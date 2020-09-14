@@ -1,0 +1,20 @@
+//
+// Placeholder text
+// --------------------------------------------------
+
+
+
+@mixin placeholder-text {
+  &::-moz-placeholder {
+    @content;
+    opacity: 1;
+  }
+
+  &:-ms-input-placeholder {
+    @content;
+  }
+
+  &::-webkit-input-placeholder {
+    @content;
+  }
+}

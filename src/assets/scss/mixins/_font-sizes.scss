@@ -1,0 +1,13 @@
+//
+// margins
+// --------------------------------------------------
+
+@mixin fontSizes($breakpoint) {
+	.#{$breakpoint}uppercase{text-transform: uppercase;}
+	.#{$breakpoint}lowercase{text-transform: lowercase;}
+	.#{$breakpoint}capitalize{text-transform: capitalize;}
+
+	@each $size in $font-sizes {
+		.#{$breakpoint}font-size-#{str-replace(#{$size},'.','p')}{ font-size: #{$size}rem;}
+	}
+}

@@ -1,0 +1,29 @@
+//
+// media queries
+// --------------------------------------------------
+
+//set the properties to all the
+//columns used
+@include global-col-props();
+
+//sets the non-media query layout
+@include responsive-layout();
+
+//now the responsive ones
+@each $breakpoint in $breakpoints {
+
+	@if ($breakpoint != "BASE"){
+		@include breakpoint($breakpoint) {
+			$thisBreakpoint: $breakpoint;
+			@if $breakpoint != '' {
+				$thisBreakpoint: $breakpoint+'-'
+			}
+
+			@include responsive-layout($thisBreakpoint);
+
+		}
+		@include breakpoint-max($breakpoint){
+			.#{$breakpoint}-up-show{display: none !important;}
+		}
+	}
+}

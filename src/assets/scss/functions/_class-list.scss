@@ -1,0 +1,17 @@
+//
+// Layout
+//-------------------
+
+//GENERATES the layouts in the media queries and
+// in the the general space (media queryless)
+
+
+@function class-list($listing){
+	$selector: ();
+
+	@each $item in $listing {
+		$selector: append($selector, unquote($item),'comma');
+	}
+	//return
+	@return $selector;
+}

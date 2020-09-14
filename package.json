@@ -1,0 +1,66 @@
+{
+  "name": "@baseframe/common",
+  "version": "2.0.0",
+  "description": "Common Javascript/jQuery plugins to help with Front-end Development",
+  "repository": "https://hilemangroup.visualstudio.com/Front%20End%20Development%20Boilerplate/_git/plugin",
+  "keywords": [
+    "equalize",
+    "accordion",
+    "collapse",
+    "marketo",
+    "popup",
+    "radios",
+    "checkboxes",
+    "navigation",
+    "responsive",
+    "tabs",
+    "dropdowns",
+    "plugins"
+  ],
+  "author": "Kevin Schroeder <kschroeder@hileman.biz>",
+  "license": "MIT",
+  "private": false,
+  "main": "common-all.js",
+  "scripts": {
+    "start": "gulp --productionjs",
+    "build": "gulp --prod"
+  },
+  "peerDependencies": {
+    "jquery": ">=3.0.0",
+    "normalize-scss": "^7.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
+    "@babel/preset-typescript": "^7.10.1",
+    "@babel/register": "^7.4.4",
+    "babel-loader": "^8.1.0",
+    "browser-sync": "^2.18.13",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^4.0.0",
+    "gulp-clean": "^0.4.0",
+    "gulp-clean-css": "^3.9.3",
+    "gulp-compile-handlebars": "^0.6.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-file-include": "^1.2.0",
+    "gulp-flatten": "^0.4.0",
+    "gulp-html-beautify": "^1.0.1",
+    "gulp-if": "^2.0.2",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^3.2.1",
+    "gulp-sourcemaps": "^2.6.0",
+    "gulp-uglify": "^3.0.0",
+    "handlebars-helpers": "^0.10.0",
+    "path": "^0.12.7",
+    "ts-loader": "^8.0.2",
+    "typescript": "^3.9.7",
+    "vinyl-named": "^1.1.0",
+    "webpack": "^4.20.2",
+    "webpack-stream": "^5.1.1",
+    "yargs": "^8.0.2"
+  },
+  "dependencies": {
+    "@types/jquery": "^3.3.38",
+    "cash-dom": "^8.0.0"
+  }
+}

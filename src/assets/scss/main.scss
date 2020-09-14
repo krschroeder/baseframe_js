@@ -1,0 +1,56 @@
+//
+// main.css
+//---------
+
+
+//
+// Global
+//
+
+@import "variables";
+@import "mixins";
+@import "functions";
+
+@import "normalize";
+@include normalize();
+@import "components/fonts";
+@import "components/tags-typography";
+@import "components/buttons";
+
+//for the content container
+//boostrap equiv of .container
+@import "components/container";
+
+//for the general styles of the image classes
+//the rest are defined in the _layout mixin
+@import "components/image";
+@import "components/site-header";
+@import "components/site-footer";
+
+@import "components/hero";
+@import "components/form";
+
+//forms
+@import "components/form";
+@import "components/form-mkto";
+
+//the general media queries for the standard classes
+//then the custom ones for things
+@import "media-queries";
+
+//after the media-queries to over-ride properites in there
+@import "components/layout";
+
+//common stuff
+@import "../../common/scss/collapse";
+@import "../../common/scss/equalize-content";
+@import "../../common/scss/nav-desktop";
+@import "../../common/scss/nav-mobile";
+@import "../../common/scss/parallax";
+@import "../../common/scss/popup";
+@import "../../common/scss/responsive-dropdown";
+@import "../../common/scss/tabs";
+
+
+@import "components/adjustments";
+@import "components/kentico-editor-fixes";

@@ -1,0 +1,70 @@
+{{>top-head title="Parallax Bg"}}
+</head>
+<body>
+	{{>header}}
+	<main role="main">
+		<div class="background-area flex-m">
+
+			<div class="background-area-bg desktop-bg md-up-show parallax-bg"
+				data-parallax-options="{speed:20}"
+				style="background-image: url('https://placehold.it/1920x760')"
+			></div>
+
+			<div class="background-area-bg mobile-bg md-up-hide"
+				style="background-image: url('https://placehold.it/768x768')"
+			></div>
+
+			<div class="container">
+				<div class="row v-space">
+					<div class="col-12 text-c">
+						<p>Phasellus laoreet lorem vel dolor tempus vehicula. Tu quoque, Brute, fili mi, nihil timor populi, nihil! Pellentesque habitant morbi tristique senectus et netus.</p>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="container">
+			<div class="row v-space">
+				<div class="md-col-8 center text-c">
+
+					<p>Tityre, tu patulae recubans sub tegmine fagi  dolor. Quis aute iure reprehenderit in voluptate velit esse. Nihil hic munitissimus habendi senatus locus, nihil horum? Cras mattis iudicium purus sit amet fermentum.</p><p>Paullum deliquit, ponderibus modulisque suis ratio utitur. Non equidem invideo, miror magis posuere velit aliquet. Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Curabitur blandit tempus ardua ridiculus sed magna. Ab illo tempore, ab est sed immemorabili bacon. Quam diu etiam furor iste tuus nos eludet?</p><p>Tu quoque, Brute, fili mi, nihil timor populi, nihil! Vivamus sagittis lacus vel augue laoreet rutrum faucibus. Cum ceteris in veneratione tui montes, nascetur mus.</p><p>Quam temere in vitiis, legem sancimus haerentia. Me non paenitet nullum festiviorem excogitasse ad hoc. Qui ipsorum lingua Celtae, nostra Galli appellantur.</p><p>Unam incolunt Belgae, aliam Aquitani, tertiam. Petierunt uti sibi concilium totius Galliae in diem certam indicere. Morbi fringilla convallis sapien, id pulvinar odio volutpat. Mercedem aut nummos unde unde extricat, amaras.</p><p>Tityre, tu patulae recubans sub tegmine fagi  dolor. Quis aute iure reprehenderit in voluptate velit esse. Nihil hic munitissimus habendi senatus locus, nihil horum? Cras mattis iudicium purus sit amet fermentum.</p><p>Paullum deliquit, ponderibus modulisque suis ratio utitur. Non equidem invideo, miror magis posuere velit aliquet. Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Curabitur blandit tempus ardua ridiculus sed magna. Ab illo tempore, ab est sed immemorabili bacon. Quam diu etiam furor iste tuus nos eludet?</p><p>Tu quoque, Brute, fili mi, nihil timor populi, nihil! Vivamus sagittis lacus vel augue laoreet rutrum faucibus. Cum ceteris in veneratione tui montes, nascetur mus.</p><p>Quam temere in vitiis, legem sancimus haerentia. Me non paenitet nullum festiviorem excogitasse ad hoc. Qui ipsorum lingua Celtae, nostra Galli appellantur.</p><p>Unam incolunt Belgae, aliam Aquitani, tertiam. Petierunt uti sibi concilium totius Galliae in diem certam indicere. Morbi fringilla convallis sapien, id pulvinar odio volutpat. Mercedem aut nummos unde unde extricat, amaras.</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="background-area flex-m">
+
+			<div class="background-area-bg desktop-bg md-up-show parallax-bg"
+				style="background-image: url('https://placehold.it/1920x760')"
+			></div>
+
+			<div class="background-area-bg mobile-bg md-up-hide"
+				style="background-image: url('https://placehold.it/768x768')"
+			></div>
+
+			<div class="container">
+				<div class="row v-space">
+					<div class="col-12 text-c">
+						<p>Phasellus laoreet lorem vel dolor tempus vehicula. Tu quoque, Brute, fili mi, nihil timor populi, nihil! Pellentesque habitant morbi tristique senectus et netus.</p>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</main>
+
+	{{>footer}}
+
+	<script src="../js/parallax.js"></script>
+	<script>
+	$(function($){
+
+		//$('.parallax-bg').parallax({speed:25, axis:'x'});
+		$('.parallax-bg').parallax({speed:25, bgFill:true});
+
+	});
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+//
+//hero image & Title
+//
+.page-hero{
+	height: 225px;
+	position: relative;
+	width: 100%;
+	display: flex;
+
+	.content{
+		display: flex;
+		align-items: center;
+	}
+
+	.page-hero-bg{
+		&,
+		&:before{
+			position: absolute;
+			top:0;
+			left:0;
+			right:0;
+			bottom:0;
+			height: inherit;
+			width:100%;
+			background-position: center center;
+			background-size: cover;
+		}
+		&:before{
+			content:'';
+			background: rgba($black, 0.25);
+		}
+	}
+
+	@include breakpoint(md) {
+		height: 395px;
+	}
+}
+
+
+

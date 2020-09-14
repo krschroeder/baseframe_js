@@ -1,0 +1,17 @@
+//
+//Kentico editor fixes
+//--------------------
+
+//for the widget inputs
+.EditMode{
+	.EditableTextEdit {
+		.EditableTextTextBox{
+			border: none;
+			color: inherit;
+			min-height:1.2em;
+			text-align: inherit;
+			font-size: inherit;
+			background: none;
+		}
+	}
+}

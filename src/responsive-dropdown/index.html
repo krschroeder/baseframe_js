@@ -1,0 +1,68 @@
+{{>top-head title="Responsive Dropdown Navigation"}}
+<link href="../css/responsive-dropdown.css" rel="stylesheet" type="text/css" />
+
+</head>
+<body>
+	{{>header}}
+<form>
+	<main role="main">
+		<div class="container">
+			<nav class="xl-col-3 lg-col-4 md-col-5 v-space">
+				<div class="resp-dd">
+					<div class="resp-dd__header">
+						<strong class="inline-block">Title For Dropdown</strong>
+						<i class="resp-dd__down-arrow">
+							<span class="sr-only">Down Arrow</span>
+						</i>
+					</div>
+					<div class="resp-dd__body">
+						<div class="sm-col-6 md-col-12" >
+							<h5>Listing of Things</h5>
+							<ul>
+								<li>Some Listing of Sorts</li>
+								<li>Some Listing of Sorts</li>
+								<li>Some Listing of Sorts</li>
+								<li>Some Listing of Sorts</li>
+								<li>Some Listing of Sorts</li>
+								<li>Some Listing of Sorts</li>
+							</ul>
+							<br />
+							<a href="#" class="see-more-btn">See More</a>
+						</div>
+
+						<div class="sm-col-6 md-col-12">
+							<h5>Another Listing</h5>
+							<ul>
+								<li>Some Listing of Sorts</li>
+								<li>Some Listing of Sorts</li>
+								<li>Some Listing of Sorts</li>
+								<li>Some Listing of Sorts</li>
+								<li>Some Listing of Sorts</li>
+								<li>Some Listing of Sorts</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</nav>
+			<div class="xl-col-9 lg-col-8 md-col-7 v-space">
+
+				<figure>
+					<img src="https://www.fillmurray.com/800/400" alt="Fill Murray Banner"  />
+				</figure>
+				<p>Ceteris in veneratione tui montes, nascetur mus. Integer legentibus erat a ante historiarum dapibus. Non equidem invideo, miror magis posuere velit aliquet. Plura mihi bona sunt, inclinet, amari petere vellent.</p><p>Paullum deliquit, ponderibus modulisque suis ratio utitur. Pellentesque habitant morbi tristique senectus et netus. Vivamus sagittis lacus vel augue laoreet rutrum faucibus. Excepteur sint obcaecat cupiditat non proident culpa. Prima luce, cum quibus mons aliud  consensu ab eo. Fabio vel iudice vincam, sunt in culpa qui officia.</p><p>Magna pars studiorum, prodita quaerimus. At nos hinc posthac, sitientis piros Afros. Quisque ut dolor gravida, placerat libero vel, euismod. Quam temere in vitiis, legem sancimus haerentia.</p><p>Etiam habebis sem dicantur magna mollis euismod. Quam diu etiam furor iste tuus nos eludet? Curabitur blandit tempus ardua ridiculus sed magna.</p><p>Qui ipsorum lingua Celtae, nostra Galli appellantur. Salutantibus vitae elit libero, a pharetra augue. Quis aute iure reprehenderit in voluptate velit esse.</p>
+			</div>
+		</div>
+	</main>
+
+	{{>footer}}
+
+</form>
+	<script>
+	$(function($){
+		$(".resp-dd").responsiveDropDown();
+	});
+
+	</script>
+
+</body>
+</html>

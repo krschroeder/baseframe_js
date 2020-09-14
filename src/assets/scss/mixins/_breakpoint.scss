@@ -1,0 +1,42 @@
+//
+// Breakpoints
+// --------------------------------------------------
+
+$breakpoints-min: (
+  sm: $screen-sm,
+  md: $screen-md,
+  lg: $screen-lg,
+  xl: $screen-xl
+);
+
+//small to large for cascade reasons
+$breakpoints-max: (
+  xl: $screen-xl-max,
+  lg: $screen-lg-max,
+  md: $screen-md-max,
+  sm: $screen-sm-max
+);
+
+@mixin breakpoint($breakpoint) {
+  @media (min-width: map-get($breakpoints-min, $breakpoint)) {
+    @content;
+  }
+}
+
+@mixin breakpoint-max($breakpoint) {
+  @media (max-width: map-get($breakpoints-max, $breakpoint)) {
+    @content;
+  }
+}
+
+@mixin breakpoint-only($breakpoint) {
+  @include breakpoint($breakpoint) {
+    @if $breakpoint != 'xl' {
+      @include breakpoint-max($breakpoint) {
+        @content;
+      }
+    } @else {
+      @content;
+    }
+  }
+}

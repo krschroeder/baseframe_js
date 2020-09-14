@@ -1,0 +1,137 @@
+//
+//Responsive Dropdown Plugin
+//
+
+$header-border-color: #ccc;
+$header-bg-color: #fff;
+$header-arrow-color: #444;
+
+$body-mobile-bg-color: #fff;
+
+//if not a global style
+.sr-only {
+	display: none !important;
+}
+
+.resp-dd {
+	margin-bottom: 2rem;
+	position: relative;
+	z-index: 999;
+
+	//generic elements
+	//delete if you have your own styles for this
+
+	li {
+		list-style: inherit;
+		padding: 0;
+		padding-left: 21px;
+		margin: 0;
+		display: block;
+		position: relative;
+
+		&:before {
+			content: none;
+		}
+		input[type="checkbox"] {
+			position: absolute;
+			left: 0;
+			top: 50%;
+			margin-top: 1px;
+			transform: translateY(-50%);
+		}
+	}
+
+	label {
+		margin: 3px 0;
+		font-size: 1rem;
+	}
+
+	//
+	// specific elems of resp-dd
+	//
+	&__header {
+		display: none;
+		border: 1px solid $header-border-color;
+		padding: 6px 12px;
+		position: relative;
+		display: none;
+		z-index: 101;
+		background: $header-bg-color;
+	}
+
+	&__down-arrow {
+		font-size: 16px;
+		color: $header-arrow-color;
+		margin-left: 5px;
+		display: block;
+		position: absolute;
+		right: 1rem;
+		top: 50%;
+		width: 0;
+		height: 0;
+		margin-top: -6px;
+		border-top: 6px solid;
+		border-left: 6px solid transparent;
+		border-right: 6px solid transparent;
+		transition: 120ms all ease-in-out;
+		line-height: 1;
+
+		&:before {
+			display: inline-block;
+			transition: all 120ms ease-in-out;
+		}
+	}
+
+	&__close-btn-area {
+		display: none;
+		text-align: center;
+		padding-top: 32px;
+		clear: both;
+		width: 100%;
+	}
+
+	&--in-mobile {
+
+		.resp-dd {
+			&__body {
+				position: absolute;
+				width: 100%;
+				top: 100%;
+				left: -9999em;
+				background: $body-mobile-bg-color;
+				padding: 0 12px 32px;
+				z-index: 100;
+				box-shadow: 0 0 18px rgba(#000, 0.2);
+				opacity: 0;
+				transition: opacity 300ms ease-out;
+			}
+
+			&__close-btn-area,
+			&__header {
+				display: block;
+			}
+		}
+	}
+
+	&--toggling {
+		.resp-dd__body {
+			left: 0;
+			display: block !important;
+		}
+	}
+
+	&--active {
+		.resp-dd {
+			&__down-arrow {
+				transform: rotateX(-180deg);
+			}
+
+			&__body {
+				left: 0;
+				padding-top: 22px;
+				display: block !important;
+				opacity: 1;
+			}
+		}
+	}
+}

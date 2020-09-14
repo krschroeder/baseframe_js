@@ -1,0 +1,31 @@
+//
+// Collapse!
+//
+
+$collapse-header-pad: 1rem 0 !default;
+$collapse-body-pad: 0 0 !default;
+$collapse-duration: 500ms;
+
+
+.collapse-item {
+	.collapse-header {
+		padding: $collapse-header-pad;
+	}
+	.collapse-body{
+		padding: $collapse-body-pad;
+		&,
+		&,.collapse-closing{
+			height: 0px;
+		}
+		overflow: hidden;
+		transition: height $collapse-duration ease-in-out;
+
+		&.collapse-open{
+			height: auto;
+		}
+		&.collapse-toggling{
+			height: auto;
+			overflow: hidden;
+		}
+	}
+}

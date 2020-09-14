@@ -1,0 +1,28 @@
+//
+// Marketo Form
+//
+
+
+.mktoLogicalField{
+	text-align: center;
+	.input-wrap{
+		display: inline-block;
+		padding: 5px;
+	}
+}
+
+.mktoButtonRow{
+	padding-top: 36px;
+	text-align: center;
+}
+
+.mktoAsterix{
+	display: none;
+}
+.mktoRequiredField{
+	.mktoAsterix{
+		display: inline-block;
+		padding-right: 3px;
+		color: $color-warning;
+	}
+}

@@ -1,0 +1,137 @@
+{{>top-head title="Popup"}}
+
+</head>
+<body>
+	{{>header}}
+	<main role="main">
+		<div class="container v-space">
+			<div style="display: none;">
+				<div id="popup-content">
+					<h1>Pop-up</h1>
+					<p>This is for a basic popup content</p>
+					<p>Cum sociis natoque penatibus et magnis dis parturient. Etiam habebis sem dicantur magna mollis euismod. Curabitur blandit tempus ardua ridiculus sed magna. Unam incolunt Belgae, aliam Aquitani, tertiam. Nihil hic munitissimus habendi senatus locus, nihil horum?</p>
+				</div>
+			</div>
+			<div class="flex-l">
+				<div class="md-col-4">
+					<a class="button popup-w-string"
+						href="#"
+						data-popup-src="<iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/9HFsQjjTkak&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen></iframe>"
+						data-popup-type="string"
+						data-popup-options="{id:'heroVideo',title:'Popup Title'}"
+						data-popup-caption="Some caption here for more splaining"
+					>Popup With String</a>
+
+					<a class="button popup-w-string"
+						href="<img src='https://placekitten.com/600/400' alt='Something'>"
+						data-popup-type="string"
+						data-popup-options="{title:'Popup Title'}"
+						data-popup-caption="Some caption here for more splaining"
+					>Popup With String 2</a>
+
+					<a href="#popup-content" class="button popup-w-content-id"
+						data-popup-options="{title:'How About That'}"
+					>Popup With HTML</a>
+
+					<a href="https://placekitten.com/900/1200?ext=.jpg" class="button pic-group" title="Kitty thats in a taller image"
+					>A Group of Pictures</a>
+
+					<button type="button" class="button js-array">A Group of Pictures in JS Array</button><br>
+					<br>
+					<a href="https://placekitten.com/1200/600?image" data-popup-title="Anchor Kitty" class="pic-group">Kitty</a><br>
+					<br>
+					<a href="https://www.fillmurray.com/600/500" data-popup-type="image" data-popup-title="Our Boy Phil Murray" class="pic-group">Phil Murray</a>
+				</div>
+				<div class="md-col-4">
+					<img src="https://placekitten.com/600/400"
+						data-popup-src="https://placekitten.com/1200/800?image?image"
+						alt="Kittens (1)"
+						class="pic-group"
+						data-popup-title="Kittens"
+					/>
+				  	<img src="https://placekitten.com/600/500"
+						data-popup-src="#popup-content"
+						alt="Kittens (2)"
+						class="pic-group"
+						data-popup-title="Joking Here's Our Popup Content"
+					/>
+
+				</div>
+				<div class="md-col-4">
+				  	<img src="https://placekitten.com/600/300"
+						data-popup-src="https://placekitten.com/900/450?image"
+						alt="Kittens (3)"
+						class="pic-group"
+						data-popup-title="Kittens (3)"
+					/>
+					<img src="https://placekitten.com/600/400"
+						data-popup-src="https://placekitten.com/900/600?yeah&image"
+						alt="Kittens (4)"
+						class="pic-group"
+						data-popup-title="Sorry it's not a doggie, but it'll have to do."
+					/>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	{{>footer jquery-slim=true}}
+
+
+
+	<script src="../js/popup.js"></script>
+
+	<script>
+		var jsArray = [
+			{
+				nodeName:"img",
+				src:"https://via.placeholder.com/600x500",
+				title:"A JS Object Title 600x500",
+				alt: "600x500 alt text"
+			},
+			{
+				nodeName:"div",
+				src:"<h2>This is a Title</h2><p>this is some lorem Quam diu etiam furor iste tuus nos eludet? Gallia est omnis divisa in partes tres, quarum. Ullamco laboris nisi ut aliquid ex ea commodi consequat.</p>",
+				title:"This is just some HTML"
+			},
+			{
+				nodeName:"img",
+				src:"https://via.placeholder.com/600x300",
+				title:"A JS Object Title 600x300"
+			}
+		];
+
+		//jQuery
+	(function($){
+		$('.popup-w-string').popup({
+			group: '.popup-w-string'
+		}).on('click',function(e){
+			e.preventDefault();
+			return false;
+		});
+
+		$('.popup-w-content-id').popup();
+
+		$('.pic-group').popup({
+			src: '.pic-group',
+			title:'A Group of Pictures',
+			afterLoaded: (el,id)=>{
+				// console.log('afterLoaded', el,id);
+			}
+		}).on('click',function(e){
+			e.preventDefault();
+			return false;
+		})
+
+		$('.js-array').popup({
+			isJsArray: true,
+			src: jsArray,
+			title:'A JavaScript Array of Objects!'
+		});
+
+	})($);
+
+	</script>
+
+</body>
+</html>

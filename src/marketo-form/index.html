@@ -1,0 +1,38 @@
+{{>top-head title="Marketo Form Magic"}}
+
+</head>
+<body>
+	{{>header}}
+	<main role="main">
+		<div class="content">
+			<h1>Your going to actually need to load this on a webpage</h1>
+			<p>Marketo doesn't load if its on the file system of your computer :-(</p>
+			<div class="mkto-something-form">
+				<!-- Added via mkto embed-->
+			</div>
+		</div>
+	</main>
+
+	{{>footer}}
+
+	<script src="https://app-ab05.marketo.com/js/forms2/js/forms2.min.js" type="text/javascript"></script>
+	<script src="../js/mkto-form-magic.js"></script>
+	<script>
+	function yourNiftyWhenReadyFn(){
+		console.log('the whistles go woot!');
+	}
+	jQuery(function($){
+		var myMarketoForm = new MyMarketoForm('.mkto-something-form',{
+			inlineFollowUp: "Thank You for Subscribing",
+			account: "597-BOK-146",
+			loadScript: '//app-ab05.marketo.com',
+			formID: 1470,
+			whenReady: function(){
+				yourNiftyWhenReadyFn();
+			}
+		});
+	});
+	</script>
+
+</body>
+</html>

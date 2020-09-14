@@ -1,0 +1,112 @@
+//
+//layout spacings
+//
+$v-space-m: 40px;
+$v-space-d: 50px;
+$v-space-half-m: 20px;
+$v-space-half-d: 25px;
+
+$horiz-col-space: 40px;
+
+
+$v-space-margin: #{$col-gutter * 2};
+$v-space-margin-half: $col-gutter;
+
+.body-content {
+	margin: 2rem 0;
+    min-height: 640px;
+}
+
+code {
+	color: $white;
+	background: $brand-dark-gray;
+	display: block;
+	padding: 1.5rem;
+	margin: 1.5rem 0;
+}
+
+.the-plugins-description {
+	> div {
+		font-size: 1.125rem;
+		margin: 1rem 0;
+	}
+}
+
+
+.v-space{
+	&,&-t{
+		margin-top: $v-space-m;
+	}
+	&,&-b{
+		margin-bottom: $v-space-m;
+	}
+}
+
+.v-space-half{
+	&,&-t{
+		margin-top: $v-space-half-m;
+	}
+	&,&-b{
+		margin-bottom: $v-space-half-m;
+	}
+}
+
+@include breakpoint(md) {
+	.v-space{
+		&,&-t{
+			margin-top: $v-space-d;
+		}
+		&,&-b{
+			margin-bottom: $v-space-d;
+		}
+	}
+
+	.v-space-half{
+		&,&-t{
+			margin-top: $v-space-half-d;
+		}
+		&,&-b{
+			margin-bottom: $v-space-half-d;
+		}
+	}
+}
+
+@include breakpoint(lg) {
+	.h-extra-col-space-outer{
+		overflow: hidden;
+	}
+
+	.row.h-extra-col-space{
+
+		margin-left: -#{$horiz-col-space};
+		margin-right: -#{$horiz-col-space};
+		.h-extra-col{
+			padding-left: $horiz-col-space;
+			padding-right: $horiz-col-space;
+		}
+	}
+}
+
+
+//for items like launchpad items, where they're spaced apart, but we want
+//to maintain the vertical padding on the top and the bottom
+
+.spaced-item-area{
+	margin-top: -#{$v-space-margin};
+	margin-bottom: -#{$v-space-margin};
+
+	.spaced-item{
+		margin-top: $v-space-margin;
+		margin-bottom: $v-space-margin;
+	}
+}
+
+.spaced-item-area-half{
+	margin-top: -#{$v-space-margin-half};
+	margin-bottom: -#{$v-space-margin-half};
+
+	.spaced-item{
+		margin-top: $v-space-margin-half;
+		margin-bottom: $v-space-margin-half;
+	}
+}

@@ -1,0 +1,51 @@
+//
+// Button
+//-----------------------------------------
+
+
+#{$site-btns}{
+	border: 0;
+	border-radius: $btn-border-radius;
+	cursor: pointer;
+	text-decoration: $btn-text-decoration;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	text-align: center;
+	vertical-align: middle;
+	color: $btn-color;
+	font-family: $btn-font;
+	font-weight: $btn-font-weight;
+	font-size: $btn-font-size;
+	background: $btn-bg-color;
+	display: inline-block;
+	padding: $btn-padding;
+	outline: thin dotted transparent;
+	outline-offset: 2px;
+	line-height: 1;
+	white-space: nowrap;
+	margin: 3px 0;
+	&.wrap{
+		white-space: normal;
+	}
+	&:hover{
+		color: $btn-color;
+		background: $btn-bg-hover-color;
+		outline: 1px dotted transparent;
+		text-decoration: $btn-text-hover-decoration;
+	}
+
+	&:focus{
+		outline: 1px dotted $btn-focus-color;
+	}
+}
+
+
+
+
+#{$site-btns}{
+	&.btn-outline{
+		background: none;
+		border:1px solid;
+		color: $white;
+	}
+}

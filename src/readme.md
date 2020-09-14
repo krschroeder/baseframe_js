@@ -1,6 +1,6 @@
 # Base_Frame Plugins
 
-It's nearly inevitable your website will need these plugin's and JS functionality for it to work. You'll notice some are missing (like a Carousel for example), that's because there are just some really, realy well made, IMO. Not touching that stuff, use those others, they're great. Others I always thought could be better, even though a few are frankly near duplicates 🤷🏻‍♂️. Anyways here we are, and you're stil reading this! If you download you probably work where I do, or somehow stumbled across.
+It's nearly inevitable your website will need these plugin's and JS functionality, so here they are. You'll notice some are missing (like a carousel for example), that's because there are just some really, realy well made, IMO. Not touching that stuff, use those others, they're great. Others I always thought could be better, even though a few are frankly near duplicates 🤷🏻‍♂️. Anyways here we are, and you're stil reading this! If you download you probably work where I do, or somehow stumbled across.
 
 ## Runs with [Cash](https://github.com/fabiospampinato/cash) (or JQuery if you wish)
 
@@ -72,10 +72,11 @@ Slider | Just kidding, use this [one](https://kenwheeler.github.io/slick/).. its
 <br>
 <br>
 <br>
-----
 @@include('./tabs/tabs.md')
 <br>
 <br>
 <br>
-----
 @@include('./equalize-content/equalize-content.md')
+
+
+### More documentation to come...

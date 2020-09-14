@@ -1,6 +1,6 @@
 {
   "name": "@baseframe/common",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "description": "Common Javascript/jQuery plugins to help with Front-end Development",
   "repository": "https://hilemangroup.visualstudio.com/Front%20End%20Development%20Boilerplate/_git/plugin",
   "keywords": [
@@ -60,7 +60,6 @@
     "yargs": "^8.0.2"
   },
   "dependencies": {
-    "@types/jquery": "^3.3.38",
-    "cash-dom": "^8.0.0"
+    "cash-dom": "^8.1.0"
   }
 }

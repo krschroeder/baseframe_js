@@ -1,6 +1,6 @@
 import $ from 'cash-dom';
-import validJSONFromString from '../../util/formatting-valid-json.js';
-import {CSS_TRANSISTION_DELAY} from '../../util/helpers';
+import validJSONFromString from './util/formatting-valid-json.js';
+import {CSS_TRANSISTION_DELAY} from './util/helpers';
 
 const VERSION = "2.1.2";
 const DATA_NAME = 'Collapse';

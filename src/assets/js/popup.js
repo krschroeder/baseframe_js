@@ -1,8 +1,8 @@
 import $ from "cash-dom";
-import validJSONFromString from '../../util/formatting-valid-json.js';
-import generateGUID from '../../util/guid-generate.js';
+import validJSONFromString from './util/formatting-valid-json.js';
+import generateGUID from './util/guid-generate.js';
 
-import {isHidden, CSS_TRANSISTION_DELAY} from '../../util/helpers';
+import {isHidden, CSS_TRANSISTION_DELAY} from './util/helpers';
 
 const VERSION = "1.0.0";
 const DATA_NAME = 'Popup';

@@ -1,5 +1,5 @@
 import $ from 'cash-dom';
-import validJSONFromString from '../../util/formatting-valid-json.js';
+import validJSONFromString from './util/formatting-valid-json.js';
 
 const VERSION = "1.0.0";
 const DATA_NAME = 'ResponsiveDropDown';

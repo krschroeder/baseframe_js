@@ -1,6 +1,6 @@
 import $ from 'cash-dom';
-import validJSONFromString from '../../util/formatting-valid-json.js';
-import getType from '../../util/helpers';
+import validJSONFromString from './util/formatting-valid-json.js';
+import getType from './util/helpers';
 
 const VERSION = "1.0.0";
 const DATA_NAME = 'Tabs';

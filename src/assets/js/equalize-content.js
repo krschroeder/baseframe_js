@@ -1,5 +1,5 @@
 import $ from 'cash-dom';
-import validJSONFromString from '../../util/formatting-valid-json.js';
+import validJSONFromString from './util/formatting-valid-json.js';
 
 const VERSION = "2.0.2";
 const DATA_NAME = 'EqualizeContent';

@@ -11,7 +11,7 @@ const checkIfParamsExist = (setParams, params, notify = true) => {
 };
   
 
-const libraryExtend = (Plugins, notify = true) => {
+const libraryExtend = (Plugins, notify = false) => {
     
     const plugins = getType(Plugins) === 'array' ? Plugins : [Plugins];
    

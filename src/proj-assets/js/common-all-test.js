@@ -10,8 +10,9 @@ import installStoreToLibrary, {
     Parallax,
     Popup,
     ResponsiveDropDown,
-    Tabs
-} from '../../common-all';
+    Tabs,
+    formInputs
+} from '../../../common-all';
 
 //necessary for all plugin's to operate
 //much like jQuery's $.data method, the $.store is similar

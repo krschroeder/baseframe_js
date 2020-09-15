@@ -39,22 +39,10 @@ helpers({
 });
 
 const DEST = 'build';
-const PLUGINS = [
-	'src/collapse/',
-	'src/equalize-content/',
-	'src/marketo-form/',
-	'src/nav-desktop/',
-	'src/nav-mobile/',
-	'src/parallax/',
-	'src/popup/',
-	'src/responsive-dropdown/',
-	// 'src/sticky-animate/',
-	'src/tabs/',
-];
-
-const PLUGIN_CSS = pluginsFindType('*.scss');
-const PLUGIN_HTML = ['src/index.html',...pluginsFindType('*.html')];
-const PLUGIN_JS = './src/plugins/js/*.{js,ts}';
+ 
+const CSS  = ['src/proj-assets/scss/**/*.scss','src/assets/scss/**/*.scss'];
+const HTML = ['src/pages/**/*.{html,hbs}'];
+const JS   = ['src/assets/js/**/*.js','src/proj-assets/js/common-all-test.js'];
 
 const SOURCE = path.resolve(__dirname, './src');
 
@@ -114,21 +102,10 @@ const hbs = {
 }
 
 
-//utility
-function pluginsFindType(fileType){
-	let plugins = [];
-
-	for(let i = 0,l = PLUGINS.length; i < l; i++){
-		plugins.push( PLUGINS[i] + fileType);
-	}
-	return plugins;
-}
-
-
 //tasks
 
 function buildCSS(){
-	return gulp.src('src/assets/scss/main.scss')
+	return gulp.src(CSS)
 		.pipe(sourcemaps.init())
 		.pipe(sass().on('error', sass.logError))
 		.pipe(autoprefixer({
@@ -138,51 +115,32 @@ function buildCSS(){
 			compatibility: "ie11"
 		})))
 		.pipe(sourcemaps.write('./'))
-		.pipe(gulp.dest(`${DEST}/css`))
+		.pipe(gulp.dest(`${DEST}/assets/css`))
 		.pipe(browser.reload({ stream: true }));
 }
 
-function pluginCSS(){
 
-	return gulp.src(PLUGIN_CSS)
-		.pipe(sourcemaps.init())
-		.pipe(sass().on('error', sass.logError))
-		.pipe(autoprefixer({
-			browsers: ["last 2 versions","ie >= 11","ios >= 11"]
-		}))
-		.pipe(gulpIf(PRODUCTION, cleanCss({
-			compatibility: "ie11"
-		})))
-		.pipe(sourcemaps.write('./'))
-		.pipe(gulp.dest(DEST+'/css'))
-		.pipe(browser.reload({ stream: true }));
-}
+function buildHTML(done){
+	if(!PRODUCTION) {
+		return gulp.src(HTML)
+			.pipe(handlebars(hbs.vars,hbs.handlebars))
+			.pipe(gulp.dest(DEST));
+	}
 
-function pluginHTML(){
-
-	return gulp.src(PLUGIN_HTML)
-		.pipe(handlebars(hbs.vars,hbs.handlebars))
-		.pipe(gulp.dest(function(file){
-			let base = file.base.slice(file.base.lastIndexOf('/')+1);
-
-			if(base === 'src'){
-				base = '';
-			}
-			return path.resolve(DEST,base);
-		}));
+	done();
 }
 
 
-function pluginJS(){
-	return gulp.src(PRODUCTION ? PLUGIN_JS: 'src/_partials/common-all-test.js')
+function buildJS(){
+	return gulp.src(JS)
 		.pipe(named())
 		.pipe(webpackStream(WEBPACK_CONFIG, webpack))
-		.pipe(gulp.dest(DEST+'/js'));
+		.pipe(gulp.dest(DEST+'/assets/js'));
 }
 
 function copyAssets(){
-	return gulp.src('src/assets/img/**/*')
-		.pipe(gulp.dest(DEST+'/img'));
+	return gulp.src('src/proj-assets/img/**/*')
+		.pipe(gulp.dest(DEST+'/assets/img'));
 }
 
 function cleanUp(){
@@ -196,32 +154,36 @@ function cleanUp(){
 }
 
 function compileReadme() {
-	return gulp.src('src/readme.md')
+	return gulp.src('src/readmes/_readme.md')
 		.pipe(fileinclude({
 			prefix: '@@',
 			basepath: '@file'
+		}))
+		.pipe(rename({
+			basename: 'readme'
 		}))
 		.pipe(gulp.dest('./'));
 }
 
 
 function watch(){
-	gulp.watch([PLUGIN_JS, 'src/util/**/*.{js,ts}']).on('all',gulp.series(pluginJS, reload));
-	gulp.watch(PLUGIN_CSS).on('all',gulp.series(pluginCSS));
+	gulp.watch(JS).on('all',gulp.series(buildJS, reload));
+	gulp.watch(CSS).on('all',gulp.series(buildCSS));
 	gulp.watch('src/assets/scss/**/*.scss').on('all',gulp.series(buildCSS));
-	gulp.watch('src/assets/img/**/*').on('all',gulp.series(copyAssets));
-	gulp.watch(['src/**/*.{html,hbs}']).on('all',gulp.series(pluginHTML, reload));
-	gulp.watch('src/readme.md').on('all',gulp.series(compileReadme));
+	gulp.watch('src/proj-assets/img/**/*').on('all',gulp.series(copyAssets));
+	gulp.watch(['src/**/*.{html,hbs}']).on('all',gulp.series(buildHTML, reload));
+	gulp.watch('src/readmes/*.md').on('all',gulp.series(compileReadme));
 }
 
-
+ 
 //
 // Server
 function server(done) {
 	// Start a server with BrowserSync to preview the site in
 	browser.init({
 		server: DEST,
-		port: 8000
+		port: 8000,
+		extensions: ['html'] // pretty urls
 	});
 	done();
 }
@@ -238,9 +200,8 @@ const BUILD = gulp.parallel(
 	gulp.series(
 		cleanUp,
 		buildCSS,
-		pluginCSS,
-		pluginJS,
-		pluginHTML,
+		buildJS,
+		buildHTML,
 		copyAssets,
 		server,
 		compileReadme,

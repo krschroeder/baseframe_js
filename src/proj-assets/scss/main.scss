@@ -42,15 +42,11 @@
 @import "components/layout";
 
 //common stuff
-@import "../../common/scss/collapse";
-@import "../../common/scss/equalize-content";
-@import "../../common/scss/nav-desktop";
-@import "../../common/scss/nav-mobile";
-@import "../../common/scss/parallax";
-@import "../../common/scss/popup";
-@import "../../common/scss/responsive-dropdown";
-@import "../../common/scss/tabs";
-
-
-@import "components/adjustments";
-@import "components/kentico-editor-fixes";
+@import "../../assets/scss/collapse";
+@import "../../assets/scss/equalize-content";
+@import "../../assets/scss/nav-desktop";
+@import "../../assets/scss/nav-mobile";
+@import "../../assets/scss/parallax";
+@import "../../assets/scss/popup";
+@import "../../assets/scss/responsive-dropdown";
+@import "../../assets/scss/tabs";

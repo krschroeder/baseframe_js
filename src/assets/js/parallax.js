@@ -1,5 +1,5 @@
 import $ from 'cash-dom';
-import validJSONFromString from '../../util/formatting-valid-json.js';
+import validJSONFromString from './util/formatting-valid-json.js';
 
 
 const VERSION = "1.0.0";
@@ -29,6 +29,7 @@ export default class Parallax {
 			initOffset: false,
 			bgFill: false,
 			outStop: 1,
+			scrollMaxPxStop: 5000,
 			minWidth: null,
 			maxWidth: null
 		};
@@ -50,6 +51,8 @@ export default class Parallax {
 		//props to get updated on resize
 		_.updatableProps();
 		
+		_.initiallyInView = ( _.$relElem.offset().top < _.winHeight );
+
 		_.init();
 	}
 
@@ -87,6 +90,7 @@ export default class Parallax {
 		_.axis = _.params.axis.toUpperCase();
 		_.$relElem = _._relElem;
 		_.outStop = _.params.outStop;
+		_.scrollMaxPxStop = _.params.scrollMaxPxStop;
 		_.initOffsetSet = false;
 		_.minWidthIfSet = _.params.minWidth ? _.winWidth > _.params.minWidth : true;
 		_.maxWidthIfSet = _.params.maxWidth ? _.winWidth < _.params.maxWidth : true;
@@ -124,13 +128,16 @@ export default class Parallax {
 			const bgFillRatio = _.bgFillRatio;
 
 
-			if ( !_.initOffsetSet ) {
+			if ( !_.initOffsetSet && _.initiallyInView ) {  
 				if( _.params.initOffset ){
+				
 					_.initOffset = speed - (scrollTop * _.speed);
 					_.initOffsetSet = true;
 				}
 			}
-		
+
+			if (Math.abs(speed) > _.scrollMaxPxStop) return;
+			 
 			const cssParams = ( _.axis === 'Y' ) ?
 				!_.bgFill ?
 				{	//don't fill it
@@ -141,7 +148,7 @@ export default class Parallax {
 					'padding-top': `${ bgFillRatio }px`
 				}:
 				{	//scroll sideways
-					'transform': `translate3d(${speed}px,0,0)`
+					'transform': `translate3d(${speed - bgFillRatio}px,0,0)`
 				}
 			;
 				
@@ -194,7 +201,7 @@ export default class Parallax {
 		const _ = this;
 
 		return  _.params.relativeElem ?
-			_.$element.parent(_.params.relativeElem) :
+			_.$element.closest(_.params.relativeElem) :
 			_.$element
 		;
 	}

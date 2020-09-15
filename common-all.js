@@ -2,6 +2,7 @@
 //not importing them because it can be either or
 import {installStoreToLibrary} from './src/assets/js/util/data';
 import libraryExtend from './src/assets/js/util/lib-extend';
+import smoothScroll from './src/assets/js/util/smoothScroll';
 
 import Popup from './src/assets/js/popup';
 import Collapse from './src/assets/js/collapse';
@@ -29,5 +30,6 @@ export {
     Popup,
     ResponsiveDropDown,
     Tabs,
-    formInputs
+    formInputs,
+    smoothScroll
 }

@@ -1,11 +1,11 @@
 import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json.js';
 import {CSS_TRANSISTION_DELAY} from './util/helpers';
+import smoothScroll from './util/smoothScroll';
 
 const VERSION = "2.1.2";
 const DATA_NAME = 'Collapse';
 const EVENT_NAME = 'collapse';
-
 
 export default class Collapse {
 
@@ -27,15 +27,16 @@ export default class Collapse {
 
 		_.defaults = {
 			elems: {
-				item: '.collapse-item',
-				btn: '.collapse-btn',
-				header: '.collapse-header',
-				body: '.collapse-body'
+				item: '.collapse__item',
+				btn: '.collapse__btn',
+				header: '.collapse__header',
+				body: '.collapse__body'
 			},
-			openClass: 'collapse-open',
-			togglingClass: 'collapse-toggling',
-			openingClass: 'collapse-opening',
-			closingClass: 'collapse-closing',
+			openCss: 'collapse--open',
+			togglingCss: 'collapse--toggling',
+			openingCss: 'collapse--opening',
+			closingCss: 'collapse--closing',
+			openNoAnimateCss: 'collapse--no-animate',
 			toggleClickBindOn: 'group',
 			toggleGroupDuration: 500,
 			toggleGroup: false,
@@ -43,6 +44,7 @@ export default class Collapse {
 			moveToTopOffset: 0,
 			moveToTopDivisor: 12,
 			toggleOnHash: false,
+			loadLocationHash: true,
 			afterOpen: function () { },
 			afterClose: function () { },
 			afterInit: function () { }
@@ -78,22 +80,21 @@ export default class Collapse {
 			});
 		}
 		_.toggleItems();
+		_.loadContentFromHash();
 		_.params.afterInit(_.element);
 	}
 
 	setDisplay() {
 		const _ = this;
 		$(_.element).find(_.params.elems.body).each(function () {
-			if ($(this).hasClass(_.params.openClass)) {
+			if ($(this).hasClass(_.params.openCss)) {
 
 				const thisCollapsibleID = `#${$(this).attr('id')}`;
 				const btnElems = `[data-href="${thisCollapsibleID}"],a[href="${thisCollapsibleID}"]`;
 				$('body').find(btnElems)
-					.addClass(_.params.openClass)
+					.addClass(_.params.openCss)
 					.attr('aria-expanded', true);
 
-			} else {
-				//$(this).hide();
 			}
 		});
 	}
@@ -130,33 +131,53 @@ export default class Collapse {
 			(_.params.toggleClickBindOn == 'body' ? 'body' : 'group')
 		;
 
-		$(_.onElem).on(`click.${EVENT_NAME} ${EVENT_NAME}Close`, _.params.elems.btn, function (e) {
-			
+		$(_.onElem).on(`click.${EVENT_NAME} ${EVENT_NAME}`, _.params.elems.btn, function (e) {
 			e.preventDefault();
 
 			if ( _.toggling ) { return;}
-
+			
 			const $this = $(this);
 			// const thisCollapsibleID = $this.is('a') ? $this.attr('href') : this.attr('data-href');
 			const thisCollapsibleID = $this.attr('href') || $this.attr('data-href');
-			const $collapsibleItem = $(thisCollapsibleID);
-			const CLOSE = $collapsibleItem.hasClass(_.params.openClass);
-			const btnElems = `[data-href="${thisCollapsibleID}"],a[href="${thisCollapsibleID}"]`;
-			const $btnElems = $(_.onElem).find(btnElems);
-
-			$collapsibleItem.addClass(_.params.togglingClass);
-			$btnElems.addClass(_.params.togglingClass);
-
-			if (_.params.toggleGroup) {
-				_._toggleGroup($collapsibleItem);
-			}
-
-			if (CLOSE) {
-				_._closeItem($btnElems, $collapsibleItem)
-			} else {
-				_._openItem($btnElems, $collapsibleItem);
-			}
+			_._toggleInner(thisCollapsibleID)
 		});
+	}
+
+	_toggleInner(thisCollapsibleID,noAnimation = false) {
+		const _ = this; console.log(thisCollapsibleID)
+		const $collapsibleItem = $(thisCollapsibleID);
+		const CLOSE = $collapsibleItem.hasClass(_.params.openCss);
+		const btnElems = `[data-href="${thisCollapsibleID}"],a[href="${thisCollapsibleID}"]`;
+		const $btnElems = $(_.onElem).find(btnElems);
+
+		$collapsibleItem.addClass(noAnimation ? (_.params.openCss + " " + _.params.openNoAnimateCss): _.params.togglingCss);
+		$btnElems.addClass(_.params.togglingCss);
+
+		if (_.params.toggleGroup) {
+			_._toggleGroup($collapsibleItem);
+		}
+
+		if (CLOSE) {
+			_._closeItem($btnElems, $collapsibleItem)
+		} else {
+			_._openItem($btnElems, $collapsibleItem);
+		}
+	}
+
+	loadContentFromHash() {
+		const _ = this;
+		const locationHashArray = location.hash.split('#');
+		
+		if (_.params.loadLocationHash) {
+			
+			if (!locationHashArray.length) return;
+
+			//first value is '' so we skip it
+			locationHashArray.slice(1).forEach((hash) => {
+				_._toggleInner('#'+hash, true);
+			});
+		}
+		
 	}
 
 	_toggleGroup($clickedItem) {
@@ -164,7 +185,7 @@ export default class Collapse {
 
 		$(_.onElem).find(_.params.elems.body).not($clickedItem).each(function () {
 
-			if ($(this).hasClass(_.params.openClass)) {
+			if ($(this).hasClass(_.params.openCss)) {
 
 				const $this = $(this);
 				const thisID = $this.attr('id');
@@ -182,7 +203,7 @@ export default class Collapse {
 		_.toggling = true;
 
 		$collapsibleItem
-			.addClass(`${_.params.togglingClass} ${_.params.closingClass}`)
+			.addClass(`${_.params.togglingCss} ${_.params.closingCss}`)
 			.css({ height: $collapsibleItem.height() })
 		
 		setTimeout(() => {
@@ -190,7 +211,7 @@ export default class Collapse {
 		}, CSS_TRANSISTION_DELAY);
 
 		setTimeout(() => {
-			const rmClasses = `${_.params.openClass} ${_.params.togglingClass} ${_.params.closingClass}`;
+			const rmClasses = `${_.params.openCss} ${_.params.togglingCss} ${_.params.closingCss}`;
 			$collapsibleItem
 				.removeClass(rmClasses)
 				.css({ height: '' });
@@ -211,7 +232,7 @@ export default class Collapse {
 		
 		_.toggling = true;
 
-		$collapsibleItem.addClass(`${_.params.togglingClass} ${_.params.openingClass}`);
+		$collapsibleItem.addClass(`${_.params.togglingCss} ${_.params.openingCss}`);
 		const height = $collapsibleItem.height();
 		
 		$collapsibleItem.css({ height: '0px' })
@@ -222,14 +243,14 @@ export default class Collapse {
 
 
 		setTimeout(() => { 
-			const rmClasses = `${_.params.togglingClass} ${_.params.openingClass}`;
+			const rmClasses = `${_.params.togglingCss} ${_.params.openingCss} ${_.params.openNoAnimateCss}`;
 
-			$collapsibleItem.addClass(`${_.params.openClass}`);
+			$collapsibleItem.addClass(`${_.params.openCss}`);
 			$collapsibleItem.removeClass(rmClasses)
 				.css({height: ''});
 
 			$btnElems
-				.addClass(_.params.openClass)
+				.addClass(_.params.openCss)
 				.removeClass(rmClasses)
 				.attr('aria-expanded', true);
 
@@ -248,23 +269,8 @@ export default class Collapse {
 
 		const elemOffsetTop = $item.offset().top;
 		const top = elemOffsetTop - _.params.moveToTopOffset;
-		let prevScroll = null;
 
-		(function smoothscroll() {
-			const currentScroll = document.documentElement.scrollTop || document.body.scrollTop || 0;
-
-			//to stop the scroll if some other action prevents it from going
-			if (prevScroll === currentScroll) return;
-			prevScroll = currentScroll;
-
-			if (currentScroll < top) {
-				
-				window.requestAnimationFrame(smoothscroll);
-				
-				// window.scrollTo(0, currentScroll + ((top - currentScroll) / _.params.moveToTopDivisor));
-				window.scroll(0, currentScroll + ((top - currentScroll) / _.params.moveToTopDivisor));
-			}
-		})();
+		smoothScroll(top,_.params.moveToTopDivisor)
 	}
 
 	openWithHash() {
@@ -278,11 +284,11 @@ export default class Collapse {
 
 			_._toggleGroup('body', $elem);
 
-			$elem.addClass(_.params.openClass).show();
+			$elem.addClass(_.params.openCss).show();
 
 			$btnElems
-				.addClass(_.params.openClass)
-				.removeClass(_.params.togglingClass)
+				.addClass(_.params.openCss)
+				.removeClass(_.params.togglingCss)
 				.attr('aria-expanded', true);
 
 			_.params.afterOpen($elem);

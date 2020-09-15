@@ -11,7 +11,8 @@ import installStoreToLibrary, {
     Popup,
     ResponsiveDropDown,
     Tabs,
-    formInputs
+    formInputs,
+    smoothScroll
 } from '../../../common-all';
 
 //necessary for all plugin's to operate
@@ -30,5 +31,11 @@ libraryExtend([
     Tabs,
 ]); 
 
+$('a.smooth-scroll').on('click',function(e){
+    const $topElem = $($(this).attr('href'));
+    const top = $topElem.position().top;
 
+    smoothScroll(top);
+    e.preventDefault();
+})
 formInputs.init();

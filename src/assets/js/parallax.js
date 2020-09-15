@@ -148,7 +148,7 @@ export default class Parallax {
 					'padding-top': `${ bgFillRatio }px`
 				}:
 				{	//scroll sideways
-					'transform': `translate3d(${speed - bgFillRatio}px,0,0)`
+					'transform': `translate3d(${speed - _.initOffset}px,0,0)`
 				}
 			;
 				

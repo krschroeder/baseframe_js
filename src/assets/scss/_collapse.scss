@@ -6,26 +6,30 @@ $collapse-header-pad: 1rem 0 !default;
 $collapse-body-pad: 0 0 !default;
 $collapse-duration: 500ms;
 
-
-.collapse-item {
-	.collapse-header {
+.collapse__item {
+	.collapse__header {
 		padding: $collapse-header-pad;
 	}
-	.collapse-body{
+	.collapse__body {
 		padding: $collapse-body-pad;
 		&,
-		&,.collapse-closing{
+		&,
+		.collapse--closing {
 			height: 0px;
 		}
 		overflow: hidden;
 		transition: height $collapse-duration ease-in-out;
 
-		&.collapse-open{
+		&.collapse--open {
 			height: auto;
 		}
-		&.collapse-toggling{
+		&.collapse--toggling {
 			height: auto;
 			overflow: hidden;
+		}
+
+		&.collapse--no-animate {
+			transition: none;
 		}
 	}
 }

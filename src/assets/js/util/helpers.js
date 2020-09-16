@@ -9,7 +9,7 @@ export default function getType(val) {
 	return ({}).toString.call(val).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
 }
 
-
+// visibilty
 export const isHidden = (el) => el.offsetParent === null;
 export const isVisible = (el) => el.offsetParent !== null;
 

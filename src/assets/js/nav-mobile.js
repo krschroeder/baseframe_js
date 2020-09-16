@@ -14,12 +14,12 @@ export default class NavMobile {
 	}
 
 	static get pluginName() {
-		return EVENT_NAME;
+		return DATA_NAME;
 	}
 
 	static arrowSubMenuItem(params) {
 		const $btn = $('<button>').attr({
-			class: `btn-nav--mb-submenu ${params.arrowSubMenuItemClass}`,
+			class: `btn-nav--mb-submenu ${params.arrowSubMenuItemCss}`,
 			type: 'button',
 			'aria-hidden': true
 		});
@@ -43,11 +43,11 @@ export default class NavMobile {
 			outerElement: 'body',
 			outsideClickClose: true,
 			hasUlCls: 'has-ul',
-			menuOpenCls: 'menu-opened', 
-			menuTogglingCls: 'menu-toggling',
+			menuOpenCss: 'menu-opened', 
+			menuTogglingCss: 'menu-toggling',
+			arrowSubMenuItemCss: 'i i-arrow-b',
 			nextLevelBtn: `<i class="nav-icon nav-icon--next" /><span class="sr-only">View menu</span></i>`,
 			backLevelBtn: '<i class="nav-icon nav-icon--back" >← <span class="sr-only">Go Back</span></i>',
-			arrowSubMenuItemClass: 'i i-arrow-b',
 			afterNavItemOpen: () => {},
 			afterNavItemClose: () => {},
 			afterOpen: () => {},
@@ -84,21 +84,21 @@ export default class NavMobile {
 
 	mobileMenuToggle() {
 		const _ = this;
-		const {enableBtn, outerElement, menuOpenCls} = _.params;
+		const {enableBtn, outerElement, menuOpenCss} = _.params;
 		if (_.menuOpened === true) {
 			_.$element.parent()
-				.find(`.${_.params.menuOpenCls}`)
-				.removeClass(_.params.menuOpenCls)
+				.find(`.${_.params.menuOpenCss}`)
+				.removeClass(_.params.menuOpenCss)
 				.find("[style]").css('display', '');
 
-			$(outerElement).removeClass(menuOpenCls);
+			$(outerElement).removeClass(menuOpenCss);
 
 			_.menuOpened = false;
 			_.params.afterClose();
 
 		} else {
-			_.$element.addClass(menuOpenCls);
-			$(outerElement).addClass(menuOpenCls);
+			_.$element.addClass(menuOpenCss);
+			$(outerElement).addClass(menuOpenCss);
 
 			_.menuOpened = true;
 			_.params.afterOpen();
@@ -138,7 +138,7 @@ export default class NavMobile {
 
 			const key = e.keyCode || e.which;
 
-			if (key === ESCAPE && _.$element.hasClass(_.params.menuOpenCls)) {
+			if (key === ESCAPE && _.$element.hasClass(_.params.menuOpenCss)) {
 				_.mobileMenuToggle();
 			}
 		});
@@ -164,10 +164,10 @@ export default class NavMobile {
 
 		_.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, `.btn-nav--mb-submenu`, function (e) { 
 
-			const {hasUlCls, menuOpenCls, menuTogglingCls, slideDuration} = _.params;
+			const {hasUlCls, menuOpenCss, menuTogglingCss, slideDuration} = _.params;
 
 			const $li = $(this).closest(`.${hasUlCls}`);  
-			const isOpened = $li.hasClass(menuOpenCls);
+			const isOpened = $li.hasClass(menuOpenCss);
 			const $ul = $li.find('ul').first();  
 			 
 			//exit because were in desktop view
@@ -177,7 +177,7 @@ export default class NavMobile {
 
 				_.allowClick = false;
 
-				$ul.addClass(menuTogglingCls);
+				$ul.addClass(menuTogglingCss);
 				
 				const ulHeightBeforeResetToZero = $ul[0].scrollHeight;
 
@@ -188,10 +188,10 @@ export default class NavMobile {
 				}, CSS_TRANSISTION_DELAY);
 			
 				setTimeout(() => {
-					$li.addClass(menuOpenCls);
+					$li.addClass(menuOpenCss);
 
-					$ul.removeClass(menuTogglingCls)
-						.addClass(menuOpenCls);
+					$ul.removeClass(menuTogglingCss)
+						.addClass(menuOpenCss);
 
 					$ul.css({ height: '' });
 
@@ -203,8 +203,8 @@ export default class NavMobile {
 			} else {
 				_.allowClick = false;
 
-				$ul.removeClass(menuOpenCls).addClass(menuTogglingCls)
-					.find(`.${menuOpenCls}`).removeClass(menuOpenCls);
+				$ul.removeClass(menuOpenCss).addClass(menuTogglingCss)
+					.find(`.${menuOpenCss}`).removeClass(menuOpenCss);
 
 				$ul.css({ height: $ul[0].scrollHeight });
 
@@ -213,8 +213,8 @@ export default class NavMobile {
 				}, CSS_TRANSISTION_DELAY);
 
 				setTimeout(() => {
-					$li.removeClass(menuOpenCls);
-					$ul.removeClass(`${menuTogglingCls} ${menuOpenCls}`);
+					$li.removeClass(menuOpenCss);
+					$ul.removeClass(`${menuTogglingCss} ${menuOpenCss}`);
 
 					$ul.css({ height: '' });
 

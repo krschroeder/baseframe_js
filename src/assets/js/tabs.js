@@ -13,7 +13,7 @@ export default class Tabs {
 	}
 
 	static get pluginName() {
-		return EVENT_NAME;
+		return DATA_NAME;
 	}
 
 	constructor(element, options, index) {
@@ -26,11 +26,11 @@ export default class Tabs {
 		_.defaults = {
 			defaultContent: 0,
 			tabsEvent: 'click',
-			activeCls: 'tab--active',
-			tabsBodyCls: 'tabs__body',
-			tabsBodyItemCls: 'tabs__body-item',
-			tabsBodyItemShowCls: 'tabs__body-item--show',
-			tabsHeadCls: 'tabs__nav',
+			activeCss: 'tab--active',
+			tabsBodyCss: 'tabs__body',
+			tabsBodyItemCss: 'tabs__body-item',
+			tabsBodyItemShowCss: 'tabs__body-item--show',
+			tabsHeadCss: 'tabs__nav',
 			useLocationHash: true,
 			loadLocationHash: true,
 			addIDtoPanel: true,
@@ -48,8 +48,8 @@ export default class Tabs {
 		);
 
 		_.params = $.store.get(element, `${DATA_NAME}_params`);
-		_.$tabsList = _.$element.find(`.${_.params.tabsHeadCls} ul`).first();
-		_.$tabsBody = _.$element.find(`.${_.params.tabsBodyCls}`).first();
+		_.$tabsList = _.$element.find(`.${_.params.tabsHeadCss} ul`).first();
+		_.$tabsBody = _.$element.find(`.${_.params.tabsBodyCss}`).first();
 
 		_.prevTabId = null;
 		//init
@@ -72,12 +72,12 @@ export default class Tabs {
 
 	ADA_Attributes() {
 		const _ = this;
-		const {tabsBodyItemCls, addIDtoPanel} = _.params;
+		const {tabsBodyItemCss, addIDtoPanel} = _.params;
 
 		_.$tabsList.find("a").each(function () {
 
 			const tabHref = $(this).attr('href').substr(1);
-			const $tabBodyItem = _.$tabsBody.find(`.${tabsBodyItemCls}[data-tab-id="${tabHref}"]`);
+			const $tabBodyItem = _.$tabsBody.find(`.${tabsBodyItemCss}[data-tab-id="${tabHref}"]`);
 
 			$(this).attr({
 				'aria-selected': 'false',
@@ -138,42 +138,42 @@ export default class Tabs {
 	changeTabElements(_tabId) {
 
 		const _ = this;
-		const { activeCls, tabsBodyCls, tabsBodyItemCls, tabsBodyItemShowCls } = _.params;
+		const { activeCss, tabsBodyCss, tabsBodyItemCss, tabsBodyItemShowCss } = _.params;
 
 		const tabId = getType(_tabId) === "number" ? 
 			_.$tabsList.find('li').eq(_tabId).find('a').attr('href').substring(1) :
 			_tabId
 		;
 	
-		const $tabSelectedItem = _.$tabsBody.find(`.${tabsBodyItemCls}[data-tab-id="${tabId}"]`);
+		const $tabSelectedItem = _.$tabsBody.find(`.${tabsBodyItemCss}[data-tab-id="${tabId}"]`);
 		
 		if ($tabSelectedItem.length) {
 
 			_.params.beforeChange(_.prevTabId, _.$tabsList, _.$tabsBody);
 
-			const isInItsBody = $tabSelectedItem.closest(`.${tabsBodyCls}`)[0].isSameNode(_.$tabsBody[0]);
+			const isInItsBody = $tabSelectedItem.closest(`.${tabsBodyCss}`)[0].isSameNode(_.$tabsBody[0]);
 			
 			if (!isInItsBody) return;
 
 			_.$tabsList.find("a").attr({ 'aria-selected': false });
-			_.$tabsList.find("li").removeClass(activeCls);
+			_.$tabsList.find("li").removeClass(activeCss);
 
-			$(`.${tabsBodyItemCls}`, _.$tabsBody).each(function () {
+			$(`.${tabsBodyItemCss}`, _.$tabsBody).each(function () {
 				
-				const isItsBodyItem = $(this).closest(`.${tabsBodyCls}`)[0].isSameNode(_.$tabsBody[0]);
+				const isItsBodyItem = $(this).closest(`.${tabsBodyCss}`)[0].isSameNode(_.$tabsBody[0]);
 
 				if ( isItsBodyItem ) { 
-					$(this).removeClass(tabsBodyItemShowCls)
+					$(this).removeClass(tabsBodyItemShowCss)
 						.attr({'aria-hidden': true});
 				}
 			});
 
 			_.$tabsList.find(`a[href="#${tabId}"]`)
 				.attr({ 'aria-selected': true })
-				.closest('li').addClass(activeCls);
+				.closest('li').addClass(activeCss);
 
-			_.$tabsBody.find(`.${tabsBodyItemCls}[data-tab-id="${tabId}"]`)
-				.addClass(tabsBodyItemShowCls)
+			_.$tabsBody.find(`.${tabsBodyItemCss}[data-tab-id="${tabId}"]`)
+				.addClass(tabsBodyItemShowCss)
 				.attr({'aria-hidden': false });
 
 			_.params.afterChange(tabId, _.$tabsList, _.$tabsBody);

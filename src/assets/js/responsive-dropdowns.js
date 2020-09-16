@@ -15,7 +15,7 @@ export default class ResponsiveDropDown {
 	}
 
 	static get pluginName() {
-		return EVENT_NAME;
+		return DATA_NAME;
 	}
 
 	constructor(element, options) {

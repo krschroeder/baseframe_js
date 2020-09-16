@@ -14,7 +14,7 @@ export default class Collapse {
 	}
 
 	static get pluginName() {
-		return EVENT_NAME;
+		return DATA_NAME;
 	}
 
 	constructor(element, options, index) {
@@ -42,9 +42,9 @@ export default class Collapse {
 			toggleGroup: false,
 			moveToTopOnOpen: false,
 			moveToTopOffset: 0,
-			moveToTopDivisor: 12,
-			toggleOnHash: false,
+			scrollSpeed: 100,
 			loadLocationHash: true,
+			useLocationHash: true,
 			afterOpen: function () { },
 			afterClose: function () { },
 			afterInit: function () { }
@@ -71,14 +71,6 @@ export default class Collapse {
 
 		_.collapseBodyNoID();
 		_.setDisplay();
-
-		if (_.params.toggleOnHash) {
-			_.openWithHash();
-
-			$(window).on(`hashchange.${EVENT_NAME}`, () => {
-				_.openWithHash();
-			});
-		}
 		_.toggleItems();
 		_.loadContentFromHash();
 		_.params.afterInit(_.element);
@@ -137,13 +129,43 @@ export default class Collapse {
 			if ( _.toggling ) { return;}
 			
 			const $this = $(this);
-			// const thisCollapsibleID = $this.is('a') ? $this.attr('href') : this.attr('data-href');
 			const thisCollapsibleID = $this.attr('href') || $this.attr('data-href');
-			_._toggleInner(thisCollapsibleID)
+
+			if (_.params.useLocationHash) {
+
+				history.pushState(null, null, thisCollapsibleID);
+		
+			}
+
+			_._toggleAction(thisCollapsibleID)
 		});
+
+		$(window).on(`popstate.${EVENT_NAME}`,(e) => {
+			if (_.params.useLocationHash) {
+				_._toggleAction(location.hash);
+				e.preventDefault();
+			}
+		})
 	}
 
-	_toggleInner(thisCollapsibleID,noAnimation = false) {
+	loadContentFromHash() {
+		const _ = this;
+		const locationHashArray = location.hash.split('#');
+		
+		if (_.params.loadLocationHash) {
+			
+			if (!locationHashArray.length) return;
+
+			//first value is '' so we skip it
+			locationHashArray.slice(1).forEach((hash) => {
+				_._toggleAction('#'+hash, true);
+			});
+		}
+		
+	}
+
+
+	_toggleAction(thisCollapsibleID,noAnimation = false) {
 		const _ = this; console.log(thisCollapsibleID)
 		const $collapsibleItem = $(thisCollapsibleID);
 		const CLOSE = $collapsibleItem.hasClass(_.params.openCss);
@@ -162,22 +184,6 @@ export default class Collapse {
 		} else {
 			_._openItem($btnElems, $collapsibleItem);
 		}
-	}
-
-	loadContentFromHash() {
-		const _ = this;
-		const locationHashArray = location.hash.split('#');
-		
-		if (_.params.loadLocationHash) {
-			
-			if (!locationHashArray.length) return;
-
-			//first value is '' so we skip it
-			locationHashArray.slice(1).forEach((hash) => {
-				_._toggleInner('#'+hash, true);
-			});
-		}
-		
 	}
 
 	_toggleGroup($clickedItem) {
@@ -270,33 +276,6 @@ export default class Collapse {
 		const elemOffsetTop = $item.offset().top;
 		const top = elemOffsetTop - _.params.moveToTopOffset;
 
-		smoothScroll(top,_.params.moveToTopDivisor)
-	}
-
-	openWithHash() {
-		const _ = this;
-		const thisID = location.hash;
-		const $elem = $(thisID);
-
-		if ($elem.length > 0) {
-
-			const $btnElems = $('body').find(`[data-href="${thisID}"],a[href="${thisID}"]`);
-
-			_._toggleGroup('body', $elem);
-
-			$elem.addClass(_.params.openCss).show();
-
-			$btnElems
-				.addClass(_.params.openCss)
-				.removeClass(_.params.togglingCss)
-				.attr('aria-expanded', true);
-
-			_.params.afterOpen($elem);
-
-
-			$(window).scrollTop(($elem.closest(_.params.elems.item) || $elem).offset().top - _.params.moveToTopOffset);
-
-
-		}
+		smoothScroll(top,_.params.scrollSpeed)
 	}
 }

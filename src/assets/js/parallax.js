@@ -13,7 +13,7 @@ export default class Parallax {
 	}
 
 	static get pluginName() {
-		return EVENT_NAME;
+		return DATA_NAME;
 	}
 
 	constructor(element, options){

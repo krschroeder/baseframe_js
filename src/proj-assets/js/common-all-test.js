@@ -31,7 +31,7 @@ libraryExtend([
     Tabs,
 ]); 
 
-$('a.smooth-scroll').on('click',function(e){
+$('body').on('click', 'a.smooth-scroll', function(e){
     const $topElem = $($(this).attr('href'));
     const top = $topElem.position().top;
 

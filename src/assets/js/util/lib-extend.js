@@ -18,27 +18,27 @@ const libraryExtend = (Plugins, notify = false) => {
     for (let i = 0, l = plugins.length; i < l; i++) {
        
         const Plugin = plugins[i];
-        const pluginName = Plugin.pluginName;
-
+        const DataName = Plugin.pluginName;
+        const pluginName = DataName.charAt(0).toLowerCase() + DataName.substring(1);
+        
         $.fn[pluginName] = function (params) {
             const _ = this;
 
             return _.each(function (index) {
                 const $this = $(this);
 
-                let instance = $.store.get(this, `${pluginName}_instance`);
+                let instance = $.store.get(this, `${DataName}_instance`);
 
                 if (!instance) {
                     const plugin = new Plugin($this, params, index);
 
-                    $.store.set(this, `${pluginName}_instance`, plugin); 
+                    $.store.set(this, `${DataName}_instance`, plugin); 
                 
                 } else {
-                    const instanceParams = $.store.get(this,`${pluginName}_params`);
-                
+                    const instanceParams = $.store.get(this,`${DataName}_params`);
                     checkIfParamsExist(instanceParams, params, notify);
-
-                    $.store.set(this,`${pluginName}_params`, $.extend(instanceParams, params) );
+                  
+                    $.store.set(this,`${DataName}_params`, $.extend(instanceParams, params) );
                     notify && console.log(`Params updated`,instanceParams)
                 }
             });

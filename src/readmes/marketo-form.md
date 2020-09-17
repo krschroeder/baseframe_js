@@ -1,4 +1,4 @@
-# Marketo Form Magic
+<h2 id="marketo-form">Marketo Form</h2>
 
 ## About
 Scripting that removes the bad things Marketo adds (classes, stylesheets and etc), and allows you to add in classes already written. Utilizes Marketo Forms 2 API. Adds in the Marketo forms 2 API script as well if its not already added, and once loaded it runs the other scripting.

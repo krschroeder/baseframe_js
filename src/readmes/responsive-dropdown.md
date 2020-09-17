@@ -1,4 +1,4 @@
-# Responsive Navigation to Dropdown
+<h2 id="responsive-dropdown">Responsive Navigation to Dropdown</h2>
 
 ## What is it!?
 This is a plugin that will take a side-navigation element and turn it into a dropdown for mobile. Its a common thing that I've come across that the mobile needs to turn into a dropdown so hence this plugin!

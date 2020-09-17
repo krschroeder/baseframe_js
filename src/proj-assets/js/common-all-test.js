@@ -13,7 +13,7 @@ import installStoreToLibrary, {
     Tabs,
     formInputs,
     smoothScroll
-} from '../../../common-all';
+} from '../../../scripts-all';
 
 //necessary for all plugin's to operate
 //much like jQuery's $.data method, the $.store is similar

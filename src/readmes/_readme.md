@@ -4,7 +4,7 @@ Common/expected/needed/integrated JavaScript functionality for websites. You'll 
 
 ## Runs with [Cash](https://github.com/fabiospampinato/cash) (or JQuery if you wish)
 
-These are made to work with [Cash](https://github.com/fabiospampinato/cash) (with jQuery still an option) as the only dependency. Cash in a small jQuery alternative that give developers DOM traversing without the extra bloat. In my opinion, having a DOM traversing Library is essential. While it adds some code to the page, saves you the hassle of writing extra. Also, everybody who's done any web developement is familiar with jQuery syntax.
+These are made to work with [Cash](https://github.com/fabiospampinato/cash) (with jQuery still an option) as the only dependency. Cash is a small jQuery alternative that give developers DOM traversing without the extra bloat. In my opinion, having a DOM traversing Library is essential. Also, everybody who's done any web developement is familiar with jQuery syntax.
 
 ## Some nice features are their is some shared syntax in the way they all operate. 
 
@@ -66,10 +66,10 @@ Collapse | Its basically like an Accordion, but more configurable |  [View](#col
 Navigation Desktop | This plugin just adds a delay to the desktop navigation for the nestled levels of a `<ul>`. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page. | [View](#nav-desktop)
 Navigation Mobile | Neat little mobile navigation plugin | [View](#nav-mobile)
 Equalize Content | When Flexbox, or other options won't work, use this to equalize content |  [View](#equalize)
-Marketo Form | Have you tried to style a Marketo form? It's a disaster! This should help slimplify the process so you won't pull your hair out. | Yes | [View](./src/marketo-form-magic/readme.md)
-Parallax Background | For making a parallaxing background | Yes | [View](#parallax)
-Popup | There's like a few dozen of these, right?! Well this is easy to style and configurable. |  [View](./src/popup/readme.md)
-Responsive Dropdown | Turn your left secondary navigation (or list of options) into a dropdown for mobile! | No | [View](#responsive-dropdowns)
+Marketo Form | Have you tried to style a Marketo form? It is a disaster! This should help slimplify the process so you won't pull your hair out. | [View](#marketo-form)
+Parallax Background | For making a parallaxing background | [View](#parallax)
+Popup | There is like a few dozen of these, right?! Well this is easy to style and configurable. |  [View](#popup)
+Responsive Dropdown | Turn your left secondary navigation (or list of options) into a dropdown for mobile!| [View](#responsive-dropdowns)
 Tabs | Tabs in tabs, change onhashchange, dream big, become starry-eyed, this does it all :-) | [View](#tabs)
 
 

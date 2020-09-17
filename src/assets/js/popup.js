@@ -39,7 +39,6 @@ export default class Popup {
 			clickOutsideClose: true,
 			fadeOut: 500,
 			fadeIn: 400,
-			fadeInDelay: 300,
 			zIndex: 2000,
 			vhDivisor: 2,
 			firstAnchorFocus: true,
@@ -177,7 +176,7 @@ export default class Popup {
 
 	addToDOM() {
 		const _ = this;
-		const { popupID, fadeIn, fadeInDelay, appendPopupTo, firstAnchorFocus } = _.params;
+		const { popupID, fadeIn, appendPopupTo, firstAnchorFocus } = _.params;
 
 		_.createPopup();
 
@@ -193,7 +192,7 @@ export default class Popup {
 
 				$firstAnchor.length && $firstAnchor[0].focus();
 
-			}, fadeIn + fadeInDelay);
+			}, fadeIn + 100);
 		}
 
 		_.animationIn();
@@ -506,6 +505,7 @@ export default class Popup {
 			const key = e.keyCode || e.which;
 
 			if (key === _.key.ESCAPE) {
+
 				_._closeEvent();
 			}
 		});
@@ -543,6 +543,9 @@ export default class Popup {
 
 		_.params.onClose(_.$element, popupID);
 		
+		//detach
+		$(document).off(`keydown.${EVENT_NAME}`);
+
 		setTimeout(() => {
 			_.params.afterClose(_.$element, popupID);
 			

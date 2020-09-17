@@ -1,4 +1,4 @@
-# Enhance Desktop Navigation
+<h2 id="nav-desktop">Enhance Desktop Navigation</h2>
 
 
 ## Features

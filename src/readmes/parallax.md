@@ -1,4 +1,4 @@
-# Parallax Background
+<h2 id="parallax">Parallax</h2>
 
 
 ## Features

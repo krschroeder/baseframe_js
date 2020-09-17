@@ -2,7 +2,7 @@
   "name": "baseframe-js",
   "version": "1.0.0",
   "description": "Common Javascript plugins and functions to help with Front-end Development on websites",
-  "repository": "https://hilemangroup.visualstudio.com/Front%20End%20Development%20Boilerplate/_git/plugin",
+  "repository": "https://github.com/krschroeder/baseframe_js",
   "keywords": [
     "equalize",
     "accordion",
@@ -20,7 +20,7 @@
   "author": "Kevin Schroeder <kschroeder@hileman.biz>",
   "license": "MIT",
   "private": false,
-  "main": "common-all.js",
+  "main": "scripts-all.js",
   "scripts": {
     "start": "gulp --productionjs",
     "build": "gulp --prod"
@@ -61,5 +61,6 @@
   },
   "dependencies": {
     "cash-dom": "^8.1.0"
-  }
+  },
+  "publishConfig": { "registry": "https://npm.pkg.github.com/" }
 }

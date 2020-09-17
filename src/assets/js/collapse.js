@@ -25,29 +25,26 @@ export default class Collapse {
 			$(element).data(EVENT_NAME + '-options')
 		);
 
-		_.defaults = {
-			elems: {
-				item: '.collapse__item',
-				btn: '.collapse__btn',
-				header: '.collapse__header',
-				body: '.collapse__body'
-			},
+		_.defaults = {	 
+			elemsItem: '.collapse__item',
+			elemsBtn: '.collapse__btn',
+			elemsBody: '.collapse__body',
 			openCss: 'collapse--open',
 			togglingCss: 'collapse--toggling',
 			openingCss: 'collapse--opening',
 			closingCss: 'collapse--closing',
 			openNoAnimateCss: 'collapse--no-animate',
 			toggleClickBindOn: 'group',
-			toggleGroupDuration: 500,
+			toggleDuration: 500,
 			toggleGroup: false,
 			moveToTopOnOpen: false,
 			moveToTopOffset: 0,
 			scrollSpeed: 100,
 			loadLocationHash: true,
 			useLocationHash: true,
-			afterOpen: function () { },
-			afterClose: function () { },
-			afterInit: function () { }
+			afterOpen: () => { },
+			afterClose: () => { },
+			afterInit: () => { }
 		};
 		_.element = element;
 		_.onElem = element;
@@ -78,7 +75,7 @@ export default class Collapse {
 
 	setDisplay() {
 		const _ = this;
-		$(_.element).find(_.params.elems.body).each(function () {
+		$(_.element).find(_.params.elemsBody).each(function () {
 			if ($(this).hasClass(_.params.openCss)) {
 
 				const thisCollapsibleID = `#${$(this).attr('id')}`;
@@ -93,10 +90,10 @@ export default class Collapse {
 
 	collapseBodyNoID() {
 		const _ = this;
-		$(_.element).find(_.params.elems.item).each(function (index) {
+		$(_.element).find(_.params.elemsItem).each(function (index) {
 
-			const $cBody = $(this).find(_.params.elems.body);
-			const $btn = $(this).find(_.params.elems.btn);
+			const $cBody = $(this).find(_.params.elemsBody);
+			const $btn = $(this).find(_.params.elemsBtn);
 
 			if (!!!$cBody.attr('id')) {
 				const btnContent = $btn.eq(0).text().slice(0, 20).trim().replace(/\s/g, '-');
@@ -123,7 +120,7 @@ export default class Collapse {
 			(_.params.toggleClickBindOn == 'body' ? 'body' : 'group')
 		;
 
-		$(_.onElem).on(`click.${EVENT_NAME} ${EVENT_NAME}`, _.params.elems.btn, function (e) {
+		$(_.onElem).on(`click.${EVENT_NAME} ${EVENT_NAME}`, _.params.elemsBtn, function (e) {
 			e.preventDefault();
 
 			if ( _.toggling ) { return;}
@@ -189,7 +186,7 @@ export default class Collapse {
 	_toggleGroup($clickedItem) {
 		const _ = this;
 
-		$(_.onElem).find(_.params.elems.body).not($clickedItem).each(function () {
+		$(_.onElem).find(_.params.elemsBody).not($clickedItem).each(function () {
 
 			if ($(this).hasClass(_.params.openCss)) {
 
@@ -230,7 +227,7 @@ export default class Collapse {
 			
 			_.toggling = false;
 
-		}, _.params.toggleGroupDuration + CSS_TRANSISTION_DELAY);
+		}, _.params.toggleDuration + CSS_TRANSISTION_DELAY);
 	}
 
 	_openItem($btnElems, $collapsibleItem) {
@@ -266,12 +263,12 @@ export default class Collapse {
 				_._moveToTopOnOpen($collapsibleItem);
 			}
 			_.toggling = false;
-		}, _.params.toggleGroupDuration + CSS_TRANSISTION_DELAY);
+		}, _.params.toggleDuration + CSS_TRANSISTION_DELAY);
 	}
 
 	_moveToTopOnOpen($collapsibleItem) {
 		const _ = this;
-		const $item = $collapsibleItem.parent(_.params.elems.item) || $collapsibleItem;
+		const $item = $collapsibleItem.parent(_.params.elemsItem) || $collapsibleItem;
 
 		const elemOffsetTop = $item.offset().top;
 		const top = elemOffsetTop - _.params.moveToTopOffset;

@@ -1,4 +1,4 @@
-# Pop-Up
+<h2 id="popup">Pop-Up</h2>
 
 
 ## Features
@@ -8,41 +8,40 @@ Good for loading a Popup (duh). Pretty light-weight for what it does and has all
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-popupID| boolean |  'popup_' + generateGUID()| text
-src | string |  src| text
-popupOuterClass| string |  "" | text
-title | string |  $(element).data('popup-title') || $(element).attr('title') || '' | text
-titleElem |string |  'h3' | text
-titleCss| string |  '' | text
-caption| string |  $(element).data('popup-caption') || '' | text
-clickOutsideClose| boolean |  true | text
-fadeOut| number |  500 | text
-fadeIn| number |  400 | text
-fadeInDelay|number |  300 | text
-zIndex | number |  2000 | text
-vhDivisor| number |  2 | text
-firstAnchorFocus| boolean |  true | text
-setTopPosition| boolean |  null | text
-isImage| boolean |  false | text
+popupID| boolean |  'popup_' + generateGUID() | ID for the popup. Good idea to set one if loading from a hash, else its dynamically generated
+src | string | src | Can be a CSS selector `.your-popup-content` or `#yeah-your-content` or `<h2>Yeah Your Popup Content</h2><p>etc...</p>` and `https://placekitten.com/900/1200?ext=.jpg`. 
+popupOuterClass| string |  "" | CSS class name to add to the outer element of the popup.
+title | string |  `$(element).data('popup-title') || $(element).attr('title') || ''` | Title to get added above to the content. Looks for that in that order specified in the default, if not overridden.
+titleElem |string |  'h3' | The element of the title
+titleCss| string |  '' | A CSS class for that above title
+caption| string |  `$(element).data('popup-caption') || ''` | Text below the main content
+clickOutsideClose| boolean |  true | closes if the popup is clicked outside of the box
+fadeOut| number |  500 | Time to fade-out the popup, CSS transition should correspond.
+fadeIn| number |  400 |  Time to fade-in the popup, CSS transition should correspond.
+zIndex | number |  2000 | CSS z-index of the popup
+vhDivisor| number | 2 | The division of the height of the popup and how it displays on the page. So, '2' means we divide it in half, and it displays in the center. '1' is not at all, and '0'. It takes any number really, and there is a use-case for this, that I can't remember exactly right now.
+firstAnchorFocus| boolean |  true | Focus's back on the anchor or element after the popup closes
+setTopPosition| number |  null | Sometimes we just may manually want to tell the vertical position of the popup.
+isImage| boolean |  false | While there is a process using a regex and other parameters sometime we may just want to specify in the config.
 isJsArray| boolean |  false | text
 escapeClose| boolean |  true | text
 group| boolean |  true | text
 showGroupAmount| boolean |  true | text
 groupOfHTML| boolean |  '/' | text
 launch| boolean |  false | text
-photoRegex| regexp |  `` | text
-closeText| boolean |  `<i class="icon-close"><span class="sr-only">Close</span></i>` | text
-prevBtnContent| boolean |  `<i class="icon-arrow-l"><span class="sr-only">Previous</span></i>` | text
-nextBtnContent| boolean |  `<i class="icon-arrow-r"><span class="sr-only">Next</span></i>` | text
-loadingHTML| boolean |  `<div class="popup__loader"></div>` | text
-appendPopupTo| boolean |  'body' | text
-showPopup| boolean |  'popup--show-popup' | text
-enableEvent| boolean |  'click' | text
-loadLocationHash| boolean |  true | text
+photoRegex| regexp |  I'll explain | If it ends in `gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg` or has a querystring parameter of `?image=jpg` or `?ext=someimageformattoo` then it'll know it's an image.
+closeText| boolean |  `<i class="icon-close"><span class="sr-only">Close</span></i>` | Close html/text.
+prevBtnContent| boolean |  `<i class="icon-arrow-l"><span class="sr-only">Previous</span></i>` | Previous Button html/text.
+nextBtnContent| boolean |  `<i class="icon-arrow-r"><span class="sr-only">Next</span></i>` | Next Button html/text.
+loadingHTML| boolean |  `<div class="popup__loader"></div>` | Loading HTML.
+appendPopupTo| boolean |  'body' | the HTML element the popup appends to.
+showPopup| boolean |  'popup--show-popup' | CSS class used to show the popup.
+enableEvent| boolean |  'click' | The event to show the popup, change to whatever event on the element. Could be 'hover' if we wanted to for some reason.
+loadLocationHash| boolean |  true | Loads a popup from a `window.location.hash`, if the hash matches the popup.
 useLocationHash| boolean |  true | Uses history and creates a hash in the location to toggle the popups on or off
-afterLoaded| function |  () => { } | text
-afterClose| function |  () => { } | text
-onClose| function |  () => { } | text
+afterLoaded| function |  () => { } | Function to run after the popup is displayed.
+afterClose| function |  () => { } | Function to run after the popup is closed.
+onClose| function |  () => { } | Function to run after the popup at the begninning of the closing event.
 
 ## Example
 

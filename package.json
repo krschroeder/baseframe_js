@@ -1,7 +1,7 @@
 {
-  "name": "@baseframe/common",
+  "name": "baseframe-js",
   "version": "1.0.0",
-  "description": "Common Javascript/jQuery plugins to help with Front-end Development",
+  "description": "Common Javascript plugins and functions to help with Front-end Development on websites",
   "repository": "https://hilemangroup.visualstudio.com/Front%20End%20Development%20Boilerplate/_git/plugin",
   "keywords": [
     "equalize",

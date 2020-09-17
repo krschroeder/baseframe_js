@@ -151,7 +151,7 @@ export default class Popup {
 
 		if (_.params.loadLocationHash && _.historyID === location.hash){
 			_.loadPopup(_.$element);
-			_.loadedFromHash = true; console.log('hhhh')
+			_.loadedFromHash = true; 
 		}
 	}
 
@@ -518,9 +518,11 @@ export default class Popup {
 			
 			if (_.loadedFromHash) {
 
-				window.history.pushState(null, null, '#popup-closed' );
 				_._close();
 				_.loadedFromHash = false;
+				
+				window.history.pushState(null, null, '#popup-closed' );
+			
 			} else {
 				
 				window.history.back(); 

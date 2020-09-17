@@ -13,4 +13,8 @@ export default function getType(val) {
 export const isHidden = (el) => el.offsetParent === null;
 export const isVisible = (el) => el.offsetParent !== null;
 
+
+// photo
+export const photoRegex = /\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg)((#|\?).*)?$|(\?|&|&amp;)(image|ext\=\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg))?$/i;
+
 export const CSS_TRANSISTION_DELAY = 100; 

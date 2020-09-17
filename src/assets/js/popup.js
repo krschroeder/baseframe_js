@@ -2,14 +2,12 @@ import $ from "cash-dom";
 import validJSONFromString from './util/formatting-valid-json.js';
 import generateGUID from './util/guid-generate.js';
 
-import { isHidden, CSS_TRANSISTION_DELAY } from './util/helpers';
+import { isHidden, photoRegex, CSS_TRANSISTION_DELAY } from './util/helpers';
 
 const VERSION = "1.0.0";
 const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
 const INSTANCE_NAME = `${DATA_NAME}_instance`;
-
-const photoRegex = /\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg)((#|\?).*)?$|(\?|&|&amp;)(image|ext\=\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg))?$/i;
 
 export default class Popup {
 
@@ -21,11 +19,11 @@ export default class Popup {
 		return DATA_NAME;
 	}
 
-	constructor(element, options) {
+	constructor(element, options, index) {
 		const _ = this;
 
 		const dataOptions = validJSONFromString(
-			$(element).data(DATA_NAME + '-options')
+			$(element).data(EVENT_NAME + '-options')
 		);
 
 		const src = $(element).data('popup-src') || $(element).attr('href') || null;
@@ -61,6 +59,7 @@ export default class Popup {
 			appendPopupTo: 'body',
 			showPopup: 'popup--show-popup',
 			enableEvent: 'click',
+			loadLocationHash: true,
 			useLocationHash: true,
 			afterLoaded: () => { },
 			afterClose: () => { },
@@ -68,7 +67,7 @@ export default class Popup {
 		};
 
 		_.$element = $(element);
-
+		
 		$.store.set(
 			element,
 			`${DATA_NAME}_params`,
@@ -92,8 +91,6 @@ export default class Popup {
 		_.$listElems = _.params.isJsArray ? _.params.src : null;
 		_.groupAmountElem = null;
 
-		// _.addedToDOM = false;
-
 		//click elem
 		_.$domClickElem = null;
 		_.domElemClicked = false;
@@ -101,60 +98,61 @@ export default class Popup {
 		//for groups
 		_.groupCount = 0;
 		_.groupIndex = 0;
-		_.historyCurrName = '';
-		//_.assignHistoryIDifMissing(); 
 
-		_.$element.on(`${_.params.enableEvent}.${DATA_NAME} ${DATA_NAME}`, function (e) {
+		//location hash  
+		_.isOpen = false;
+		_.isOpenHash = '';
+		_.historyID = '#' + _.params.popupID + '__' + index;
+		_.loadedFromHash = false;
 
+		_.initLoadEvents();
+		
+	}
+
+	initLoadEvents() {
+		const _ = this;
+
+		_.$element.on(`${_.params.enableEvent}.${EVENT_NAME} ${EVENT_NAME}`, function (e) {
+			 
+			e.preventDefault();
+			
+			if (_.params.useLocationHash){
+				window.history.pushState(null, null, _.historyID );
+			}
 			_.loadPopup(this);
 
-			e.preventDefault();
-
-			if (_.params.useLocationHash){
-				_.historyCurrName = '#' + _.params.popupID + '__' + _.groupIndex;
-				window.history.pushState({
-					btn: _.groupIndex,
-				}, null, _.historyCurrName );
-			}
 		});
 
 
-		$(window).on(`popstate.${EVENT_NAME}`,(event) => {
+		$(window).on(`popstate.${EVENT_NAME} ${EVENT_NAME}`,(e) => {
 			if (_.params.useLocationHash) {
-			
-				if (_.historyCurrName !== location.hash){
-					_._close(false);
-					event.preventDefault();
-				} else {
-
-					if(event.state) {
-						// console.log(event.state)
-						_.loadPopup(_.$element.eq(event.state.btn))
+				
+				if (
+					_.historyID === _.isOpenHash ||
+					_.historyID === location.hash
+				){
+					if(_.isOpen) {
+					
+						_._close();
+				
+					} else {
+					
+						_.loadPopup(_.$element);
 					}
 				}
-				
 			}
-		})
+			e.preventDefault();
+				
+		});
 
 		if (_.params.launch) {
 			_.loadPopup(document.activeElement);
 		}
-	}
 
-	assignHistoryIDifMissing() {
-		// popup-history-id
-		const _ = this;
-		let index = 0;
-		_.$element.each(function () {
-			const noHistoryID = !$(this).data('popup-history-id');
-
-			if (noHistoryID) {
-				if (!_.params.isJsArray) {
-					console.log(_.params.popupID + "_n" + index)
-					$(this).data('popup-history-id', `${_.params.popupID}_n${index+=1}`);
-				}
-			}
-		})
+		if (_.params.loadLocationHash && _.historyID === location.hash){
+			_.loadPopup(_.$element);
+			_.loadedFromHash = true; console.log('hhhh')
+		}
 	}
 
 	loadPopup(clickElem = null) {
@@ -164,6 +162,8 @@ export default class Popup {
 			_.$domClickElem = $(clickElem);
 			_.domElemClicked = true;
 		}
+		
+		_.isOpenHash = window.location.hash;
 
 		_.addToDOM();
 		_.closeHandlers();
@@ -171,6 +171,8 @@ export default class Popup {
 		if (_.params.escapeClose) {
 			_.escapeClose();
 		}
+
+		_.isOpen = true;
 	}
 
 	addToDOM() {
@@ -215,7 +217,7 @@ export default class Popup {
 			title,
 			caption,
 			isDomSelector = false
-			;
+		;
 
 		if (isJsArray) {
 
@@ -316,7 +318,7 @@ export default class Popup {
 
 			$popupContentBody.append(imgNode, loader);
 
-			$(imgNode).on('load', () => {
+			$(imgNode).on(`load.${EVENT_NAME}`, () => {
 
 				$('.popup__loader-outer').remove();
 				imgNode.removeAttribute("style");
@@ -435,12 +437,12 @@ export default class Popup {
 				}
 			});
 
-			_.$popup.on(`click.${DATA_NAME}`, '.btn--popup-prev', function () {
+			_.$popup.on(`click.${EVENT_NAME}`, '.btn--popup-prev', function () {
 				_.toggleGroup(true, false);
 			})
-				.on(`click.${DATA_NAME}`, '.btn--popup-next', function () {
-					_.toggleGroup(false, true);
-				});
+			.on(`click.${EVENT_NAME}`, '.btn--popup-next', function () {
+				_.toggleGroup(false, true);
+			});
 		}
 	}
 
@@ -488,10 +490,12 @@ export default class Popup {
 			'.popup__overlay,.popup__btn-close' :
 			'.popup__btn-close';
 
-		_.$popup.on(`click.${DATA_NAME}`, closeElems, function (e) {
+		_.$popup.on(`click.${EVENT_NAME}`, closeElems, function (e) {
 
-			_._close();
+
 			e.preventDefault();
+			 
+			_._closeEvent();
 		});
 	}
 
@@ -502,9 +506,29 @@ export default class Popup {
 			const key = e.keyCode || e.which;
 
 			if (key === _.key.ESCAPE) {
-				_._close();
+				_._closeEvent();
 			}
 		});
+	}
+
+	_closeEvent(){
+		const _ = this;
+
+		if (_.params.useLocationHash){  
+			
+			if (_.loadedFromHash) {
+
+				window.history.pushState(null, null, '#popup-closed' );
+				_._close();
+				_.loadedFromHash = false;
+			} else {
+				
+				window.history.back(); 
+			}
+			
+		} else {
+			_._close();
+		}
 	}
 
 
@@ -517,11 +541,10 @@ export default class Popup {
 
 		_.params.onClose(_.$element, popupID);
 		
-		if (_.params.useLocationHash ){
-			window.location.href.split('#')[0]
-		}
 		setTimeout(() => {
 			_.params.afterClose(_.$element, popupID);
+			
+			_.isOpen = false;
 
 			if (_.grabContentsFromDom) {
 
@@ -537,7 +560,10 @@ export default class Popup {
 				$(_.$domClickElem)[0].focus();
 			}
 
+			_.isOpenHash = '';
+
 		}, fadeOut + 1);
+
 	}
 
 

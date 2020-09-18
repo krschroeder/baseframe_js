@@ -48,21 +48,100 @@ onClose | function |  () => { } | Function to run after the popup at the begninn
 __The following is an example html structure for this plugin:__
 
 ```html
-<div class="container" style="min-height: 1000px">
+<div style="display: none;">
 	<div id="popup-content">
 		<h1>Pop-up</h1>
 		<p>This is for a basic popup content</p>
 		<p>Cum sociis natoque penatibus et magnis dis parturient. Etiam habebis sem dicantur magna mollis euismod. Curabitur blandit tempus ardua ridiculus sed magna. Unam incolunt Belgae, aliam Aquitani, tertiam. Nihil hic munitissimus habendi senatus locus, nihil horum?</p>
 	</div>
-	<a href="#" id="launch-popup-jq" class="button">Launch jQuery Popup</a>
-	<a href="#" id="launch-popup-jq2" class="button">Launch jQuery Popup (remove)</a>
+</div>
+<div class="flex-l">
+	<div class="md-col-4">
+		<a class="button popup-w-string"
+			href="#"
+			data-popup-src="<iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/9HFsQjjTkak&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen></iframe>"
+			data-popup-type="string"
+			data-popup-options="{popupID:'video',title:'Video Title'}"
+			data-popup-caption="Some caption here for more splaining"
+		>Popup With String</a>
+
+		<a class="button popup-w-string"
+			href="<img src='https://placekitten.com/600/400' alt='Something'>"
+			data-popup-type="string"
+			data-popup-options="{popupID:'kitten-pic',title:'Popup Title'}"
+			data-popup-caption="Some caption here for more splaining"
+		>Popup With String 2</a>
+
+		<a href="#popup-content" class="button popup-w-content-id"
+			data-popup-options="{title:'How About That'}"
+		>Popup With HTML</a>
+
+		<a href="https://placekitten.com/900/1200?ext=.jpg" class="button pic-group" title="Kitty thats in a taller image"
+		>A Group of Pictures</a>
+
+		<button type="button" class="button js-array">A Group of Pictures in JS Array</button><br>
+		<br>
+		<a href="https://placekitten.com/1200/600?image" data-popup-title="Anchor Kitty" class="pic-group">Kitty</a><br>
+		<br>
+		<a href="https://www.fillmurray.com/600/500" data-popup-type="image" data-popup-title="Our Boy Phil Murray" class="pic-group">Phil Murray</a>
+	</div>
+	<div class="md-col-4">
+		<img src="https://placekitten.com/600/400"
+			data-popup-src="https://placekitten.com/1200/800?image?image"
+			alt="Kittens (1)"
+			class="pic-group"
+			data-popup-title="Kittens"
+		/>
+		<img src="https://placekitten.com/600/500"
+			data-popup-src="#popup-content"
+			alt="Kittens (2)"
+			class="pic-group"
+			data-popup-title="Joking Here's Our Popup Content"
+		/>
+
+	</div>
+	<div class="md-col-4">
+		<img src="https://placekitten.com/600/300"
+			data-popup-src="https://placekitten.com/900/450?image"
+			alt="Kittens (3)"
+			class="pic-group"
+			data-popup-title="Kittens (3)"
+		/>
+		<img src="https://placekitten.com/600/400"
+			data-popup-src="https://placekitten.com/900/600?yeah&image"
+			alt="Kittens (4)"
+			class="pic-group"
+			data-popup-title="Sorry it's not a doggie, but it'll have to do."
+		/>
+	</div>
 </div>
 ```
 
 __Javascript__
 ```javascript
+//
+//examples of using it differently
+//
 
-//Instead of combing the DOM for elements, comb an JS array that maybe gets compiled from some JSON array. Structure it like the following:
+//getting contents from a string
+$('.popup-w-string').popup({
+	group: '.popup-w-string'
+
+});
+// an ID, which comes from the href prop on the element
+$('.popup-w-content-id').popup();
+
+//group of pictures with one mixed element in the group
+$('.pic-group').popup({
+	src: '.pic-group',
+	title:'A Group of Pictures'
+		
+});
+
+// JS Array
+
+// Instead of combing the DOM for elements, comb an JS array that maybe gets 
+// compiled from some JSON array. Structure it like the following:
 
 var jsArray = [
 	{
@@ -83,27 +162,9 @@ var jsArray = [
 	}
 ];
 
-//examples of using it differently
-
-//getting contents from a page element
-$('#launch-popup-jq2').popup({
-	contents: $('#popup-content'),
-	popupID: 'my-popup-jq2',
-	directionX: 'LEFT'
-});
-
-//getting contents from a group of pics
-$('.pic-group').popup({
-	inline:true,
-	contents: '.pic-group',
-	title:'How About That',
-	afterLoaded: (el,id)=>{console.log('yeah loaded', el,id)}
-});
-
-//getting imagery to generate from an array
-$('.js-object-group').popup({
-	array:true,
-	contents: jsArray,
-	title:'How About That'
+$('.js-array').popup({
+	isJsArray: true,
+	src: jsArray,
+	title:'A JavaScript Array of Objects!'
 });
 ```

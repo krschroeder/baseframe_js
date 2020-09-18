@@ -34,7 +34,7 @@ import installStoreToLibrary, {
     Popup,
     ResponsiveDropDown,
     Tabs
-} from 'base_frame/@plugins';
+} from 'baseframe-js';
 
 //necessary for all plugin's to operate
 //much like jQuery's $.data method, the $.store is similar

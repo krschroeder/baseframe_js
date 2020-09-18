@@ -59,9 +59,11 @@ __The following is an example html structure for this plugin:__
 </div>
 ```
 
-### Browse a JS Array of Images ###
-Instead of combing the DOM for elements, comb an JS array that maybe gets compiled from some JSON array. Structure it like the following:
+__Javascript__
 ```javascript
+
+//Instead of combing the DOM for elements, comb an JS array that maybe gets compiled from some JSON array. Structure it like the following:
+
 var jsArray = [
 	{
 		nodeName:"img",
@@ -80,11 +82,7 @@ var jsArray = [
 		title:"A JS Object Title 600x300"
 	}
 ];
-```
 
-
-__JavaScript__
-```javascript
 //examples of using it differently
 
 //getting contents from a page element

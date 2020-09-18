@@ -55,7 +55,7 @@ libraryExtend([
 ```
 
 ### libraryExtend
-Pass in an `array` for the first argument, and `notify` is optional defaulted to true. `notify` console log's when parameters get updated on an instance.
+Pass in an `array` for the first argument, and `notify` is optional defaulted to false. `notify` console log's when parameters get updated on an instance.
 
 ```javascript
 libraryExtend(Array [,notify])

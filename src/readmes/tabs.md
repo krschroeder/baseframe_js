@@ -14,10 +14,10 @@ Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 defaultContent | Boolean / String | 0 | The order of the list item selected. Goes of course their appearance in the DOM.
 tabsEvent | string | 'click' | Event to change the tabs content
-activeCls | string | 'tab--active' | The 'active' CSS class that is added to the tabs list on the `<li>` element.
-tabsBodyCls | string | 'tabs__body' | The CSS class for the body element in which all the tab content resides.
-tabsBodyItemCls | string | 'tabs__body-item' | The CSS class for the tab content within the 'tabs body'.
-tabsBodyItemShowCls | string | 'tabs__body-item--show' | The CSS class added to the 'tabs body item' to show it.
+activeCss | string | 'tab--active' | The 'active' CSS class that is added to the tabs list on the `<li>` element.
+tabsBodyCss | string | 'tabs__body' | The CSS class for the body element in which all the tab content resides.
+tabsBodyItemCss | string | 'tabs__body-item' | The CSS class for the tab content within the 'tabs body'.
+tabsBodyItemShowCss | string | 'tabs__body-item--show' | The CSS class added to the 'tabs body item' to show it.
 tabsHeadCls | string | 'tabs__nav' | The CSS class for the tabs navigation, added to the `<ul>` or its parent element.
 useLocationHash | boolean | true | Use window location hash and history push state so the browser back button can be used (or forward as well) to toggle through tabs.
 loadLocationHash | boolean | true | Add in location hash parameters to load default tabs. `#files#files-inner` loading multiple is possible if many diffrent tabs. Also load tabs within tabs and such as well.

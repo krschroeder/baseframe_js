@@ -46,13 +46,13 @@ export default class NavMobile {
 			menuOpenCss: 'menu-opened', 
 			menuTogglingCss: 'menu-toggling',
 			arrowSubMenuItemCss: 'i i-arrow-b',
-			nextLevelBtn: `<i class="nav-icon nav-icon--next" /><span class="sr-only">View menu</span></i>`,
-			backLevelBtn: '<i class="nav-icon nav-icon--back" >← <span class="sr-only">Go Back</span></i>',
 			afterNavItemOpen: () => {},
 			afterNavItemClose: () => {},
 			afterOpen: () => {},
 			afterClose: () => {},
 			stopPropagation: true,
+			nextLevelBtn: `<i class="nav-icon nav-icon--next" /><span class="sr-only">View menu</span></i>`,
+			backLevelBtn: `<i class="nav-icon nav-icon--back" >← <span class="sr-only">Go Back</span></i>`,
 			navToggleNestled: false
 		};
 		_.$element = $(element);

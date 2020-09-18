@@ -28,8 +28,6 @@ outsideClickElem | string Or HTMLELement | 'body' |
 
 __The following is an example html structure for this plugin:__
 
-Use the __.resp-nav-mobile-dd__ to get the whole thing working.
-
 __HTML__
 ```html
 <div class="resp-dd">

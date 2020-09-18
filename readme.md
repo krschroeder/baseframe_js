@@ -55,7 +55,7 @@ libraryExtend([
 ```
 
 ### libraryExtend
-Pass in an `array` for the first argument, and `notify` is optional defaulted to true. `notify` console log's when parameters get updated on an instance.
+Pass in an `array` for the first argument, and `notify` is optional defaulted to false. `notify` console log's when parameters get updated on an instance.
 
 ```javascript
 libraryExtend(Array [,notify])
@@ -325,22 +325,22 @@ Plugin is strictly for mobile so other plugins can be used for the desktop nav i
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-enableBtn | string | '#mobile-nav-btn' |
-ariaLabel | string | 'Toggle site navigation' |
-slideDuration | number | 400 |
-outerElement | string or HTMLElement | 'body' |
-outsideClickClose | boolean | true |
-hasUlCls | string | 'has-ul' |
-menuOpenCss | string | 'menu-opened' | 
-menuTogglingCss | string | 'menu-toggling',
-arrowSubMenuItemCss | string | 'i i-arrow-b' |
-nextLevelBtn | string | `<i class="nav-icon nav-icon--next" /><span class="sr-only">View menu</span></i>` |
-backLevelBtn | string | '<i class="nav-icon nav-icon--back" >← <span class="sr-only">Go Back</span></i>' |
+enableBtn | string | '#mobile-nav-btn' | The selector to the mobile nav button to turn show the navigation.
+ariaLabel | string | 'Toggle site navigation' | The arial label for the `enable` button.
+slideDuration | number | 400 | Duration for showing a sub menu item, CSS transistion should correspond.
+outerElement | string or HTMLElement | 'body' | Element to attach `menuOpenCss` class to.
+outsideClickClose | boolean | true | Can close if clicked outside of the menu.
+hasUlCls | string | 'has-ul' | CSS class for `<li>` that have a `<ul>` nestled.
+menuOpenCss | string | 'menu-opened' | CSS class added to the elements saying its opened.
+menuTogglingCss | string | 'menu-toggling' | CSS class added while the element is toggling.
+arrowSubMenuItemCss | string | 'i i-arrow-b' | CSS class of the button added to the `<li>` element for toggling open/closed.
 afterNavItemOpen | function | () => {} | Function to run after an nav item is opened.
 afterNavItemClose | function | () => {} | Function to run after a nav item is closed.
 afterOpen | function | () => {} | Function to run after the nav is open.
 afterClose | function | () => {} | Function to run after the nav is closed.
 stopPropagation | boolean | true, | Stops the click from propagating up in the DOM from the nav element.
+nextLevelBtn | string | `<i class="nav-icon nav-icon--next" /><span class="sr-only">View menu</span></i>` | Button for the 'next level'. This only works if the base class is extended with the `NavMobileNestled`.
+backLevelBtn | string | `<i class="nav-icon nav-icon--back" >← <span class="sr-only">Go Back</span></i>` | Button for the 'previous level'. This only works if the base class is extended with the `NavMobileNestled`.
 navToggleNestled | boolean | false | This only works if the base class is extended with the `NavMobileNestled` class and is an alternative way to display the navigation items.
 
 ### Example
@@ -509,9 +509,11 @@ __The following is an example html structure for this plugin:__
 </div>
 ```
 
-### Browse a JS Array of Images ###
-Instead of combing the DOM for elements, comb an JS array that maybe gets compiled from some JSON array. Structure it like the following:
+__Javascript__
 ```javascript
+
+//Instead of combing the DOM for elements, comb an JS array that maybe gets compiled from some JSON array. Structure it like the following:
+
 var jsArray = [
 	{
 		nodeName:"img",
@@ -530,11 +532,7 @@ var jsArray = [
 		title:"A JS Object Title 600x300"
 	}
 ];
-```
 
-
-__JavaScript__
-```javascript
 //examples of using it differently
 
 //getting contents from a page element
@@ -593,8 +591,6 @@ outsideClickElem | string Or HTMLELement | 'body' |
 
 __The following is an example html structure for this plugin:__
 
-Use the __.resp-nav-mobile-dd__ to get the whole thing working.
-
 __HTML__
 ```html
 <div class="resp-dd">
@@ -651,10 +647,10 @@ Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 defaultContent | Boolean / String | 0 | The order of the list item selected. Goes of course their appearance in the DOM.
 tabsEvent | string | 'click' | Event to change the tabs content
-activeCls | string | 'tab--active' | The 'active' CSS class that is added to the tabs list on the `<li>` element.
-tabsBodyCls | string | 'tabs__body' | The CSS class for the body element in which all the tab content resides.
-tabsBodyItemCls | string | 'tabs__body-item' | The CSS class for the tab content within the 'tabs body'.
-tabsBodyItemShowCls | string | 'tabs__body-item--show' | The CSS class added to the 'tabs body item' to show it.
+activeCss | string | 'tab--active' | The 'active' CSS class that is added to the tabs list on the `<li>` element.
+tabsBodyCss | string | 'tabs__body' | The CSS class for the body element in which all the tab content resides.
+tabsBodyItemCss | string | 'tabs__body-item' | The CSS class for the tab content within the 'tabs body'.
+tabsBodyItemShowCss | string | 'tabs__body-item--show' | The CSS class added to the 'tabs body item' to show it.
 tabsHeadCls | string | 'tabs__nav' | The CSS class for the tabs navigation, added to the `<ul>` or its parent element.
 useLocationHash | boolean | true | Use window location hash and history push state so the browser back button can be used (or forward as well) to toggle through tabs.
 loadLocationHash | boolean | true | Add in location hash parameters to load default tabs. `#files#files-inner` loading multiple is possible if many diffrent tabs. Also load tabs within tabs and such as well.

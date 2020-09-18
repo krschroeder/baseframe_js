@@ -69,7 +69,7 @@ Equalize Content | When Flexbox, or other options won&rsquo;t work, use this to 
 Marketo Form | Have you tried to style a Marketo form? It is a disaster! This should help slimplify the process so you won&rsquo;t pull your hair out. | [View](#marketo-form)
 Parallax Background | For making a parallaxing background | [View](#parallax)
 Popup | There is like a few dozen of these, right?! Well this is easy to style and configurable. |  [View](#popup)
-Responsive Dropdown | Turn your left secondary navigation (or list of options) into a dropdown for mobile!| [View](#responsive-dropdowns)
+Responsive Dropdown | Turn your left secondary navigation (or list of options) into a dropdown for mobile!| [View](#responsive-dropdown)
 Tabs | Tabs in tabs, change onhashchange, dream big, become starry-eyed, this does it all :-) | [View](#tabs)
 
 

@@ -69,7 +69,7 @@ Equalize Content | When Flexbox, or other options won&rsquo;t work, use this to 
 Marketo Form | Have you tried to style a Marketo form? It is a disaster! This should help slimplify the process so you won&rsquo;t pull your hair out. | [View](#marketo-form)
 Parallax Background | For making a parallaxing background | [View](#parallax)
 Popup | There is like a few dozen of these, right?! Well this is easy to style and configurable. |  [View](#popup)
-Responsive Dropdown | Turn your left secondary navigation (or list of options) into a dropdown for mobile!| [View](#responsive-dropdowns)
+Responsive Dropdown | Turn your left secondary navigation (or list of options) into a dropdown for mobile!| [View](#responsive-dropdown)
 Tabs | Tabs in tabs, change onhashchange, dream big, become starry-eyed, this does it all :-) | [View](#tabs)
 
 
@@ -494,6 +494,14 @@ afterClose | function |  () => { } | Function to run after the popup is closed.
 onClose | function |  () => { } | Function to run after the popup at the begninning of the closing event.
 
 ### Example
+
+__Notes:__
+The popup gets is content to display in the popup in a few ways:
+- `data-popup-src` attribute on an element, so `<button data-popup-src=".my-element">My Button</button>`
+- `href` attribute on an `<a>`, but it can also use the `data-popup-src` as well.
+- Or it can just be specified in the config.
+
+The order of operations on these is the __JS config__ first, then __data-popup__ attribute, then __href__.
 
 __The following is an example html structure for this plugin:__
 

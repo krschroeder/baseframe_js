@@ -97,27 +97,19 @@
 			}
 		];
 
-		//jQuery
 	(function($){
 		$('.popup-w-string').popup({
-			group: '.popup-w-string',
-		}).on('click',function(e){
-			e.preventDefault();
-			return false;
+			group: '.popup-w-string'
+
 		});
 
 		$('.popup-w-content-id').popup();
 
 		$('.pic-group').popup({
 			src: '.pic-group',
-			title:'A Group of Pictures',
-			afterLoaded: (el,id)=>{
-				// console.log('afterLoaded', el,id);
-			}
-		}).on('click',function(e){
-			e.preventDefault();
-			return false;
-		})
+			title:'A Group of Pictures'
+			 
+		});
 
 		$('.js-array').popup({
 			isJsArray: true,

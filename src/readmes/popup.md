@@ -45,6 +45,14 @@ onClose | function |  () => { } | Function to run after the popup at the begninn
 
 ### Example
 
+__Notes:__
+The popup gets is content to display in the popup in a few ways:
+- `data-popup-src` attribute on an element, so `<button data-popup-src=".my-element">My Button</button>`
+- `href` attribute on an `<a>`, but it can also use the `data-popup-src` as well.
+- Or it can just be specified in the config.
+
+The order of operations on these is the __JS config__ first, then __data-popup__ attribute, then __href__.
+
 __The following is an example html structure for this plugin:__
 
 ```html

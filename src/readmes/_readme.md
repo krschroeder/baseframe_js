@@ -1,22 +1,22 @@
 # Base_Frame Plugins &amp; Common JS
 
-Common/expected/needed/integrated JavaScript functionality for websites. You'll notice a few token are missing (like a carousel for example), that's because there are just some really, realy well made, IMO. Not touching that stuff, use those others, they're great. The ones here are configurable, 
+Common/expected/needed/integrated JavaScript functionality for websites. You'll notice a few token are missing (like a carousel for example), that's because there are just some really, realy well made, IMO. Not touching that stuff, use those others, they're great. The ones here are configurable, and as its set up now easy to import in.
 
 ## Runs with [Cash](https://github.com/fabiospampinato/cash) (or JQuery if you wish)
 
 These are made to work with [Cash](https://github.com/fabiospampinato/cash) (with jQuery still an option) as the only dependency. Cash is a small jQuery alternative that give developers DOM traversing without the extra bloat. In my opinion, having a DOM traversing Library is essential. Also, everybody who's done any web developement is familiar with jQuery syntax.
 
-## Some nice features are their is some shared syntax in the way they all operate. 
+## Features and Advantages
 
 __For Example:__ all have options that can be plugged in as a data attribute, in JSON format (loosely written somehat)
 ```html
-    <div id="your-plugin-elem" data-plugin-name="{option:'text',option2: true, etc: 'you get the idea'}"></div>
+<div id="your-plugin-elem" data-plugin-name="{option:'text',option2: true, etc: 'you get the idea'}"></div>
 ```
 
-<p><strong>For Example:</strong> all can have their configuration change. Which can come in handy sometimes when things get complex</p>
+<p><strong>For Example:</strong> all can have their configuration change when added into `$.fn`. Which can come in handy sometimes when things get complex</p>
     
 ```javascript
-    $('.your-plugin-elem').PluginOfSorts({change:'yep', height: 1e6})
+$('.your-plugin-elem').PluginOfSorts({change:'yep', height: 1e6})
 ```
 
 ## Example of Importing In
@@ -60,13 +60,13 @@ Pass in an `array` for the first argument, and `notify` is optional defaulted to
 ```javascript
 libraryExtend(Array [,notify])
 ````
-Name | Description | Readme
------- | ---- | -----| -------
-Collapse | Its basically like an Accordion, but more configurable |  [View](#collapse)
+Name | Description | Jump To Link
+---- | ---- | ----
+Collapse | Its basically like an Accordion, but more configurable | [View](#collapse)
 Navigation Desktop | This plugin just adds a delay to the desktop navigation for the nestled levels of a `<ul>`. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page. | [View](#nav-desktop)
 Navigation Mobile | Neat little mobile navigation plugin | [View](#nav-mobile)
-Equalize Content | When Flexbox, or other options won't work, use this to equalize content |  [View](#equalize)
-Marketo Form | Have you tried to style a Marketo form? It is a disaster! This should help slimplify the process so you won't pull your hair out. | [View](#marketo-form)
+Equalize Content | When Flexbox, or other options won&rsquo;t work, use this to equalize content | [View](#equalize)
+Marketo Form | Have you tried to style a Marketo form? It is a disaster! This should help slimplify the process so you won&rsquo;t pull your hair out. | [View](#marketo-form)
 Parallax Background | For making a parallaxing background | [View](#parallax)
 Popup | There is like a few dozen of these, right?! Well this is easy to style and configurable. |  [View](#popup)
 Responsive Dropdown | Turn your left secondary navigation (or list of options) into a dropdown for mobile!| [View](#responsive-dropdowns)

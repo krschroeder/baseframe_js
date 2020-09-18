@@ -27,9 +27,10 @@ export default class Popup {
 		);
 
 		const src = $(element).data('popup-src') || $(element).attr('href') || null;
+		const guidID = 'popup_' + generateGUID();
 
 		_.defaults = {
-			popupID: 'popup_' + generateGUID(),
+			popupID: guidID,
 			src: src,
 			popupOuterClass: "",
 			title: $(element).data('popup-title') || $(element).attr('title') || '',
@@ -52,8 +53,8 @@ export default class Popup {
 			launch: false,
 			photoRegex: photoRegex,
 			closeText: `<i class="icon-close"><span class="sr-only">Close</span></i>`,
-			prevBtnContent: `<i class="icon-arrow-l"><span class="sr-only">Previous</span></i>`,
-			nextBtnContent: `<i class="icon-arrow-r"><span class="sr-only">Next</span></i>`,
+			prevBtnHTML: `<i class="icon-arrow-l"><span class="sr-only">Previous</span></i>`,
+			nextBtnHTML: `<i class="icon-arrow-r"><span class="sr-only">Next</span></i>`,
 			loadingHTML: `<div class="popup__loader"></div>`,
 			appendPopupTo: 'body',
 			showPopup: 'popup--show-popup',
@@ -73,6 +74,10 @@ export default class Popup {
 			$.extend(_.defaults, options, dataOptions)
 		);
 		_.params = $.store.get(element, `${DATA_NAME}_params`);
+		 
+		if (_.params.useLocationHash && guidID === _.params.popupID) {
+			console.warn('If loading from a location hash pleasemake sure to specify an ID not auto generated. This won\'t work should the page get reloaded.');
+		}
 
 		_.$popup = null;
 
@@ -333,13 +338,13 @@ export default class Popup {
 
 
 		if (showGroupAmount) {
-			_.groupAmountElem.html(`${_.groupIndex + 1} ${_.params.groupOfHTML} ${_.groupCount}`);
+			_.groupAmountElem.html(`<span>${_.groupIndex + 1}</span> <span class="popup__group-divisor">${_.params.groupOfHTML}</span> <span>${_.groupCount}</span>`);
 		}
 	}
 
 	createPopup() {
 		const _ = this;
-		const { popupID, group, prevBtnContent, nextBtnContent, showGroupAmount } = _.params;
+		const { popupID, group, prevBtnHTML, nextBtnHTML, showGroupAmount } = _.params;
 
 		_.determineContent();
 
@@ -350,12 +355,12 @@ export default class Popup {
 			let btnPrev = $("<button>").attr({
 				type: "button",
 				class: "btn--popup btn--popup-prev"
-			}).append(prevBtnContent),
+			}).append(prevBtnHTML),
 
 				btnNext = $("<button>").attr({
 					type: "button",
 					class: "btn--popup btn--popup-next"
-				}).append(nextBtnContent);
+				}).append(nextBtnHTML);
 
 			groupControls = $("<div/>").attr({
 				class: "popup__controls"
@@ -455,7 +460,7 @@ export default class Popup {
 		const topPos = setTopPosition || setTopPosition === 0 ?
 			setTopPosition :
 			Math.max(0, times + document.querySelector('html').scrollTop)
-			;
+		;
 
 		const $popupContent = $popup.find('.popup__content');
 

@@ -1,10 +1,10 @@
-<h1 id="equalize">Equalize</h1>
+<h2 id="equalize">Equalize</h2>
 
 
-## Features
+### Features
 This __equalization script__ will work with any responsive classes your heart desires to use. It will take elements and measure their position top and add them to an array. Then it assigns the tallest height to that row, so they all are sized per row neatly. You can stop it at certain widths, you can start it, and there are other configurable options. If the equalize items are all in one column rows then no heights will be added. Look at the __Settings__ for the rest.
 
-## Settings
+### Settings
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
@@ -19,7 +19,7 @@ resizeCss| string |  'in-resize' | Transition effects will destroy equalization 
 fuzzy| number |  1 | The variance it can have so it doesn't need to be exactly aligned per pixel. So if an element is off by 1px it'll still align.
 
 
-## Example
+### Example
 
 __The following is an example html structure for this plugin:__
 

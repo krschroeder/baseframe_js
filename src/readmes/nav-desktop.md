@@ -1,24 +1,28 @@
 <h2 id="nav-desktop">Enhance Desktop Navigation</h2>
 
 
-## Features
+### Features
 This plugin just adds a delay to the desktop navigation and for the nestled levels. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page.
 
-## Settings
+### Settings
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-mobileOff| number | 740 | The width it switches off for mobile navigation
-delay| number | 950 | The delay the drop-downs stay put when moused off.
-edgeClass| string | 'main-nav-edge' | Class name given to assist in edge positioning of drop-downs so they don't spill over to the right and off the page.
-tabAccessible | boolean | true | Makes it possible to tab open dropdown links that are hidden. Works in conjuction with another css class `.focus` which gets added right along side with the `:hover` state class.
+stopWidth | 768 | the width in which the navigaiton will stop for mobile.
+delay | 800 | The delay in time you can hover off a sub menu item.
+edgeCss | 'ul-on-edge' | The CSS class that moves the nav when if goes over the egde of the page.
+outerElem | 'body' | Element to attach the `navHoveredCss` option.
+ulHasCss | 'has-ul' | CSS class for `<li>` that have a `<ul>` nestled.
+ulNotCss | 'no-ul' | CSS class for `<li>` that don't have a `<ul>` nestled.
+navHoveredCss | 'desktop-nav-hovered' | The CSS class added to the `outerElem` (defaulted to the `<body>`).
+hoverCss | 'hover' | The hover class to work in conjuction with the `delay` option to keep the item on the page when hovered off.
 
-
-## Example
+### Example
 
 __The following is an example html structure for this plugin:__
 
-```
+__HTML__
+```html
 <nav id="main-nav">
 	<ul>
 		<li><a href="#">Some Link</a>
@@ -34,7 +38,5 @@ __The following is an example html structure for this plugin:__
 
 __JavaScript__
 ```javascript
-	jQuery(function($){
-		$('#main-nav').enhanceDesktopNav();
-	});
+$('#main-nav').navDesktop();
 ```

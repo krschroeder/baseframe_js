@@ -1,12 +1,12 @@
 <h2 id="marketo-form">Marketo Form</h2>
 
-## About
+### About
 Scripting that removes the bad things Marketo adds (classes, stylesheets and etc), and allows you to add in classes already written. Utilizes Marketo Forms 2 API. Adds in the Marketo forms 2 API script as well if its not already added, and once loaded it runs the other scripting.
 
-## Features
+### Features
 Makes Marketo Form embeds great again!
 
-## Settings
+### Settings
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
@@ -27,12 +27,12 @@ followUpUrl| string | null | If set to a __string__ it'll display this message. 
 whenReady| function | function(){} | Additional function to run other custom scripting when the form is ready (_whenReady event has fired_). No arguments are being passed
 afterSuccess| function | function(){} | Additional function to run other custom scripting when the form has submitted (_form.onSuccess_). No arguments are being passed.
 
-## Example
+### Example
 
 __The following is an example html structure for this plugin:__
 
 __HTML__
-```
+```html
 <div class="some-other-class mkto-something-form">
 	<!-- Added via mkto embed-->
 </div>
@@ -43,15 +43,15 @@ __JavaScript__
 function yourNiftyWhenReadyFn(){
 	console.log('the whistles go woot!');
 }
-jQuery(function($){
-	var myMarketoForm = new MyMarketoForm('.mkto-something-form',{
-		inlineFollowUp: "Thank You for Subscribing",
-		account: "597-BOK-146",
-		loadScript: '//app-ab05.marketo.com',
-		formID: 1470,
-		whenReady: function(){
-			yourNiftyWhenReadyFn();
-		}
-	});
+
+new MyMarketoForm('.mkto-something-form',{
+	inlineFollowUp: "Thank You for Subscribing",
+	account: "597-BOK-146",
+	loadScript: '//app-ab05.marketo.com',
+	formID: 1470,
+	whenReady: function(){
+		yourNiftyWhenReadyFn();
+	}
 });
+
 ```

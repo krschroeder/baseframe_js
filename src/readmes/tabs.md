@@ -2,13 +2,13 @@
 
 At some point we all need to be able to tab content. This one does it for you!
 
-## Features
+### Features
 - Tabs within tabs, so tabs can be added inside other tabs if needed (which it will at some point),
 - hash to load not only a tab, but tabs in tabs as well!
 	- i.e.: add this to the location `#description#files-inner`
 	- or to load just a tab then `#description`
 
-## Settings
+### Settings
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
@@ -27,20 +27,13 @@ afterChange | function | () => {}  | Function to run after the tab change, passe
 onInit | function | () => {} | Function to run after the the plugin intializes, passed variables are the 'previous tab ID', 'tabs list', 'tabs body' elements.
 
 
-## Example
+### Example
 
 __The following is an example html structure for this plugin:__
 
-#### How to structure the HTML
-- `.tabs-container` class must be added to surrounding all elements
-- `.tabs__nav` class added outside of the `<ul>`
-- Each `<a>` in the `.tabs__nav` navigation should have the `id` of the tabbed content in its `href` attribute
-- `.tabs__body` class added to the tab body of the content to be toggled
-- Each toggleable element should have the `data-tab-id="tab-identifier"` on it and this way the navigation knows what to tab.
-
 
 __HTML__
-```
+```html
 <div class="tab__container">
 	<div class="inline-ul tabs__nav" role="menubar">
 		<ul>
@@ -84,17 +77,16 @@ __HTML__
 
 __JavaScript__
 ```javascript
-$(() => {
-	$(".tabs__container").tabs({
-		onInit: (tab,list,body) =>{
-			/onsole.log('init',tab,list,body)
-		},
-		beforeChange: (tab,list,body) =>{
-			console.log('before',tab,list,body)
-		},
-		afterChange: (tab,list,body) =>{
-			console.log('after',tab,list,body)
-		}
-	});
+$(".tabs__container").tabs({
+	onInit: (tab,list,body) =>{
+		console.log('init',tab,list,body)
+	},
+	beforeChange: (tab,list,body) =>{
+		console.log('before',tab,list,body)
+	},
+	afterChange: (tab,list,body) =>{
+		console.log('after',tab,list,body)
+	}
 });
+
 ```

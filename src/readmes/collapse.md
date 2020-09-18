@@ -1,11 +1,11 @@
 <h2 id="collapse">Collapse</h2>
 
 
-## Features
+### Features
 This has a move-to-top after open feature, open with location hash, and callbacks after events and such.
 
 
-## Settings
+### Settings
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
@@ -30,7 +30,7 @@ afterClose | function |  ($btnElems, $collapsibleItem) => { } |  callback functi
 afterInit | function |  ($btnElems, $collapsibleItem) => { } | callback function after collapse is initialized.
 
 
-## Example
+### Example
 
 __The following is an example html structure for this plugin:__
 

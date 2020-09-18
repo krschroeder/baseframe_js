@@ -1,22 +1,22 @@
 # Base_Frame Plugins &amp; Common JS
 
-Common/expected/needed/integrated JavaScript functionality for websites. You'll notice a few token are missing (like a carousel for example), that's because there are just some really, realy well made, IMO. Not touching that stuff, use those others, they're great. The ones here are configurable, 
+Common/expected/needed/integrated JavaScript functionality for websites. You'll notice a few token are missing (like a carousel for example), that's because there are just some really, realy well made, IMO. Not touching that stuff, use those others, they're great. The ones here are configurable, and as its set up now easy to import in.
 
 ## Runs with [Cash](https://github.com/fabiospampinato/cash) (or JQuery if you wish)
 
 These are made to work with [Cash](https://github.com/fabiospampinato/cash) (with jQuery still an option) as the only dependency. Cash is a small jQuery alternative that give developers DOM traversing without the extra bloat. In my opinion, having a DOM traversing Library is essential. Also, everybody who's done any web developement is familiar with jQuery syntax.
 
-## Some nice features are their is some shared syntax in the way they all operate. 
+## Features and Advantages
 
 __For Example:__ all have options that can be plugged in as a data attribute, in JSON format (loosely written somehat)
 ```html
-    <div id="your-plugin-elem" data-plugin-name="{option:'text',option2: true, etc: 'you get the idea'}"></div>
+<div id="your-plugin-elem" data-plugin-name="{option:'text',option2: true, etc: 'you get the idea'}"></div>
 ```
 
-<p><strong>For Example:</strong> all can have their configuration change. Which can come in handy sometimes when things get complex</p>
+<p><strong>For Example:</strong> all can have their configuration change when added into `$.fn`. Which can come in handy sometimes when things get complex</p>
     
 ```javascript
-    $('.your-plugin-elem').PluginOfSorts({change:'yep', height: 1e6})
+$('.your-plugin-elem').PluginOfSorts({change:'yep', height: 1e6})
 ```
 
 ## Example of Importing In
@@ -60,13 +60,13 @@ Pass in an `array` for the first argument, and `notify` is optional defaulted to
 ```javascript
 libraryExtend(Array [,notify])
 ````
-Name | Description | Readme
------- | ---- | -----| -------
-Collapse | Its basically like an Accordion, but more configurable |  [View](#collapse)
+Name | Description | Jump To Link
+---- | ---- | ----
+Collapse | Its basically like an Accordion, but more configurable | [View](#collapse)
 Navigation Desktop | This plugin just adds a delay to the desktop navigation for the nestled levels of a `<ul>`. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page. | [View](#nav-desktop)
 Navigation Mobile | Neat little mobile navigation plugin | [View](#nav-mobile)
-Equalize Content | When Flexbox, or other options won't work, use this to equalize content |  [View](#equalize)
-Marketo Form | Have you tried to style a Marketo form? It is a disaster! This should help slimplify the process so you won't pull your hair out. | [View](#marketo-form)
+Equalize Content | When Flexbox, or other options won&rsquo;t work, use this to equalize content | [View](#equalize)
+Marketo Form | Have you tried to style a Marketo form? It is a disaster! This should help slimplify the process so you won&rsquo;t pull your hair out. | [View](#marketo-form)
 Parallax Background | For making a parallaxing background | [View](#parallax)
 Popup | There is like a few dozen of these, right?! Well this is easy to style and configurable. |  [View](#popup)
 Responsive Dropdown | Turn your left secondary navigation (or list of options) into a dropdown for mobile!| [View](#responsive-dropdowns)
@@ -79,11 +79,11 @@ Tabs | Tabs in tabs, change onhashchange, dream big, become starry-eyed, this do
 <h2 id="collapse">Collapse</h2>
 
 
-## Features
+### Features
 This has a move-to-top after open feature, open with location hash, and callbacks after events and such.
 
 
-## Settings
+### Settings
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
@@ -108,7 +108,7 @@ afterClose | function |  ($btnElems, $collapsibleItem) => { } |  callback functi
 afterInit | function |  ($btnElems, $collapsibleItem) => { } | callback function after collapse is initialized.
 
 
-## Example
+### Example
 
 __The following is an example html structure for this plugin:__
 
@@ -158,13 +158,13 @@ $('.collapse-group').collapse();
 <br>
 <br>
 <br>
-<h1 id="equalize">Equalize</h1>
+<h2 id="equalize">Equalize</h2>
 
 
-## Features
+### Features
 This __equalization script__ will work with any responsive classes your heart desires to use. It will take elements and measure their position top and add them to an array. Then it assigns the tallest height to that row, so they all are sized per row neatly. You can stop it at certain widths, you can start it, and there are other configurable options. If the equalize items are all in one column rows then no heights will be added. Look at the __Settings__ for the rest.
 
-## Settings
+### Settings
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
@@ -179,7 +179,7 @@ resizeCss| string |  'in-resize' | Transition effects will destroy equalization 
 fuzzy| number |  1 | The variance it can have so it doesn't need to be exactly aligned per pixel. So if an element is off by 1px it'll still align.
 
 
-## Example
+### Example
 
 __The following is an example html structure for this plugin:__
 
@@ -210,13 +210,13 @@ $('.equalize-container').equalizeContent();
 <br>
 <h2 id="marketo-form">Marketo Form</h2>
 
-## About
+### About
 Scripting that removes the bad things Marketo adds (classes, stylesheets and etc), and allows you to add in classes already written. Utilizes Marketo Forms 2 API. Adds in the Marketo forms 2 API script as well if its not already added, and once loaded it runs the other scripting.
 
-## Features
+### Features
 Makes Marketo Form embeds great again!
 
-## Settings
+### Settings
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
@@ -237,12 +237,12 @@ followUpUrl| string | null | If set to a __string__ it'll display this message. 
 whenReady| function | function(){} | Additional function to run other custom scripting when the form is ready (_whenReady event has fired_). No arguments are being passed
 afterSuccess| function | function(){} | Additional function to run other custom scripting when the form has submitted (_form.onSuccess_). No arguments are being passed.
 
-## Example
+### Example
 
 __The following is an example html structure for this plugin:__
 
 __HTML__
-```
+```html
 <div class="some-other-class mkto-something-form">
 	<!-- Added via mkto embed-->
 </div>
@@ -253,17 +253,17 @@ __JavaScript__
 function yourNiftyWhenReadyFn(){
 	console.log('the whistles go woot!');
 }
-jQuery(function($){
-	var myMarketoForm = new MyMarketoForm('.mkto-something-form',{
-		inlineFollowUp: "Thank You for Subscribing",
-		account: "597-BOK-146",
-		loadScript: '//app-ab05.marketo.com',
-		formID: 1470,
-		whenReady: function(){
-			yourNiftyWhenReadyFn();
-		}
-	});
+
+new MyMarketoForm('.mkto-something-form',{
+	inlineFollowUp: "Thank You for Subscribing",
+	account: "597-BOK-146",
+	loadScript: '//app-ab05.marketo.com',
+	formID: 1470,
+	whenReady: function(){
+		yourNiftyWhenReadyFn();
+	}
 });
+
 ```
 
 <br>
@@ -272,24 +272,28 @@ jQuery(function($){
 <h2 id="nav-desktop">Enhance Desktop Navigation</h2>
 
 
-## Features
+### Features
 This plugin just adds a delay to the desktop navigation and for the nestled levels. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page.
 
-## Settings
+### Settings
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-mobileOff| number | 740 | The width it switches off for mobile navigation
-delay| number | 950 | The delay the drop-downs stay put when moused off.
-edgeClass| string | 'main-nav-edge' | Class name given to assist in edge positioning of drop-downs so they don't spill over to the right and off the page.
-tabAccessible | boolean | true | Makes it possible to tab open dropdown links that are hidden. Works in conjuction with another css class `.focus` which gets added right along side with the `:hover` state class.
+stopWidth | 768 | the width in which the navigaiton will stop for mobile.
+delay | 800 | The delay in time you can hover off a sub menu item.
+edgeCss | 'ul-on-edge' | The CSS class that moves the nav when if goes over the egde of the page.
+outerElem | 'body' | Element to attach the `navHoveredCss` option.
+ulHasCss | 'has-ul' | CSS class for `<li>` that have a `<ul>` nestled.
+ulNotCss | 'no-ul' | CSS class for `<li>` that don't have a `<ul>` nestled.
+navHoveredCss | 'desktop-nav-hovered' | The CSS class added to the `outerElem` (defaulted to the `<body>`).
+hoverCss | 'hover' | The hover class to work in conjuction with the `delay` option to keep the item on the page when hovered off.
 
-
-## Example
+### Example
 
 __The following is an example html structure for this plugin:__
 
-```
+__HTML__
+```html
 <nav id="main-nav">
 	<ul>
 		<li><a href="#">Some Link</a>
@@ -305,9 +309,7 @@ __The following is an example html structure for this plugin:__
 
 __JavaScript__
 ```javascript
-	jQuery(function($){
-		$('#main-nav').enhanceDesktopNav();
-	});
+$('#main-nav').navDesktop();
 ```
 
 <br>
@@ -316,32 +318,37 @@ __JavaScript__
 <h2 id="nav-mobile">Mobile Navigation</h2>
 
 
-## About
+### About
 Plugin is strictly for mobile so other plugins can be used for the desktop nav if needed. The clicking action that allows for opening/closing nav item is handled via the visibility of the __'open/close' button__ so the click so no clashing between desktop and mobile happen. Also so CSS can control it tighter as sometimes device width may dictate whether or not you'll see the desktop or mobile view.
 
-## Settings
+### Settings
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-mobileButton | string | '#mobile-nav-btn' | The class or id of the mobile navigation button. __Note:__ the visibility of this button allows the click action of the child `<ul>`'s to function. It's recommended to use pass an 'ID' attribute for this if the default gets changed.
-navParent | element | $(element) | Default navigation parent is the __element__ the plugin is attached to.
-slideDuration | string | 300 | Duration in time the menu item opens
-outerElement | string | 'body' | '.menu-item' class gets added to this element. Use for CSS styling purposes if needed.
-outsideClickClose | string | true | Allows for an outside click in the body of the document to close the navigation.
-hasULClass | string | 'has-children' | CSS Class name for the `<li>` elements that have children `<ul>`'s in them, and is what the clicking event is delegated to.
-menuOpenClass | string | 'menu-opened' | CSS Class that gets added to the `<li>` and the `<body>` tags when and element becomes open.
-afterNavItemOpen | string | function(item){} |  Callback function for after a navigation item is opened. The 'item' argument is the jQuery element of the opened navigational item.
-afterNavItemClose | string | function(item){} | Callback function for after a navigation item is closed. The 'item' argument is the jQuery element of the closed navigational item.
-afterOpen | string | function(item){} | Callback function for opening the whole navigation.
-afterClose | string | function(item){} | Callback function for closing the whole navigation.
-stopPropagation | boolean | true | To stop the click on the anchor from propagation up
+enableBtn | string | '#mobile-nav-btn' |
+ariaLabel | string | 'Toggle site navigation' |
+slideDuration | number | 400 |
+outerElement | string or HTMLElement | 'body' |
+outsideClickClose | boolean | true |
+hasUlCls | string | 'has-ul' |
+menuOpenCss | string | 'menu-opened' | 
+menuTogglingCss | string | 'menu-toggling',
+arrowSubMenuItemCss | string | 'i i-arrow-b' |
+nextLevelBtn | string | `<i class="nav-icon nav-icon--next" /><span class="sr-only">View menu</span></i>` |
+backLevelBtn | string | '<i class="nav-icon nav-icon--back" >← <span class="sr-only">Go Back</span></i>' |
+afterNavItemOpen | function | () => {} | Function to run after an nav item is opened.
+afterNavItemClose | function | () => {} | Function to run after a nav item is closed.
+afterOpen | function | () => {} | Function to run after the nav is open.
+afterClose | function | () => {} | Function to run after the nav is closed.
+stopPropagation | boolean | true, | Stops the click from propagating up in the DOM from the nav element.
+navToggleNestled | boolean | false | This only works if the base class is extended with the `NavMobileNestled` class and is an alternative way to display the navigation items.
 
-## Example
+### Example
 
 __The following is an example html structure for this plugin:__
 
 __HTML__
-```
+```html
 <nav id="main-nav">
 	<button id="mobile-nav-btn">
 		<div id="mobile-nav-btn-inner">
@@ -364,11 +371,7 @@ __HTML__
 
 __JavaScript__
 ```javascript
-	jQuery(function($){
-		$('#main-nav')
-			.mobileNavigation()
-			.enhanceDesktopNav();//<--may be used in conjunction with other plugins
-	});
+$('#main-nav').navMobile()
 ```
 
 <br>
@@ -377,10 +380,10 @@ __JavaScript__
 <h2 id="parallax">Parallax</h2>
 
 
-## Features
+### Features
 By default it allows you to move the background image. Also can move an element itself. It uses the `translate3d` property as its more efficient than using a `top` or `left`.
 
-## Settings
+### Settings
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
@@ -392,39 +395,54 @@ initOffset | boolean | false | If parallaxing an element, it'll account for the 
 bgFill | boolean| false | If it's a background image, this adds extra height to ensure it fills the area.
 outStop | number | 1 | 1 = 100% of the height of the element. 0.5 = 50%, etc. If it's set to .5, the element will stop parallaxing if 50% of the element has left the viewport, instead of the 100% by default.
 minWidth | number | null | The minimum width for the parallax effect to run.
-maxWidth | number | nul | The maximum width for the parallax effect to run.
-## Example
+maxWidth | number | null | The maximum width for the parallax effect to run.
+scrollMaxPxStop | number | 5000 | max an item can scroll. Make this less should you want it to stop prior to exiting the screen. Good for when you have content that it shouldn't overlap.
+
+### Example
 
 __The following structure should be used with this plugin:__
 
 __HTML__
-```
-<div class="background-area flex-m">
-
-	<div class="background-area-bg desktop-bg md-up-show parallax-bg"
-		style="background-image: url('https://placehold.it/1920x760')"
-	></div>
-
-	<div class="background-area-bg mobile-bg md-up-hide"
-		style="background-image: url('https://placehold.it/768x768')"
-	></div>
-
-	<div class="container">
-		<div class="row v-pad">
-			<div class="col-12 text-c">
-				<p>Phasellus laoreet lorem vel dolor tempus vehicula. Tu quoque, Brute, fili mi, nihil timor populi, nihil! Pellentesque habitant morbi tristique senectus et netus.</p>
-			</div>
+```html
+<div class="container v-space">
+	<div class="relative md-wide-4">
+		<div class="parallax-bg" data-parallax-options="{speed:-10, initOffset:true, bgFill: false, scrollMaxPxStop: 120}">
+			<img src="https://placehold.it/768x768/565656" alt="Placeholder" />
 		</div>
 	</div>
-
+	<div class="relative md-wide-4">
+		<div class="parallax-bg" data-parallax-options="{speed:10, initOffset:true, bgFill: false, scrollMaxPxStop: 120}">
+			<img src="https://placehold.it/768x768/444" alt="Placeholder" />
+		</div>
+	</div>
+	<div class="relative md-wide-4">
+		<div class="parallax-bg" data-parallax-options="{speed:30, initOffset:true, bgFill: false, scrollMaxPxStop: 220, axis: 'x'}">
+			<img src="https://placehold.it/768x768/222" alt="Placeholder" />
+		</div>
+	</div>
+	<div class="relative md-wide-4">
+		<div class="parallax-bg" data-parallax-options="{speed:-10, initOffset:true, bgFill: false, scrollMaxPxStop: 120}">
+			<img src="https://placehold.it/768x768" alt="Placeholder" />
+		</div>
+	</div>
+	<div class="relative md-wide-4">
+		<div class="parallax-bg" data-parallax-options="{speed: -20, initOffset:true, bgFill: false, scrollMaxPxStop: 180}">
+			<img src="https://placehold.it/768x768/777" alt="Placeholder" />
+		</div>
+	</div>
+	<div class="relative md-wide-4">
+		<div class="parallax-bg" data-parallax-options="{speed:-20, initOffset:true, bgFill: false, axis: 'x'}">
+			<img src="https://placehold.it/768x768/999" alt="Placeholder" />
+		</div>
+	</div>
 </div>
 ```
 
 ```javascript
-	$('.parallax-bg').parallax({
-		speed:10,
-		axis: 'y'
-	});
+$('.parallax-bg').parallax({
+	speed:10,
+	axis: 'y'
+});
 ```
 
 <br>
@@ -433,20 +451,20 @@ __HTML__
 <h2 id="popup">Pop-Up</h2>
 
 
-## Features
-Good for loading a Popup (duh). Pretty light-weight for what it does and has all the configurable options you should need. Simple CSS styling and all that fun stuff.
+### Features
+Where do I begin? Look at the settings. Pretty light-weight for what it does and has all the configurable options you should need. Simple CSS styling and all that fun stuff.
 
-## Settings
+### Settings
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-popupID| boolean |  'popup_' + generateGUID() | ID for the popup. Good idea to set one if loading from a hash, else its dynamically generated
+popupID| boolean | 'popup_' + generateGUID() | ID for the popup. Good idea to set one if loading from a hash, else its dynamically generated
 src | string | src | Can be a CSS selector `.your-popup-content` or `#yeah-your-content` or `<h2>Yeah Your Popup Content</h2><p>etc...</p>` and `https://placekitten.com/900/1200?ext=.jpg`. 
 popupOuterClass| string |  "" | CSS class name to add to the outer element of the popup.
-title | string |  `$(element).data('popup-title') || $(element).attr('title') || ''` | Title to get added above to the content. Looks for that in that order specified in the default, if not overridden.
+title | string |  <code>$(element).data('popup-title') &#124;&#124; $(element).attr('title') &#124;&#124; ''</code> | Title to get added above to the content. Looks for that in that order specified in the default, if not overridden.
 titleElem |string |  'h3' | The element of the title
 titleCss| string |  '' | A CSS class for that above title
-caption| string |  `$(element).data('popup-caption') || ''` | Text below the main content
+caption| string |  <code>$(element).data('popup-caption') &#124;&#124; ''</code> | Text below the main content
 clickOutsideClose| boolean |  true | closes if the popup is clicked outside of the box
 fadeOut| number |  500 | Time to fade-out the popup, CSS transition should correspond.
 fadeIn| number |  400 |  Time to fade-in the popup, CSS transition should correspond.
@@ -455,31 +473,31 @@ vhDivisor| number | 2 | The division of the height of the popup and how it displ
 firstAnchorFocus| boolean |  true | Focus's back on the anchor or element after the popup closes
 setTopPosition| number |  null | Sometimes we just may manually want to tell the vertical position of the popup.
 isImage| boolean |  false | While there is a process using a regex and other parameters sometime we may just want to specify in the config.
-isJsArray| boolean |  false | text
-escapeClose| boolean |  true | text
-group| boolean |  true | text
-showGroupAmount| boolean |  true | text
-groupOfHTML| boolean |  '/' | text
-launch| boolean |  false | text
-photoRegex| regexp |  I'll explain | If it ends in `gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg` or has a querystring parameter of `?image=jpg` or `?ext=someimageformattoo` then it'll know it's an image.
+isJsArray| boolean |  false | If using an array instead of DOM elements
+escapeClose| boolean |  true | Will close the popup if the escape key is pressed.
+group| boolean |  true | Groups like elements together so they can be toggled within the popup
+showGroupAmount| boolean |  true | Shows the amount of elements if there is more than one.
+groupOfHTML| boolean |  '/' | The separator (or text) between the group amount (e.g.: '1 / 3').
+launch| boolean |  false | Launch the popup immediately.
+photoRegex| regexp |  I'll explain | If it ends in <code>gif&#124;png&#124;jp(g&#124;eg)&#124;bmp&#124;ico&#124;webp&#124;jxr&#124;svg</code> or has a querystring parameter of `?image=jpg` or `?ext=someimageformattoo` then it'll know it's an image.
 closeText| boolean |  `<i class="icon-close"><span class="sr-only">Close</span></i>` | Close html/text.
-prevBtnContent| boolean |  `<i class="icon-arrow-l"><span class="sr-only">Previous</span></i>` | Previous Button html/text.
-nextBtnContent| boolean |  `<i class="icon-arrow-r"><span class="sr-only">Next</span></i>` | Next Button html/text.
-loadingHTML| boolean |  `<div class="popup__loader"></div>` | Loading HTML.
-appendPopupTo| boolean |  'body' | the HTML element the popup appends to.
-showPopup| boolean |  'popup--show-popup' | CSS class used to show the popup.
-enableEvent| boolean |  'click' | The event to show the popup, change to whatever event on the element. Could be 'hover' if we wanted to for some reason.
-loadLocationHash| boolean |  true | Loads a popup from a `window.location.hash`, if the hash matches the popup.
-useLocationHash| boolean |  true | Uses history and creates a hash in the location to toggle the popups on or off
-afterLoaded| function |  () => { } | Function to run after the popup is displayed.
-afterClose| function |  () => { } | Function to run after the popup is closed.
-onClose| function |  () => { } | Function to run after the popup at the begninning of the closing event.
+prevBtnHTML| boolean |  `<i class="icon-arrow-l"><span class="sr-only">Previous</span></i>` | Previous Button html/text.
+nextBtnHTML| boolean |  `<i class="icon-arrow-r"><span class="sr-only">Next</span></i>` | Next Button html/text.
+loadingHTML | boolean |  `<div class="popup__loader"></div>` | Loading HTML.
+appendPopupTo | boolean |  'body' | the HTML element the popup appends to.
+showPopup | boolean |  'popup--show-popup' | CSS class used to show the popup.
+enableEvent | boolean |  'click' | The event to show the popup, change to whatever event on the element. Could be 'hover' if we wanted to for some reason.
+loadLocationHash | boolean |  true | Loads a popup from a `window.location.hash`, if the hash matches the popup.
+useLocationHash | boolean |  true | Uses history and creates a hash in the location to toggle the popups on or off
+afterLoaded | function |  () => { } | Function to run after the popup is displayed.
+afterClose | function |  () => { } | Function to run after the popup is closed.
+onClose | function |  () => { } | Function to run after the popup at the begninning of the closing event.
 
-## Example
+### Example
 
 __The following is an example html structure for this plugin:__
 
-```
+```html
 <div class="container" style="min-height: 1000px">
 	<div id="popup-content">
 		<h1>Pop-up</h1>
@@ -517,29 +535,29 @@ var jsArray = [
 
 __JavaScript__
 ```javascript
-	//examples of using it differently
+//examples of using it differently
 
-	//getting contents from a page element
-	$('#launch-popup-jq2').popup({
-		contents: $('#popup-content'),
-		popupID: 'my-popup-jq2',
-		directionX: 'LEFT'
-	});
+//getting contents from a page element
+$('#launch-popup-jq2').popup({
+	contents: $('#popup-content'),
+	popupID: 'my-popup-jq2',
+	directionX: 'LEFT'
+});
 
-	//getting contents from a group of pics
-	$('.pic-group').popup({
-		inline:true,
-		contents: '.pic-group',
-		title:'How About That',
-		afterLoaded: (el,id)=>{console.log('yeah loaded', el,id)}
-	});
+//getting contents from a group of pics
+$('.pic-group').popup({
+	inline:true,
+	contents: '.pic-group',
+	title:'How About That',
+	afterLoaded: (el,id)=>{console.log('yeah loaded', el,id)}
+});
 
-	//getting imagery to generate from an array
-	$('.js-object-group').popup({
-		array:true,
-		contents: jsArray,
-		title:'How About That'
-	});
+//getting imagery to generate from an array
+$('.js-object-group').popup({
+	array:true,
+	contents: jsArray,
+	title:'How About That'
+});
 ```
 
 <br>
@@ -547,50 +565,71 @@ __JavaScript__
 <br>
 <h2 id="responsive-dropdown">Responsive Navigation to Dropdown</h2>
 
-## What is it!?
+### What is it!?
 This is a plugin that will take a side-navigation element and turn it into a dropdown for mobile. Its a common thing that I've come across that the mobile needs to turn into a dropdown so hence this plugin!
 
-## Features
+### Features
 There is a close button that you can add to the bottom if you'd like. Outside click support, so you can close not clicking the header or the (optional) close button.
 
-## Settings
+### Settings
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-clickHeader| string |  '.resp-nav-header' | Class name added for the header that is used for targeting the header
-toggleBody| string |  '.resp-nav-dd-body' | Class name added for the body that is used for targeting the body
-openHeaderClass| string |  'resp-dd-active' | The active class name used when the dropdown has been opened
-inMobileClass| string |  'resp-dd-in-mobile' | The class used for styling the element into a dropdown. It gets added via the 'mobileBreak' setting, so this can be set dynamically per need.
-closeBtnBottom| boolean |  true | This adds a close button to the bottom of the dropdown so if the user scrolls a bit they know they can click it to close.
-closeBtnText| string |  'Close' | The text for the close button appended to the bottom (if it has been added).
-closeBtnClass| string |  '' | Additional class to add to the button (if it has been added).
-toggleAmount| number |  600 | The time spend sliding up and down
-mobileBreak| number |  768 | The default breakpoint the side-nav/element turns to a dropdown.
+clickHeader | string| '.resp-dd__header' | CSS class for the header element
+toggleBody | string| '.resp-dd__body' | CSS class for the toggle body
+closeBtnBottom | string | true | Shows close button at the bottom.
+closeBtnText | string| 'Close' | Close text for the button
+openHeaderCss | string| 'resp-dd--active' | CSS class when the toggle body is opened for the header
+inMobileCss | string| 'resp-dd--in-mobile' | CSS class changing the element over to a 'responsive dropdown' in mobile.
+closeBtnDivCss | string| 'resp-dd__close-btn-area' | CSS class for the close button area.
+closeBtnCss | string| '' | Option to add a button class on the optional close button at the bottom.
+toggleCss | string| 'resp-dd__body--open' | CSS class added to the body when it is open.
+togglingCss | string| 'resp-dd__body--toggling' | CSS class added to the toggle body when toggling.
+duration | number | 300 | Time spent transitioning to open. Should correspond with CSS transition.
+mobileBkpt | number | 768 | Break point before entering into mobile.
+outsideClickElem | string Or HTMLELement | 'body' |
 
-## Example
+### Example
 
 __The following is an example html structure for this plugin:__
 
 Use the __.resp-nav-mobile-dd__ to get the whole thing working.
 
 __HTML__
-```
-<div class="resp-nav-mobile-dd">
-	<div class="resp-nav-header">
+```html
+<div class="resp-dd">
+	<div class="resp-dd__header">
 		<strong class="inline-block">Title For Dropdown</strong>
-		<i class="ico-down-arrow"><span class="sr-only">Down Arrow</span></i>
+		<i class="resp-dd__down-arrow">
+			<span class="sr-only">Down Arrow</span>
+		</i>
 	</div>
-	<div class="resp-nav-dd-body">
-		&hellip; body contents to show.
+	<div class="resp-dd__body">
+		<div class="sm-col-6 md-col-12" >
+			<h5>Listing of Things</h5>
+			<ul>
+				<li>Some Listing of Sorts</li>
+				<li>Some Listing of Sorts</li>
+			</ul>
+			<br />
+			<a href="#" class="see-more-btn">See More</a>
+		</div>
+
+		<div class="sm-col-6 md-col-12">
+			<h5>Another Listing</h5>
+			<ul>
+				<li>Some Listing of Sorts</li>
+				<li>Some Listing of Sorts</li>
+				<li>Some Listing of Sorts</li>
+			</ul>
+		</div>
 	</div>
 </div>
 ```
 
 __JavaScript__
 ```javascript
-jQuery(function($){
-	$('.resp-nav-mobile-dd').responsiveDropDown(/*{config options}*/);
-});
+$('.resp-nav-mobile-dd').responsiveDropDown();
 ```
 
 <br>
@@ -600,13 +639,13 @@ jQuery(function($){
 
 At some point we all need to be able to tab content. This one does it for you!
 
-## Features
+### Features
 - Tabs within tabs, so tabs can be added inside other tabs if needed (which it will at some point),
 - hash to load not only a tab, but tabs in tabs as well!
 	- i.e.: add this to the location `#description#files-inner`
 	- or to load just a tab then `#description`
 
-## Settings
+### Settings
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
@@ -625,20 +664,13 @@ afterChange | function | () => {}  | Function to run after the tab change, passe
 onInit | function | () => {} | Function to run after the the plugin intializes, passed variables are the 'previous tab ID', 'tabs list', 'tabs body' elements.
 
 
-## Example
+### Example
 
 __The following is an example html structure for this plugin:__
 
-#### How to structure the HTML
-- `.tabs-container` class must be added to surrounding all elements
-- `.tabs__nav` class added outside of the `<ul>`
-- Each `<a>` in the `.tabs__nav` navigation should have the `id` of the tabbed content in its `href` attribute
-- `.tabs__body` class added to the tab body of the content to be toggled
-- Each toggleable element should have the `data-tab-id="tab-identifier"` on it and this way the navigation knows what to tab.
-
 
 __HTML__
-```
+```html
 <div class="tab__container">
 	<div class="inline-ul tabs__nav" role="menubar">
 		<ul>
@@ -682,17 +714,16 @@ __HTML__
 
 __JavaScript__
 ```javascript
-$(() => {
-	$(".tabs__container").tabs({
-		onInit: (tab,list,body) =>{
-			/onsole.log('init',tab,list,body)
-		},
-		beforeChange: (tab,list,body) =>{
-			console.log('before',tab,list,body)
-		},
-		afterChange: (tab,list,body) =>{
-			console.log('after',tab,list,body)
-		}
-	});
+$(".tabs__container").tabs({
+	onInit: (tab,list,body) =>{
+		console.log('init',tab,list,body)
+	},
+	beforeChange: (tab,list,body) =>{
+		console.log('before',tab,list,body)
+	},
+	afterChange: (tab,list,body) =>{
+		console.log('after',tab,list,body)
+	}
 });
+
 ```

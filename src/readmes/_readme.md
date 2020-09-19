@@ -19,7 +19,7 @@ __For Example:__ all have options that can be plugged in as a data attribute, in
 $('.your-plugin-elem').PluginOfSorts({change:'yep', height: 1e6})
 ```
 
-## Example of Importing In
+## Example Script of Importing Everything In
 ```javascript
 //lets bring it all on in
 import installStoreToLibrary, {
@@ -33,12 +33,14 @@ import installStoreToLibrary, {
     Parallax,
     Popup,
     ResponsiveDropDown,
-    Tabs
+    Tabs,
+    formInputs,
+    smoothScroll
 } from 'baseframe-js';
 
 //necessary for all plugin's to operate
 //much like jQuery's $.data method, the $.store is similar
-installStoreToLibrary();
+installStoreToLibrary(true);
 
 //perhaps for some reason you don't want to install
 //but here we obviously are
@@ -54,12 +56,6 @@ libraryExtend([
 ]); 
 ```
 
-### libraryExtend
-Pass in an `array` for the first argument, and `notify` is optional defaulted to false. `notify` console log's when parameters get updated on an instance.
-
-```javascript
-libraryExtend(Array [,notify])
-````
 Name | Description | Jump To Link
 ---- | ---- | ----
 Collapse | Its basically like an Accordion, but more configurable | [View](#collapse)
@@ -71,7 +67,92 @@ Parallax Background | For making a parallaxing background | [View](#parallax)
 Popup | There is like a few dozen of these, right?! Well this is easy to style and configurable. |  [View](#popup)
 Responsive Dropdown | Turn your left secondary navigation (or list of options) into a dropdown for mobile!| [View](#responsive-dropdown)
 Tabs | Tabs in tabs, change onhashchange, dream big, become starry-eyed, this does it all :-) | [View](#tabs)
+<br>
+<br>
 
+------
+
+### Class Set-up for using `LibraryExtend`
+
+Each class just needs to have the following properties set on it
+
+```javascript
+    class YourClass {
+       static get version() {
+            return VERSION;
+        }
+
+        static get pluginName() {
+            //Data Name is `YourClass`
+            return DATA_NAME;
+        }
+        
+        constructor(element, options, index){
+            //... your constructor
+        }
+    }
+
+```
+
+------
+
+### Essential Functions
+
+#### libraryExtend
+Pass in an `array` for the first argument, and `notify` is optional defaulted to false. `notify` console log's when parameters get updated on an instance.
+
+```javascript
+libraryExtend(plugins:array [,notify:boolean])
+```
+
+
+#### installStoreToLibrary
+
+Pass in the first attribute to add in the `expose` method, which allows you to see all the data stored in the Map.
+
+```javascript
+installStoreToLibrary([,expose:boolean]) 
+```
+
+#### $.store
+
+Inside the $.store method is the following structure. The first parameter can be an `HTMLElement` or a `$(HTMLElement)`. The second parameter is a `string` and is the identifier on on which the data is stored. Multiple properties can be stored on the same element. In the plugin's the instance (`PluginName_instance`) is saved, as well as the instance paremeters (`PluginName_params`).
+
+```javascript
+const Store = {
+	set(element, keyStore, data) {
+		mapData.set(element, keyStore, data)
+	},
+	get(element, keyStore) {
+		return mapData.get(element, keyStore)
+	},
+	remove(element, keyStore) {
+		mapData.delete(element, keyStore)
+    },
+    //shows the all the data stored in the Map
+    //only added if the first parameter is set to true in the function
+	expose(){
+		mapData.expose()
+	}
+};
+```
+
+### Functions
+
+#### formInputs
+formInputs function currently adds in space-bar support for radio buttons, and checkbox inputs. As long as there is a `for` attribute on a `<label>` that maps to an input.
+
+```javascript
+formInputs.init();
+```
+
+#### smoothScroll
+
+First parameter is the HTMLElement to scroll to, the second is the speed. Default speed is 100. This uses the `window.scroll` so should work cross-browser. This stops scrolling if the previous pixel is the same as the next, if the scroll tries to get broken, or if it can't scroll to anymore.
+
+```javascript
+smoothScroll(scrollToElement:HTMLElement | $(HTMLElement), speed:number);
+```
 
 <br>
 <br>

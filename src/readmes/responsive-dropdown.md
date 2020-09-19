@@ -62,5 +62,5 @@ __HTML__
 
 __JavaScript__
 ```javascript
-$('.resp-nav-mobile-dd').responsiveDropDown();
+$(".resp-dd").responsiveDropDown();
 ```

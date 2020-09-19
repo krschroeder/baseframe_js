@@ -104,7 +104,7 @@ const mapData = (() => {
 	}
 })()
 
-const Data = {
+const Store = {
 	set(element, keyStore, data) {
 		mapData.set(element, keyStore, data)
 	},
@@ -113,18 +113,19 @@ const Data = {
 	},
 	remove(element, keyStore) {
 		mapData.delete(element, keyStore)
-	},
-	expose(){
-		mapData.expose()
 	}
 };
 
-function installStoreToLibrary(){
+function installStoreToLibrary(expose = false){
+	if (expose) {
+		Store.expose = () => mapData.expose()
+	}
+
 	$.extend({
-		store : Data
+		store : Store
 	});
 }
 
-export default Data;
 
-export {installStoreToLibrary};
+export default installStoreToLibrary;
+export { Store };

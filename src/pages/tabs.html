@@ -71,20 +71,17 @@
 {{>footer}}
 
 <script>
-$(() => {
-	$(".tabs__container").tabs({
-		onInit: (tab,list,body) =>{
-			//console.log('init',tab,list,body)
-		},
-		beforeChange: (tab,list,body) =>{
-			//console.log('before',tab,list,body)
-		},
-		afterChange: (tab,list,body) =>{
-			//console.log('after',tab,list,body)
-		}
-	});
+$(".tabs__container").tabs({
+	onInit: function(tab,list,body) {
+		//console.log('init',tab,list,body)
+	},
+	beforeChange: function(tab,list,body) {
+		//console.log('before',tab,list,body)
+	},
+	afterChange: function(tab,list,body) {
+		//console.log('after',tab,list,body)
+	}
 });
-
 </script>
 
 </body>

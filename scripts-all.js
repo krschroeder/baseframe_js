@@ -1,6 +1,6 @@
 //cash dom or jquery are a dependency
 //not importing them because it can be either or
-import {installStoreToLibrary} from './src/assets/js/util/data';
+import installStoreToLibrary from './src/assets/js/util/store';
 import libraryExtend from './src/assets/js/util/lib-extend';
 import smoothScroll from './src/assets/js/util/smoothScroll';
 

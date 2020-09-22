@@ -25,6 +25,10 @@ __For Example:__ all can have their configuration change when added into `$.fn`.
 $('.your-plugin-elem').PluginOfSorts({change:'yep', height: 1e6})
 ```
 
+### Callbacks after events
+
+Lots of callback functions to run after and before events and such that may help you out when you need it most.
+
 ## Example Script of Importing Everything In
 ```javascript
 //lets bring it all on in
@@ -149,7 +153,7 @@ installStoreToLibrary([,expose:boolean])
 
 #### $.store
 
-Inside the $.store method is the following structure. The first parameter can be an `HTMLElement` or a `$(HTMLElement)`. The second parameter is a `string` and is the identifier on on which the data is stored. Multiple properties can be stored on the same element. In the plugin's the instance (`PluginName_instance`) is saved, as well as the instance paremeters (`PluginName_params`).
+Inside the $.store method is the following structure. The first parameter can be an `HTMLElement` or a `$(HTMLElement)`. The second parameter is a `string` and is the identifier on on which the data is stored. Multiple properties can be stored on the same element. In the plugin's the instance (`PluginName_instance`) is saved, as well as the instance paremeters (`PluginName_params`). Not going to lie, this was started from Bootstraps (which gets its credit in the code), but altered to be little more of its own.
 
 ```javascript
 const Store = {
@@ -188,6 +192,8 @@ smoothScroll(scrollToTop :number [,speed: number]);
 ```
 
 #### cookies
+
+Getting and setting cookies made easy!
  
 __params__
 Option |  Description
@@ -200,10 +206,16 @@ sameSite | `Lax`, `Strict` or `None` are the options
 
 ```javascript
 //setting a cookie
-cookies.set(name:string,value:string, params:object);
+cookies.set(name:string,value:string,{path:'/',expires: 60, secure: true, sameSite: 'Lax'});
 
 //getting a cookie
-cookies.get(name,{path: '/'})
+cookies.get(name,{path: '/'});
+
+//removing a cookie
+cookies.remove(name,{path:'/path/to-your/cookie'});
+
+//maybe you want to extend $ ?
+$.extend({cookies: cookies});
 ```
 
 <br>

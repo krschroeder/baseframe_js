@@ -16,7 +16,7 @@ export default function smoothScroll(elemYPos, _speed = 100) {
         prevScroll = currentScroll;
 
         if (Math.floor(currentScroll - elemYPos) !== 0 ) {
-            console.log('whatt',currentScroll, elemYPos)
+            
             window.requestAnimationFrame(smoothScrollInner);
 
             window.scroll(0, currentScroll + ((elemYPos - currentScroll) * speed));

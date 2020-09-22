@@ -1,8 +1,11 @@
 {
   "name": "baseframe-js",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Common Javascript plugins and functions to help with Front-end Development on websites",
-  "repository": "https://github.com/krschroeder/baseframe_js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/krschroeder/baseframe_js"
+  },
   "keywords": [
     "equalize",
     "accordion",
@@ -15,9 +18,9 @@
     "responsive",
     "tabs",
     "dropdowns",
-    "plugins"
+    "js plugins"
   ],
-  "author": "Kevin Schroeder <kschroeder@hileman.biz>",
+  "author": "Kevin Schroeder <kevin.r.schroeder@gmail.com>",
   "license": "MIT",
   "private": false,
   "main": "scripts-all.js",
@@ -52,8 +55,6 @@
     "gulp-uglify": "^3.0.0",
     "handlebars-helpers": "^0.10.0",
     "path": "^0.12.7",
-    "ts-loader": "^8.0.2",
-    "typescript": "^3.9.7",
     "vinyl-named": "^1.1.0",
     "webpack": "^4.20.2",
     "webpack-stream": "^5.1.1",
@@ -61,6 +62,5 @@
   },
   "dependencies": {
     "cash-dom": "^8.1.0"
-  },
-  "publishConfig": { "registry": "https://npm.pkg.github.com/" }
+  }
 }

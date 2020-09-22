@@ -12,7 +12,8 @@ import installStoreToLibrary, {
     ResponsiveDropDown,
     Tabs,
     formInputs,
-    smoothScroll
+    smoothScroll,
+    cookies
 } from '../../../scripts-all';
 
 //necessary for all plugin's to operate
@@ -28,8 +29,10 @@ libraryExtend([
     Parallax,
     Popup,
     ResponsiveDropDown,
-    Tabs,
+    Tabs
 ]); 
+
+$.extend({cookies: cookies});
 
 $('body').on('click', 'a.smooth-scroll', function(e){
     const $topElem = $($(this).attr('href'));

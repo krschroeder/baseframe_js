@@ -13,7 +13,8 @@ import Tabs from './src/assets/js/tabs';
 import EqualizeContent from './src/assets/js/equalize-content';
 import MarketoForm from './src/assets/js/marketo-form';
 import ResponsiveDropDown from './src/assets/js/responsive-dropdowns';
-import formInputs from './src/assets/js/form-input'
+import formInputs from './src/assets/js/form-input';
+import cookies from './src/assets/js/cookies';
 
 // this is needed for all to operate
 // so I would say this makes sense
@@ -31,5 +32,6 @@ export {
     ResponsiveDropDown,
     Tabs,
     formInputs,
-    smoothScroll
+    smoothScroll,
+    cookies
 }

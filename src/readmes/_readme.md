@@ -8,9 +8,13 @@ These are made to work with [Cash](https://github.com/fabiospampinato/cash) (wit
 
 ## Features and Advantages
 
-__For Example:__ all have options that can be plugged in as a data attribute, in JSON format (loosely written somehat)
+### Pass in parameter options with a `data-` attribute
+The data attribute is always the `data-` (of course) and then the plugin name `pluginName` followed by `-options`.
+
+__For Example:__ all have options that can be plugged in as a data attribute, in object literal format.
+
 ```html
-<div id="your-plugin-elem" data-plugin-name="{option:'text',option2: true, etc: 'you get the idea'}"></div>
+<div id="your-plugin-elem" data-pluginName-options="{option:'text',option2: true, etc: 'you get the idea'}"></div>
 ```
 
 <p><strong>For Example:</strong> all can have their configuration change when added into `$.fn`. Which can come in handy sometimes when things get complex</p>
@@ -56,17 +60,44 @@ libraryExtend([
 ]); 
 ```
 
-Name | Description | Jump To Link
----- | ---- | ----
-Collapse | Its basically like an Accordion, but more configurable | [View](#collapse)
-Navigation Desktop | This plugin just adds a delay to the desktop navigation for the nestled levels of a `<ul>`. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page. | [View](#nav-desktop)
-Navigation Mobile | Neat little mobile navigation plugin | [View](#nav-mobile)
-Equalize Content | When Flexbox, or other options won&rsquo;t work, use this to equalize content | [View](#equalize)
-Marketo Form | Have you tried to style a Marketo form? It is a disaster! This should help slimplify the process so you won&rsquo;t pull your hair out. | [View](#marketo-form)
-Parallax Background | For making a parallaxing background | [View](#parallax)
-Popup | There is like a few dozen of these, right?! Well this is easy to style and configurable. |  [View](#popup)
-Responsive Dropdown | Turn your left secondary navigation (or list of options) into a dropdown for mobile!| [View](#responsive-dropdown)
-Tabs | Tabs in tabs, change onhashchange, dream big, become starry-eyed, this does it all :-) | [View](#tabs)
+## Plugin Names and What They Do.
+
+
+### Collapse 
+Its basically like an Accordion, but more configurable 
+__[View](#collapse)__
+
+### Navigation Desktop
+This plugin just adds a delay to the desktop navigation for the nestled levels of a `<ul>`. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page. 
+__[View](#nav-desktop)__
+
+### Navigation Mobile
+Neat little mobile navigation plugin 
+__[View](#nav-mobile)__
+
+### Equalize Content
+When Flexbox, or other options won&rsquo;t work, use this to equalize content 
+__[View](#equalize)__
+
+### Marketo Form
+Have you tried to style a Marketo form? It is a disaster! This should help slimplify the process so you won&rsquo;t pull your hair out. 
+__[View](#marketo-form)__
+
+### Parallax Background
+For making a parallaxing background 
+__[View](#parallax)__
+
+### Popup
+There is like a few dozen of these, right?! Well this is easy to style and configurable. 
+__[View](#popup)__
+
+### Responsive Dropdown
+Turn your left secondary navigation (or list of options) into a dropdown for mobile!
+__[View](#responsive-dropdown)__
+
+### Tabs
+Tabs in tabs, change onhashchange, dream big, become starry-eyed, this does it all :-) 
+__[View](#tabs)__
 <br>
 <br>
 
@@ -99,7 +130,7 @@ Each class just needs to have the following properties set on it
 ### Essential Functions
 
 #### libraryExtend
-Pass in an `array` for the first argument, and `notify` is optional defaulted to false. `notify` console log's when parameters get updated on an instance.
+Pass in an `array` for the first argument, or a single plugin class, and `notify` is optional defaulted to false. `notify` console log's when parameters get updated on an instance.
 
 ```javascript
 libraryExtend(plugins:array [,notify:boolean])
@@ -148,10 +179,29 @@ formInputs.init();
 
 #### smoothScroll
 
-First parameter is the HTMLElement to scroll to, the second is the speed. Default speed is 100. This uses the `window.scroll` so should work cross-browser. This stops scrolling if the previous pixel is the same as the next, if the scroll tries to get broken, or if it can't scroll to anymore.
+First parameter is the HTMLElement's top to scroll to position top, the second is the speed. Default speed is 100. This uses the `window.scroll` so should work cross-browser. This stops scrolling if the previous pixel is the same as the next, if the scroll tries to get broken, or if it can't scroll to anymore.
 
 ```javascript
-smoothScroll(scrollToElement:HTMLElement | $(HTMLElement), speed:number);
+smoothScroll(scrollToTop :number [,speed: number]);
+```
+
+#### cookies
+ 
+__params__
+Option |  Description
+------ | ---- 
+path | path to the cookie, default is the current `location.pathname`
+expires | set in minutes. Time the cookie will expire.
+secure | if it can only be accessed via https. This gets set automatically when `sameSite` is set to `None`
+sameSite | `Lax`, `Strict` or `None` are the options
+
+
+```javascript
+//setting a cookie
+cookies.set(name:string,value:string, params:object);
+
+//getting a cookie
+cookies.get(name,{path: '/'})
 ```
 
 <br>

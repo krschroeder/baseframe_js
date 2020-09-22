@@ -7,6 +7,8 @@ Common/expected/needed/integrated JavaScript functionality for websites. You'll 
 These are made to work with [Cash](https://github.com/fabiospampinato/cash) (with jQuery still an option) as the only dependency. Cash is a small jQuery alternative that give developers DOM traversing without the extra bloat. In my opinion, having a DOM traversing Library is essential. Also, everybody who's done any web developement is familiar with jQuery syntax.
 
 ## Features and Advantages
+### Its small!
+Combined all together (with my minification settings at least) its ~ 49k. Add that with Cash and its less than jQuery alone!
 
 ### Pass in parameter options with a `data-` attribute
 The data attribute is always the `data-` (of course) and then the plugin name `pluginName` followed by `-options`.
@@ -16,8 +18,8 @@ __For Example:__ all have options that can be plugged in as a data attribute, in
 ```html
 <div id="your-plugin-elem" data-pluginName-options="{option:'text',option2: true, etc: 'you get the idea'}"></div>
 ```
-
-<p><strong>For Example:</strong> all can have their configuration change when added into `$.fn`. Which can come in handy sometimes when things get complex</p>
+### Update parameters after init!
+__For Example:__ all can have their configuration change when added into `$.fn`. Which can come in handy sometimes when things get complex. Could come in handy for instance when you have an accordion (or collapsible section) and on mobile you want it to scroll to the top on open (that plugin does that!), but not on desktop.
     
 ```javascript
 $('.your-plugin-elem').PluginOfSorts({change:'yep', height: 1e6})

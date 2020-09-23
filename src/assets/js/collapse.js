@@ -16,6 +16,7 @@ export default class Collapse {
 	static get pluginName() {
 		return DATA_NAME;
 	}
+	
 
 	constructor(element, options, index) {
 

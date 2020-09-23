@@ -29,6 +29,10 @@ $('.your-plugin-elem').PluginOfSorts({change:'yep', height: 1e6})
 
 Lots of callback functions to run after and before events and such that may help you out when you need it most.
 
+### It works in IE11
+These scripts all work back to IE11. One day in the future perhaps we can drop that support.
+
+
 ## Example Script of Importing Everything In
 ```javascript
 //lets bring it all on in
@@ -185,10 +189,10 @@ formInputs.init();
 
 #### smoothScroll
 
-First parameter is the HTMLElement's top to scroll to position top, the second is the speed. Default speed is 100. This uses the `window.scroll` so should work cross-browser. This stops scrolling if the previous pixel is the same as the next, if the scroll tries to get broken, or if it can't scroll to anymore.
+First parameter is the HTMLElement's top to scroll to position top, the second is the speed. Default speed is 100. This uses the `window.scroll` so should work cross-browser. This stops scrolling if the previous pixel is the same as the next, if the scroll tries to get broken, or if it can't scroll to anymore. Third argument is a callback function to run after the scrolling is done. The 4th parameter is the arguments for that function if necessary.
 
 ```javascript
-smoothScroll(scrollToTop :number [,speed: number]);
+smoothScroll(scrollToTop :number [,speed: number, afterScroll:Function, afterScrollArgs:Array<any>]);
 ```
 
 #### cookies
@@ -197,11 +201,11 @@ Getting and setting cookies made easy!
  
 __params__
 Option |  Description
------- | ---- 
-path | path to the cookie, default is the current `location.pathname`
+------ | -------
+path | path to the cookie, default is the current `location.pathname`.
 expires | set in minutes. Time the cookie will expire.
-secure | if it can only be accessed via https. This gets set automatically when `sameSite` is set to `None`
-sameSite | `Lax`, `Strict` or `None` are the options
+secure | if it can only be accessed via https. This gets set automatically when `sameSite` is set to `None`.
+sameSite | `Lax`, `Strict` or `None` are the options.
 
 
 ```javascript

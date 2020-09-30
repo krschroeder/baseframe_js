@@ -3,11 +3,13 @@ import validJSONFromString from './util/formatting-valid-json.js';
 import generateGUID from './util/guid-generate.js';
 
 import { isHidden, photoRegex, CSS_TRANSISTION_DELAY } from './util/helpers';
-
+import {filterHash} from './util/get-param';
 const VERSION = "1.0.0";
 const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
 const INSTANCE_NAME = `${DATA_NAME}_instance`;
+
+window.filterHash = filterHash;
 
 export default class Popup {
 
@@ -59,6 +61,7 @@ export default class Popup {
 			appendPopupTo: 'body',
 			showPopup: 'popup--show-popup',
 			enableEvent: 'click',
+			useHashFilter: null,
 			loadLocationHash: true,
 			useLocationHash: true,
 			afterLoaded: () => { },
@@ -79,15 +82,15 @@ export default class Popup {
 			console.warn('If loading from a location hash pleasemake sure to specify an ID not auto generated. This won\'t work should the page get reloaded.');
 		}
 
-		_.$popup = null;
-
+		
 		_.key = {
 			ARROWLEFT: 37,
 			ARROWRIGHT: 39,
 			ESCAPE: 27
 		};
-
+		
 		//Content
+		_.$popup = null;
 		_.elemGrabbedLocation = null;
 		_.grabContentsFromDom = false;
 		_.currentElem = null;
@@ -113,15 +116,43 @@ export default class Popup {
 		
 	}
 
+	getHistoryEntry(blank = false) {
+		// useHashFilter is set to a string value
+		// returns new history state string
+		const _ = this;
+		const {useHashFilter} = _.params;
+		const {hash} = location;
+		let historyItem = blank ? '' : _.historyID; console.log('historyItema',historyItem)
+
+		if (useHashFilter) { //useHashFilter +"="+ 
+			const newHash = `#${useHashFilter}=${historyItem}`;
+
+			historyItem = hash !=="" ? 
+			( hash.match(newHash) ? 
+				hash.replace(filterHash(useHashFilter),historyItem) : 
+				`${hash}${newHash}`
+			) : 
+				newHash
+			;
+
+		}
+		console.log('historyItem',historyItem)
+		return historyItem;
+	}
+
 	initLoadEvents() {
 		const _ = this;
+		const { launch, useHashFilter,loadLocationHash} = _.params;
 
 		_.$element.on(`${_.params.enableEvent}.${EVENT_NAME} ${EVENT_NAME}`, function (e) {
-			 
+			
+			const {useLocationHash} = _.params;
+
 			e.preventDefault();
 			
-			if (_.params.useLocationHash){
-				window.history.pushState(null, null, _.historyID );
+			if (useLocationHash) {
+			
+				window.history.pushState(null, null, _.getHistoryEntry() );
 			}
 			_.loadPopup(this);
 
@@ -129,12 +160,15 @@ export default class Popup {
 
 
 		$(window).on(`popstate.${EVENT_NAME} ${EVENT_NAME}`,(e) => {
-			if (_.params.useLocationHash) {
-				
+			const {useLocationHash, useHashFilter} = _.params;
+
+			if (useLocationHash) {
+			
 				if (
 					_.historyID === _.isOpenHash ||
-					_.historyID === location.hash
+					_.historyID === (useHashFilter ? filterHash(useHashFilter) : location.hash)
 				){
+				
 					if(_.isOpen) {
 					
 						_._close();
@@ -149,11 +183,11 @@ export default class Popup {
 				
 		});
 
-		if (_.params.launch) {
+		if (launch) {
 			_.loadPopup(document.activeElement);
 		}
 
-		if (_.params.loadLocationHash && _.historyID === location.hash){
+		if (loadLocationHash && _.historyID === (useHashFilter ? filterHash(useHashFilter) : location.hash)){
 			_.loadPopup(_.$element);
 			_.loadedFromHash = true; 
 		}
@@ -161,18 +195,19 @@ export default class Popup {
 
 	loadPopup(clickElem = null) {
 		const _ = this;
+		const {escapeClose, useHashFilter} = _.params;
 
 		if (clickElem) {
 			_.$domClickElem = $(clickElem);
 			_.domElemClicked = true;
 		}
 		
-		_.isOpenHash = window.location.hash;
-
+		_.isOpenHash =  useHashFilter ? filterHash(useHashFilter) : location.hash;
+	
 		_.addToDOM();
 		_.closeHandlers();
 
-		if (_.params.escapeClose) {
+		if (escapeClose) {
 			_.escapeClose();
 		}
 
@@ -260,7 +295,7 @@ export default class Popup {
 			}
 
 			_.groupCount = _.$listElems.length;
-			``
+		
 			title = currentElem.data('popup-title') || currentElem.attr('title');
 			caption = currentElem.data('popup-caption');
 		}
@@ -519,15 +554,15 @@ export default class Popup {
 	_closeEvent(){
 		const _ = this;
 
-		if (_.params.useLocationHash){  
-			
+		if (_.params.useLocationHash){ 
+			 
 			if (_.loadedFromHash) {
-
-				_._close();
-				_.loadedFromHash = false;
 				
-				window.history.pushState(null, null, '#popup-closed' );
-			
+				_._close();
+				_.loadedFromHash = false; console.log('yeahhh',_.getHistoryEntry(true))
+				 
+				window.history.pushState(null, null, _.getHistoryEntry(true));
+				
 			} else {
 				
 				window.history.back(); 

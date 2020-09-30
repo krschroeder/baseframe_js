@@ -1,6 +1,7 @@
 import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json.js';
 import getType from './util/helpers';
+import {filterHash} from './util/get-param';
 
 const VERSION = "1.0.0";
 const DATA_NAME = 'Tabs';
@@ -31,6 +32,7 @@ export default class Tabs {
 			tabsBodyItemCss: 'tabs__body-item',
 			tabsBodyItemShowCss: 'tabs__body-item--show',
 			tabsHeadCss: 'tabs__nav',
+			useHashFilter: null,
 			useLocationHash: true,
 			loadLocationHash: true,
 			addIDtoPanel: true,
@@ -39,6 +41,7 @@ export default class Tabs {
 			onInit: () => { }
 		};
 		
+		//state
 		_.$element = $(element);
 
 		$.store.set(
@@ -52,8 +55,9 @@ export default class Tabs {
 		_.$tabsBody = _.$element.find(`.${_.params.tabsBodyCss}`).first();
 
 		_.prevTabId = null;
-		//init
 
+
+		//init
 		_.ADA_Attributes();
 		_.tabsChangeEvent();
 		_.changeTabElements(_.params.defaultContent);
@@ -101,12 +105,16 @@ export default class Tabs {
 		const _ = this;
 
 		_.$tabsList.on(`${_.params.tabsEvent}.${EVENT_NAME} ${EVENT_NAME}`, "a", function (e) {
-
 			const tabId = $(this).attr('href');
-
+			
 			if (_.params.useLocationHash) {
-	
-				history.pushState(null, null, tabId);
+				let historyItem = tabId;
+
+				const {useHashFilter} = _.params;
+				if (useHashFilter) {
+					historyItem = location.hash.replace(filterHash(useHashFilter),tabId);
+				}
+				history.pushState(null, null, historyItem);
 			}
 			
 			_.loadTabContent(tabId.substring(1));
@@ -117,9 +125,10 @@ export default class Tabs {
 
 	loadTabContent(tabId) {
 		const _ = this;
-		const locationHashArray = location.hash.split('#');
+		const {useHashFilter, useLocationHash} = _.params;
 		
 		if (_.params.loadLocationHash) {
+			const locationHashArray = (useHashFilter ? filterHash(useHashFilter) : location.hash).split('#');
 			
 			if (!locationHashArray.length) return;
 
@@ -129,7 +138,7 @@ export default class Tabs {
 			});
 		}
 		
-		if (!_.params.useLocationHash) {
+		if (!useLocationHash) {
 			
 			_.changeTabElements(tabId);
 		}

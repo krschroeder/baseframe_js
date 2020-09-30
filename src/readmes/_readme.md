@@ -1,13 +1,13 @@
 # Base_Frame Plugins &amp; Common JS
 
-Common/expected/needed/integrated JavaScript functionality for websites. You'll notice a few token are missing (like a carousel for example), that's because there are just some really, realy well made, IMO. Not touching that stuff, use those others, they're great. The ones here are configurable, and as its set up now easy to import in.
+Common/expected/needed/integrated JavaScript functionality for websites. You'll notice a few token are missing (like a carousel for example), that's because there are just some really, really well made, IMO. Not touching that stuff, use those others, they're great. The ones here are configurable, and as its set up now easy to import in.
 
 ## Runs with [Cash](https://github.com/fabiospampinato/cash) (or JQuery if you wish)
 
 These are made to work with [Cash](https://github.com/fabiospampinato/cash) (with jQuery still an option) as the only dependency. Cash is a small jQuery alternative that give developers DOM traversing without the extra bloat. In my opinion, having a DOM traversing Library is essential. Also, everybody who's done any web developement is familiar with jQuery syntax.
 
 ## Features and Advantages
-### Its small!
+### It's small!
 Combined all together (with my minification settings at least) its ~ 49k. Add that with Cash and its less than jQuery alone!
 
 ### Pass in parameter options with a `data-` attribute
@@ -18,8 +18,8 @@ __For Example:__ all have options that can be plugged in as a data attribute, in
 ```html
 <div id="your-plugin-elem" data-pluginName-options="{option:'text',option2: true, etc: 'you get the idea'}"></div>
 ```
-### Update parameters after init!
-__For Example:__ all can have their configuration change when added into `$.fn`. Which can come in handy sometimes when things get complex. Could come in handy for instance when you have an accordion (or collapsible section) and on mobile you want it to scroll to the top on open (that plugin does that!), but not on desktop.
+### Update Parameters After Init!
+__For Example:__ all can have their configuration change when added into `$.fn`. Which can come in handy sometimes when things get complex. Could come in handy for instance when you have an accordion (or collapsible section) and on mobile you want it to scroll to the top on open (that plugin does that!), but not on desktop. This works for the vast majority of params, but not all FYI. For example, I can specify a 'click' event and that can only be set on 'init'. Perhaps I'll document this later on though.
     
 ```javascript
 $('.your-plugin-elem').PluginOfSorts({change:'yep', height: 1e6})
@@ -30,7 +30,7 @@ $('.your-plugin-elem').PluginOfSorts({change:'yep', height: 1e6})
 Lots of callback functions to run after and before events and such that may help you out when you need it most.
 
 ### It works in IE11
-These scripts all work back to IE11. One day in the future perhaps we can drop that support.
+These scripts all work back to IE11. One day in the future perhaps we can drop that support. Tried to avoid scripting that needs polyfills, or looks ugly compiled into ES5.  
 
 
 ## Example Script of Importing Everything In
@@ -70,11 +70,14 @@ libraryExtend([
 ]); 
 ```
 
+## Using Styles For Plugins
+Styles are located in the `src/assets/scss/` directory and all can be grabbed that way and added on in. Still should do a little more work in updating the SCSS variables to be frank. So I would just drag those files into the project directly (which is what I just do). I think it's painful anways to import in then override defaults in your own file. Bringing it in (IMO) is little more elegant.
+
+
 ## Plugin Names and What They Do.
 
-
 ### Collapse 
-Its basically like an Accordion, but more configurable 
+It's basically like an Accordion, but more configurable 
 __[View](#collapse)__
 
 ### Navigation Desktop

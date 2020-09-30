@@ -13,8 +13,11 @@ import Tabs from './src/assets/js/tabs';
 import EqualizeContent from './src/assets/js/equalize-content';
 import MarketoForm from './src/assets/js/marketo-form';
 import ResponsiveDropDown from './src/assets/js/responsive-dropdowns';
-import formInputs from './src/assets/js/form-input';
+
 import cookies from './src/assets/js/cookies';
+import formInputs from './src/assets/js/form-input';
+import throttledResize from './src/assets/js/util/throttle-resize';
+import bgResponsiveLoad from './src/assets/js/bg-responsive-load';
 
 // this is needed for all to operate
 // so I would say this makes sense
@@ -31,7 +34,9 @@ export {
     Popup,
     ResponsiveDropDown,
     Tabs,
+    bgResponsiveLoad,
+    cookies,
     formInputs,
     smoothScroll,
-    cookies
+    throttledResize
 }

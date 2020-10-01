@@ -126,9 +126,10 @@ export default class Tabs {
 	loadTabContent(tabId) {
 		const _ = this;
 		const {useHashFilter, useLocationHash} = _.params;
-		
+	
 		if (_.params.loadLocationHash) {
-			const locationHashArray = (useHashFilter ? filterHash(useHashFilter) : location.hash).split('#');
+		
+			const locationHashArray = (useHashFilter ? (filterHash(useHashFilter) || '') : location.hash).split('#');
 			
 			if (!locationHashArray.length) return;
 
@@ -142,6 +143,7 @@ export default class Tabs {
 			
 			_.changeTabElements(tabId);
 		}
+		
 	}
 
 	changeTabElements(_tabId) {

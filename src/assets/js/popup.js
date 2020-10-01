@@ -117,26 +117,28 @@ export default class Popup {
 	}
 
 	getHistoryEntry(blank = false) {
-		// useHashFilter is set to a string value
-		// returns new history state string
+	
 		const _ = this;
 		const {useHashFilter} = _.params;
-		const {hash} = location;
-		let historyItem = blank ? '' : _.historyID; console.log('historyItema',historyItem)
+		const {hash} = window.location;
+		let historyItem = blank ? '' : _.historyID; 
 
-		if (useHashFilter) { //useHashFilter +"="+ 
+		if (useHashFilter) { 
 			const newHash = `#${useHashFilter}=${historyItem}`;
-
+			const foundHash = `#${useHashFilter}=${filterHash(useHashFilter)}`;
+		
 			historyItem = hash !=="" ? 
-			( hash.match(newHash) ? 
-				hash.replace(filterHash(useHashFilter),historyItem) : 
-				`${hash}${newHash}`
+			( hash.match(foundHash) ? 
+				hash.replace(RegExp('([&?]|)'+ foundHash),historyItem) : 
+				`${hash}&${newHash}`
 			) : 
 				newHash
 			;
 
 		}
-		console.log('historyItem',historyItem)
+
+		if (historyItem === "") historyItem = "#";
+
 		return historyItem;
 	}
 
@@ -161,7 +163,7 @@ export default class Popup {
 
 		$(window).on(`popstate.${EVENT_NAME} ${EVENT_NAME}`,(e) => {
 			const {useLocationHash, useHashFilter} = _.params;
-
+			
 			if (useLocationHash) {
 			
 				if (
@@ -556,21 +558,24 @@ export default class Popup {
 
 		if (_.params.useLocationHash){ 
 			 
-			if (_.loadedFromHash) {
+			// if (_.loadedFromHash) {
 				
-				_._close();
-				_.loadedFromHash = false; console.log('yeahhh',_.getHistoryEntry(true))
+			// 	_._close();
+			// 	_.loadedFromHash = false; 
 				 
-				window.history.pushState(null, null, _.getHistoryEntry(true));
+			// 	// window.history.pushState(null, null, _.getHistoryEntry(true));
 				
-			} else {
+			// } else {
 				
-				window.history.back(); 
-			}
+			// 	// window.history.back(); 
+			// }
+
+			window.history.pushState(null, null, _.getHistoryEntry(true));
 			
-		} else {
+		} 
+		//else {
 			_._close();
-		}
+		//}
 	}
 
 
@@ -579,7 +584,7 @@ export default class Popup {
 		const { showPopup, fadeOut } = _.params;
 		const popupID = '#' + _.params.popupID;
 
-		$(popupID).removeClass(showPopup);
+		_.$popup.removeClass(showPopup);
 
 		_.params.onClose(_.$element, popupID);
 		

@@ -3,13 +3,11 @@ import validJSONFromString from './util/formatting-valid-json.js';
 import generateGUID from './util/guid-generate.js';
 
 import { isHidden, photoRegex, CSS_TRANSISTION_DELAY } from './util/helpers';
-import {filterHash} from './util/get-param';
+import {getHashParam} from './util/get-param';
 const VERSION = "1.0.0";
 const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
 const INSTANCE_NAME = `${DATA_NAME}_instance`;
-
-window.filterHash = filterHash;
 
 export default class Popup {
 
@@ -125,7 +123,7 @@ export default class Popup {
 
 		if (useHashFilter) { 
 			const newHash = `#${useHashFilter}=${historyItem}`;
-			const foundHash = `#${useHashFilter}=${filterHash(useHashFilter)}`;
+			const foundHash = `#${useHashFilter}=${getHashParam(useHashFilter)}`;
 		
 			historyItem = hash !=="" ? 
 			( hash.match(foundHash) ? 
@@ -168,7 +166,7 @@ export default class Popup {
 			
 				if (
 					_.historyID === _.isOpenHash ||
-					_.historyID === (useHashFilter ? filterHash(useHashFilter) : location.hash)
+					_.historyID === (useHashFilter ? getHashParam(useHashFilter) : location.hash)
 				){
 				
 					if(_.isOpen) {
@@ -189,7 +187,7 @@ export default class Popup {
 			_.loadPopup(document.activeElement);
 		}
 
-		if (loadLocationHash && _.historyID === (useHashFilter ? filterHash(useHashFilter) : location.hash)){
+		if (loadLocationHash && _.historyID === (useHashFilter ? getHashParam(useHashFilter) : location.hash)){
 			_.loadPopup(_.$element);
 			_.loadedFromHash = true; 
 		}
@@ -204,7 +202,7 @@ export default class Popup {
 			_.domElemClicked = true;
 		}
 		
-		_.isOpenHash =  useHashFilter ? filterHash(useHashFilter) : location.hash;
+		_.isOpenHash =  useHashFilter ? getHashParam(useHashFilter) : location.hash;
 	
 		_.addToDOM();
 		_.closeHandlers();
@@ -557,25 +555,10 @@ export default class Popup {
 		const _ = this;
 
 		if (_.params.useLocationHash){ 
-			 
-			// if (_.loadedFromHash) {
-				
-			// 	_._close();
-			// 	_.loadedFromHash = false; 
-				 
-			// 	// window.history.pushState(null, null, _.getHistoryEntry(true));
-				
-			// } else {
-				
-			// 	// window.history.back(); 
-			// }
-
 			window.history.pushState(null, null, _.getHistoryEntry(true));
-			
 		} 
-		//else {
-			_._close();
-		//}
+		
+		_._close();
 	}
 
 

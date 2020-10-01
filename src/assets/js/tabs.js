@@ -1,7 +1,7 @@
 import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json.js';
 import getType from './util/helpers';
-import {filterHash} from './util/get-param';
+import {getHashParam} from './util/get-param';
 
 const VERSION = "1.0.0";
 const DATA_NAME = 'Tabs';
@@ -111,9 +111,14 @@ export default class Tabs {
 				let historyItem = tabId;
 
 				const {useHashFilter} = _.params;
+				const {hash} = location;
+
 				if (useHashFilter) {
-					historyItem = location.hash.replace(filterHash(useHashFilter),tabId);
+				
+					historyItem = hash ? hash.replace(getHashParam(useHashFilter),tabId) : `#${useHashFilter}=${tabId}`;
+					
 				}
+
 				history.pushState(null, null, historyItem);
 			}
 			
@@ -125,11 +130,11 @@ export default class Tabs {
 
 	loadTabContent(tabId) {
 		const _ = this;
-		const {useHashFilter, useLocationHash} = _.params;
+		const {loadLocationHash, useHashFilter, useLocationHash} = _.params;
 	
-		if (_.params.loadLocationHash) {
+		if (loadLocationHash) {
 		
-			const locationHashArray = (useHashFilter ? (filterHash(useHashFilter) || '') : location.hash).split('#');
+			const locationHashArray = (useHashFilter ? (getHashParam(useHashFilter) || '') : location.hash).split('#');
 			
 			if (!locationHashArray.length) return;
 

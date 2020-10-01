@@ -19,7 +19,7 @@ const getUrlParam = (name)=>{
    return _getParam(name);
 }
 
-export const filterHash = (name) => {
+export const getHashParam = (name) => {
    return _getParam(name,location.hash,'#','([^&;]*)|&|#|$');
 }
 

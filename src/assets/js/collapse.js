@@ -2,6 +2,7 @@ import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json.js';
 import {CSS_TRANSISTION_DELAY} from './util/helpers';
 import smoothScroll from './util/smoothScroll';
+import {getHashParam} from './util/get-param';
 
 const VERSION = "2.1.2";
 const DATA_NAME = 'Collapse';
@@ -41,8 +42,9 @@ export default class Collapse {
 			moveToTopOnOpen: false,
 			moveToTopOffset: 0,
 			scrollSpeed: 100,
-			loadLocationHash: true,
+			useHashFilter: null,
 			useLocationHash: true,
+			loadLocationHash: true,
 			afterOpen: () => { },
 			afterClose: () => { },
 			afterInit: () => { }
@@ -79,8 +81,8 @@ export default class Collapse {
 		$(_.element).find(_.params.elemsBody).each(function () {
 			if ($(this).hasClass(_.params.openCss)) {
 
-				const thisCollapsibleID = `#${$(this).attr('id')}`;
-				const btnElems = `[data-href="${thisCollapsibleID}"],a[href="${thisCollapsibleID}"]`;
+				const collapseID = `#${$(this).attr('id')}`;
+				const btnElems = `[data-href="${collapseID}"],a[href="${collapseID}"]`;
 				$('body').find(btnElems)
 					.addClass(_.params.openCss)
 					.attr('aria-expanded', true);
@@ -127,20 +129,38 @@ export default class Collapse {
 			if ( _.toggling ) { return;}
 			
 			const $this = $(this);
-			const thisCollapsibleID = $this.attr('href') || $this.attr('data-href');
+			const collapseID = $this.attr('href') || $this.attr('data-href');
 
 			if (_.params.useLocationHash) {
 
-				history.pushState(null, null, thisCollapsibleID);
-		
+				let historyItem = collapseID;
+
+				const {useHashFilter} = _.params;
+				const {hash} = location;
+
+				if (useHashFilter) {
+					
+					historyItem = hash ? hash.replace(getHashParam(useHashFilter),collapseID) : `#${useHashFilter}=${collapseID}`;
+					
+				}
+
+				history.pushState(null, null, historyItem);
 			}
 
-			_._toggleAction(thisCollapsibleID)
+			_._toggleAction(collapseID);
 		});
 
 		$(window).on(`popstate.${EVENT_NAME}`,(e) => {
-			if (_.params.useLocationHash) {
-				_._toggleAction(location.hash);
+
+			const {useLocationHash, useHashFilter} = _.params;
+
+			if (useLocationHash) {
+
+				const hash = (useHashFilter ? (getHashParam(useHashFilter) || '') : location.hash);
+				
+				// if(hash === "") return;
+
+				_._toggleAction(hash);
 				e.preventDefault();
 			}
 		})
@@ -148,9 +168,12 @@ export default class Collapse {
 
 	loadContentFromHash() {
 		const _ = this;
-		const locationHashArray = location.hash.split('#');
-		
-		if (_.params.loadLocationHash) {
+
+		const {loadLocationHash, useHashFilter} = _.params;
+
+		const locationHashArray = (useHashFilter ? (getHashParam(useHashFilter) || '') : location.hash).split('#');
+
+		if (loadLocationHash) {
 			
 			if (!locationHashArray.length) return;
 
@@ -163,17 +186,20 @@ export default class Collapse {
 	}
 
 
-	_toggleAction(thisCollapsibleID,noAnimation = false) {
-		const _ = this; console.log(thisCollapsibleID)
-		const $collapsibleItem = $(thisCollapsibleID);
-		const CLOSE = $collapsibleItem.hasClass(_.params.openCss);
-		const btnElems = `[data-href="${thisCollapsibleID}"],a[href="${thisCollapsibleID}"]`;
+	_toggleAction(collapseID,noAnimation = false) {
+		const _ = this; 
+
+		const {openCss, openNoAnimateCss, togglingCss, toggleGroup} = _.params;
+		const $collapsibleItem = $(collapseID);
+
+		const CLOSE = $collapsibleItem.hasClass(openCss);
+		const btnElems = `[data-href="${collapseID}"],a[href="${collapseID}"]`;
 		const $btnElems = $(_.onElem).find(btnElems);
 
-		$collapsibleItem.addClass(noAnimation ? (_.params.openCss + " " + _.params.openNoAnimateCss): _.params.togglingCss);
-		$btnElems.addClass(_.params.togglingCss);
+		$collapsibleItem.addClass(noAnimation ? (openCss + " " + openNoAnimateCss): togglingCss);
+		$btnElems.addClass(togglingCss);
 
-		if (_.params.toggleGroup) {
+		if (toggleGroup) {
 			_._toggleGroup($collapsibleItem);
 		}
 
@@ -270,6 +296,8 @@ export default class Collapse {
 	_moveToTopOnOpen($collapsibleItem) {
 		const _ = this;
 		const $item = $collapsibleItem.parent(_.params.elemsItem) || $collapsibleItem;
+		
+		if (!$item.length) return;
 
 		const elemOffsetTop = $item.offset().top;
 		const top = elemOffsetTop - _.params.moveToTopOffset;

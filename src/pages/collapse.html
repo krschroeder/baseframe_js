@@ -1,5 +1,4 @@
 {{>top-head title="Collapse"}}
-<link href="../css/collapse.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 	{{>header}}
@@ -70,7 +69,11 @@
 
 	$(function(){
 
-		$('.collapse-group').collapse({moveToTopOnOpen:true,toggleGroup:true});
+		$('.collapse-group').collapse({
+			moveToTopOnOpen:true,
+			toggleGroup:true,
+			// useHashFilter: 'collapse'
+		});
 
 	});
 

@@ -19,6 +19,7 @@ tabsBodyCss | string | 'tabs__body' | The CSS class for the body element in whic
 tabsBodyItemCss | string | 'tabs__body-item' | The CSS class for the tab content within the 'tabs body'.
 tabsBodyItemShowCss | string | 'tabs__body-item--show' | The CSS class added to the 'tabs body item' to show it.
 tabsHeadCss | string | 'tabs__nav' | The CSS class for the tabs navigation, added to the `<ul>` or its parent element.
+useHashFilter | string | null | If there is a number of elements where the `location.hash` value is used, it may be necessary to filter it to get the intended data. Pass in a string value, i.e.: 'tabs' and it'll load and filter through as needed while maintaining the remaining location hash values. Example value of this could be `#tabs=#requirements&foo=bar&baz=foo`. This only gets used if 'useLocationHash' option is selected. 
 useLocationHash | boolean | true | Use window location hash and history push state so the browser back button can be used (or forward as well) to toggle through tabs.
 loadLocationHash | boolean | true | Add in location hash parameters to load default tabs. `#files#files-inner` loading multiple is possible if many diffrent tabs. Also load tabs within tabs and such as well.
 addIDtoPanel | boolean | true | Adds an ID attribute to the panel for ADA compliance, but isn't necessary for its functionality.

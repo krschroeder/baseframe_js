@@ -4,6 +4,8 @@ import generateGUID from './util/guid-generate.js';
 
 import { isHidden, photoRegex, CSS_TRANSISTION_DELAY } from './util/helpers';
 import {getHashParam} from './util/get-param';
+import getHistoryEntry from './util/plugin/get-history-entry';
+
 const VERSION = "1.0.0";
 const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
@@ -117,27 +119,9 @@ export default class Popup {
 	getHistoryEntry(blank = false) {
 	
 		const _ = this;
-		const {useHashFilter} = _.params;
-		const {hash} = window.location;
 		let historyItem = blank ? '' : _.historyID; 
-
-		if (useHashFilter) { 
-			const newHash = `#${useHashFilter}=${historyItem}`;
-			const foundHash = `#${useHashFilter}=${getHashParam(useHashFilter)}`;
 		
-			historyItem = hash !=="" ? 
-			( hash.match(foundHash) ? 
-				hash.replace(RegExp('([&?]|)'+ foundHash),historyItem) : 
-				`${hash}&${newHash}`
-			) : 
-				newHash
-			;
-
-		}
-
-		if (historyItem === "") historyItem = "#";
-
-		return historyItem;
+		return getHistoryEntry(_, historyItem);
 	}
 
 	initLoadEvents() {

@@ -48,8 +48,11 @@ import installStoreToLibrary, {
     Popup,
     ResponsiveDropDown,
     Tabs,
+    bgResponsiveLoad,
+    cookies,
     formInputs,
-    smoothScroll
+    smoothScroll,
+    throttledResize
 } from 'baseframe-js';
 
 //necessary for all plugin's to operate
@@ -183,6 +186,23 @@ const Store = {
 
 ### Functions
 
+
+#### bgResponsiveLoad
+
+This plugin simply loads an background image of a specified element, if it's visible. This function exists because most browsers load an image (even a background one) even if the element isn't visible. The event removes itself if nothing is left to load.
+
+
+__params__
+Option |  Default | Description
+------ | ------- | -----
+delay | 200 | Time delay in which the function will run after the resize event.
+eventName | 'BackgroundImageLoad' | Event namespace of the load event.
+bgDataName | 'bg-img' | The data attribute name that holds the background image to load.
+
+```javascript
+bgResponsiveLoad(selector: string | HTMLElement [, params] );
+```
+
 #### formInputs
 formInputs function currently adds in space-bar support for radio buttons, and checkbox inputs. As long as there is a `for` attribute on a `<label>` that maps to an input.
 
@@ -201,6 +221,7 @@ smoothScroll(scrollToTop :number [,speed: number, afterScroll:Function, afterScr
 #### cookies
 
 Getting and setting cookies made easy!
+
  
 __params__
 Option |  Description
@@ -251,10 +272,11 @@ toggleClickBindOn | string |  'group' |  Attaches the click to the selector or `
 toggleDuration | number |  500 |  The speed at which the items will open, should pair with CSS transition settings.
 toggleGroup | boolean |  false |  More or less toggles the other opened element(s) closed, and make it behave like an accordion.
 moveToTopOnOpen | boolean |  false |  After the element is opened, the item will move to the top of it. Good for mobile.
-moveToTopOffset | string |  0 |  Should we need to offset the move to the top if the __moveToTopOnOpen__ is set to `true`.
+moveToTopOffset | number |  0 |  Should we need to offset the move to the top if the __moveToTopOnOpen__ is set to `true`.
 scrollSpeed | number |  100 |  The speed of the scroll if __moveToTopOnOpen__ is set to `true`.
-loadLocationHash | boolean |  true | Loads with a location hash in the browser address bar, must of course be the ID of the item. and can pass several as follows `#idOf1#idOf2` but beware if you do one may only open based on settings
+useHashFilter | string | null | If there is a number of elements where the `location.hash` value is used, it may be necessary to filter it to get the intended data. Pass in a string value, i.e.: 'collapse' and it'll load and filter through as needed while maintaining the remaining location hash values. this only gets used if 'useLocationHash' option is selected. 
 useLocationHash | boolean |  true |  Use the `window.location.hash` to open and close the items.
+loadLocationHash | boolean |  true | Loads with a location hash in the browser address bar, must of course be the ID of the item. and can pass several as follows `#idOf1#idOf2` but beware if you do one may only open based on settings
 afterOpen | function |  ($btnElems, $collapsibleItem) => { } |  callback function after an item is opened.
 afterClose | function |  ($btnElems, $collapsibleItem) => { } |  callback function after an item is closed.
 afterInit | function |  ($btnElems, $collapsibleItem) => { } | callback function after collapse is initialized.
@@ -639,6 +661,7 @@ loadingHTML | boolean |  `<div class="popup__loader"></div>` | Loading HTML.
 appendPopupTo | boolean |  'body' | the HTML element the popup appends to.
 showPopup | boolean |  'popup--show-popup' | CSS class used to show the popup.
 enableEvent | boolean |  'click' | The event to show the popup, change to whatever event on the element. Could be 'hover' if we wanted to for some reason.
+useHashFilter | string | null | If there is a number of elements where the `location.hash` value is used, it may be necessary to filter it to get the intended data. Pass in a string value, i.e.: 'popup' and it'll load and filter through as needed while maintaining the remaining location hash values. Example value of this could be `#popup=#your_popup__1&foo=bar&baz=foo`. This only gets used if 'useLocationHash' option is selected. 
 loadLocationHash | boolean |  true | Loads a popup from a `window.location.hash`, if the hash matches the popup.
 useLocationHash | boolean |  true | Uses history and creates a hash in the location to toggle the popups on or off
 afterLoaded | function |  () => { } | Function to run after the popup is displayed.
@@ -872,6 +895,7 @@ tabsBodyCss | string | 'tabs__body' | The CSS class for the body element in whic
 tabsBodyItemCss | string | 'tabs__body-item' | The CSS class for the tab content within the 'tabs body'.
 tabsBodyItemShowCss | string | 'tabs__body-item--show' | The CSS class added to the 'tabs body item' to show it.
 tabsHeadCss | string | 'tabs__nav' | The CSS class for the tabs navigation, added to the `<ul>` or its parent element.
+useHashFilter | string | null | If there is a number of elements where the `location.hash` value is used, it may be necessary to filter it to get the intended data. Pass in a string value, i.e.: 'tabs' and it'll load and filter through as needed while maintaining the remaining location hash values. Example value of this could be `#tabs=#requirements&foo=bar&baz=foo`. This only gets used if 'useLocationHash' option is selected. 
 useLocationHash | boolean | true | Use window location hash and history push state so the browser back button can be used (or forward as well) to toggle through tabs.
 loadLocationHash | boolean | true | Add in location hash parameters to load default tabs. `#files#files-inner` loading multiple is possible if many diffrent tabs. Also load tabs within tabs and such as well.
 addIDtoPanel | boolean | true | Adds an ID attribute to the panel for ADA compliance, but isn't necessary for its functionality.

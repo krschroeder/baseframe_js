@@ -37,6 +37,7 @@ loadingHTML | boolean |  `<div class="popup__loader"></div>` | Loading HTML.
 appendPopupTo | boolean |  'body' | the HTML element the popup appends to.
 showPopup | boolean |  'popup--show-popup' | CSS class used to show the popup.
 enableEvent | boolean |  'click' | The event to show the popup, change to whatever event on the element. Could be 'hover' if we wanted to for some reason.
+useHashFilter | string | null | If there is a number of elements where the `location.hash` value is used, it may be necessary to filter it to get the intended data. Pass in a string value, i.e.: 'popup' and it'll load and filter through as needed while maintaining the remaining location hash values. Example value of this could be `#popup=#your_popup__1&foo=bar&baz=foo`. This only gets used if 'useLocationHash' option is selected. 
 loadLocationHash | boolean |  true | Loads a popup from a `window.location.hash`, if the hash matches the popup.
 useLocationHash | boolean |  true | Uses history and creates a hash in the location to toggle the popups on or off
 afterLoaded | function |  () => { } | Function to run after the popup is displayed.

@@ -1,37 +1,50 @@
-import isVisible from './util/helpers';
+import { isVisible } from './util/helpers';
+
 
 const defaults = {
 	delay: 200,
-	eventName: 'BackgroundImageLoad'
+	eventName: 'BackgroundImageLoad',
+	bgDataName: 'bg-img'
 };
 
-const bgResponsiveLoad = (bgElem = '.bg-responsive', options = defaults ) => {
+const bgResponsiveLoad = (bgElem = '.bg-responsive', options ) => {
 
 	const _ = this;
-	const {eventName, delay} = options;
+	const params = $.extend(defaults,options);
+	const { eventName, delay } = params;
 	let resizeThrottle = null;
 
 	$(window).on(`resize.${eventName}`, () => {
 		resizeThrottle && clearTimeout(resizeThrottle);
 
-		resizeThrottle = setTimeout(loadVisibleImageElem, delay, bgElem);
+		resizeThrottle = setTimeout(loadVisibleImageElem, delay, bgElem, params);
 	});
 
-	loadVisibleImageElem(bgElem);
+	loadVisibleImageElem(bgElem, params);
 
 }
 
-function loadVisibleImageElem(bgElem) {
+function loadVisibleImageElem(bgElem, params) {
+
+	const { eventName, bgDataName } = params;
+
 	$(bgElem).each(function () {
 		const $this = $(this);
-		const bgImg = $this.data('bg-img');
+		const bgImg = $this.data(bgDataName);
 
 		if (isVisible(this) && bgImg) {
 			$this.css({
 				'background-image': `url("${bgImg}")`
 			});
+
+			$this.removeAttr('data-bg-img');
 		}
 	});
+
+	if (!$(`${bgElem}[data-${bgDataName}]`).length) {
+		$(window).off(`resize.${eventName}`);
+	}
+
 }
 
 export default bgResponsiveLoad;

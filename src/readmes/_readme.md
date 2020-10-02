@@ -48,8 +48,11 @@ import installStoreToLibrary, {
     Popup,
     ResponsiveDropDown,
     Tabs,
+    bgResponsiveLoad,
+    cookies,
     formInputs,
-    smoothScroll
+    smoothScroll,
+    throttledResize
 } from 'baseframe-js';
 
 //necessary for all plugin's to operate
@@ -183,6 +186,23 @@ const Store = {
 
 ### Functions
 
+
+#### bgResponsiveLoad
+
+This plugin simply loads an background image of a specified element, if it's visible. This function exists because most browsers load an image (even a background one) even if the element isn't visible. The event removes itself if nothing is left to load.
+
+
+__params__
+Option |  Default | Description
+------ | ------- | -----
+delay | 200 | Time delay in which the function will run after the resize event.
+eventName | 'BackgroundImageLoad' | Event namespace of the load event.
+bgDataName | 'bg-img' | The data attribute name that holds the background image to load.
+
+```javascript
+bgResponsiveLoad(selector: string | HTMLElement [, params] );
+```
+
 #### formInputs
 formInputs function currently adds in space-bar support for radio buttons, and checkbox inputs. As long as there is a `for` attribute on a `<label>` that maps to an input.
 
@@ -201,6 +221,7 @@ smoothScroll(scrollToTop :number [,speed: number, afterScroll:Function, afterScr
 #### cookies
 
 Getting and setting cookies made easy!
+
  
 __params__
 Option |  Description

@@ -1,6 +1,6 @@
 {
   "name": "baseframe-js",
-  "version": "1.1.4",
+  "version": "1.2.0",
   "description": "Common Javascript plugins and functions to help with Front-end Development on websites",
   "repository": {
     "type": "git",
@@ -25,7 +25,7 @@
   "private": false,
   "main": "scripts-all.js",
   "scripts": {
-    "start": "gulp --productionjs",
+    "start": "gulp",
     "build": "gulp --prod"
   },
   "peerDependencies": {

@@ -8,6 +8,7 @@ const PROD_JS = (!!yargs.argv.productionjs || PRODUCTION);
 const USE_JQUERY = !!yargs.argv.jquery;
 
 const SOURCE = path.resolve(__dirname, './src');
+const excludeRgx = /(node_modules\/(?!(@hilemangroup|bootstrap|baseframe\-js)))/;
 
 const config = {
     
@@ -48,7 +49,7 @@ const config = {
             rules: [
                 {
                     test: /.js$/,
-                    exclude: /(node_modules\/(?!(@hilemangroup|bootstrap)))/,
+                    exclude: excludeRgx,
                     use: [
                         {
                             loader: 'babel-loader'
@@ -58,7 +59,7 @@ const config = {
                 // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
                 {
                     test: /\.(tsx|ts)?$/,
-                    exclude: /(node_modules\/(?!(@hilemangroup|bootstrap)))/,
+                    exclude: excludeRgx,
                     loader: "ts-loader" 
                 }
             ]

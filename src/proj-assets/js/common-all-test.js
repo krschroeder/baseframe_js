@@ -11,6 +11,7 @@ import installStoreToLibrary, {
     Popup,
     ResponsiveDropDown,
     Tabs,
+    bgResponsiveLoad,
     formInputs,
     smoothScroll,
     cookies
@@ -51,4 +52,7 @@ $('body').on('click', 'a.smooth-scroll', function(e){
    
     e.preventDefault();
 })
+
 formInputs.init();
+
+bgResponsiveLoad('.background-area-bg');

@@ -16,10 +16,10 @@ export default class Parallax {
 		return DATA_NAME;
 	}
 
-	constructor(element, options){
+	constructor(element, options) {
 		const _ = this;
 		const dataOptions = validJSONFromString(
-			$(element).data(EVENT_NAME+'-options')
+			$(element).data(EVENT_NAME + '-options')
 		);
 		_.defaults = {
 			speed: 7,
@@ -36,13 +36,13 @@ export default class Parallax {
 
 		_.$window = $(window);
 		_.$element = $(element);
-			
+
 		$.store.set(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(_.defaults, options, dataOptions) 
+			$.extend(_.defaults, options, dataOptions)
 		);
-		_.params = $.store.get(element,`${DATA_NAME}_params`);
+		_.params = $.store.get(element, `${DATA_NAME}_params`);
 
 		_.requestAnimationFrame = !!window.requestAnimationFrame;
 
@@ -50,8 +50,8 @@ export default class Parallax {
 		_.initOffset = 0;
 		//props to get updated on resize
 		_.updatableProps();
-		
-		_.initiallyInView = ( _.$relElem.offset().top < _.winHeight );
+
+		_.initiallyInView = (_.$relElem.offset().top < _.winHeight);
 
 		_.init();
 	}
@@ -64,9 +64,9 @@ export default class Parallax {
 			EVENT_NAME
 		].join(' ');
 
-		$( window ).on( EVENTS , ()=> {
-			if( _.requestAnimationFrame ) {
-				window.requestAnimationFrame(function(){
+		$(window).on(EVENTS, () => {
+			if (_.requestAnimationFrame) {
+				window.requestAnimationFrame(function () {
 					_.parallax(_);
 				});
 			} else {
@@ -74,7 +74,7 @@ export default class Parallax {
 			}
 
 		}).trigger(EVENT_NAME);
-		
+
 		_.resizeUpdates();
 	}
 
@@ -98,66 +98,66 @@ export default class Parallax {
 	}
 
 
-	resizeUpdates(){
+	resizeUpdates() {
 		const _ = this;
 		let resizeThrottle = null;
 
-		$(window).on(`resize.${EVENT_NAME} ${EVENT_NAME}`,function(){
-			resizeThrottle = setTimeout(()=>{
+		$(window).on(`resize.${EVENT_NAME} ${EVENT_NAME}`, function () {
+			resizeThrottle = setTimeout(() => {
 
-				if ( !_.initOffsetSet && _.params.initOffset ) {
-					_.$element.css({'transform':''});
+				if (!_.initOffsetSet && _.params.initOffset) {
+					_.$element.css({ 'transform': '' });
 				}
-				
+
 				_.updatableProps();
 
-			},100);
+			}, 100);
 		});
 	}
-		
-	parallax(_){
+
+	parallax(_) {
 
 		const elemTop = _.$relElem.offset().top;
 		const scrollTop = window.pageYOffset;
 		const withinMinAndMaxIfSet = (_.minWidthIfSet && _.maxWidthIfSet);
 
-		if( _._isScrolledIntoView(elemTop, scrollTop) && withinMinAndMaxIfSet ){
-			
+		if (_._isScrolledIntoView(elemTop, scrollTop) && withinMinAndMaxIfSet) {
+
 			const speedInZeroInView = (scrollTop + _.winHeight) - elemTop;
-			const speed = (speedInZeroInView * _.speed );
+			const speed = (speedInZeroInView * _.speed);
 			const bgFillRatio = _.bgFillRatio;
 
 
-			if ( !_.initOffsetSet && _.initiallyInView ) {  
-				if( _.params.initOffset ){
-				
+			if (!_.initOffsetSet && _.initiallyInView) {
+				if (_.params.initOffset) {
+
 					_.initOffset = speed - (scrollTop * _.speed);
 					_.initOffsetSet = true;
 				}
 			}
 
 			if (Math.abs(speed) > _.scrollMaxPxStop) return;
-			 
-			const cssParams = ( _.axis === 'Y' ) ?
+
+			const cssParams = (_.axis === 'Y') ?
 				!_.bgFill ?
-				{	//don't fill it
-					'transform': `translate3d(0,${speed - _.initOffset}px,0)`
-				}
-				: { //fill the background
-					'transform': `translate3d(0,${speed - bgFillRatio}px,0)`,
-					'padding-top': `${ bgFillRatio }px`
-				}:
+					{	//don't fill it
+						'transform': `translate3d(0,${speed - _.initOffset}px,0)`
+					}
+					: { //fill the background
+						'transform': `translate3d(0,${speed - bgFillRatio}px,0)`,
+						'padding-top': `${bgFillRatio}px`
+					} :
 				{	//scroll sideways
 					'transform': `translate3d(${speed - _.initOffset}px,0,0)`
 				}
-			;
-				
+				;
+
 			_.$element.css(cssParams);
 
 			_.effectCleared = true;
 		} else {
 
-			if ( !_.effectCleared ) {
+			if (!_.effectCleared) {
 
 				_.$element.css({
 					'transform': '',
@@ -170,41 +170,41 @@ export default class Parallax {
 	}
 
 
-	_isScrolledIntoView(elemTop, scrollTop){
+	_isScrolledIntoView(elemTop, scrollTop) {
 		const _ = this;
 
-		
+
 		const elemBottom = (_.elemHeight * _.outStop) + elemTop;
 		const inView = (
 			(scrollTop < elemBottom) &&
 			(_.winHeight + scrollTop > elemTop)
 		);
-		
+
 		return inView;
 	}
 
 	//getters
-	get _bgFillRatio(){
+	get _bgFillRatio() {
 		const _ = this;
 		const pad = 2; //buffer for any potential rounding errors
 		const speed = _.speed < 0 ? _.speed * -1 : _.speed;
-		// console.log('speed',speed,(_.winHeight * speed) + pad)
-		return  (_.winHeight * speed) + pad;
+	 
+		return (_.winHeight * speed) + pad;
 	}
 
-	get _speed(){
+	get _speed() {
 		const _ = this;
 		return _.params.speed / 100;
 	}
 
-	get _relElem(){
+	get _relElem() {
 		const _ = this;
 
-		return  _.params.relativeElem ?
+		return _.params.relativeElem ?
 			_.$element.closest(_.params.relativeElem) :
 			_.$element
-		;
+			;
 	}
 
-		
+
 }

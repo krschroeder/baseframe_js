@@ -3,6 +3,7 @@ import validJSONFromString from './util/formatting-valid-json.js';
 import {CSS_TRANSISTION_DELAY} from './util/helpers';
 import smoothScroll from './util/smoothScroll';
 import {getHashParam} from './util/get-param';
+import getHistoryEntry from './util/plugin/get-history-entry';
 
 const VERSION = "2.1.2";
 const DATA_NAME = 'Collapse';
@@ -133,18 +134,7 @@ export default class Collapse {
 
 			if (_.params.useLocationHash) {
 
-				let historyItem = collapseID;
-
-				const {useHashFilter} = _.params;
-				const {hash} = location;
-
-				if (useHashFilter) {
-					
-					historyItem = hash ? hash.replace(getHashParam(useHashFilter),collapseID) : `#${useHashFilter}=${collapseID}`;
-					
-				}
-
-				history.pushState(null, null, historyItem);
+				history.pushState(null, null, getHistoryEntry(_,collapseID));
 			}
 
 			_._toggleAction(collapseID);

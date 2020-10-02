@@ -2,6 +2,7 @@ import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json.js';
 import getType from './util/helpers';
 import {getHashParam} from './util/get-param';
+import getHistoryEntry from './util/plugin/get-history-entry';
 
 const VERSION = "1.0.0";
 const DATA_NAME = 'Tabs';
@@ -108,18 +109,19 @@ export default class Tabs {
 			const tabId = $(this).attr('href');
 			
 			if (_.params.useLocationHash) {
-				let historyItem = tabId;
+				// let historyItem = tabId;
 
-				const {useHashFilter} = _.params;
-				const {hash} = location;
+				// getHistoryEntry(this, tabId );
+				// const {useHashFilter} = _.params;
+				// const {hash} = location;
 
-				if (useHashFilter) {
-				
-					historyItem = hash ? hash.replace(getHashParam(useHashFilter),tabId) : `#${useHashFilter}=${tabId}`;
+				// if (useHashFilter) {
+				// 	const newTab = getHashParam(useHashFilter);
+				// 	historyItem = hash ? hash.replace(getHashParam(useHashFilter),tabId) : `#${useHashFilter}=${tabId}`;
 					
-				}
-
-				history.pushState(null, null, historyItem);
+				// }
+				
+				history.pushState(null, null, getHistoryEntry(_, tabId ));
 			}
 			
 			_.loadTabContent(tabId.substring(1));
@@ -135,12 +137,13 @@ export default class Tabs {
 		if (loadLocationHash) {
 		
 			const locationHashArray = (useHashFilter ? (getHashParam(useHashFilter) || '') : location.hash).split('#');
-			
-			if (!locationHashArray.length) return;
+
+			// if (!locationHashArray.length) return;
 
 			//first value is '' so we skip it
 			locationHashArray.slice(1).forEach((hash) => {
 				_.changeTabElements(hash);
+			 
 			});
 		}
 		

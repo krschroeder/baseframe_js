@@ -15,12 +15,12 @@ const _getParam = (name,
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
-const getUrlParam = (name)=>{
-   return _getParam(name);
+const getUrlParam = (name, searchStr = window.location.search)=>{
+   return _getParam(name, searchStr);
 }
 
 export const getHashParam = (name) => {
-   return _getParam(name,location.hash,'#','([^&;]*)|&|#|$');
+   return _getParam(name,location.hash,'#&','([^&;]*)|&|#|$');
 }
 
 export default getUrlParam;

@@ -3,7 +3,7 @@
 import installStoreToLibrary from './src/assets/js/util/store';
 import libraryExtend from './src/assets/js/util/lib-extend';
 import smoothScroll from './src/assets/js/util/smoothScroll';
-
+import getUrlParam, {getHashParam} from './src/assets/js/util/get-param';
 import Popup from './src/assets/js/popup';
 import Collapse from './src/assets/js/collapse';
 import Parallax from './src/assets/js/parallax';
@@ -37,6 +37,8 @@ export {
     bgResponsiveLoad,
     cookies,
     formInputs,
+    getHashParam,
+    getUrlParam,
     smoothScroll,
     throttledResize
 }

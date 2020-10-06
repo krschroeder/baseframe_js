@@ -13,6 +13,8 @@ import installStoreToLibrary, {
     Tabs,
     bgResponsiveLoad,
     formInputs,
+    getHashParam,
+    getUrlParam,
     smoothScroll,
     cookies
 } from '../../../scripts-all';
@@ -38,6 +40,9 @@ libraryExtend([
 //then just the plugin
 libraryExtend(Tabs);
 
+
+$.extend({getHashParam: getHashParam});
+$.extend({getUrlParam: getUrlParam});
 $.extend({cookies: cookies});
 
 const smoothScrollCallback = (arg,dos) => {

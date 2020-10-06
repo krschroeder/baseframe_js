@@ -1,6 +1,6 @@
 # Base_Frame Plugins &amp; Common JS
 
-Common/expected/needed/integrated JavaScript functionality for websites. You'll notice a few token are missing (like a carousel for example), that's because there are just some really, really well made, IMO. Not touching that stuff, use those others, they're great. The ones here are configurable, and as its set up now easy to import in.
+Common and needed JavaScript functionality for websites. The scripting features plugins for collapsible sections, popups, parallaxin, tabs and more. It features utilities for setting and getting cookies, smooth scrolling (without jQuery), throttled resizing, querystring parameter filtering and some more. The plugin's are configurable and consistent. This scriping is designed to be imported in easily so you can start building!
 
 ## Runs with [Cash](https://github.com/fabiospampinato/cash) (or JQuery if you wish)
 
@@ -8,7 +8,7 @@ These are made to work with [Cash](https://github.com/fabiospampinato/cash) (wit
 
 ## Features and Advantages
 ### It's small!
-Combined all together (with my minification settings at least) its ~ 49k. Add that with Cash and its less than jQuery alone!
+Combined all together (with my minification settings at least) its ~ 52k. Add that with Cash and its less than jQuery alone!
 
 ### Pass in parameter options with a `data-` attribute
 The data attribute is always the `data-` (of course) and then the plugin name `pluginName` followed by `-options`.
@@ -50,7 +50,9 @@ import installStoreToLibrary, {
     Tabs,
     bgResponsiveLoad,
     cookies,
-    formInputs,
+	formInputs,
+	getHashParam,
+    getUrlParam,
     smoothScroll,
     throttledResize
 } from 'baseframe-js';
@@ -80,7 +82,7 @@ Styles are located in the `src/assets/scss/` directory and all can be grabbed th
 ## Plugin Names and What They Do.
 
 ### Collapse 
-It's basically like an Accordion, but more configurable 
+It's is for toggling collapsible sections. Can be used like an accordion and etc. 
 __[View](#collapse)__
 
 ### Navigation Desktop
@@ -96,15 +98,15 @@ When Flexbox, or other options won&rsquo;t work, use this to equalize content
 __[View](#equalize)__
 
 ### Marketo Form
-Have you tried to style a Marketo form? It is a disaster! This should help slimplify the process so you won&rsquo;t pull your hair out. 
+Have you tried to style a Marketo form? It is not too fun to do! This should help slimplify the process so you won&rsquo;t pull your hair out. 
 __[View](#marketo-form)__
 
 ### Parallax Background
-For making a parallaxing background 
+For making a parallaxing elements on the page. Lots of configurable options.
 __[View](#parallax)__
 
 ### Popup
-There is like a few dozen of these, right?! Well this is easy to style and configurable. 
+There is like a few dozen of these, right?! Well this is easy to style and configurable. Also, tons of options, from loading in images, to traversing a JavaScript Array (instead of the DOM), which can come from an AJAX request (which that'd be a separate bit of code, but you get the idea). Load on location.hash etc.
 __[View](#popup)__
 
 ### Responsive Dropdown
@@ -112,7 +114,7 @@ Turn your left secondary navigation (or list of options) into a dropdown for mob
 __[View](#responsive-dropdown)__
 
 ### Tabs
-Tabs in tabs, change onhashchange, dream big, become starry-eyed, this does it all :-) 
+Tabs in tabs, change onhashchange this does it for tabs!
 __[View](#tabs)__
 <br>
 <br>
@@ -215,7 +217,7 @@ formInputs.init();
 First parameter is the HTMLElement's top to scroll to position top, the second is the speed. Default speed is 100. This uses the `window.scroll` so should work cross-browser. This stops scrolling if the previous pixel is the same as the next, if the scroll tries to get broken, or if it can't scroll to anymore. Third argument is a callback function to run after the scrolling is done. The 4th parameter is the arguments for that function if necessary.
 
 ```javascript
-smoothScroll(scrollToTop :number [,speed: number, afterScroll:Function, afterScrollArgs:Array<any>]);
+smoothScroll(scrollToTop :number [,speed: number [, afterScroll:Function [, afterScrollArgs:Array<any>]]]);
 ```
 
 #### cookies
@@ -234,17 +236,35 @@ sameSite | `Lax`, `Strict` or `None` are the options.
 
 ```javascript
 //setting a cookie
-cookies.set(name:string,value:string,{path:'/',expires: 60, secure: true, sameSite: 'Lax'});
+cookies.set('cookieName','your cookie value',{path:'/',expires: 60, secure: true, sameSite: 'Lax'});
 
 //getting a cookie
-cookies.get(name,{path: '/'});
+cookies.get('cookieName',{path: '/'});
 
 //removing a cookie
-cookies.remove(name,{path:'/path/to-your/cookie'});
+cookies.remove('cookieName',{path:'/path/to-your/cookie'});
 
 //maybe you want to extend $ ?
 $.extend({cookies: cookies});
 ```
+
+
+
+#### getHashParam
+
+Gets a hash parameter, same idea as grabbing one from a URL
+
+```javascript
+getHashParam('hashparam');
+```
+
+#### getUrlParam
+Gets a URL parameter, second argument is the option to change the searchstring to something other than the  `location.search` string.
+
+```javascript
+getUrlParam('urlparam'[,search:string]);
+```
+
 
 <br>
 <br>

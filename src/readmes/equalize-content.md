@@ -1,4 +1,4 @@
-<h2 id="equalize">Equalize</h2>
+<h2 id="equalize-plugin">Equalize</h2>
 
 
 ### Features

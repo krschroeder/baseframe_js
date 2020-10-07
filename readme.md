@@ -1,6 +1,6 @@
 # Base_Frame Plugins &amp; Common JS
 
-Common and needed JavaScript functionality for websites. The scripting features plugins for collapsible sections, popups, parallaxin, tabs and more. It features utilities for setting and getting cookies, smooth scrolling (without jQuery), throttled resizing, querystring parameter filtering and some more. The plugin's are configurable and consistent. This scriping is designed to be imported in easily so you can start building!
+Common and needed JavaScript functionality for websites. The scripting features plugins for collapsible sections, popups, parallaxing elements, tabs and more. It features utilities for setting and getting cookies, smooth scrolling (without jQuery), throttled resizing, querystring parameter filtering and more. The plugin's are configurable and consistent. This scriping is designed to be imported in easily so you can start building!
 
 ## Runs with [Cash](https://github.com/fabiospampinato/cash) (or JQuery if you wish)
 
@@ -50,9 +50,7 @@ import installStoreToLibrary, {
     Tabs,
     bgResponsiveLoad,
     cookies,
-	formInputs,
-	getHashParam,
-    getUrlParam,
+    formInputs,
     smoothScroll,
     throttledResize
 } from 'baseframe-js';
@@ -83,39 +81,39 @@ Styles are located in the `src/assets/scss/` directory and all can be grabbed th
 
 ### Collapse 
 It's is for toggling collapsible sections. Can be used like an accordion and etc. 
-__[View](#collapse)__
+__[View](#collapse-plugin)__
 
 ### Navigation Desktop
 This plugin just adds a delay to the desktop navigation for the nestled levels of a `<ul>`. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page. 
-__[View](#nav-desktop)__
+__[View](#nav-desktop-plugin)__
 
 ### Navigation Mobile
 Neat little mobile navigation plugin 
-__[View](#nav-mobile)__
+__[View](#nav-mobile-plugin)__
 
 ### Equalize Content
 When Flexbox, or other options won&rsquo;t work, use this to equalize content 
-__[View](#equalize)__
+__[View](#equalize-plugin)__
 
 ### Marketo Form
 Have you tried to style a Marketo form? It is not too fun to do! This should help slimplify the process so you won&rsquo;t pull your hair out. 
-__[View](#marketo-form)__
+__[View](#marketo-form-plugin)__
 
-### Parallax Background
+### Parallax Elements
 For making a parallaxing elements on the page. Lots of configurable options.
-__[View](#parallax)__
+__[View](#parallax-plugin)__
 
 ### Popup
 There is like a few dozen of these, right?! Well this is easy to style and configurable. Also, tons of options, from loading in images, to traversing a JavaScript Array (instead of the DOM), which can come from an AJAX request (which that'd be a separate bit of code, but you get the idea). Load on location.hash etc.
-__[View](#popup)__
+__[View](#popup-plugin)__
 
 ### Responsive Dropdown
 Turn your left secondary navigation (or list of options) into a dropdown for mobile!
-__[View](#responsive-dropdown)__
+__[View](#responsive-dropdown-plugin)__
 
 ### Tabs
 Tabs in tabs, change onhashchange this does it for tabs!
-__[View](#tabs)__
+__[View](#tabs-plugin)__
 <br>
 <br>
 
@@ -151,7 +149,7 @@ Each class just needs to have the following properties set on it
 Pass in an `array` for the first argument, or a single plugin class, and `notify` is optional defaulted to false. `notify` console log's when parameters get updated on an instance.
 
 ```javascript
-libraryExtend(plugins:array [,notify:boolean])
+libraryExtend(plugins:Array<Plugins> ,notify?:boolean)
 ```
 
 
@@ -160,7 +158,7 @@ libraryExtend(plugins:array [,notify:boolean])
 Pass in the first attribute to add in the `expose` method, which allows you to see all the data stored in the Map.
 
 ```javascript
-installStoreToLibrary([,expose:boolean]) 
+installStoreToLibrary(expose?:boolean) 
 ```
 
 #### $.store
@@ -202,7 +200,7 @@ eventName | 'BackgroundImageLoad' | Event namespace of the load event.
 bgDataName | 'bg-img' | The data attribute name that holds the background image to load.
 
 ```javascript
-bgResponsiveLoad(selector: string | HTMLElement [, params] );
+bgResponsiveLoad(selector: string | HTMLElement, params?:any );
 ```
 
 #### formInputs
@@ -217,7 +215,7 @@ formInputs.init();
 First parameter is the HTMLElement's top to scroll to position top, the second is the speed. Default speed is 100. This uses the `window.scroll` so should work cross-browser. This stops scrolling if the previous pixel is the same as the next, if the scroll tries to get broken, or if it can't scroll to anymore. Third argument is a callback function to run after the scrolling is done. The 4th parameter is the arguments for that function if necessary.
 
 ```javascript
-smoothScroll(scrollToTop :number [,speed: number [, afterScroll:Function [, afterScrollArgs:Array<any>]]]);
+smoothScroll(scrollToTop :number ,speed?: number , afterScroll?:Function, afterScrollArgs?:Array<any>);
 ```
 
 #### cookies
@@ -249,27 +247,25 @@ $.extend({cookies: cookies});
 ```
 
 
-
 #### getHashParam
-
-Gets a hash parameter, same idea as grabbing one from a URL
+Searches for a query-string value using `location.hash`.
 
 ```javascript
-getHashParam('hashparam');
+    getHashParam(search:string)
 ```
 
 #### getUrlParam
-Gets a URL parameter, second argument is the option to change the searchstring to something other than the  `location.search` string.
+Searches for a query-string value using `location.search`, pass in an optional second parameter to search another string for key-pair values.
 
 ```javascript
-getUrlParam('urlparam'[,search:string]);
+    getUrlParam(search:string ,searchString?:string)
 ```
 
 
 <br>
 <br>
 <br>
-<h2 id="collapse">Collapse</h2>
+<h2 id="collapse-plugin">Collapse</h2>
 
 
 ### Features
@@ -352,7 +348,7 @@ $('.collapse-group').collapse();
 <br>
 <br>
 <br>
-<h2 id="equalize">Equalize</h2>
+<h2 id="equalize-plugin">Equalize</h2>
 
 
 ### Features
@@ -402,7 +398,7 @@ $('.equalize-container').equalizeContent();
 <br>
 <br>
 <br>
-<h2 id="marketo-form">Marketo Form</h2>
+<h2 id="marketo-form-plugin">Marketo Form</h2>
 
 ### About
 Scripting that removes the bad things Marketo adds (classes, stylesheets and etc), and allows you to add in classes already written. Utilizes Marketo Forms 2 API. Adds in the Marketo forms 2 API script as well if its not already added, and once loaded it runs the other scripting.
@@ -463,7 +459,7 @@ new MyMarketoForm('.mkto-something-form',{
 <br>
 <br>
 <br>
-<h2 id="nav-desktop">Desktop Navigation (Enhanced)</h2>
+<h2 id="nav-desktop-plugin">Desktop Navigation (Enhanced)</h2>
 
 
 ### Features
@@ -509,7 +505,7 @@ $('#main-nav').navDesktop();
 <br>
 <br>
 <br>
-<h2 id="nav-mobile">Mobile Navigation</h2>
+<h2 id="nav-mobile-plugin">Mobile Navigation</h2>
 
 
 ### About
@@ -571,11 +567,11 @@ $('#main-nav').navMobile()
 <br>
 <br>
 <br>
-<h2 id="parallax">Parallax</h2>
+<h2 id="parallax-plugin">Parallax</h2>
 
 
 ### Features
-By default it allows you to move the background image. Also can move an element itself. It uses the `translate3d` property as its more efficient than using a `top` or `left`.
+This plugin is for parallaxing page elements (and yes background images). Use the `bgFill` option and it'll magically expand to the height of its container if using a background image. It uses the `translate3d` property as its more efficient than using a `top` or `left` as well as `requestAnimationFrame`. Can be used to move elements either with a Y or X axis. 
 
 ### Settings
 
@@ -642,7 +638,7 @@ $('.parallax-bg').parallax({
 <br>
 <br>
 <br>
-<h2 id="popup">Pop-Up</h2>
+<h2 id="popup-plugin">Pop-Up</h2>
 
 
 ### Features

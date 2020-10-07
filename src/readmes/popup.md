@@ -1,4 +1,4 @@
-<h2 id="popup">Pop-Up</h2>
+<h2 id="popup-plugin">Pop-Up</h2>
 
 
 ### Features

@@ -6,7 +6,7 @@ import { isHidden, photoRegex, CSS_TRANSISTION_DELAY } from './util/helpers';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 
-const VERSION = "1.0.0";
+const VERSION = "1.0.1";
 const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
 const INSTANCE_NAME = `${DATA_NAME}_instance`;
@@ -138,7 +138,8 @@ export default class Popup {
 			
 				window.history.pushState(null, null, _.getHistoryEntry() );
 			}
-			_.loadPopup(this);
+			
+			_.isOpen ? _._close() : _.loadPopup(this);
 
 		});
 
@@ -200,7 +201,7 @@ export default class Popup {
 
 	addToDOM() {
 		const _ = this;
-		const { popupID, fadeIn, appendPopupTo, firstAnchorFocus } = _.params;
+		const { fadeIn, appendPopupTo, firstAnchorFocus } = _.params;
 
 		_.createPopup();
 
@@ -209,12 +210,15 @@ export default class Popup {
 		if (firstAnchorFocus) {
 			setTimeout(() => {
 
-				const $firstAnchor = $(`#${popupID}`)
+				const $firstAnchor = _.$popup
 					.find("[tabindex], a, input")
 					.not("[tabindex='-1'],.popup__btn-close").eq(0);
 
 
-				$firstAnchor.length && $firstAnchor[0].focus();
+				$firstAnchor.length ? 
+					$firstAnchor[0].focus() : 
+					_.$popup.find('.popup__btn-close')[0].focus()
+				;
 
 			}, fadeIn + 100);
 		}

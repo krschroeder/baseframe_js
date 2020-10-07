@@ -1,4 +1,4 @@
-<h2 id="nav-desktop">Desktop Navigation (Enhanced)</h2>
+<h2 id="nav-desktop-plugin">Desktop Navigation (Enhanced)</h2>
 
 
 ### Features

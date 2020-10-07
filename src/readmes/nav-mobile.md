@@ -1,4 +1,4 @@
-<h2 id="nav-mobile">Mobile Navigation</h2>
+<h2 id="nav-mobile-plugin">Mobile Navigation</h2>
 
 
 ### About

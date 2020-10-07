@@ -1,4 +1,4 @@
-<h2 id="collapse">Collapse</h2>
+<h2 id="collapse-plugin">Collapse</h2>
 
 
 ### Features

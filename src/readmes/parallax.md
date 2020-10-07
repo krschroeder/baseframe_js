@@ -1,8 +1,8 @@
-<h2 id="parallax">Parallax</h2>
+<h2 id="parallax-plugin">Parallax</h2>
 
 
 ### Features
-By default it allows you to move the background image. Also can move an element itself. It uses the `translate3d` property as its more efficient than using a `top` or `left`.
+This plugin is for parallaxing page elements (and yes background images). Use the `bgFill` option and it'll magically expand to the height of its container if using a background image. It uses the `translate3d` property as its more efficient than using a `top` or `left` as well as `requestAnimationFrame`. Can be used to move elements either with a Y or X axis. 
 
 ### Settings
 

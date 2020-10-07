@@ -1,4 +1,4 @@
-<h2 id="tabs">Tabs Plugin About</h2>
+<h2 id="tabs-plugin">Tabs Plugin About</h2>
 
 At some point we all need to be able to tab content. This one does it for you!
 

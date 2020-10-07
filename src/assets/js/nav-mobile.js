@@ -3,7 +3,7 @@ import validJSONFromString from './util/formatting-valid-json.js';
 import {isVisible,CSS_TRANSISTION_DELAY} from './util/helpers';
 
 
-const VERSION = "1.0.0";
+const VERSION = "1.0.1";
 const DATA_NAME = 'NavMobile';
 const EVENT_NAME = 'navMobile';
 
@@ -69,9 +69,9 @@ export default class NavMobile {
 		_.menuButtonClick();
 		_.menuNavigationClick();
 		_.checkIfEnabled();
-		if (_.params.outsideClickClose) {
-			_.doOutsideClick();
-		}
+		
+		_.doOutsideClick();
+	
 
 		const elemID = element[0].id || element[0].className;
 
@@ -242,17 +242,17 @@ export default class NavMobile {
 	doOutsideClick() {
 		const _ = this;
 		$('body').on(`click.${EVENT_NAME}`, this, function (e) {
+			if (_.params.outsideClickClose) {
+				if (!_.menuOpened) { return; }//lets just exit then..
+		
+				const menuClicked = (_.$element.has(e.target).length > 0);
 
-			if (!_.menuOpened) { return; }//lets just exit then..
-	
-			const menuClicked = (_.$element.has(e.target).length > 0);
-
-			//if the menu item is not clicked and its opened
-			//the menu button shouldn't register because propogation is prevented to the body
-			if (!menuClicked && _.menuOpened) {
-				_.mobileMenuToggle();
+				//if the menu item is not clicked and its opened
+				//the menu button shouldn't register because propogation is prevented to the body
+				if (!menuClicked && _.menuOpened) {
+					_.mobileMenuToggle();
+				}
 			}
-
 		});
 
 	}

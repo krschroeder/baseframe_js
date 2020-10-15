@@ -149,7 +149,7 @@ Each class just needs to have the following properties set on it
 Pass in an `array` for the first argument, or a single plugin class, and `notify` is optional defaulted to false. `notify` console log's when parameters get updated on an instance.
 
 ```javascript
-libraryExtend(plugins:Array<Plugins> ,notify?:boolean)
+libraryExtend(plugins:Array<Plugin> | Plugin, notify?:boolean)
 ```
 
 

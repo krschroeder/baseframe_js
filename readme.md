@@ -1,6 +1,6 @@
 # Base_Frame Plugins &amp; Common JS
 
-Common and needed JavaScript functionality for websites. The scripting features plugins for collapsible sections, popups, parallaxing elements, tabs and more. It features utilities for setting and getting cookies, smooth scrolling (without jQuery), throttled resizing, querystring parameter filtering and more. The plugin's are configurable and consistent. This scriping is designed to be imported in easily so you can start building!
+Common and needed JavaScript functionality for websites. The scripting features plugins for collapsible sections, popups, parallaxing elements, tabs and more. It features utilities for setting and getting cookies, smooth scrolling (without jQuery), throttled resizing, querystring parameter filtering and more. The plugin's are configurable and consistent. This scripting is designed to be imported in easily so you can start building!
 
 ## Runs with [Cash](https://github.com/fabiospampinato/cash) (or JQuery if you wish)
 
@@ -149,7 +149,7 @@ Each class just needs to have the following properties set on it
 Pass in an `array` for the first argument, or a single plugin class, and `notify` is optional defaulted to false. `notify` console log's when parameters get updated on an instance.
 
 ```javascript
-libraryExtend(plugins:Array<Plugins> ,notify?:boolean)
+libraryExtend(plugins:Array<Plugin> | Plugin, notify?:boolean)
 ```
 
 
@@ -676,13 +676,13 @@ nextBtnHTML| boolean |  `<i class="icon-arrow-r"><span class="sr-only">Next</spa
 loadingHTML | boolean |  `<div class="popup__loader"></div>` | Loading HTML.
 appendPopupTo | boolean |  'body' | the HTML element the popup appends to.
 showPopup | boolean |  'popup--show-popup' | CSS class used to show the popup.
-enableEvent | boolean |  'click' | The event to show the popup, change to whatever event on the element. Could be 'hover' if we wanted to for some reason.
+enableEvent | string |  'click' | The event to show the popup, change to whatever event on the element. Could be 'hover' if we wanted to for some reason.
 useHashFilter | string | null | If there is a number of elements where the `location.hash` value is used, it may be necessary to filter it to get the intended data. Pass in a string value, i.e.: 'popup' and it'll load and filter through as needed while maintaining the remaining location hash values. Example value of this could be `#popup=#your_popup__1&foo=bar&baz=foo`. This only gets used if 'useLocationHash' option is selected. 
 loadLocationHash | boolean |  true | Loads a popup from a `window.location.hash`, if the hash matches the popup.
 useLocationHash | boolean |  true | Uses history and creates a hash in the location to toggle the popups on or off
-afterLoaded | function |  () => { } | Function to run after the popup is displayed.
-afterClose | function |  () => { } | Function to run after the popup is closed.
-onClose | function |  () => { } | Function to run after the popup at the begninning of the closing event.
+afterLoaded | function |  (_.$element, popupID) => { } | Function to run after the popup is displayed. `_.$element` is the `$(HTMLElement)` the popup is intialized on.
+afterClose | function |  (_.$element, popupID) => { } | Function to run after the popup is closed.
+onClose | function |  (_.$element, popupID) => { } | Function to run after the popup at the begninning of the closing event.
 
 ### Example
 
@@ -890,7 +890,7 @@ $(".resp-dd").responsiveDropDown();
 <br>
 <br>
 <br>
-<h2 id="tabs">Tabs Plugin About</h2>
+<h2 id="tabs-plugin">Tabs Plugin About</h2>
 
 At some point we all need to be able to tab content. This one does it for you!
 

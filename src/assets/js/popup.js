@@ -211,7 +211,7 @@ export default class Popup {
 			setTimeout(() => {
 
 				const $firstAnchor = _.$popup
-					.find("[tabindex], a, input")
+					.find("[tabindex], a, input, textarea")
 					.not("[tabindex='-1'],.popup__btn-close").eq(0);
 
 

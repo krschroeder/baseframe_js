@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<!--[if IE 9]><html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->
+<html class="no-js">
+<!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Enhance Desktop Navigation | Plugins </title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet"> 
+
+<link rel="stylesheet" href="./assets/css/main.css">
+
+</head>
+<body>
+	<header id="site-header">
+	
+		<div class="container">
+			<a href="/" class="logo">
+				<span class="sr-only">Base Frame Logo, go back to home</span>
+			</a>
+			<button class="mobile-nav-btn" id="mobile-nav-btn">
+				<div class="mobile-nav-btn__inner">
+					<div class="nav-top-bar"></div>
+					<div class="nav-mid-bar"></div>
+					<div class="nav-bot-bar"></div>
+				</div>
+			</button>
+			<nav id="main-nav" class="main-nav" role="navigation">
+				<ul id="menuElem">
+					<li><a href="#">Example Menu Links</a>
+						<ul>
+							<li><a href="#">Example Link For Hover</a></li>
+							<li><a href="#">Some Link</a></li>
+							<li><a href="#">Hover Link</a>
+								<ul>
+									<li><a href="#">More Links</a></li>
+									<li><a href="#">More Links</a>
+										<ul>
+											<li><a href="#">More Links</a></li>
+											<li><a href="#">More Links</a></li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+							<li><a href="#">Some Fake Link</a></li>
+							<li><a href="#">Some Fake Link</a></li>
+							
+						</ul>
+					</li>
+					<li><a href="#">Plugin Pages</a>
+						<ul>
+						    <li><a href="/collapse.html">Collapse</a></li>
+						    <li><a href="/nav-desktop.html">Desktop Navigation</a></li>
+						    <li><a href="/nav-mobile.html">Mobile Navigation</a></li>
+						    <li><a href="/equalize-content.html">Equalize</a></li>
+						    <li><a href="/marketo-magic.html">Marketo Form Magic</a></li>
+						    <li><a href="/popup.html">Popup</a></li>
+						    <li><a href="/responsive-dropdown.html">Responsive Dropdown</a></li>
+						    <li><a href="/tabs.html">Tabs</a></li>
+						    <li><a href="/parallax.html">Parallax</a></li>
+						</ul>				</li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+	<main role="main">
+		<div class="container v-space">
+			<h1>Enhance Desktop Navigation</h1>
+			<p>Sed haec quis possit intrepidus aestimare tellus. Inmensae subtilitatis, obscuris et malesuada fames. Ab illo tempore, ab est sed immemorabili bacon. Quo usque tandem abutere, Catilina, patientia nostra? Cum ceteris in veneratione tui montes, nascetur mus.</p><p>Quis aute iure reprehenderit in voluptate velit esse. Contra legem facit qui pastrami id facit quod lex prohibet. Idque Caesaris facere voluntate liceret: sese habere. Nihilne te nocturnum praesidium Palati, nihil urbis vigiliae. Petierunt uti sibi concilium totius Galliae in diem certam indicere. Paullum deliquit, ponderibus modulisque suis ratio utitur.</p><p>Non equidem invideo, miror magis posuere velit aliquet. Gallia est omnis divisa in partes tres, quarum. Salutantibus vitae elit libero, a pharetra augue. Fictum,  deserunt mollit anim laborum astutumque! Unam incolunt Belgae, aliam Aquitani, tertiam.</p><p>Quisque placerat facilisis egestas cillum dolore. Tu quoque, Brute, fili mi, nihil timor populi, nihil! Ullamco laboris nisi ut aliquid ex ea commodi consequat. Quisque ut dolor gravida, placerat libero vel, euismod. Ut enim ad minim veniam, quis nostrud exercitation.</p><p>Nihil hic munitissimus habendi senatus locus, nihil horum? Excepteur sint obcaecat cupiditat non proident culpa. Ambitioni dedisse scripsisse iudicaretur porkchops. Donec sed odio operae, eu vulputate felis rhoncus. Praeterea iter est quasdam res quas ex communi. Nec dubitamus multa iter quae et nos invenerat.</p>
+		</div>
+	</main>
+
+	<footer id="site-footer" role="contentinfo">
+		<div class="container">
+			<div class="row text-c">
+	
+				<p><small><strong>Base_Frame</strong> Plugins 1.2.8<br>
+					MIT License (or use/modify as needed, and at your own risk)<br>
+					Using <a href="https://www.npmjs.com/package/cash-dom">Cash</a> Library</small></p>
+			</div>
+		</div>
+	</footer>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/cash/8.0.0/cash.min.js"></script>
+	
+	<script src="./assets/js/common-all-test.js"></script> 
+	<script>
+		$(function(){//
+			$('#main-nav')
+				.navMobile({navToggleNestled:false})
+				.navDesktop();
+		});
+	</script>
+
+
+</body>
+</html>

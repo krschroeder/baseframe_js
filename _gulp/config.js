@@ -8,16 +8,16 @@ const PROD_JS = (!!yargs.argv.productionjs || PRODUCTION);
 const USE_JQUERY = !!yargs.argv.jquery;
 
 const SOURCE = path.resolve(__dirname, './src');
-const excludeRgx = /(node_modules\/(?!(@hilemangroup|bootstrap|baseframe\-js)))/;
+const excludeRgx = /(node_modules)/;
 
 const config = {
     
-    DEST: 'build',
+    DEST: PRODUCTION ? 'dist' : 'build',
 
     SRC: {
         CSS: ['src/proj-assets/scss/**/*.scss','src/assets/scss/**/*.scss'],
         HTML: ['src/pages/**/*.{html,hbs}'],
-        JS: ['src/assets/js/**/*.js','src/proj-assets/js/common-all-test.js'],
+        JS: PRODUCTION ? 'scripts-all.js' : ['src/assets/js/**/*.js','src/proj-assets/js/common-all-test.js'],
     },
 
     HBS:  {

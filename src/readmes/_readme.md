@@ -77,6 +77,25 @@ libraryExtend([
 Styles are located in the `src/assets/scss/` directory and all can be grabbed that way and added on in. Still should do a little more work in updating the SCSS variables to be frank. So I would just drag those files into the project directly (which is what I just do). I think it's painful anways to import in then override defaults in your own file. Bringing it in (IMO) is little more elegant.
 
 
+## Webpack Config
+
+Because were bringing in native ES6 code and by default we exclude `node_modules` from transpiling we'll need to make an exception for this pacakge. Below is an example of the regex in the excludes.
+
+```javascript
+rules: [
+    {
+        test: /.js$/,
+        exclude: /(node_modules\/(?!(baseframe\-js|some-module|some-other-module)))/,
+        use: [
+            {
+                loader: 'babel-loader'
+            }
+        ]
+    }
+    //... 
+]
+```
+
 ## Plugin Names and What They Do.
 
 ### Collapse 

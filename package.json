@@ -1,6 +1,6 @@
 {
   "name": "baseframe-js",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "description": "Common Javascript plugins and functions to help with Front-end Development on websites",
   "repository": {
     "type": "git",
@@ -29,7 +29,6 @@
     "build": "gulp --prod"
   },
   "peerDependencies": {
-    "jquery": ">=3.0.0",
     "normalize-scss": "^7.0.1"
   },
   "devDependencies": {

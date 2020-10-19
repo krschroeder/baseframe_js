@@ -63,7 +63,7 @@ function buildCSS(){
 
 
 function buildHTML(done){
-	if(!PRODUCTION) {
+	if(!PRODUCTION) { console.log('wtf its prod')
 		return gulp.src(HTML)
 			.pipe(handlebars(HBS.vars,HBS.handlebars))
 			.pipe(gulp.dest(DEST));

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<!--[if IE 9]><html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->
+<html class="no-js">
+<!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Home | Plugins </title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet"> 
+
+<link rel="stylesheet" href="./assets/css/main.css">
+</head>
+<body>
+<div id="doc-top"></div>
+<header id="site-header">
+
+	<div class="container">
+		<a href="/" class="logo">
+			<span class="sr-only">Base Frame Logo, go back to home</span>
+		</a>
+		<button class="mobile-nav-btn" id="mobile-nav-btn">
+			<div class="mobile-nav-btn__inner">
+				<div class="nav-top-bar"></div>
+				<div class="nav-mid-bar"></div>
+				<div class="nav-bot-bar"></div>
+			</div>
+		</button>
+		<nav id="main-nav" class="main-nav" role="navigation">
+			<ul id="menuElem">
+				<li><a href="#">Example Menu Links</a>
+					<ul>
+						<li><a href="#">Example Link For Hover</a></li>
+						<li><a href="#">Some Link</a></li>
+						<li><a href="#">Hover Link</a>
+							<ul>
+								<li><a href="#">More Links</a></li>
+								<li><a href="#">More Links</a>
+									<ul>
+										<li><a href="#">More Links</a></li>
+										<li><a href="#">More Links</a></li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+						<li><a href="#">Some Fake Link</a></li>
+						<li><a href="#">Some Fake Link</a></li>
+						
+					</ul>
+				</li>
+				<li><a href="#">Plugin Pages</a>
+					<ul>
+					    <li><a href="/collapse.html">Collapse</a></li>
+					    <li><a href="/nav-desktop.html">Desktop Navigation</a></li>
+					    <li><a href="/nav-mobile.html">Mobile Navigation</a></li>
+					    <li><a href="/equalize-content.html">Equalize</a></li>
+					    <li><a href="/marketo-magic.html">Marketo Form Magic</a></li>
+					    <li><a href="/popup.html">Popup</a></li>
+					    <li><a href="/responsive-dropdown.html">Responsive Dropdown</a></li>
+					    <li><a href="/tabs.html">Tabs</a></li>
+					    <li><a href="/parallax.html">Parallax</a></li>
+					</ul>				</li>
+			</ul>
+		</nav>
+	</div>
+</header>
+<main role="main" class="body-content">
+	<div class="container text-c">
+		<div class="row v-space">
+			<div class="xl-col-2"><!--#dev this is for spacing--></div>
+			<div class="xl-col-8 text-l">
+				<h1>Common Plugins and JavaScript for Websites</h1>
+				<p class="text-md">It's nearly inevitable your website will need these plugin's and functions for it to work. These are made to work with <a href="https://github.com/fabiospampinato/cash" target="_blank">Cash</a> (with jQuery still an option) as the only dependency.</p>
+				<h2>About</h2>
+				<p><a href="#page-bottom" class="smooth-scroll">Go To Page Bottom Smooth Scroll</a> Below are some common plugin's to help enhance your website. You'll notice some are missing (like a Carousel for example), that's because there are just some really, realy well made, IMO. Not touching that stuff, use it, its great. Others I always thought could be better, even though a few are frankly near duplicates 🤷🏻‍♂️. Anyways here we are, and you're stil reading this! If you download you probably work where I do, or somehow stumbled across.</p>
+
+				<h2>Some nice features are their is some shared syntax in the way they all operate.</h2>
+
+				<p><strong>For Example:</strong> all have options that can be plugged in as a data attribute, in JSON format (loosely written somehat)</p>
+				<code>
+					&lt;div id="your-plugin-elem" data-plugin-name="{option:'text',option2: true, etc: 'you get the idea'}"&gt;&lt;/div&gt;
+				</code>
+
+				<p><strong>For Example:</strong> all can have their configuration change. Which can come in handy sometimes when things get complex</p>
+				<code>
+					$('.your-plugin-elem').PluginOfSorts({change:'yep', height: 1e6})
+				</code>
+
+				<h3>Future updates</h3>
+				<ul>
+					<li>More static methods, you never know. They come in handy</li>
+				</ul> 
+			</div>
+		</div> 
+		<div class="row v-space">
+			<div class="xl-col-2"><!--#dev this is for spacing--></div>
+			<div class="xl-col-4 text-c the-plugins-list">
+				<h2>Plugins List <small>(yep it's everything)</small></h2>
+				<ul>
+				    <li><a href="/collapse.html">Collapse</a></li>
+				    <li><a href="/nav-desktop.html">Desktop Navigation</a></li>
+				    <li><a href="/nav-mobile.html">Mobile Navigation</a></li>
+				    <li><a href="/equalize-content.html">Equalize</a></li>
+				    <li><a href="/marketo-magic.html">Marketo Form Magic</a></li>
+				    <li><a href="/popup.html">Popup</a></li>
+				    <li><a href="/responsive-dropdown.html">Responsive Dropdown</a></li>
+				    <li><a href="/tabs.html">Tabs</a></li>
+				    <li><a href="/parallax.html">Parallax</a></li>
+				</ul>			</div>
+			<div class="xl-col-4 the-plugins-description" id="page-bottom">
+				<h3>What they do (in a nutshell)</h3>
+				 <div id="plugin-collapse">This toggles open and close items. It can behave as an accordion, or just to open and close an element</div>
+				 <div id="plugin-nav-desktop" style="display:none">Desktop navigation sucks if it doesn't have a hover-stay delay, or when you mouse-out it shouldn't lose focus immediately. Also, edge detection for dropdown flyouts for the nestled lists</div>
+				 <div id="plugin-nav-mobile" style="display:none">This toggles open and close items. It can behave as an accordion, or just to open and close an element</div>
+				 <div id="plugin-equalize-content" style="display:none">While Flexbox nearly kills the whole premise of this plugin, but it can still come in handy. There may be times where you can't use that CSS property and need something else. This is that solution!</div>
+				 <div id="plugin-marketo-form-magic" style="display:none">Don't know if you've ever worked in Marketo, it can be a pain. The forms especially are and this can help! This is scripting that removes the bad things Marketo adds (classes, stylesheets and etc), and allows you to add in classes (you may have) already written. Utilizes Marketo Forms 2 API. Adds in the Marketo forms 2 API script as well if its not already added, and once loaded it runs the other scripting.</div>
+				 <div id="plugin-popup" style="display:none">Another freaking popup, well this one does some stuff! You can group items, pull things from a JS array instead of traversing the DOM. Used with some AJAX that part can be neat (which I haven't yet tried). It works for loading images, or pull stuff on the DOM (and put back), or string elements to turn into DOM ones.</div>
+				 <div id="plugin-responsive-dropdown" style="display:none">If you ever have a navigation on the left that needs to turn to a dropdown list above on mobile, this is your friend. This isn't for <kbd>&lt;select/&gt;</kbd> items FYI, name may be a little deceptive.</div>
+				 <div id="plugin-parallax" style="display: none;">This is for Parallaxing, yep. Lots of configuration options to satisfy a good bit of situations and scenerios I didn't even know existed</div>
+				 <div id="plugin-tabs" style="display: none;">Who likes tabs, in tabs? We can do that.</div>
+				 <p>
+					<a href="#doc-top" class="smooth-scroll">Back to top</a>
+				</p>
+			</div>
+			
+			<script>
+				(() => {
+					const pl = document.querySelector('.the-plugins-list');
+					const pd = document.querySelector('.the-plugins-description');
+
+					pl.querySelectorAll('a').forEach(function(el){  
+						el.addEventListener('mouseenter',function(e){
+							const itsDesc = this.getAttribute('href').slice(1).replace('.html','');
+
+							pd.querySelectorAll('div').forEach(function(el){
+								el.style.display = 'none';
+							})
+						 
+							pd.querySelector(`#plugin-${itsDesc}`).style.display = 'block';
+						})
+					});
+				})();
+			</script>
+		</div>
+	</div>
+</main>
+
+<footer id="site-footer" role="contentinfo">
+	<div class="container">
+		<div class="row text-c">
+
+			<p><small><strong>Base_Frame</strong> Plugins 1.2.8<br>
+				MIT License (or use/modify as needed, and at your own risk)<br>
+				Using <a href="https://www.npmjs.com/package/cash-dom">Cash</a> Library</small></p>
+		</div>
+	</div>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cash/8.0.0/cash.min.js"></script>
+
+<script src="./assets/js/common-all-test.js"></script> 
+<script>
+	$(function(){//
+		$('#main-nav')
+			.navMobile({navToggleNestled:false})
+			.navDesktop();
+	});
+</script>
+
+</body>
+</html>

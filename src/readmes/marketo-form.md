@@ -12,7 +12,7 @@ Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 formID| number | null | Marketo assigns a number for each form in the embed code, needed for embedding
 inMarketo| boolean | false | This option should be __true__ if in Marketo, and keeps the 'MktoForms2.loadForm' from trying to load the form. When in Marketo the form will be loaded, we will just want to run the scripting to assist in styling!
-account| string | "487-ERY-597"| This is the account number, and it will be available when getting the embed code
+account| string | "487-ERY-XXX"| This is the account number, and it will be available when getting the embed code
 loadScript| string|  "//app-ab03.marketo.com"| This should be unique/will vary per Marketo account and can be accessed via the embed code
 hideLabels| boolean | false | When set to __true__ labels will be hidden
 wrapLabels| boolean | true | When set to __true__ labels for radios and checkboxes will be wrapped in a css class which displays them inline-block. This way the input and label wont separate ever.

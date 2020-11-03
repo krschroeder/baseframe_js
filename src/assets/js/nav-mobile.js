@@ -1,9 +1,9 @@
 import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json.js';
 import {isVisible,CSS_TRANSISTION_DELAY} from './util/helpers';
+import submenuBtn from './util/plugin/nav';
 
-
-const VERSION = "1.0.1";
+const VERSION = "1.0.2";
 const DATA_NAME = 'NavMobile';
 const EVENT_NAME = 'navMobile';
 
@@ -15,18 +15,6 @@ export default class NavMobile {
 
 	static get pluginName() {
 		return DATA_NAME;
-	}
-
-	static arrowSubMenuItem(params) {
-		const $btn = $('<button>').attr({
-			class: `btn-nav--mb-submenu ${params.arrowSubMenuItemCss}`,
-			type: 'button',
-			'aria-hidden': true
-		});
-
-		$btn.html(`<span class="sr-only">toggle sub-menu</span>`);
-
-		return $btn;
 	}
 
 	constructor(element, options) {
@@ -45,7 +33,7 @@ export default class NavMobile {
 			hasUlCls: 'has-ul',
 			menuOpenCss: 'menu-opened', 
 			menuTogglingCss: 'menu-toggling',
-			arrowSubMenuItemCss: 'i i-arrow-b',
+			submenuBtnCss: 'btn-nav--mb-submenu i i-arrow-b',
 			afterNavItemOpen: () => {},
 			afterNavItemClose: () => {},
 			afterOpen: () => {},
@@ -115,8 +103,12 @@ export default class NavMobile {
 			const anchorText = `toggle menu`;
 
 			if (!$this.hasClass(_.params.hasUlCls)) { 
-				$this.addClass(_.params.hasUlCls)
-					.append(NavMobile.arrowSubMenuItem(_.params));
+				const $a = $this.find('a').first();
+
+				$a.addClass(_.params.hasUlCls);
+
+				$a.after(submenuBtn(_.params, $a.text()))
+					 
 
 			}
 		});

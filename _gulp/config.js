@@ -12,12 +12,12 @@ const excludeRgx = /(node_modules)/;
 
 const config = {
     
-    DEST: PRODUCTION ? 'dist' : 'build',
+    DEST: 'build',
 
     SRC: {
         CSS: ['src/proj-assets/scss/**/*.scss','src/assets/scss/**/*.scss'],
         HTML: ['src/pages/**/*.{html,hbs}'],
-        JS: PRODUCTION ? 'scripts-all.js' : ['src/assets/js/**/*.js','src/proj-assets/js/common-all-test.js'],
+        JS: ['src/assets/js/**/*.js','src/proj-assets/js/common-all-test.js']
     },
 
     HBS:  {

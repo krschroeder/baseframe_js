@@ -79,13 +79,13 @@ Styles are located in the `src/assets/scss/` directory and all can be grabbed th
 
 ## Webpack Config
 
-Because were bringing in native ES6 code and by default we exclude `node_modules` from transpiling we'll need to make an exception for this pacakge. Below is an example of the regex in the excludes.
+Because were bringing in native ES6 code and by default we exclude `node_modules` from transpiling, we'll need to make an exception for this package. Below is an example of the regex in the excludes.
 
 ```javascript
 rules: [
     {
         test: /.js$/,
-        exclude: /(node_modules\/(?!(baseframe\-js|some-module|some-other-module)))/,
+        exclude: /(node_modules\/(?!(baseframe\-js|some\-module|another\-module)))/,
         use: [
             {
                 loader: 'babel-loader'

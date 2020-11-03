@@ -1,7 +1,7 @@
 import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json.js';
 
-const VERSION = "1.0.0";
+const VERSION = "1.1.0";
 const DATA_NAME = 'NavDesktop';
 const EVENT_NAME = 'navDesktop';
  
@@ -33,7 +33,8 @@ export default class NavDesktop {
 			ulHasCss: 'has-ul',
 			ulNotCss: 'no-ul',
 			navHoveredCss: 'desktop-nav-hovered',
-			hoverCss: 'hover'
+			hoverCss: 'hover',
+			submenuBtnCss: 'btn-nav--mb-submenu i i-arrow-b'
 		};
 
 		$.store.set( 

@@ -3,6 +3,7 @@ import installStoreToLibrary, {
     libraryExtend,
     Collapse,
     EqualizeContent,
+    LazyLoad,
     MarketoForm,
     NavDesktop,
     NavMobile,
@@ -16,7 +17,7 @@ import installStoreToLibrary, {
     getHashParam,
     getUrlParam,
     smoothScroll,
-    cookies
+    cookies,
 } from '../../../scripts-all';
 
 //necessary for all plugin's to operate
@@ -27,6 +28,7 @@ installStoreToLibrary(true);
 libraryExtend([
     Collapse,
     EqualizeContent,
+    LazyLoad,
     NavDesktop,
     NavMobile,
     // NavMobileNestled,
@@ -45,6 +47,8 @@ $.extend({getHashParam: getHashParam});
 $.extend({getUrlParam: getUrlParam});
 $.extend({cookies: cookies});
 
+window.LazyLoad = LazyLoad;
+
 const smoothScrollCallback = (arg,dos) => {
     console.log('yeah ' + arg + dos);
 }
@@ -60,4 +64,6 @@ $('body').on('click', 'a.smooth-scroll', function(e){
 
 formInputs.init();
 
-bgResponsiveLoad('.background-area-bg');
+$('img[data-src]').lazyLoad();
+$('.background-area-bg').lazyLoad();
+// bgResponsiveLoad('.background-area-bg');

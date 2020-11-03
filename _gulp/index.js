@@ -46,24 +46,28 @@ helpers({
 
 //tasks
 
-function buildCSS(){
-	return gulp.src(CSS)
-		.pipe(sourcemaps.init())
-		.pipe(sass().on('error', sass.logError))
-		.pipe(autoprefixer({
-			browsers: ["last 2 versions","ie >= 11","ios >= 11"]
-		}))
-		.pipe(gulpIf(PRODUCTION, cleanCss({
-			compatibility: "ie11"
-		})))
-		.pipe(sourcemaps.write('./'))
-		.pipe(gulp.dest(`${DEST}/assets/css`))
-		.pipe(browser.reload({ stream: true }));
+function buildCSS(done){
+	if (!PRODUCTION) { 
+		return gulp.src(CSS)
+			.pipe(sourcemaps.init())
+			.pipe(sass().on('error', sass.logError))
+			.pipe(autoprefixer({
+				browsers: ["last 2 versions","ie >= 11","ios >= 11"]
+			}))
+			.pipe(gulpIf(PRODUCTION, cleanCss({
+				compatibility: "ie11"
+			})))
+			.pipe(sourcemaps.write('./'))
+			.pipe(gulp.dest(`${DEST}/assets/css`))
+			.pipe(browser.reload({ stream: true }));
+	}
+
+	done();
 }
 
 
 function buildHTML(done){
-	if(!PRODUCTION) { console.log('wtf its prod')
+	if (!PRODUCTION) { 
 		return gulp.src(HTML)
 			.pipe(handlebars(HBS.vars,HBS.handlebars))
 			.pipe(gulp.dest(DEST));
@@ -80,9 +84,12 @@ function buildJS(){
 		.pipe(gulp.dest(DEST+'/assets/js'));
 }
 
-function copyAssets(){
-	return gulp.src('src/proj-assets/img/**/*')
-		.pipe(gulp.dest(DEST+'/assets/img'));
+function copyAssets(done) {
+	if(!PRODUCTION) { 
+		return gulp.src('src/proj-assets/img/**/*')
+			.pipe(gulp.dest(DEST+'/assets/img'));
+	}
+	done();
 }
 
 function cleanUp(){

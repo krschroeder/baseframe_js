@@ -8,11 +8,11 @@
 
 			<div class="background-area-bg desktop-bg md-up-show parallax-bg"
 				data-parallax-options="{speed:20}"
-				data-bg-img="https://placehold.it/1920x760"
+				data-bg-src="https://placehold.it/1920x760"
 			></div>
 
 			<div class="background-area-bg mobile-bg md-up-hide"
-				data-bg-img="https://placehold.it/768x768"
+				data-bg-src="https://placehold.it/768x768"
 			></div>
 
 			<div class="container">
@@ -28,32 +28,32 @@
 		<div class="container v-space">
 			<div class="relative md-wide-4">
 				<div class="parallax-bg" data-parallax-options="{speed:-10, initOffset:true, bgFill: false, scrollMaxPxStop: 120}">
-					<img src="https://placehold.it/768x768/565656" alt="Placeholder" />
+					<img src="./assets/images/cleardot.gif" data-src="https://placehold.it/768x768/565656" alt="Placeholder" />
 				</div>
 			</div>
 			<div class="relative md-wide-4">
 				<div class="parallax-bg" data-parallax-options="{speed:10, initOffset:true, bgFill: false, scrollMaxPxStop: 120}">
-					<img src="https://placehold.it/768x768/444" alt="Placeholder" />
+					<img src="./assets/images/cleardot.gif" data-src="https://placehold.it/768x768/444" alt="Placeholder" />
 				</div>
 			</div>
 			<div class="relative md-wide-4">
 				<div class="parallax-bg" data-parallax-options="{speed:30, initOffset:true, bgFill: false, scrollMaxPxStop: 220, axis: 'x'}">
-					<img src="https://placehold.it/768x768/222" alt="Placeholder" />
+					<img src="./assets/images/cleardot.gif" data-src="https://placehold.it/768x768/222" alt="Placeholder" />
 				</div>
 			</div>
 			<div class="relative md-wide-4">
 				<div class="parallax-bg" data-parallax-options="{speed:-10, initOffset:true, bgFill: false, scrollMaxPxStop: 120}">
-					<img src="https://placehold.it/768x768" alt="Placeholder" />
+					<img src="./assets/images/cleardot.gif" data-src="https://placehold.it/768x768" alt="Placeholder" />
 				</div>
 			</div>
 			<div class="relative md-wide-4">
 				<div class="parallax-bg" data-parallax-options="{speed: -20, initOffset:true, bgFill: false, scrollMaxPxStop: 180}">
-					<img src="https://placehold.it/768x768/777" alt="Placeholder" />
+					<img src="./assets/images/cleardot.gif" data-src="https://placehold.it/768x768/777" alt="Placeholder" />
 				</div>
 			</div>
 			<div class="relative md-wide-4">
 				<div class="parallax-bg" data-parallax-options="{speed:-20, initOffset:true, bgFill: false, axis: 'x'}">
-					<img src="https://placehold.it/768x768/999" alt="Placeholder" />
+					<img src="./assets/images/cleardot.gif" data-src="https://placehold.it/768x768/999" alt="Placeholder" />
 				</div>
 			</div>
 		</div>
@@ -69,11 +69,11 @@
 		<div class="background-area flex-m">
 
 			<div class="background-area-bg desktop-bg md-up-show parallax-bg"
-				style="background-image: url('https://placehold.it/1920x760')"
+				data-bg-src="https://placehold.it/1920x760"
 			></div>
 
 			<div class="background-area-bg mobile-bg md-up-hide"
-				style="background-image: url('https://placehold.it/768x768')"
+				data-bg-src="https://placehold.it/768x768"
 			></div>
 
 			<div class="container">
@@ -86,14 +86,10 @@
 
 		</div>
 	</main>
-
 	{{>footer}}
-
-	<script src="../js/parallax.js"></script>
 	<script>
 	$(function($){
-
-		//$('.parallax-bg').parallax({speed:25, axis:'x'});
+	
 		$('.parallax-bg').parallax({speed:25, bgFill:true});
 
 	});

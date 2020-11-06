@@ -64,6 +64,17 @@ $('body').on('click', 'a.smooth-scroll', function(e){
 
 formInputs.init();
 
-$('img[data-src]').lazyLoad();
-$('.background-area-bg').lazyLoad();
+$('.background-area-bg').lazyLoad({observerID: 'background-area-bg', inEvt: (el)=>{console.log('el',el)}});
+$('img[data-src]').lazyLoad({observerID: 'img[data-src]'});
+$('p').lazyLoad({
+    observerID: 'p',
+    loadImgs: false, 
+    unobserve:false,
+    inEvt: (el) => {
+        setTimeout(()=> {el.style.color = 'red';},1000);
+    },
+    outEvt: (el) => {
+        setTimeout(()=> {el.style.color = '';},1000);
+    }
+});
 // bgResponsiveLoad('.background-area-bg');

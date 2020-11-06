@@ -1,6 +1,6 @@
 import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json.js';
-import { isVisible } from './util/helpers';
+import getType, { isVisible } from './util/helpers';
 
 
 const VERSION = '1.0.0';
@@ -11,11 +11,13 @@ const isIE = /MSIE \d|Trident.*rv:/.test(navigator.userAgent);
 
 let isLoaded = false;
 let scriptAppended = false;
-let lazyElemObserver = null;
+
+const lazyElemObservers = new Map();
 
 const _lazyElemObserver = (_) => {
 
-    const { loadedCb, force, observerOpts, imgSrcName, bgSrcName } = _.params;
+    
+    const { inEvt, outEvt, force, observerOpts, unobserve, loadImgs } = _.params;
 
     return new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
@@ -24,21 +26,14 @@ const _lazyElemObserver = (_) => {
 
             if (entry.isIntersecting && isVisible(lazyElem) || force) {
 
-                const src = lazyElem.dataset[imgSrcName];
-                const bgImg = lazyElem.dataset[bgSrcName];
+                loadImgs && _.imgAndBg(_,lazyElem);
 
-                if (src) {
-                    lazyElem.src = src;
-                }
+                typeof inEvt === 'function' && inEvt(lazyElem);
+        
+                unobserve && _.lazyElemObserver.unobserve(lazyElem);
 
-                if (bgImg) {
-                    lazyElem.style.backgroundImage = `url("${bgImg}")`;
-                    lazyElem.removeAttribute('data-bg-src');
-                }
-
-                lazyElemObserver.unobserve(lazyElem);
-
-                typeof loadedCb === 'function' && loadedCb(lazyElem);
+            } else {
+                typeof outEvt === 'function' && outEvt(lazyElem);
             }
         });
     }, observerOpts);
@@ -59,9 +54,13 @@ export default class LazyLoad {
         return {
             imgSrcName: 'src',
             bgSrcName: 'bgSrc',
-            loadedCb: () => { },
+            loadImgs: true,
+            inEvt: null,
+            outEvt: null,
             force: false,
             polyfillSrc: 'https://polyfill.io/v3/polyfill.js?features=IntersectionObserver',
+            observerID: null,
+            unobserve: true,
             observerOpts: { rootMargin: '48px' },
             isIE: isIE
         }
@@ -75,15 +74,21 @@ export default class LazyLoad {
         const dataOptions = validJSONFromString(
             $(element).data(DATA_NAME + '-options')
         );
-
+       
         $.store.set(
             element,
             `${DATA_NAME}_params`,
-            $.extend(LazyLoad.defaults, options, dataOptions)
+            $.extend(
+                LazyLoad.defaults,
+                options, 
+                dataOptions
+            )
         );
 
-        _.params = $.store.get(element, `${DATA_NAME}_params`);
+        _.lazyElemObserver = null;
 
+        _.params = $.store.get(element, `${DATA_NAME}_params`);
+        
         _.lazyLoad();
     }
 
@@ -95,7 +100,6 @@ export default class LazyLoad {
             if (!scriptAppended) {
 
                 ieScript.src = _.params.polyfillSrc;
-
                 document.body.appendChild(ieScript);
 
                 scriptAppended = true;
@@ -104,7 +108,7 @@ export default class LazyLoad {
             ieScript.addEventListener('load', () => {
                 _.lazyLoadInner();
                 isLoaded = true;
-                console.log('loaded script')
+
             });
 
         } else {
@@ -112,16 +116,45 @@ export default class LazyLoad {
         }
     }
 
+    imgAndBg(_,lazyElem) {
+
+        const {imgSrcName, bgSrcName } = _.params;
+
+        const src = lazyElem.dataset[imgSrcName];
+        const bgImg = lazyElem.dataset[bgSrcName];
+
+        if (src) {
+            lazyElem.src = src;
+        }
+
+        if (bgImg) {
+            lazyElem.style.backgroundImage = `url("${bgImg}")`;
+            lazyElem.removeAttribute('data-bg-src');
+        }
+
+    }
+
     lazyLoadInner() {
         const _ = this;
+        const {observerID} = _.params;
 
         if (window.IntersectionObserver) {
 
-            if (!lazyElemObserver) {
-                lazyElemObserver = _lazyElemObserver(_);
+            if (observerID && !lazyElemObservers.has(observerID)) {
+
+                lazyElemObservers.set(observerID,_lazyElemObserver(_));
+
+                _.lazyElemObserver = lazyElemObservers.get(observerID);
+
+            } else {
+                _.lazyElemObserver = _lazyElemObserver(_);
             }
 
-            lazyElemObserver.observe(_.element[0]);
+            if (!observerID) {
+                console.warn(`It recommended to set an 'observerID', so the element group can leverage the same one.`,_.element);
+            }
+
+            _.lazyElemObserver.observe(_.element[0]);
 
         } else {
             console.warn(`You're window doesn't contain the "IntersectionObserver" property, please use a polyfill`);

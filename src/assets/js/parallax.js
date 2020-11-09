@@ -16,23 +16,27 @@ export default class Parallax {
 		return DATA_NAME;
 	}
 
-	constructor(element, options) {
-		const _ = this;
-		const dataOptions = validJSONFromString(
-			$(element).data(EVENT_NAME + '-options')
-		);
-		_.defaults = {
+	static get defaults() {
+		return {
 			speed: 7,
 			axis: 'y',
 			relativeElem: false,
-			$heightElem: $(element),
+			$heightElem: null,
 			initOffset: false,
 			bgFill: false,
 			outStop: 1,
 			scrollMaxPxStop: 5000,
 			minWidth: null,
 			maxWidth: null
-		};
+		}
+	}
+
+	constructor(element, options) {
+		const _ = this;
+		const dataOptions = validJSONFromString(
+			$(element).data(EVENT_NAME + '-options')
+		);
+		const instanceDefaults = {$heightElem: $(element)};
 
 		_.$window = $(window);
 		_.$element = $(element);
@@ -40,7 +44,7 @@ export default class Parallax {
 		$.store.set(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(_.defaults, options, dataOptions)
+			$.extend(Parallax.defaults, instanceDefaults, options, dataOptions)
 		);
 		_.params = $.store.get(element, `${DATA_NAME}_params`);
 

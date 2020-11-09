@@ -17,14 +17,8 @@ export default class NavMobile {
 		return DATA_NAME;
 	}
 
-	constructor(element, options) {
-		const _ = this; 
-
-		const dataOptions = validJSONFromString(
-			$(element).data(EVENT_NAME + '-options')
-		);
-		//props
-		_.defaults = {
+	static get defaults() {
+		return {
 			enableBtn: '#mobile-nav-btn',
 			ariaLabel: 'Toggle site navigation',
 			slideDuration: 400,
@@ -42,13 +36,23 @@ export default class NavMobile {
 			nextLevelBtn: `<i class="nav-icon nav-icon--next" /><span class="sr-only">View menu</span></i>`,
 			backLevelBtn: `<i class="nav-icon nav-icon--back" >← <span class="sr-only">Go Back</span></i>`,
 			navToggleNestled: false
-		};
+		}
+	}
+
+	constructor(element, options) {
+		const _ = this; 
+
+		const dataOptions = validJSONFromString(
+			$(element).data(EVENT_NAME + '-options')
+		);
+		//props
+		 
 		_.$element = $(element);
 
 		$.store.set(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(_.defaults, options, dataOptions)
+			$.extend(NavMobile.defaults, options, dataOptions)
 		);
 		_.params = $.store.get(element, `${DATA_NAME}_params`);
 

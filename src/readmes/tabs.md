@@ -12,7 +12,7 @@ At some point we all need to be able to tab content. This one does it for you!
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-defaultContent | Boolean / String | 0 | The order of the list item selected. Goes of course their appearance in the DOM.
+defaultContent | Boolean / String | 0 | The order of the list item selected. Goes of course their appearance in the DOM. Passing in `'none'` does as it sounds and hides them all by default.
 tabsEvent | string | 'click' | Event to change the tabs content
 activeCss | string | 'tab--active' | The 'active' CSS class that is added to the tabs list on the `<li>` element.
 tabsBodyCss | string | 'tabs__body' | The CSS class for the body element in which all the tab content resides.

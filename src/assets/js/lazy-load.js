@@ -1,6 +1,6 @@
 import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json.js';
-import getType, { isVisible } from './util/helpers';
+import { isVisible } from './util/helpers';
 
 
 const VERSION = '1.0.0';

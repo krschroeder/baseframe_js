@@ -4,7 +4,7 @@ import getType from './util/helpers';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 
-const VERSION = "1.0.0";
+const VERSION = "1.0.1";
 const DATA_NAME = 'Tabs';
 const EVENT_NAME = 'tabs';
 
@@ -18,14 +18,8 @@ export default class Tabs {
 		return DATA_NAME;
 	}
 
-	constructor(element, options, index) {
-		const _ = this;
-
-		const dataOptions = validJSONFromString(
-			$(element).data(DATA_NAME + '-options')
-		);
-
-		_.defaults = {
+	static get defaults() {
+		return {
 			defaultContent: 0,
 			tabsEvent: 'click',
 			activeCss: 'tab--active',
@@ -40,7 +34,15 @@ export default class Tabs {
 			beforeChange: () => {},
 			afterChange: () => {},
 			onInit: () => { }
-		};
+		}
+	}
+
+	constructor(element, options, index) {
+		const _ = this;
+
+		const dataOptions = validJSONFromString(
+			$(element).data(DATA_NAME + '-options')
+		);
 		
 		//state
 		_.$element = $(element);
@@ -48,7 +50,7 @@ export default class Tabs {
 		$.store.set(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(_.defaults, options, dataOptions)
+			$.extend(Tabs.defaults, options, dataOptions)
 		);
 
 		_.params = $.store.get(element, `${DATA_NAME}_params`);
@@ -155,6 +157,8 @@ export default class Tabs {
 	}
 
 	changeTabElements(_tabId) {
+		
+		if( _tabId === 'none') return;
 
 		const _ = this;
 		const { activeCss, tabsBodyCss, tabsBodyItemCss, tabsBodyItemShowCss } = _.params;

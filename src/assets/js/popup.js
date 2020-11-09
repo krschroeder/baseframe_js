@@ -21,24 +21,16 @@ export default class Popup {
 		return DATA_NAME;
 	}
 
-	constructor(element, options, index) {
-		const _ = this;
+	static get defaults() {
 
-		const dataOptions = validJSONFromString(
-			$(element).data(EVENT_NAME + '-options')
-		);
-
-		const src = $(element).data('popup-src') || $(element).attr('href') || null;
-		const guidID = 'popup_' + generateGUID();
-
-		_.defaults = {
-			popupID: guidID,
-			src: src,
+		return {
+			popupID: null,
+			src: null,
+			title: null,
+			caption: null,
 			popupOuterClass: "",
-			title: $(element).data('popup-title') || $(element).attr('title') || '',
 			titleElem: 'h3',
 			titleCss: '',
-			caption: $(element).data('popup-caption') || '',
 			clickOutsideClose: true,
 			fadeOut: 500,
 			fadeIn: 400,
@@ -50,7 +42,7 @@ export default class Popup {
 			isJsArray: false,
 			escapeClose: true,
 			group: true,
-			showGroupAmount: true,
+			showGroupAmount: false,
 			groupOfHTML: '/',
 			launch: false,
 			photoRegex: photoRegex,
@@ -67,19 +59,33 @@ export default class Popup {
 			afterLoaded: () => { },
 			afterClose: () => { },
 			onClose: () => { }
-		};
+		}
+	}
+
+	constructor(element, options, index) {
+		const _ = this;
+
+		const dataOptions = validJSONFromString(
+			$(element).data(EVENT_NAME + '-options')
+		);
+
+		const popupID = 'popup_' + generateGUID();
+		const src = $(element).data('popup-src') || $(element).attr('href') || null;
+		const caption = $(element).data('popup-caption') || '';
+		const title  = $(element).data('popup-title') || $(element).attr('title') || '';
+		const instanceDefaults = {popupID,src,caption,title};
 
 		_.$element = $(element);
 		
 		$.store.set(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(_.defaults, options, dataOptions)
+			$.extend(Popup.defaults,instanceDefaults, options, dataOptions)
 		);
 		_.params = $.store.get(element, `${DATA_NAME}_params`);
 		 
-		if (_.params.useLocationHash && guidID === _.params.popupID) {
-			console.warn('If loading from a location hash pleasemake sure to specify an ID not auto generated. This won\'t work should the page get reloaded.');
+		if (_.params.useLocationHash && popupID === _.params.popupID) {
+			console.warn('If loading from a location hash please make sure to specify an ID not auto generated. This won\'t work should the page get reloaded.');
 		}
 
 		

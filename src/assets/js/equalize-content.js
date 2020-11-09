@@ -15,15 +15,8 @@ export default class EqualizeContent {
 		return DATA_NAME;
 	}
 
-	constructor(element, options) {
-		const _ = this;
-		_.element = element;
-
-		const dataOptions = validJSONFromString(
-			$(element).data(EVENT_NAME+'-options')
-		);
-
-		_.defaults = {
+	static get default() {
+		return {
 			equalizeItem: '.equalize',
 			startWidth: 0, 
 			stopWidth: 480,
@@ -33,12 +26,23 @@ export default class EqualizeContent {
 			aligningCss: 'flex-l',
 			resizeCss: 'in-resize',
 			fuzzy: 1
-		};
+		}
+	}
+
+	constructor(element, options) {
+		const _ = this;
+		_.element = element;
+
+		const dataOptions = validJSONFromString(
+			$(element).data(EVENT_NAME+'-options')
+		);
+
+	 
 
 		$.store.set(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(_.defaults, options, dataOptions) 
+			$.extend(EqualizeContent.defaults, options, dataOptions) 
 		);
 		_.params = $.store.get(element,`${DATA_NAME}_params`);
 

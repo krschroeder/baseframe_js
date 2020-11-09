@@ -15,6 +15,20 @@ export default class NavDesktop {
 		return DATA_NAME;
 	}
 
+	static get defaults() {
+		return {
+			stopWidth: 768,
+			delay: 800,
+			edgeCss: 'ul-on-edge', 
+			outerElem: 'body',
+			ulHasCss: 'has-ul',
+			ulNotCss: 'no-ul',
+			navHoveredCss: 'desktop-nav-hovered',
+			hoverCss: 'hover',
+			submenuBtnCss: 'btn-nav--mb-submenu i i-arrow-b'
+		}
+	}
+
 	constructor(element, options) {
 		const _ = this;
 
@@ -25,22 +39,11 @@ export default class NavDesktop {
 			$(element).data(DATA_NAME + '-options')
 		);
 
-		_.defaults = {
-			stopWidth: 768,
-			delay: 800,
-			edgeCss: 'ul-on-edge', 
-			outerElem: 'body',
-			ulHasCss: 'has-ul',
-			ulNotCss: 'no-ul',
-			navHoveredCss: 'desktop-nav-hovered',
-			hoverCss: 'hover',
-			submenuBtnCss: 'btn-nav--mb-submenu i i-arrow-b'
-		};
 
 		$.store.set( 
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(_.defaults, options, dataOptions)
+			$.extend(NavDesktop.defaults, options, dataOptions)
 		);
 		_.params = $.store.get(element, `${DATA_NAME}_params`);
 

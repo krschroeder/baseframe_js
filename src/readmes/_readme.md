@@ -40,6 +40,7 @@ import installStoreToLibrary, {
     libraryExtend,
     Collapse,
     EqualizeContent,
+    LazyLoad,
     MarketoForm,
     NavDesktop,
     NavMobile,
@@ -64,6 +65,7 @@ installStoreToLibrary(true);
 libraryExtend([
     Collapse,
     EqualizeContent,
+    LazyLoad,
     NavDesktop,
     NavMobile,
     Parallax,
@@ -102,6 +104,18 @@ rules: [
 It's is for toggling collapsible sections. Can be used like an accordion and etc. 
 __[View](#collapse-plugin)__
 
+### Equalize Content
+When Flexbox, or other options won&rsquo;t work, use this to equalize content 
+__[View](#equalize-plugin)__
+
+### Lazy Load
+Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` and magically polyfills for IE11. 
+__[View](#plugin-lazy-load)__
+
+### Marketo Form
+Have you tried to style a Marketo form? It is not too fun to do! This should help slimplify the process so you won&rsquo;t pull your hair out. 
+__[View](#marketo-form-plugin)__
+
 ### Navigation Desktop
 This plugin just adds a delay to the desktop navigation for the nestled levels of a `<ul>`. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page. 
 __[View](#nav-desktop-plugin)__
@@ -109,14 +123,6 @@ __[View](#nav-desktop-plugin)__
 ### Navigation Mobile
 Neat little mobile navigation plugin 
 __[View](#nav-mobile-plugin)__
-
-### Equalize Content
-When Flexbox, or other options won&rsquo;t work, use this to equalize content 
-__[View](#equalize-plugin)__
-
-### Marketo Form
-Have you tried to style a Marketo form? It is not too fun to do! This should help slimplify the process so you won&rsquo;t pull your hair out. 
-__[View](#marketo-form-plugin)__
 
 ### Parallax Elements
 For making a parallaxing elements on the page. Lots of configurable options.
@@ -182,7 +188,7 @@ installStoreToLibrary(expose?:boolean)
 
 #### $.store
 
-Inside the $.store method is the following structure. The first parameter can be an `HTMLElement` or a `$(HTMLElement)`. The second parameter is a `string` and is the identifier on on which the data is stored. Multiple properties can be stored on the same element. In the plugin's the instance (`PluginName_instance`) is saved, as well as the instance paremeters (`PluginName_params`). Not going to lie, this was started from Bootstraps (which gets its credit in the code), but altered to be little more of its own.
+Inside the $.store method is the following structure. The first parameter can be an `HTMLElement` or a `$(HTMLElement)`. The second parameter is a `string` and is the identifier on on which the data is stored. Multiple properties can be stored on the same element. In the plugin's the instance (`PluginName_instance`) is saved, as well as the instance paremeters (`PluginName_params`). 
 
 ```javascript
 const Store = {
@@ -195,7 +201,8 @@ const Store = {
 	remove(element, keyStore) {
 		mapData.delete(element, keyStore)
     },
-    //shows the all the data stored in the Map
+    //console logs the all the data stored in the Map
+    //which could be helpful if developing.
     //only added if the first parameter is set to true in the function
 	expose(){
 		mapData.expose()
@@ -270,14 +277,14 @@ $.extend({cookies: cookies});
 Searches for a query-string value using `location.hash`.
 
 ```javascript
-    getHashParam(search:string)
+getHashParam(search:string)
 ```
 
 #### getUrlParam
 Searches for a query-string value using `location.search`, pass in an optional second parameter to search another string for key-pair values.
 
 ```javascript
-    getUrlParam(search:string ,searchString?:string)
+getUrlParam(search:string ,searchString?:string)
 ```
 
 
@@ -289,6 +296,10 @@ Searches for a query-string value using `location.search`, pass in an optional s
 <br>
 <br>
 @@include('./equalize-content.md')
+<br>
+<br>
+<br>
+@@include('./lazy-load.md')
 <br>
 <br>
 <br>

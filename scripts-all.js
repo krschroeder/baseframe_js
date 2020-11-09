@@ -13,7 +13,7 @@ import Tabs from './src/assets/js/tabs';
 import EqualizeContent from './src/assets/js/equalize-content';
 import MarketoForm from './src/assets/js/marketo-form';
 import ResponsiveDropDown from './src/assets/js/responsive-dropdowns';
-import LazyLoad from './src/assets/js/lazy-loader';
+import LazyLoad from './src/assets/js/lazy-load';
 
 import cookies from './src/assets/js/cookies';
 import formInputs from './src/assets/js/form-input';

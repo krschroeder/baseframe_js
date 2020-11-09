@@ -18,14 +18,8 @@ export default class ResponsiveDropDown {
 		return DATA_NAME;
 	}
 
-	constructor(element, options) {
-		const _ = this;
-
-		const dataOptions = validJSONFromString(
-			$(element).data(DATA_NAME + '-options')
-		);
-
-		_.defaults = {
+	static get defaults() {
+		return {
 			clickHeader: '.resp-dd__header',
 			toggleBody: '.resp-dd__body',
 			closeBtnBottom: true,
@@ -39,7 +33,15 @@ export default class ResponsiveDropDown {
 			duration: 300,
 			mobileBkpt: 768,
 			outsideClickElem: 'body'
-		};
+		}
+	}
+
+	constructor(element, options) {
+		const _ = this;
+
+		const dataOptions = validJSONFromString(
+			$(element).data(DATA_NAME + '-options')
+		);
 
 		_.isActive = false;
 		_.$element = $(element);
@@ -53,7 +55,7 @@ export default class ResponsiveDropDown {
 		$.store.set(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(_.defaults, options, dataOptions)
+			$.extend(ResponsiveDropDown.defaults, options, dataOptions)
 		);
 		_.params = $.store.get(element, `${DATA_NAME}_params`);
 

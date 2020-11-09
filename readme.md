@@ -40,6 +40,7 @@ import installStoreToLibrary, {
     libraryExtend,
     Collapse,
     EqualizeContent,
+    LazyLoad,
     MarketoForm,
     NavDesktop,
     NavMobile,
@@ -64,6 +65,7 @@ installStoreToLibrary(true);
 libraryExtend([
     Collapse,
     EqualizeContent,
+    LazyLoad,
     NavDesktop,
     NavMobile,
     Parallax,
@@ -102,6 +104,18 @@ rules: [
 It's is for toggling collapsible sections. Can be used like an accordion and etc. 
 __[View](#collapse-plugin)__
 
+### Equalize Content
+When Flexbox, or other options won&rsquo;t work, use this to equalize content 
+__[View](#equalize-plugin)__
+
+### Lazy Load
+Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` and magically polyfills for IE11. 
+__[View](#plugin-lazy-load)__
+
+### Marketo Form
+Have you tried to style a Marketo form? It is not too fun to do! This should help slimplify the process so you won&rsquo;t pull your hair out. 
+__[View](#marketo-form-plugin)__
+
 ### Navigation Desktop
 This plugin just adds a delay to the desktop navigation for the nestled levels of a `<ul>`. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page. 
 __[View](#nav-desktop-plugin)__
@@ -109,14 +123,6 @@ __[View](#nav-desktop-plugin)__
 ### Navigation Mobile
 Neat little mobile navigation plugin 
 __[View](#nav-mobile-plugin)__
-
-### Equalize Content
-When Flexbox, or other options won&rsquo;t work, use this to equalize content 
-__[View](#equalize-plugin)__
-
-### Marketo Form
-Have you tried to style a Marketo form? It is not too fun to do! This should help slimplify the process so you won&rsquo;t pull your hair out. 
-__[View](#marketo-form-plugin)__
 
 ### Parallax Elements
 For making a parallaxing elements on the page. Lots of configurable options.
@@ -182,7 +188,7 @@ installStoreToLibrary(expose?:boolean)
 
 #### $.store
 
-Inside the $.store method is the following structure. The first parameter can be an `HTMLElement` or a `$(HTMLElement)`. The second parameter is a `string` and is the identifier on on which the data is stored. Multiple properties can be stored on the same element. In the plugin's the instance (`PluginName_instance`) is saved, as well as the instance paremeters (`PluginName_params`). Not going to lie, this was started from Bootstraps (which gets its credit in the code), but altered to be little more of its own.
+Inside the $.store method is the following structure. The first parameter can be an `HTMLElement` or a `$(HTMLElement)`. The second parameter is a `string` and is the identifier on on which the data is stored. Multiple properties can be stored on the same element. In the plugin's the instance (`PluginName_instance`) is saved, as well as the instance paremeters (`PluginName_params`). 
 
 ```javascript
 const Store = {
@@ -195,7 +201,8 @@ const Store = {
 	remove(element, keyStore) {
 		mapData.delete(element, keyStore)
     },
-    //shows the all the data stored in the Map
+    //console logs the all the data stored in the Map
+    //which could be helpful if developing.
     //only added if the first parameter is set to true in the function
 	expose(){
 		mapData.expose()
@@ -270,14 +277,14 @@ $.extend({cookies: cookies});
 Searches for a query-string value using `location.hash`.
 
 ```javascript
-    getHashParam(search:string)
+getHashParam(search:string)
 ```
 
 #### getUrlParam
 Searches for a query-string value using `location.search`, pass in an optional second parameter to search another string for key-pair values.
 
 ```javascript
-    getUrlParam(search:string ,searchString?:string)
+getUrlParam(search:string ,searchString?:string)
 ```
 
 
@@ -414,6 +421,112 @@ __JavaScript__
 $('.equalize-container').equalizeContent();
 ```
 
+<br>
+<br>
+<br>
+<h2 id="plugin-lazy-load">Lazy Load</h2>
+
+Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` and magically polyfills for IE11. 
+
+
+Option | Type | Default | Description
+------ | ---- | ------- | -----------
+
+imgSrcName| string | 'src' | Name of the data attribute to load an image source. For example `<img src="cleardot.gif" data-src="your-lazy-image.jpg">`.
+bgSrcName| string | 'bgSrc' | Name of the data attribute to load a background image. Use camel casing when changing.
+loadImgs| boolean | true | Load images and background images. Built-in function for this since its the core intended functionality.
+inEvt| Function | null | Custom function that hooks into the element appearing on screen. the `lazyElem` is the only parameter passed, so `inEvt(lazyElem) = > {console.log(lazyElem)}`.
+outEvt| Function | null | Custom function that hooks into the element disappearing in the viewport.
+force | boolean | false | 
+polyfillSrc | string | 'https://polyfill.io/v3/polyfill.js?features=IntersectionObserver' | Source of the polyfill for IE11. Can be changed if necessary should this need changed for any reason.
+observerID| string | null | ID of `window.IntersectionObserver` which gets created with the 'new' operator, so one can get used for each instance.
+unobserve| string | true | once entered in on the viewport, it'll unobserve. Make `false` should you want to re-observe an element.
+observerOpts| string | { rootMargin: '48px' } | Parameters being passed into the IntersectionObserver, please refer to documentation to use that.
+isIE | regexp | Browser dependent |  If its IE it'll resolve to `true` else `false`.
+
+### Example
+
+__The following is an example html structure for this plugin:__
+
+__HTML__
+```html
+<img src="./assets/images/cleardot.gif" 
+    data-src="https://placehold.it/768x768/565656" 
+    alt="Placeholder" 
+/>
+
+<img src="./assets/images/cleardot.gif" 
+    data-src="https://placehold.it/768x768/444" 
+    alt="Placeholder" 
+/>
+
+<img src="./assets/images/cleardot.gif" 
+    data-src="https://placehold.it/768x768/222" 
+    alt="Placeholder" 
+/>
+
+<img src="./assets/images/cleardot.gif" 
+    data-src="https://placehold.it/768x768" 
+    alt="Placeholder" 
+/>
+
+
+
+<div class="background-area-bg desktop-bg md-up-show"
+ data-bg-src="https://placehold.it/1920x760"
+></div>
+
+<div class="background-area-bg mobile-bg md-up-hide"
+    data-bg-src="https://placehold.it/768x768"
+></div>
+
+
+<h1>Common Plugins and JavaScript for Websites</h1>
+<p class="text-md">It's nearly inevitable your website will need these plugin's and functions for it to work. These are made to work with <a href="https://github.com/fabiospampinato/cash" target="_blank">Cash</a> (with jQuery still an option) as the only dependency.</p>
+<h2>About</h2>
+<p><a href="#page-bottom" class="smooth-scroll">Go To Page Bottom Smooth Scroll</a> Below are some common plugin's to help enhance your website. You'll notice some are missing (like a Carousel for example), that's because there are just some really, realy well made, IMO. Not touching that stuff, use it, its great. Others I always thought could be better, even though a few are frankly near duplicates 🤷🏻‍♂️. Anyways here we are, and you're stil reading this! If you download you probably work where I do, or somehow stumbled across.</p>
+
+<h2>Some nice features are their is some shared syntax in the way they all operate.</h2>
+
+<p><strong>For Example:</strong> all have options that can be plugged in as a data attribute, in JSON format (loosely written somehat)</p>
+<code>
+    &lt;div id="your-plugin-elem" data-plugin-name="{option:'text',option2: true, etc: 'you get the idea'}"&gt;&lt;/div&gt;
+</code>
+
+<p><strong>For Example:</strong> all can have their configuration change. Which can come in handy sometimes when things get complex</p>
+<code>
+    $('.your-plugin-elem').PluginOfSorts({change:'yep', height: 1e6})
+</code>
+                
+```
+
+__JavaScript__
+```javascript
+
+//Background images... with a custom in event
+$('.background-area-bg').lazyLoad({
+    observerID: 'background-area-bg', 
+    inEvt: (el)=>{console.log('el',el)}
+});
+
+//regular images
+$('img[data-src]').lazyLoad({
+    observerID: 'img[data-src]'
+});
+
+//a bunch of paragraphs to style right!
+$('p').lazyLoad({
+    observerID: 'p',
+    loadImgs: false, 
+    unobserve:false,
+    inEvt: (el) => {
+        setTimeout(()=> {el.style.color = 'red';},1000);
+    },
+    outEvt: (el) => {
+        setTimeout(()=> {el.style.color = '';},1000);
+    }
+});
+```
 <br>
 <br>
 <br>
@@ -923,7 +1036,7 @@ At some point we all need to be able to tab content. This one does it for you!
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-defaultContent | Boolean / String | 0 | The order of the list item selected. Goes of course their appearance in the DOM.
+defaultContent | Boolean / String | 0 | The order of the list item selected. Goes of course their appearance in the DOM. Passing in `'none'` does as it sounds and hides them all by default.
 tabsEvent | string | 'click' | Event to change the tabs content
 activeCss | string | 'tab--active' | The 'active' CSS class that is added to the tabs list on the `<li>` element.
 tabsBodyCss | string | 'tabs__body' | The CSS class for the body element in which all the tab content resides.

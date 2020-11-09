@@ -18,17 +18,9 @@ export default class Collapse {
 	static get pluginName() {
 		return DATA_NAME;
 	}
-	
 
-	constructor(element, options, index) {
-
-		const _ = this;
-
-		const dataOptions = validJSONFromString(
-			$(element).data(EVENT_NAME + '-options')
-		);
-
-		_.defaults = {	 
+	static get default() {
+		return {
 			elemsItem: '.collapse__item',
 			elemsBtn: '.collapse__btn',
 			elemsBody: '.collapse__body',
@@ -49,7 +41,18 @@ export default class Collapse {
 			afterOpen: () => { },
 			afterClose: () => { },
 			afterInit: () => { }
-		};
+		}
+	}
+	
+
+	constructor(element, options, index) {
+
+		const _ = this;
+
+		const dataOptions = validJSONFromString(
+			$(element).data(EVENT_NAME + '-options')
+		);
+
 		_.element = element;
 		_.onElem = element;
 		_.index = index;
@@ -57,7 +60,7 @@ export default class Collapse {
 		$.store.set(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(_.defaults, options, dataOptions) 
+			$.extend(Collapse.defaults, options, dataOptions) 
 		);
 		_.params = $.store.get(element,`${DATA_NAME}_params`);
 		

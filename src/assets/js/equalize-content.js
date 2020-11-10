@@ -15,7 +15,7 @@ export default class EqualizeContent {
 		return DATA_NAME;
 	}
 
-	static get default() {
+	static get defaults() {
 		return {
 			equalizeItem: '.equalize',
 			startWidth: 0, 

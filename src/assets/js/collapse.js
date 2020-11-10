@@ -19,7 +19,7 @@ export default class Collapse {
 		return DATA_NAME;
 	}
 
-	static get default() {
+	static get defaults() {
 		return {
 			elemsItem: '.collapse__item',
 			elemsBtn: '.collapse__btn',

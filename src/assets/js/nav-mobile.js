@@ -3,7 +3,7 @@ import validJSONFromString from './util/formatting-valid-json.js';
 import {isVisible,CSS_TRANSISTION_DELAY} from './util/helpers';
 import submenuBtn from './util/plugin/nav';
 
-const VERSION = "1.0.2";
+const VERSION = "1.0.3";
 const DATA_NAME = 'NavMobile';
 const EVENT_NAME = 'navMobile';
 
@@ -109,11 +109,7 @@ export default class NavMobile {
 			if (!$this.hasClass(_.params.hasUlCls)) { 
 				const $a = $this.find('a').first();
 
-				$a.addClass(_.params.hasUlCls);
-
 				$a.after(submenuBtn(_.params, $a.text()))
-					 
-
 			}
 		});
 	}

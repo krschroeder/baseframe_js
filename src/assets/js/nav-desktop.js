@@ -1,7 +1,7 @@
 import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json.js';
 
-const VERSION = "1.1.0";
+const VERSION = "1.1.2";
 const DATA_NAME = 'NavDesktop';
 const EVENT_NAME = 'navDesktop';
  
@@ -87,7 +87,7 @@ export default class NavDesktop {
 			} 
 		}
 
-		$(_.element).find('ul').on(`mouseover.${EVENT_NAME}`, 'li',function(e){
+		$(_.element).find('ul').on(`mouseover.${EVENT_NAME}`, 'li,ul',function(e){
 
 			const li = this;
 			const {outerElem, navHoveredCss, hoverCss} = _.params;
@@ -101,6 +101,7 @@ export default class NavDesktop {
 				liLiParents.addClass(hoverCss);
 
 				$(li).find(`.${hoverCss}`).removeClass(hoverCss);
+				$(li).siblings('li').removeClass(hoverCss)
 
 				liLiParents.length === 0 && 
 					$(_.element).find(`.${hoverCss}`).removeClass(hoverCss);
@@ -110,7 +111,7 @@ export default class NavDesktop {
 				$(outerElem).addClass(navHoveredCss);
 			});
 			
-		}).on(`mouseout.${EVENT_NAME}`, 'li', function(e){
+		}).on(`mouseout.${EVENT_NAME}`, 'li,ul', function(e){
 
 			const li = this;
 			const {edgeCss, delay, navHoveredCss, hoverCss, outerElem} = _.params;

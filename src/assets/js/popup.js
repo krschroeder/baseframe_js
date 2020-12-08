@@ -6,7 +6,7 @@ import { isHidden, photoRegex, CSS_TRANSISTION_DELAY } from './util/helpers';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 
-const VERSION = "1.0.1";
+const VERSION = "1.0.2";
 const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
 const INSTANCE_NAME = `${DATA_NAME}_instance`;
@@ -608,9 +608,8 @@ export default class Popup {
 
 			$.store.remove(element, INSTANCE_NAME);
 			$.store.remove(element, `${DATA_NAME}_params`);
-			$(element)
-				.off(`${params.enableEvent}.${DATA_NAME} ${DATA_NAME}`)
-				.off(DATA_NAME);
+			
+			$(element).off(`${params.enableEvent}.${EVENT_NAME}`).off(`${EVENT_NAME}`);
 
 			$(document).off(`keydown.${EVENT_NAME}`);
 		}

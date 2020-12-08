@@ -1,18 +1,4 @@
-/**
- * --------------------------------------------------------------------------
- * Bootstrap (v4.3.1): dom/data.js
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * --------------------------------------------------------------------------
- */
 
-/**
- * ------------------------------------------------------------------------
- * Constants
- * ------------------------------------------------------------------------
- */
-
-//Modified to create multiple entries in case there is more than one plugin acting/using the element as a key
-//also uses a Map
 
 const mapData = (() => {
 
@@ -69,7 +55,7 @@ const mapData = (() => {
 		},
 		get(_element, keyStore) {
 
-			const  element = _element[0] || _element;
+			const element = _element[0] || _element;
 
 			if (!element || typeof element.keyStore === 'undefined') {
 				return null;
@@ -89,16 +75,30 @@ const mapData = (() => {
 			
 			return null;
 		},
-		delete(element, keyStore) {
+		delete(_element, keyStore) {
+
+			const element = _element[0] || _element;
+
 			if (typeof element.keyStore === 'undefined') {
 				return
 			}
 
-			const keyProperties = element.keyStore;
+			const keyProperties = element.keyStore; console.log(keyProperties)
 
 			if (keyProperties.keyStore === keyStore) {
 				storeData.delete(keyProperties.id);
 				delete element.keyStore
+			}
+
+			for (let i = 0, l = keyProperties.length; i < l; i++){
+				let currKey = keyProperties[i];
+				
+				if (currKey.keyStore === keyStore){
+					 
+					storeData.delete(currKey.id);
+					keyProperties.splice(i,1);
+					 
+				}
 			}
 		}
 	}

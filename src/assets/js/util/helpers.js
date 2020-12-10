@@ -10,8 +10,8 @@ export default function getType(val) {
 }
 
 // visibilty
-export const isHidden = (el) => el.offsetParent === null;
-export const isVisible = (el) => el.offsetParent !== null;
+export const isVisible = (el) => el.offsetParent !== null || !!( el.offsetWidth || el.offsetHeight || el.getClientRects().length );
+export const isHidden = (el) => !isVisible(el);
 
 
 // photo

@@ -3,7 +3,7 @@ import validJSONFromString from './util/formatting-valid-json.js';
 import {isVisible,CSS_TRANSISTION_DELAY} from './util/helpers';
 import submenuBtn from './util/plugin/nav';
 
-const VERSION = "1.0.3";
+const VERSION = "1.2.0";
 const DATA_NAME = 'NavMobile';
 const EVENT_NAME = 'navMobile';
 
@@ -35,7 +35,8 @@ export default class NavMobile {
 			stopPropagation: true,
 			nextLevelBtn: `<i class="nav-icon nav-icon--next" /><span class="sr-only">View menu</span></i>`,
 			backLevelBtn: `<i class="nav-icon nav-icon--back" >← <span class="sr-only">Go Back</span></i>`,
-			navToggleNestled: false
+			navToggleNestled: false,
+			bkptEnable: null
 		}
 	}
 
@@ -104,10 +105,12 @@ export default class NavMobile {
 
 		$('li', _.$element).has('ul').each(function () {
 			const $this = $(this);
-			const anchorText = `toggle menu`;
-
-			if (!$this.hasClass(_.params.hasUlCls)) { 
+			 
+			 
+			if (!$this.next('button').length) { 
 				const $a = $this.find('a').first();
+
+				$a.addClass(_.params.hasUlCls);
 
 				$a.after(submenuBtn(_.params, $a.text()))
 			}
@@ -119,7 +122,9 @@ export default class NavMobile {
 		const ESCAPE = 27;
 
 		$(_.params.enableBtn).on(`click.${EVENT_NAME} ${EVENT_NAME}`, function (e) {
-			
+			console.log('allowclick',_.allowClick,_.params.bkptEnable)
+			if (!_.allowClick) return;
+
 			_.mobileMenuToggle();
 
 			e.stopPropagation();
@@ -130,7 +135,7 @@ export default class NavMobile {
 
 			const key = e.keyCode || e.which;
 
-			if (key === ESCAPE && _.$element.hasClass(_.params.menuOpenCss)) {
+			if (key === ESCAPE && _.$element.hasClass(_.params.menuOpenCss) && _.allowClick) {
 				_.mobileMenuToggle();
 			}
 		});
@@ -251,23 +256,29 @@ export default class NavMobile {
 
 	checkIfEnabled() {
 		const _ = this;
-
+		
 		let resizeTimer;
-		_.allowClick = isVisible($(_.params.enableBtn)[0]);
+		 
 		//basically if the navigational button is visible then
 		//we can allow the click to open the navigation
 		//this is so it doesn't clash with any other plugins
 		//and allows for the control of this click via CSS
-		$(window).on(`resize.${EVENT_NAME} ${EVENT_NAME}`, function () {
+		$(window).on(`resize.${EVENT_NAME} ${EVENT_NAME}`, function (e) {
 			
 			resizeTimer && clearTimeout(resizeTimer);
 
 			resizeTimer = setTimeout(() => {
 				
-				_.allowClick = isVisible($(_.params.enableBtn)[0]);
+				_.allowClick = typeof _.params.bkptEnable ==='number' ? 
+					$(window).width() <= _.params.bkptEnable :
+					isVisible($(_.params.enableBtn)[0])
+				;
 				 
-			}, 200);
-		});
+				 
+			}, e.type === EVENT_NAME ? 0 : 200);
+		}).trigger(EVENT_NAME);
+
+		 
 	}
 }
 

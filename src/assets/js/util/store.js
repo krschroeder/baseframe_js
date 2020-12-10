@@ -83,7 +83,7 @@ const mapData = (() => {
 				return
 			}
 
-			const keyProperties = element.keyStore; console.log(keyProperties)
+			const keyProperties = element.keyStore;
 
 			if (keyProperties.keyStore === keyStore) {
 				storeData.delete(keyProperties.id);

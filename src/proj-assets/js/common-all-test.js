@@ -47,7 +47,9 @@ $.extend({getHashParam: getHashParam});
 $.extend({getUrlParam: getUrlParam});
 $.extend({cookies: cookies});
 
-window.LazyLoad = LazyLoad;
+$.extend({popup: Popup})
+
+window.MarketoForm = MarketoForm;
 
 const smoothScrollCallback = (arg,dos) => {
     console.log('yeah ' + arg + dos);
@@ -77,4 +79,5 @@ $('p').lazyLoad({
         setTimeout(()=> {el.style.color = '';},1000);
     }
 });
+
 // bgResponsiveLoad('.background-area-bg');

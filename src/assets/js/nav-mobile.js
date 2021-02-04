@@ -122,7 +122,7 @@ export default class NavMobile {
 		const ESCAPE = 27;
 
 		$(_.params.enableBtn).on(`click.${EVENT_NAME} ${EVENT_NAME}`, function (e) {
-			console.log('allowclick',_.allowClick,_.params.bkptEnable)
+			 
 			if (!_.allowClick) return;
 
 			_.mobileMenuToggle();

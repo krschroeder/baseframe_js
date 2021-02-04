@@ -606,12 +606,14 @@ export default class Popup {
 
 		if (element) {
 
+			const params = $.store.get(element, `${DATA_NAME}_params`);
+
 			$.store.remove(element, INSTANCE_NAME);
-			$.store.remove(element, `${DATA_NAME}_params`);
 			
 			$(element).off(`${params.enableEvent}.${EVENT_NAME}`).off(`${EVENT_NAME}`);
-
 			$(document).off(`keydown.${EVENT_NAME}`);
+
+			$.store.remove(element, `${DATA_NAME}_params`);
 		}
 
 	}

@@ -240,6 +240,35 @@ export default class MarketoForm {
 		});
 	}
 
+	// wrapCheckBoxInputsWithLabels() {
+    //     const _ = this;
+        
+    //     $('.mktoCheckboxList,.mktoRadioList', _.$mktoForm).each(function () {
+    //         const $input = $(this).find('input');
+    //         const $pLbl = $(this).closest('.mktoFieldWrap').find('label').first();
+    //         const $pLblHTML = $pLbl.html();
+
+    //         // const inputType = $input.attr("type").toLowerCase();
+    //         const isRadioType = $input.attr("type") === 'radio';
+    //         const inputSpecificClass = isRadioType ? 'input-radio' : 'input-checkbox';
+
+    //         $input.each(function (index) {
+    //             const $parent = $(this).parent();
+
+    //             $parent.find('input:eq(' + index + '), label:eq(' + index + ')')
+    //                 .wrapAll(`<div class="${_.param.wrapperClass} ${inputSpecificClass}"/>`);
+
+    //             const $label = $parent.find('label').eq(0);
+
+    //             !isRadioType && $label.html($pLblHTML);
+    //             isRadioType && $pLbl.addClass('sr-only');
+    //             $(this).after(`<i class="input-marker"/>`);
+
+    //         });
+            
+    //     });
+    // }
+
 	assignColumns($scope){
 
 		const _ = this;

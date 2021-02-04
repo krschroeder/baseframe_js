@@ -209,6 +209,4 @@ export default class Parallax {
 			_.$element
 			;
 	}
-
-
 }

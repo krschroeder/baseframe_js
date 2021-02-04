@@ -6,8 +6,11 @@ const mapData = (() => {
 	let id = 1;
 
 	return {
-		expose(){
-			console.log(storeData);	 
+		expose(what){
+			if (!what) console.log(storeData);
+			if (what === 'ret') {
+				return storeData;
+			}
 		},
 		set(_element, keyStore, data) {
 			
@@ -61,19 +64,10 @@ const mapData = (() => {
 				return null;
 			}
 
-			const keyProperties = element.keyStore;
+			const store = element.keyStore.filter((el) => el.keyStore === keyStore);
 
-			for (let i = 0, l = keyProperties.length; i < l; i++){
-				let currKey = keyProperties[i];
-				
-				if (currKey.keyStore === keyStore){
-					return storeData.get(currKey.id);
-				}
-			}
-			
-			new Error('Object exists, but didnt return a storeData');
-			
-			return null;
+			return store.length ? storeData.get(store[0].id) : null;
+
 		},
 		delete(_element, keyStore) {
 
@@ -87,7 +81,9 @@ const mapData = (() => {
 
 			if (keyProperties.keyStore === keyStore) {
 				storeData.delete(keyProperties.id);
-				delete element.keyStore
+				delete element.keyStore;
+
+				return;
 			}
 
 			for (let i = 0, l = keyProperties.length; i < l; i++){
@@ -118,7 +114,7 @@ const Store = {
 
 function installStoreToLibrary(expose = false){
 	if (expose) {
-		Store.expose = () => mapData.expose()
+		Store.expose = (p) => mapData.expose(p)
 	}
 
 	$.extend({

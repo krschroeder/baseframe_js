@@ -1,6 +1,6 @@
 {
   "name": "baseframe-js",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Common Javascript plugins and functions to help with Front-end Development on websites",
   "repository": {
     "type": "git",

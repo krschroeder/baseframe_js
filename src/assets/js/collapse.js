@@ -5,7 +5,7 @@ import smoothScroll from './util/smoothScroll';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 
-const VERSION = "2.1.2";
+const VERSION = "2.1.3";
 const DATA_NAME = 'Collapse';
 const EVENT_NAME = 'collapse';
 
@@ -105,7 +105,10 @@ export default class Collapse {
 			if (!!!$cBody.attr('id')) {
 				const btnContent = $btn.eq(0).text().slice(0, 20).trim().replace(/\s/g, '-');
 				const id = `collapse_${_.index}-${index}-${btnContent}`;
-				$cBody.attr('id', id);
+				$cBody.attr({
+					'id': id,
+					'aria-hidden': true
+				})
 				$btn.attr({
 					href: `#${id}`,
 					'aria-controls': id
@@ -165,7 +168,6 @@ export default class Collapse {
 		const {loadLocationHash, useHashFilter} = _.params;
 
 		const locationHashArray = (useHashFilter ? (getHashParam(useHashFilter) || '') : location.hash).split('#');
-
 		if (loadLocationHash) {
 			
 			if (!locationHashArray.length) return;
@@ -237,7 +239,8 @@ export default class Collapse {
 			const rmClasses = `${_.params.openCss} ${_.params.togglingCss} ${_.params.closingCss}`;
 			$collapsibleItem
 				.removeClass(rmClasses)
-				.css({ height: '' });
+				.css({ height: '' })
+				.attr({'aria-hidden': true});
 
 			$btnElems
 				.removeClass(rmClasses)
@@ -270,7 +273,8 @@ export default class Collapse {
 
 			$collapsibleItem.addClass(`${_.params.openCss}`);
 			$collapsibleItem.removeClass(rmClasses)
-				.css({height: ''});
+				.css({height: ''})
+				.attr({'aria-hidden': false});
 
 			$btnElems
 				.addClass(_.params.openCss)

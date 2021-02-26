@@ -91,6 +91,9 @@ export default class Collapse {
 					.addClass(_.params.openCss)
 					.attr('aria-expanded', true);
 
+				$(this).attr({'aria-hidden': false}); 
+			} else {
+				$(this).attr({'aria-hidden': true});
 			}
 		});
 	}

@@ -5,7 +5,7 @@ import smoothScroll from './util/smoothScroll';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 
-const VERSION = "2.1.3";
+const VERSION = "2.1.5";
 const DATA_NAME = 'Collapse';
 const EVENT_NAME = 'collapse';
 
@@ -174,10 +174,13 @@ export default class Collapse {
 		if (loadLocationHash) {
 			
 			if (!locationHashArray.length) return;
-
+			 
 			//first value is '' so we skip it
 			locationHashArray.slice(1).forEach((hash) => {
-				_._toggleAction('#'+hash, true);
+				if ($(_.element).eq(_.index).find('#'+hash).length > 0) {
+					 
+					_._toggleAction('#'+hash, true);
+				}
 			});
 		}
 		

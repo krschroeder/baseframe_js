@@ -4,7 +4,7 @@ import getType from './util/helpers';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 
-const VERSION = "1.0.1";
+const VERSION = "1.0.2";
 const DATA_NAME = 'Tabs';
 const EVENT_NAME = 'tabs';
 
@@ -93,7 +93,6 @@ export default class Tabs {
 			});
 
 			$tabBodyItem.attr({
-				'tabindex': '0',
 				'aria-labelledby': tabHref,
 				'role': 'tabpanel'
 			});
@@ -111,17 +110,6 @@ export default class Tabs {
 			const tabId = $(this).attr('href');
 			
 			if (_.params.useLocationHash) {
-				// let historyItem = tabId;
-
-				// getHistoryEntry(this, tabId );
-				// const {useHashFilter} = _.params;
-				// const {hash} = location;
-
-				// if (useHashFilter) {
-				// 	const newTab = getHashParam(useHashFilter);
-				// 	historyItem = hash ? hash.replace(getHashParam(useHashFilter),tabId) : `#${useHashFilter}=${tabId}`;
-					
-				// }
 				
 				history.pushState(null, null, getHistoryEntry(_, tabId ));
 			}

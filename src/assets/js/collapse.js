@@ -5,7 +5,7 @@ import smoothScroll from './util/smoothScroll';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 
-const VERSION = "2.1.5";
+const VERSION = "2.1.6";
 const DATA_NAME = 'Collapse';
 const EVENT_NAME = 'collapse';
 
@@ -43,7 +43,6 @@ export default class Collapse {
 			afterInit: () => { }
 		}
 	}
-	
 
 	constructor(element, options, index) {
 
@@ -90,11 +89,7 @@ export default class Collapse {
 				$('body').find(btnElems)
 					.addClass(_.params.openCss)
 					.attr('aria-expanded', true);
-
-				$(this).attr({'aria-hidden': false}); 
-			} else {
-				$(this).attr({'aria-hidden': true});
-			}
+			}  
 		});
 	}
 
@@ -108,21 +103,15 @@ export default class Collapse {
 			if (!!!$cBody.attr('id')) {
 				const btnContent = $btn.eq(0).text().slice(0, 20).trim().replace(/\s/g, '-');
 				const id = `collapse_${_.index}-${index}-${btnContent}`;
-				$cBody.attr({
-					'id': id,
-					'aria-hidden': true
-				})
+				
+				$cBody.attr({'id': id})
 				$btn.attr({
 					href: `#${id}`,
 					'aria-controls': id
 				});
 			}
 
-
-			$btn.attr({
-				'aria-expanded': $btn.attr('aria-expanded') || false,
-
-			})
+			$btn.attr({'aria-expanded': $btn.attr('aria-expanded') || false})
 		});
 	}
 
@@ -157,7 +146,6 @@ export default class Collapse {
 
 				const hash = (useHashFilter ? (getHashParam(useHashFilter) || '') : location.hash);
 				
-				// if(hash === "") return;
 
 				_._toggleAction(hash);
 				e.preventDefault();
@@ -173,8 +161,6 @@ export default class Collapse {
 		const locationHashArray = (useHashFilter ? (getHashParam(useHashFilter) || '') : location.hash).split('#');
 		if (loadLocationHash) {
 			
-			if (!locationHashArray.length) return;
-			 
 			//first value is '' so we skip it
 			locationHashArray.slice(1).forEach((hash) => {
 				if ($(_.element).eq(_.index).find('#'+hash).length > 0) {
@@ -279,8 +265,7 @@ export default class Collapse {
 
 			$collapsibleItem.addClass(`${_.params.openCss}`);
 			$collapsibleItem.removeClass(rmClasses)
-				.css({height: ''})
-				.attr({'aria-hidden': false});
+				.css({height: ''});
 
 			$btnElems
 				.addClass(_.params.openCss)

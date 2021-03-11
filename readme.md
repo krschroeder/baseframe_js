@@ -8,7 +8,7 @@ These are made to work with [Cash](https://github.com/fabiospampinato/cash) (wit
 
 ## Features and Advantages
 ### It's small!
-Combined all together (with my minification settings at least) its ~ 52k. Add that with Cash and its less than jQuery alone!
+Combined all together (with my minification settings at least) its ~ 59k. Add that with Cash and its less than jQuery alone!
 
 ### Pass in parameter options with a `data-` attribute
 The data attribute is always the `data-` (of course) and then the plugin name `pluginName` followed by `-options`.
@@ -103,7 +103,7 @@ rules: [
 
 ### Accessible Menu
 Adds tabbing, allows the use of arrows for toggling around the navigation, which is configurable depending on the menu design. The use of the escape key to go up a level.
-__[View](#accessible-menu)__
+__[View](#accessible-menu-plugin)__
 
 ### Collapse 
 It's is for toggling collapsible sections. Can be used like an accordion and etc. 
@@ -294,7 +294,7 @@ getUrlParam(search:string ,searchString?:string)
 <br>
 <br>
 <br>
-<h2 id="accessible-menu">Accessible Menu</h2>
+<h2 id="accessible-menu-plugin">Accessible Menu</h2>
 
 
 ### Features
@@ -335,7 +335,7 @@ __HTML__
 ```
 
 ```javascript
-$('.parallax-bg').accessibleMenu({
+$('#main-menu').accessibleMenu({
 	keyDirections: ['horizontal', 'vertical', 'vertical'],
 	focusCss: 'focus'
 });

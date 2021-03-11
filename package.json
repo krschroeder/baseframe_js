@@ -1,12 +1,14 @@
 {
   "name": "baseframe-js",
-  "version": "1.5.0",
+  "version": "1.5.2",
   "description": "Common Javascript plugins and functions to help with Front-end Development on websites",
   "repository": {
     "type": "git",
     "url": "https://github.com/krschroeder/baseframe_js"
   },
   "keywords": [
+    "accessible",
+    "accessibility",
     "accessible menu",
     "accessible navigation",
     "equalize",
@@ -15,6 +17,7 @@
     "collapsible",
     "marketo",
     "popup",
+    "modal",
     "radios",
     "checkboxes",
     "navigation",

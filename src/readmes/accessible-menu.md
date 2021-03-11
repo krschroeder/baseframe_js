@@ -1,4 +1,4 @@
-<h2 id="accessible-menu">Accessible Menu</h2>
+<h2 id="accessible-menu-plugin">Accessible Menu</h2>
 
 
 ### Features
@@ -39,7 +39,7 @@ __HTML__
 ```
 
 ```javascript
-$('.parallax-bg').accessibleMenu({
+$('#main-menu').accessibleMenu({
 	keyDirections: ['horizontal', 'vertical', 'vertical'],
 	focusCss: 'focus'
 });

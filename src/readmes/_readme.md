@@ -38,6 +38,7 @@ These scripts all work back to IE11. One day in the future perhaps we can drop t
 //lets bring it all on in
 import installStoreToLibrary, {
     libraryExtend,
+    AccessibleMenu,
     Collapse,
     EqualizeContent,
     LazyLoad,
@@ -99,6 +100,10 @@ rules: [
 ```
 
 ## Plugin Names and What They Do.
+
+### Accessible Menu
+Adds tabbing, allows the use of arrows for toggling around the navigation, which is configurable depending on the menu design. The use of the escape key to go up a level.
+__[View](#accessible-menu)__
 
 ### Collapse 
 It's is for toggling collapsible sections. Can be used like an accordion and etc. 
@@ -286,8 +291,10 @@ Searches for a query-string value using `location.search`, pass in an optional s
 ```javascript
 getUrlParam(search:string ,searchString?:string)
 ```
-
-
+<br>
+<br>
+<br>
+@@include('./accessible-menu.md')
 <br>
 <br>
 <br>

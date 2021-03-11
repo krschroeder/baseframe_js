@@ -1,12 +1,14 @@
 {
   "name": "baseframe-js",
-  "version": "1.4.6",
+  "version": "1.5.0",
   "description": "Common Javascript plugins and functions to help with Front-end Development on websites",
   "repository": {
     "type": "git",
     "url": "https://github.com/krschroeder/baseframe_js"
   },
   "keywords": [
+    "accessible menu",
+    "accessible navigation",
     "equalize",
     "accordion",
     "collapse",

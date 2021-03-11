@@ -38,6 +38,7 @@ These scripts all work back to IE11. One day in the future perhaps we can drop t
 //lets bring it all on in
 import installStoreToLibrary, {
     libraryExtend,
+    AccessibleMenu,
     Collapse,
     EqualizeContent,
     LazyLoad,
@@ -99,6 +100,10 @@ rules: [
 ```
 
 ## Plugin Names and What They Do.
+
+### Accessible Menu
+Adds tabbing, allows the use of arrows for toggling around the navigation, which is configurable depending on the menu design. The use of the escape key to go up a level.
+__[View](#accessible-menu)__
 
 ### Collapse 
 It's is for toggling collapsible sections. Can be used like an accordion and etc. 
@@ -286,7 +291,55 @@ Searches for a query-string value using `location.search`, pass in an optional s
 ```javascript
 getUrlParam(search:string ,searchString?:string)
 ```
+<br>
+<br>
+<br>
+<h2 id="accessible-menu">Accessible Menu</h2>
 
+
+### Features
+This plugin allows a user to use the keyboard arrows to navigate a desktop navigation, and are configurable depending on the design. It also allows the use of the escape key to go up a level in the navigation.
+
+### Settings
+
+Option | Type | Default | Description
+------ | ---- | ------- | -----------
+keyDirections | array | ['horizontal', 'vertical', 'vertical'] | The direction in which the menu appears. For example, 'horizontal' means the `<li>` elements are going across the page. The next in the array is 'vertical', which means they're stacked. Typically if a third level exists they're also vertical as well.
+focusCss | string | 'focus' | the focus class that allows the menu to appear as being active
+
+
+### Example
+
+__The following structure should be used with this plugin:__
+
+__HTML__
+```html
+<nav id="main-menu">
+    <ul>
+        <li><a href="#level-1-link">Level 1 Link</a></li>
+        <li><a href="#level-1-link">Level 1 Link</a>
+            <ul>
+                <li><a href="#level-2-link">Level 2 Link</a></li>
+                <li><a href="#level-2-link">Level 2 Link</a></li>
+            </ul>
+        </li>		
+        <li><a href="#healthy-choice">Level 1 Link</a></li>		
+            <ul>
+                <li><a href="#level-2-link">Level 2 Link</a></li>
+                <li><a href="#level-2-link">Level 2 Link</a></li>
+                <li><a href="#level-2-link">Level 2 Link</a></li>
+            </ul>
+        </li>	
+    </ul>
+</nav>
+```
+
+```javascript
+$('.parallax-bg').accessibleMenu({
+	keyDirections: ['horizontal', 'vertical', 'vertical'],
+	focusCss: 'focus'
+});
+```
 
 <br>
 <br>

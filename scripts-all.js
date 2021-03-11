@@ -5,6 +5,7 @@ import libraryExtend from './src/assets/js/util/lib-extend';
 import smoothScroll from './src/assets/js/util/smoothScroll';
 import getUrlParam, {getHashParam} from './src/assets/js/util/get-param';
 import Popup from './src/assets/js/popup';
+import AccessibleMenu from './src/assets/js/accessible-menu';
 import Collapse from './src/assets/js/collapse';
 import Parallax from './src/assets/js/parallax';
 import NavDesktop from './src/assets/js/nav-desktop';
@@ -25,6 +26,7 @@ import bgResponsiveLoad from './src/assets/js/bg-responsive-load';
 export default installStoreToLibrary;
 export {
     libraryExtend,
+    AccessibleMenu,
     Collapse,
     EqualizeContent,
     MarketoForm,

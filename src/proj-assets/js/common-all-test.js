@@ -1,6 +1,7 @@
 //lets bring it all on in
 import installStoreToLibrary, {
     libraryExtend,
+    AccessibleMenu,
     Collapse,
     EqualizeContent,
     LazyLoad,
@@ -17,7 +18,7 @@ import installStoreToLibrary, {
     getHashParam,
     getUrlParam,
     smoothScroll,
-    cookies,
+    cookies
 } from '../../../scripts-all';
 
 //necessary for all plugin's to operate
@@ -26,6 +27,7 @@ installStoreToLibrary(true);
 
 //pass in as an array
 libraryExtend([
+    AccessibleMenu,
     Collapse,
     EqualizeContent,
     LazyLoad,
@@ -63,6 +65,12 @@ $('body').on('click', 'a.smooth-scroll', function(e){
    
     e.preventDefault();
 })
+
+$('#main-nav')
+    .navMobile({navToggleNestled:false})
+    .navDesktop();
+
+$('#main-nav').accessibleMenu();
 
 formInputs.init();
 

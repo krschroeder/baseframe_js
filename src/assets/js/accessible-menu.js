@@ -1,7 +1,7 @@
 import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json.js';
 
-const VERSION = "1.0.0";
+const VERSION = "1.1.0";
 const DATA_NAME = 'AccessibleMenu';
 const EVENT_NAME = 'accessibleMenu';
 
@@ -57,7 +57,9 @@ const prev = (e, $ulParents, activeElem, focusCss, keyDirections) => {
 
 	if (
 		e.keyCode === keys.LEFT && keyDirections[l] === "horizontal" ||
-		e.keyCode === keys.UP && keyDirections[l] === "vertical"
+		e.keyCode === keys.UP && keyDirections[l] === "vertical"  ||
+		e.keyCode === keys.LEFT && keyDirections[l] === "vertical" && 
+		(l > 1 && keyDirections[l - 1] === "vertical" && $(activeElem).parent('li').index() === 0) 
 	) {
 
 		focusListItem(activeElem, $ulParents, focusCss, true);

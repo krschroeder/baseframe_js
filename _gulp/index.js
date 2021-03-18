@@ -1,6 +1,5 @@
 import gulp, { src } from 'gulp';
 import path from 'path';
-import yargs from 'yargs';
 import browser from 'browser-sync';
 import rename from 'gulp-rename';
 import sass from 'gulp-sass';
@@ -12,7 +11,6 @@ import helpers       from 'handlebars-helpers';
 
 import autoprefixer from 'gulp-autoprefixer';
 import cleanCss from 'gulp-clean-css';
-import flatten from 'gulp-flatten';
 import clean from 'gulp-clean';
 import fileinclude from 'gulp-file-include';
 
@@ -77,15 +75,30 @@ function buildHTML(done){
 }
 
 
-function buildJS(){
-	return gulp.src(JS)
-		.pipe(named())
-		.pipe(webpackStream(WEBPACK_CONFIG, webpack))
-		.pipe(gulp.dest(DEST+'/assets/js'));
+function buildJS(done){
+	if (!PRODUCTION) {
+		return gulp.src(JS)
+			.pipe(named())
+			.pipe(webpackStream(WEBPACK_CONFIG, webpack))
+			.pipe(gulp.dest(DEST+'/assets/js'));
+	}
+
+	done();
 }
 
+// function buildJSDist(done){
+// 	if (PRODUCTION) {
+// 		return gulp.src('./scripts-all.js')
+// 			.pipe(named())
+// 			.pipe(webpackStream(WEBPACK_CONFIG, webpack))
+// 			.pipe(gulp.dest('dist/'));
+// 	}
+	
+// 	done();
+// }
+
 function copyAssets(done) {
-	if(!PRODUCTION) { 
+	if (!PRODUCTION) { 
 		return gulp.src('src/proj-assets/img/**/*')
 			.pipe(gulp.dest(DEST+'/assets/img'));
 	}
@@ -94,7 +107,8 @@ function copyAssets(done) {
 
 function cleanUp(){
 	return gulp.src([
-			path.resolve(DEST, '**/*.{html,css,js}')
+			path.resolve(DEST, '**/*.{html,css,js}'),
+			'dist/'
 		],{
 		read: false,
 		allowEmpty: true
@@ -115,25 +129,30 @@ function compileReadme() {
 }
 
 
-function watch(){
-	gulp.watch(JS).on('all',gulp.series(buildJS, reload));
-	gulp.watch(CSS).on('all',gulp.series(buildCSS));
-	gulp.watch('src/assets/scss/**/*.scss').on('all',gulp.series(buildCSS));
-	gulp.watch('src/proj-assets/img/**/*').on('all',gulp.series(copyAssets));
-	gulp.watch(['src/**/*.{html,hbs}']).on('all',gulp.series(buildHTML, reload));
-	gulp.watch('src/readmes/*.md').on('all',gulp.series(compileReadme));
+function watch(done){
+	if (!PRODUCTION) {
+		gulp.watch(JS).on('all',gulp.series(buildJS, reload));
+		gulp.watch(CSS).on('all',gulp.series(buildCSS));
+		gulp.watch('src/assets/scss/**/*.scss').on('all',gulp.series(buildCSS));
+		gulp.watch('src/proj-assets/img/**/*').on('all',gulp.series(copyAssets));
+		gulp.watch(['src/**/*.{html,hbs}']).on('all',gulp.series(buildHTML, reload));
+		gulp.watch('src/readmes/*.md').on('all',gulp.series(compileReadme));
+	}
+	done();
 }
 
  
 //
 // Server
 function server(done) {
-	// Start a server with BrowserSync to preview the site in
-	browser.init({
-		server: DEST,
-		port: 8000,
-		extensions: ['html'] // pretty urls
-	});
+	if (!PRODUCTION) {
+		// Start a server with BrowserSync to preview the site in
+		browser.init({
+			server: DEST,
+			port: 8000,
+			extensions: ['html'] // pretty urls
+		});
+	}
 	done();
 }
 
@@ -150,6 +169,7 @@ const BUILD = gulp.parallel(
 		cleanUp,
 		buildCSS,
 		buildJS,
+		// buildJSDist,
 		buildHTML,
 		copyAssets,
 		server,

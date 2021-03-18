@@ -13,7 +13,8 @@ const excludeRgx = /(node_modules)/;
 const config = {
     
     DEST: 'build',
-
+    PRODUCTION: PRODUCTION,
+    
     SRC: {
         CSS: ['src/proj-assets/scss/**/*.scss','src/assets/scss/**/*.scss'],
         HTML: ['src/pages/**/*.{html,hbs}'],

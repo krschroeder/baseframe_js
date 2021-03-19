@@ -1,7 +1,7 @@
 {
   "name": "baseframe-js",
-  "version": "1.6.0",
-  "description": "Common Javascript plugins and functions to help with Front-end Development on websites",
+  "version": "1.6.1",
+  "description": "A suite of useful Javascript plugins and functions to help with Front-end Development on websites",
   "repository": {
     "type": "git",
     "url": "https://github.com/krschroeder/baseframe_js"

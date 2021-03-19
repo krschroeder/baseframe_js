@@ -86,16 +86,16 @@ function buildJS(done){
 	done();
 }
 
-// function buildJSDist(done){
-// 	if (PRODUCTION) {
-// 		return gulp.src('./scripts-all.js')
-// 			.pipe(named())
-// 			.pipe(webpackStream(WEBPACK_CONFIG, webpack))
-// 			.pipe(gulp.dest('dist/'));
-// 	}
+function buildJSDist(done){
+	if (PRODUCTION) {
+		return gulp.src('./scripts-all.js')
+			.pipe(named())
+			.pipe(webpackStream(WEBPACK_CONFIG, webpack))
+			.pipe(gulp.dest('dist/'));
+	}
 	
-// 	done();
-// }
+	done();
+}
 
 function copyAssets(done) {
 	if (!PRODUCTION) { 
@@ -169,7 +169,7 @@ const BUILD = gulp.parallel(
 		cleanUp,
 		buildCSS,
 		buildJS,
-		// buildJSDist,
+		buildJSDist,
 		buildHTML,
 		copyAssets,
 		server,

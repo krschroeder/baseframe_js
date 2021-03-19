@@ -1,6 +1,6 @@
-# Base_Frame Plugins &amp; Common JS
+# Base_Frame Plugins &amp; Functions
 
- It features utilities for setting and getting cookies, smooth scrolling (without jQuery), throttled resizing, querystring parameter filtering and more. The plugin's are configurable and share consistentency across. This scripting is designed to be imported in easily so you can start building!
+A suite of useful Javascript plugins and functions to help with Front-end Development on websites. The scripting features plugins for collapsible sections, popups, parallaxing elements, tabs and more. It features utilities for setting and getting cookies, smooth scrolling (without jQuery), throttled resizing, querystring parameter filtering and more. The plugin's are configurable and consistent. This scripting is designed to be imported in easily so you can start building!
 
 ## Runs with [Cash](https://github.com/fabiospampinato/cash) (or JQuery if you wish)
 

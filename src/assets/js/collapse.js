@@ -168,6 +168,7 @@ export default class Collapse {
 
 	_toggleAction(collapseID,noAnimation = false) {
 		const _ = this; 
+		if (collapseID === '#') return;
 
 		const {openCss, openNoAnimateCss, togglingCss, toggleGroup} = _.params;
 		const $collapsibleItem = $(_.element).find(collapseID);

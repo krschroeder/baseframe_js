@@ -107,7 +107,7 @@ export default class Tabs {
 		const _ = this;
 
 		_.$tabsList.on(`${_.params.tabsEvent}.${EVENT_NAME} ${EVENT_NAME}`, "a", function (e) {
-			const tabId = $(this).attr('href');
+			const tabId = $(this).attr('href').substring(1);
 			
 			if (_.params.useLocationHash) {
 				
@@ -126,13 +126,10 @@ export default class Tabs {
 	
 		if (loadLocationHash) {
 		
-			const locationHashArray = (useHashFilter ? (getHashParam(useHashFilter) || '') : location.hash).split('#');
-
-			// if (!locationHashArray.length) return;
-
-			//first value is '' so we skip it
-			locationHashArray.slice(1).forEach((hash) => {
-				_.changeTabElements(hash);
+			const locationHashArray = (useHashFilter ? (getHashParam(useHashFilter) || '') : location.hash).split('=');
+		
+			locationHashArray.forEach((hash) => {
+				_.changeTabElements(hash.replace(/#/g,''));
 			 
 			});
 		}
@@ -155,7 +152,7 @@ export default class Tabs {
 			_.$tabsList.find('li').eq(_tabId).find('a').attr('href').substring(1) :
 			_tabId
 		;
-	
+		
 		const $tabSelectedItem = _.$tabsBody.find(`.${tabsBodyItemCss}[data-tab-id="${tabId}"]`);
 		
 		if ($tabSelectedItem.length) {

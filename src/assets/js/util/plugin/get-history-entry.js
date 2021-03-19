@@ -6,10 +6,10 @@ const getHistoryEntry = (_, entry) => {
 
     let historyEntry = entry;
 
-    if (useHashFilter) {
-        const newHash = `#${useHashFilter}=${entry}`;
-        const foundHash = `#${useHashFilter}=${getHashParam(useHashFilter)}`;
-     
+    if (useHashFilter) {  
+        const newHash = `${useHashFilter}=${entry}`;
+        const foundHash = `${useHashFilter}=${getHashParam(useHashFilter)}`;
+        
         historyEntry = hash !== "" ?
             (hash.match(foundHash) ?
                 hash.replace(foundHash, newHash) :
@@ -22,7 +22,7 @@ const getHistoryEntry = (_, entry) => {
   
     if (historyEntry === "") historyEntry = "#";
 
-    return historyEntry;
+    return '#' + historyEntry.replace(/#/g,'');
 }
 
 export default getHistoryEntry;

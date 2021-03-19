@@ -11,6 +11,8 @@ const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
 const INSTANCE_NAME = `${DATA_NAME}_instance`;
 
+const cleanHash = () => location.hash.replace(/#/g,'');
+
 export default class Popup {
 
 	static get version() {
@@ -115,7 +117,7 @@ export default class Popup {
 		//location hash  
 		_.isOpen = false;
 		_.isOpenHash = '';
-		_.historyID = '#' + _.params.popupID + '__' + index;
+		_.historyID = '' + _.params.popupID + '__' + index;
 		_.loadedFromHash = false;
 
 		_.initLoadEvents();
@@ -157,9 +159,9 @@ export default class Popup {
 			
 				if (
 					_.historyID === _.isOpenHash ||
-					_.historyID === (useHashFilter ? getHashParam(useHashFilter) : location.hash)
+					_.historyID === (useHashFilter ? getHashParam(useHashFilter) : cleanHash())
 				){
-				
+					 
 					if(_.isOpen) {
 					
 						_._close();
@@ -178,7 +180,7 @@ export default class Popup {
 			_.loadPopup(document.activeElement);
 		}
 
-		if (loadLocationHash && _.historyID === (useHashFilter ? getHashParam(useHashFilter) : location.hash)){
+		if (loadLocationHash && _.historyID === (useHashFilter ? getHashParam(useHashFilter) : cleanHash())){
 			_.loadPopup(_.$element);
 			_.loadedFromHash = true; 
 		}
@@ -193,7 +195,7 @@ export default class Popup {
 			_.domElemClicked = true;
 		}
 		
-		_.isOpenHash =  useHashFilter ? getHashParam(useHashFilter) : location.hash;
+		_.isOpenHash =  useHashFilter ? getHashParam(useHashFilter) : cleanHash();
 	
 		_.addToDOM();
 		_.closeHandlers();

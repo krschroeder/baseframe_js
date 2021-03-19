@@ -140,34 +140,27 @@ export default class Collapse {
 
 		$(window).on(`popstate.${EVENT_NAME}`,(e) => {
 
-			const {useLocationHash, useHashFilter} = _.params;
-
-			if (useLocationHash) {
-
-				const hash = (useHashFilter ? (getHashParam(useHashFilter) || '') : location.hash);
-				
-
-				_._toggleAction(hash);
-				e.preventDefault();
-			}
+			_.loadContentFromHash();
+			e.preventDefault();
 		})
 	}
 
 	loadContentFromHash() {
 		const _ = this;
 
-		const {loadLocationHash, useHashFilter} = _.params;
+		const {useLocationHash, useHashFilter} = _.params;
 
-		const locationHashArray = (useHashFilter ? (getHashParam(useHashFilter) || '') : location.hash).split('#');
-		if (loadLocationHash) {
+		if (useLocationHash) {
+
+			const hash = (useHashFilter ? (getHashParam(useHashFilter) || '') : location.hash);
 			
-			//first value is '' so we skip it
-			locationHashArray.slice(1).forEach((hash) => {
-				if ($(_.element).eq(_.index).find('#'+hash).length > 0) {
-					 
-					_._toggleAction('#'+hash, true);
-				}
-			});
+			//if there are multiples
+			const hashes = hash.split('=');
+
+			for (let i = 0, l = hashes.length; i < l; i++) {
+				
+				_._toggleAction('#' + hashes[i].replace(/#/g,''));
+			}
 		}
 		
 	}
@@ -177,7 +170,9 @@ export default class Collapse {
 		const _ = this; 
 
 		const {openCss, openNoAnimateCss, togglingCss, toggleGroup} = _.params;
-		const $collapsibleItem = $(collapseID);
+		const $collapsibleItem = $(_.element).find(collapseID);
+		
+		if (!$collapsibleItem.length) {return;}
 
 		const CLOSE = $collapsibleItem.hasClass(openCss);
 		const btnElems = `[data-href="${collapseID}"],a[href="${collapseID}"]`;

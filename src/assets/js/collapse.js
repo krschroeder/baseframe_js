@@ -169,9 +169,9 @@ export default class Collapse {
 	_toggleAction(collapseID,noAnimation = false) {
 		const _ = this; 
 		if (collapseID === '#') return;
-
-		const {openCss, openNoAnimateCss, togglingCss, toggleGroup} = _.params;
+		
 		const $collapsibleItem = $(_.element).find(collapseID);
+		const {openCss, openNoAnimateCss, togglingCss, toggleGroup} = _.params;
 		
 		if (!$collapsibleItem.length) {return;}
 
@@ -269,7 +269,7 @@ export default class Collapse {
 				.attr('aria-expanded', true);
 
 			_.params.afterOpen(this);
-
+a
 			if (_.params.moveToTopOnOpen) {
 				_._moveToTopOnOpen($collapsibleItem);
 			}

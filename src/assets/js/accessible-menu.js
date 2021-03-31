@@ -1,7 +1,7 @@
 import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json.js';
 
-const VERSION = "1.1.0";
+const VERSION = "1.2.0";
 const DATA_NAME = 'AccessibleMenu';
 const EVENT_NAME = 'accessibleMenu';
 
@@ -13,11 +13,11 @@ const keys = {
 	DOWN:  40
 }
 
-const escapeKey = (e, $ulParents, focusCss) => {
+const escapeKey = (e, $ulParents, focusCss, tabIfNotAnchor) => {
 	if (e.keyCode == keys.ESC) {
 
 		if ($ulParents.length > 1) {
-			const $anchor = $ulParents.eq(0).parent('li').find('a').first();
+			const $anchor = $ulParents.eq(0).parent('li').find(`a,${tabIfNotAnchor}`).first();
 			$anchor[0].focus();
 			$anchor.parent('li').addClass(focusCss);
 		}
@@ -25,17 +25,17 @@ const escapeKey = (e, $ulParents, focusCss) => {
 	}
 }
 
-const focusListItem = (activeElem, $ulParents, focusCss, prev) => {
+const focusListItem = (activeElem, $ulParents, focusCss, prev,tabIfNotAnchor) => {
 	const $aeLi = $(activeElem).parent('li');
 	const $el = prev ? $aeLi.prev('li') : $aeLi.next('li');
 
 	if ($el.length) {
 		$el.addClass(focusCss).siblings('li').removeClass(focusCss);
-		$el.find('a').first()[0].focus();
+		$el.find(`a,${tabIfNotAnchor}`).first()[0].focus();
 
 	} else {
 		if ($ulParents.length > 1) {
-			const $anchor = $ulParents.eq(0).parent('li').find('a').first();
+			const $anchor = $ulParents.eq(0).parent('li').find(`a,${tabIfNotAnchor}`).first();
 			$anchor[0].focus();
 			$anchor.parent('li').addClass(focusCss);
 		}
@@ -43,16 +43,16 @@ const focusListItem = (activeElem, $ulParents, focusCss, prev) => {
 }
 
 
-const focusNestledListItem = (activeElem,focusCss) => {
+const focusNestledListItem = (activeElem, focusCss, tabIfNotAnchor) => {
 	const $el = $(activeElem).parent('li').find('li').first();
 
 	if ($el.length) {
 		$el.addClass(focusCss).siblings('li').removeClass(focusCss);
-		$el.find('a').first()[0].focus();
+		$el.find(`a,${tabIfNotAnchor}`).first()[0].focus();
 	}
 }
 
-const prev = (e, $ulParents, activeElem, focusCss, keyDirections) => {
+const prev = (e, $ulParents, activeElem, focusCss, keyDirections, tabIfNotAnchor) => {
 	const l = $ulParents.length - 1;
 
 	if (
@@ -62,12 +62,12 @@ const prev = (e, $ulParents, activeElem, focusCss, keyDirections) => {
 		(l > 1 && keyDirections[l - 1] === "vertical" && $(activeElem).parent('li').index() === 0) 
 	) {
 
-		focusListItem(activeElem, $ulParents, focusCss, true);
+		focusListItem(activeElem, $ulParents, focusCss, true, tabIfNotAnchor);
 		e.preventDefault();
 	}
 }
 
-const next = (e, $ulParents, activeElem, focusCss, keyDirections) => {
+const next = (e, $ulParents, activeElem, focusCss, keyDirections, tabIfNotAnchor) => {
 	const l = $ulParents.length - 1;
 
 	if (
@@ -76,7 +76,7 @@ const next = (e, $ulParents, activeElem, focusCss, keyDirections) => {
 		e.keyCode === keys.DOWN && keyDirections[l] === "vertical"
 	) {
 
-		focusListItem(activeElem, $ulParents,focusCss, false);
+		focusListItem(activeElem, $ulParents,focusCss, false, tabIfNotAnchor);
 		e.preventDefault();
 	}
 
@@ -86,7 +86,7 @@ const next = (e, $ulParents, activeElem, focusCss, keyDirections) => {
 		e.keyCode === keys.DOWN && keyDirections[l] === "horizontal"
 	) {
 
-		focusNestledListItem(activeElem, $ulParents);
+		focusNestledListItem(activeElem, $ulParents, tabIfNotAnchor);
 		e.preventDefault();
 	}
 }
@@ -104,7 +104,8 @@ export default class AccessibleMenu {
 	static get defaults() {
 		return {
 			keyDirections: ['horizontal', 'vertical', 'vertical'],
-			focusCss: 'focus'
+			focusCss: 'focus',
+			tabIfNotAnchor: '.tab-element'
 		}
 	}
 
@@ -129,7 +130,7 @@ export default class AccessibleMenu {
 
 	init() {
 		const _ = this;
-		$(_.element).on('focusin.' + EVENT_NAME, 'a', function (e) {
+		$(_.element).on('focusin.' + EVENT_NAME, 'a,' + _.params.tabIfNotAnchor, function (e) {
 
 			$(this).parent('li').addClass('focus')
 				.siblings('li').removeClass('focus');
@@ -141,10 +142,10 @@ export default class AccessibleMenu {
 	
 		$(_.element).on('keydown.' + EVENT_NAME, function (e) {
 			e = e || window.event;
-			const {focusCss, keyDirections} = _.params;
+			const {focusCss, keyDirections, tabIfNotAnchor} = _.params;
 			const activeElem = document.activeElement;
 			const $ulParents = $(activeElem).parents('ul');
-			const props = [e, $ulParents, activeElem, focusCss, keyDirections];
+			const props = [e, $ulParents, activeElem, focusCss, keyDirections, tabIfNotAnchor];
 	
 			escapeKey(e, $ulParents);
 			prev(...props);

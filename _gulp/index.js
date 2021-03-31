@@ -169,7 +169,7 @@ const BUILD = gulp.parallel(
 		cleanUp,
 		buildCSS,
 		buildJS,
-		buildJSDist,
+		// buildJSDist,
 		buildHTML,
 		copyAssets,
 		server,

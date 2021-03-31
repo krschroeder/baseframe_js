@@ -460,7 +460,7 @@ export default class Popup {
 
 		if (_.groupCount > 1) {
 
-			$(document).on(`keydown.${EVENT_NAME}`, function (e) {
+			$(document).on(`keydown.${EVENT_NAME}${_.params.popupID}`, function (e) {
 				const ev = e || window.event;
 				const key = ev.keyCode || ev.which;
 
@@ -536,7 +536,7 @@ export default class Popup {
 
 	escapeClose() {
 		const _ = this;
-		$(document).on(`keydown.${EVENT_NAME}`, function (ev) {
+		$(document).on(`keydown.${EVENT_NAME}${_.params.popupID}`, function (ev) {
 			const e = ev || window.event;
 			const key = e.keyCode || e.which;
 
@@ -568,7 +568,7 @@ export default class Popup {
 		_.params.onClose(_.$element, popupID);
 		
 		//detach
-		$(document).off(`keydown.${EVENT_NAME}`);
+		$(document).off(`keydown.${EVENT_NAME}${_.params.popupID}`);
 
 		setTimeout(() => {
 			_.params.afterClose(_.$element, popupID);
@@ -613,7 +613,7 @@ export default class Popup {
 			$.store.remove(element, INSTANCE_NAME);
 			
 			$(element).off(`${params.enableEvent}.${EVENT_NAME}`).off(`${EVENT_NAME}`);
-			$(document).off(`keydown.${EVENT_NAME}`);
+			$(document).off(`keydown.${EVENT_NAME}${_.params.popupID}`);
 
 			$.store.remove(element, `${DATA_NAME}_params`);
 		}

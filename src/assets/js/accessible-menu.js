@@ -1,7 +1,7 @@
 import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json.js';
 
-const VERSION = "1.2.0";
+const VERSION = "1.1.1";
 const DATA_NAME = 'AccessibleMenu';
 const EVENT_NAME = 'accessibleMenu';
 
@@ -13,11 +13,11 @@ const keys = {
 	DOWN:  40
 }
 
-const escapeKey = (e, $ulParents, focusCss, tabIfNotAnchor) => {
+const escapeKey = (e, $ulParents, focusCss) => {
 	if (e.keyCode == keys.ESC) {
 
 		if ($ulParents.length > 1) {
-			const $anchor = $ulParents.eq(0).parent('li').find(`a,${tabIfNotAnchor}`).first();
+			const $anchor = $ulParents.eq(0).parent('li').find('a').first();
 			$anchor[0].focus();
 			$anchor.parent('li').addClass(focusCss);
 		}
@@ -25,17 +25,17 @@ const escapeKey = (e, $ulParents, focusCss, tabIfNotAnchor) => {
 	}
 }
 
-const focusListItem = (activeElem, $ulParents, focusCss, prev,tabIfNotAnchor) => {
+const focusListItem = (activeElem, $ulParents, focusCss, prev) => {
 	const $aeLi = $(activeElem).parent('li');
 	const $el = prev ? $aeLi.prev('li') : $aeLi.next('li');
 
 	if ($el.length) {
 		$el.addClass(focusCss).siblings('li').removeClass(focusCss);
-		$el.find(`a,${tabIfNotAnchor}`).first()[0].focus();
+		$el.find('a').first()[0].focus();
 
 	} else {
 		if ($ulParents.length > 1) {
-			const $anchor = $ulParents.eq(0).parent('li').find(`a,${tabIfNotAnchor}`).first();
+			const $anchor = $ulParents.eq(0).parent('li').find('a').first();
 			$anchor[0].focus();
 			$anchor.parent('li').addClass(focusCss);
 		}
@@ -43,16 +43,16 @@ const focusListItem = (activeElem, $ulParents, focusCss, prev,tabIfNotAnchor) =>
 }
 
 
-const focusNestledListItem = (activeElem, focusCss, tabIfNotAnchor) => {
+const focusNestledListItem = (activeElem,focusCss) => {
 	const $el = $(activeElem).parent('li').find('li').first();
 
 	if ($el.length) {
 		$el.addClass(focusCss).siblings('li').removeClass(focusCss);
-		$el.find(`a,${tabIfNotAnchor}`).first()[0].focus();
+		$el.find('a').first()[0].focus();
 	}
 }
 
-const prev = (e, $ulParents, activeElem, focusCss, keyDirections, tabIfNotAnchor) => {
+const prev = (e, $ulParents, activeElem, focusCss, keyDirections) => {
 	const l = $ulParents.length - 1;
 
 	if (
@@ -62,12 +62,12 @@ const prev = (e, $ulParents, activeElem, focusCss, keyDirections, tabIfNotAnchor
 		(l > 1 && keyDirections[l - 1] === "vertical" && $(activeElem).parent('li').index() === 0) 
 	) {
 
-		focusListItem(activeElem, $ulParents, focusCss, true, tabIfNotAnchor);
+		focusListItem(activeElem, $ulParents, focusCss, true);
 		e.preventDefault();
 	}
 }
 
-const next = (e, $ulParents, activeElem, focusCss, keyDirections, tabIfNotAnchor) => {
+const next = (e, $ulParents, activeElem, focusCss, keyDirections) => {
 	const l = $ulParents.length - 1;
 
 	if (
@@ -76,7 +76,7 @@ const next = (e, $ulParents, activeElem, focusCss, keyDirections, tabIfNotAnchor
 		e.keyCode === keys.DOWN && keyDirections[l] === "vertical"
 	) {
 
-		focusListItem(activeElem, $ulParents,focusCss, false, tabIfNotAnchor);
+		focusListItem(activeElem, $ulParents,focusCss, false);
 		e.preventDefault();
 	}
 
@@ -86,7 +86,7 @@ const next = (e, $ulParents, activeElem, focusCss, keyDirections, tabIfNotAnchor
 		e.keyCode === keys.DOWN && keyDirections[l] === "horizontal"
 	) {
 
-		focusNestledListItem(activeElem, $ulParents, tabIfNotAnchor);
+		focusNestledListItem(activeElem, $ulParents);
 		e.preventDefault();
 	}
 }
@@ -104,8 +104,7 @@ export default class AccessibleMenu {
 	static get defaults() {
 		return {
 			keyDirections: ['horizontal', 'vertical', 'vertical'],
-			focusCss: 'focus',
-			tabIfNotAnchor: '.tab-element'
+			focusCss: 'focus'
 		}
 	}
 
@@ -130,22 +129,31 @@ export default class AccessibleMenu {
 
 	init() {
 		const _ = this;
-		$(_.element).on('focusin.' + EVENT_NAME, 'a,' + _.params.tabIfNotAnchor, function (e) {
+		let to = null;
 
+		$(_.element).on('focusin.' + EVENT_NAME, 'a', function (e) {
+			
+			to && clearTimeout(to);
+		 
 			$(this).parent('li').addClass('focus')
 				.siblings('li').removeClass('focus');
 	
 		}).on('mouseleave.' + EVENT_NAME, function () {
 	
 			$(this).find('li.focus').removeClass('focus');
+		}).on('focusout.' + EVENT_NAME, function () { 
+			to = setTimeout(()=>{
+			 
+				$(this).find('li.focus').removeClass('focus');
+			},200)
 		});
 	
 		$(_.element).on('keydown.' + EVENT_NAME, function (e) {
 			e = e || window.event;
-			const {focusCss, keyDirections, tabIfNotAnchor} = _.params;
+			const {focusCss, keyDirections} = _.params;
 			const activeElem = document.activeElement;
 			const $ulParents = $(activeElem).parents('ul');
-			const props = [e, $ulParents, activeElem, focusCss, keyDirections, tabIfNotAnchor];
+			const props = [e, $ulParents, activeElem, focusCss, keyDirections];
 	
 			escapeKey(e, $ulParents);
 			prev(...props);
@@ -158,6 +166,7 @@ export default class AccessibleMenu {
 
 		$el.off('focusin.' + EVENT_NAME);
 		$el.off('mouseleave.' + EVENT_NAME);
+		$el.off('blur.' + EVENT_NAME);
 		$el.off('keydown.' + EVENT_NAME);
 
 		$.store.remove(element, `${DATA_NAME}_params`);

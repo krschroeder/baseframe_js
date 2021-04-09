@@ -16,6 +16,8 @@ outsideClickClose | boolean | true | Can close if clicked outside of the menu.
 hasUlCls | string | 'has-ul' | CSS class for `<li>` that have a `<ul>` nestled.
 menuOpenCss | string | 'menu-opened' | CSS class added to the elements saying its opened.
 menuTogglingCss | string | 'menu-toggling' | CSS class added while the element is toggling.
+menuIsOpeningCss | string | 'menu-is-opening' | CSS class added to the body/outerElement when the menu is opening.
+menuIsClosingCss | string | 'menu-is-closing' | CSS class added to the body/outerElement when the menu is closing.
 arrowSubMenuItemCss | string | 'i i-arrow-b' | CSS class of the button added to the `<li>` element for toggling open/closed.
 afterNavItemOpen | function | () => {} | Function to run after an nav item is opened.
 afterNavItemClose | function | () => {} | Function to run after a nav item is closed.

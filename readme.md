@@ -708,6 +708,8 @@ outsideClickClose | boolean | true | Can close if clicked outside of the menu.
 hasUlCls | string | 'has-ul' | CSS class for `<li>` that have a `<ul>` nestled.
 menuOpenCss | string | 'menu-opened' | CSS class added to the elements saying its opened.
 menuTogglingCss | string | 'menu-toggling' | CSS class added while the element is toggling.
+menuIsOpeningCss | string | 'menu-is-opening' | CSS class added to the body/outerElement when the menu is opening.
+menuIsClosingCss | string | 'menu-is-closing' | CSS class added to the body/outerElement when the menu is closing.
 arrowSubMenuItemCss | string | 'i i-arrow-b' | CSS class of the button added to the `<li>` element for toggling open/closed.
 afterNavItemOpen | function | () => {} | Function to run after an nav item is opened.
 afterNavItemClose | function | () => {} | Function to run after a nav item is closed.
@@ -833,7 +835,7 @@ Where do I begin? Look at the settings. Pretty light-weight for what it does and
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-popupID| boolean | 'popup_' + generateGUID() | ID for the popup. Good idea to set one if loading from a hash, else its dynamically generated
+popupID| string | 'popup_' + generateGUID() | ID for the popup. Good idea to set one if loading from a hash, else its dynamically generated
 src | string | src | Can be a CSS selector `.your-popup-content` or `#yeah-your-content` or `<h2>Yeah Your Popup Content</h2><p>etc...</p>` and `https://placekitten.com/900/1200?ext=.jpg`. 
 popupOuterClass| string |  "" | CSS class name to add to the outer element of the popup.
 title | string |  <code>$(element).data('popup-title') &#124;&#124; $(element).attr('title') &#124;&#124; ''</code> | Title to get added above to the content. Looks for that in that order specified in the default, if not overridden.
@@ -868,6 +870,20 @@ useLocationHash | boolean |  true | Uses history and creates a hash in the locat
 afterLoaded | function |  (_.$element, popupID) => { } | Function to run after the popup is displayed. `_.$element` is the `$(HTMLElement)` the popup is intialized on.
 afterClose | function |  (_.$element, popupID) => { } | Function to run after the popup is closed.
 onClose | function |  (_.$element, popupID) => { } | Function to run after the popup at the begninning of the closing event.
+
+<br>
+<br>
+
+### Static Methods
+
+Method | Params | Description
+------ | ------- | ------
+close() | element:HTMLElement, refocus:boolean | closes the current popup, `refocus` boolean will refocus on the last clicked element (or the element the popup is attached to).
+remove() | element:HTMLElement | Removes the instance of the popup. If used in combination with close, make sure this fires after the popup is done closing, else it will fire an error.
+show() | element:HTMLElement | Loads the popup.
+
+<br>
+<br>
 
 ### Example
 

@@ -6,12 +6,10 @@ import { isHidden, photoRegex, CSS_TRANSISTION_DELAY } from './util/helpers';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 
-const VERSION = "1.0.2";
+const VERSION = "1.0.3";
 const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
 const INSTANCE_NAME = `${DATA_NAME}_instance`;
-
-const cleanHash = () => location.hash.replace(/#/g,'');
 
 export default class Popup {
 
@@ -117,7 +115,7 @@ export default class Popup {
 		//location hash  
 		_.isOpen = false;
 		_.isOpenHash = '';
-		_.historyID = '' + _.params.popupID + '__' + index;
+		_.historyID = '#' + _.params.popupID + '__' + index;
 		_.loadedFromHash = false;
 
 		_.initLoadEvents();
@@ -136,7 +134,7 @@ export default class Popup {
 		const _ = this;
 		const { launch, useHashFilter,loadLocationHash} = _.params;
 
-		_.$element.on(`${_.params.enableEvent}.${EVENT_NAME} ${EVENT_NAME}`, function (e) {
+		_.$element.on(`${_.params.enableEvent}.${EVENT_NAME}${_.params.popupID} ${EVENT_NAME}${_.params.popupID}`, function (e) {
 			
 			const {useLocationHash} = _.params;
 
@@ -152,16 +150,16 @@ export default class Popup {
 		});
 
 
-		$(window).on(`popstate.${EVENT_NAME} ${EVENT_NAME}`,(e) => {
+		$(window).on(`popstate.${EVENT_NAME}${_.params.popupID} ${EVENT_NAME}${_.params.popupID}`,(e) => {
 			const {useLocationHash, useHashFilter} = _.params;
 			
 			if (useLocationHash) {
 			
 				if (
 					_.historyID === _.isOpenHash ||
-					_.historyID === (useHashFilter ? getHashParam(useHashFilter) : cleanHash())
+					_.historyID === (useHashFilter ? getHashParam(useHashFilter) : location.hash)
 				){
-					 
+				
 					if(_.isOpen) {
 					
 						_._close();
@@ -180,7 +178,7 @@ export default class Popup {
 			_.loadPopup(document.activeElement);
 		}
 
-		if (loadLocationHash && _.historyID === (useHashFilter ? getHashParam(useHashFilter) : cleanHash())){
+		if (loadLocationHash && _.historyID === (useHashFilter ? getHashParam(useHashFilter) : location.hash)){
 			_.loadPopup(_.$element);
 			_.loadedFromHash = true; 
 		}
@@ -190,12 +188,12 @@ export default class Popup {
 		const _ = this;
 		const {escapeClose, useHashFilter} = _.params;
 
-		if (clickElem) {
+		if (clickElem) { 
 			_.$domClickElem = $(clickElem);
 			_.domElemClicked = true;
 		}
 		
-		_.isOpenHash =  useHashFilter ? getHashParam(useHashFilter) : cleanHash();
+		_.isOpenHash =  useHashFilter ? getHashParam(useHashFilter) : location.hash;
 	
 		_.addToDOM();
 		_.closeHandlers();
@@ -240,7 +238,7 @@ export default class Popup {
 
 		//if grabbed content from before
 		if (_.grabContentsFromDom) {
-			_.elemGrabbedLocation.after(_.currentSrc);
+			_.elemGrabbedLocation.after($(_.currentSrc));
 			_.elemGrabbedLocation.remove();
 		}
 
@@ -263,7 +261,8 @@ export default class Popup {
 			_.groupCount = _.$listElems.length;
 
 		} else {
-
+			 
+			
 			_.$listElems = $(typeof group === 'string' ? group : _.params.src);
 
 			if (_.domElemClicked) {
@@ -297,7 +296,7 @@ export default class Popup {
 		}
 
 		_.currentElem = currentElem;
-		_.currentSrc = src;
+		_.currentSrc = src; 
 
 		const grabContentsFromDom = isDomSelector && !isJsArray && (!isDomSelector ? false : isHidden($(src)[0]));
 
@@ -306,7 +305,7 @@ export default class Popup {
 		if (grabContentsFromDom) {
 
 			_.elemGrabbedLocation = $('<span/>').attr({ id: 'orig-loc_' + popupID });
-
+			
 			$(src).after(_.elemGrabbedLocation);
 		}
 
@@ -332,7 +331,6 @@ export default class Popup {
 
 		//wipe the current body contents
 		$popupContentBody.html("");
-
 
 		if (isImg) {
 
@@ -460,7 +458,7 @@ export default class Popup {
 
 		if (_.groupCount > 1) {
 
-			$(document).on(`keydown.${EVENT_NAME}${_.params.popupID}`, function (e) {
+			$(document).on(`keydown.${EVENT_NAME}${_.params.popupID}groupcontrols`, function (e) {
 				const ev = e || window.event;
 				const key = ev.keyCode || ev.which;
 
@@ -472,10 +470,10 @@ export default class Popup {
 				}
 			});
 
-			_.$popup.on(`click.${EVENT_NAME}`, '.btn--popup-prev', function () {
+			_.$popup.on(`click.${EVENT_NAME}${_.params.popupID}`, '.btn--popup-prev', function () {
 				_.toggleGroup(true, false);
 			})
-			.on(`click.${EVENT_NAME}`, '.btn--popup-next', function () {
+			.on(`click.${EVENT_NAME}${_.params.popupID}`, '.btn--popup-next', function () {
 				_.toggleGroup(false, true);
 			});
 		}
@@ -525,7 +523,7 @@ export default class Popup {
 			'.popup__overlay,.popup__btn-close' :
 			'.popup__btn-close';
 
-		_.$popup.on(`click.${EVENT_NAME}`, closeElems, function (e) {
+		_.$popup.on(`click.${EVENT_NAME}${_.params.popupID}`, closeElems, function (e) {
 
 
 			e.preventDefault();
@@ -576,8 +574,8 @@ export default class Popup {
 			_.isOpen = false;
 
 			if (_.grabContentsFromDom) {
-
-				$(_.elemGrabbedLocation).after(_.currentSrc);
+			
+				$(_.elemGrabbedLocation).after($(_.currentSrc));
 				_.elemGrabbedLocation.remove();
 
 				_.grabContentsFromDom = false;
@@ -612,8 +610,10 @@ export default class Popup {
 
 			$.store.remove(element, INSTANCE_NAME);
 			
-			$(element).off(`${params.enableEvent}.${EVENT_NAME}`).off(`${EVENT_NAME}`);
-			$(document).off(`keydown.${EVENT_NAME}${_.params.popupID}`);
+			$(element).off(`${params.enableEvent}.${EVENT_NAME}${params.popupID}`);
+			$(element).off(`${EVENT_NAME}${params.popupID}`);
+			$(document).off(`keydown.${EVENT_NAME}${params.popupID}groupcontrols`); 
+			$(document).off(`keydown.${EVENT_NAME}${params.popupID}`);
 
 			$.store.remove(element, `${DATA_NAME}_params`);
 		}
@@ -624,7 +624,7 @@ export default class Popup {
 		const instance = $.store.get(element, INSTANCE_NAME);
 
 		if (instance) {
-			instance.loadPopup();
+			instance.loadPopup(element);
 		}
 
 	}

@@ -3,7 +3,7 @@ import validJSONFromString from './util/formatting-valid-json.js';
 import {isVisible,CSS_TRANSISTION_DELAY} from './util/helpers';
 import submenuBtn from './util/plugin/nav';
 
-const VERSION = "1.2.0";
+const VERSION = "1.3.0";
 const DATA_NAME = 'NavMobile';
 const EVENT_NAME = 'navMobile';
 
@@ -27,6 +27,8 @@ export default class NavMobile {
 			hasUlCls: 'has-ul',
 			menuOpenCss: 'menu-opened', 
 			menuTogglingCss: 'menu-toggling',
+			menuIsOpeningCss: 'menu-is-opening',
+			menuIsClosingCss: 'menu-is-closing',
 			submenuBtnCss: 'btn-nav--mb-submenu i i-arrow-b',
 			afterNavItemOpen: () => {},
 			afterNavItemClose: () => {},
@@ -77,7 +79,7 @@ export default class NavMobile {
 
 	mobileMenuToggle() {
 		const _ = this;
-		const {enableBtn, outerElement, menuOpenCss} = _.params;
+		const {enableBtn, outerElement, menuOpenCss, menuIsOpeningCss, menuIsClosingCss, slideDuration} = _.params;
 		if (_.menuOpened === true) {
 			_.$element.parent()
 				.find(`.${_.params.menuOpenCss}`)
@@ -86,12 +88,22 @@ export default class NavMobile {
 
 			$(outerElement).removeClass(menuOpenCss);
 
+			$(outerElement).addClass(menuIsClosingCss);
+			setTimeout(() => {
+				$(outerElement).removeClass(menuIsClosingCss);
+			}, slideDuration);
+
 			_.menuOpened = false;
 			_.params.afterClose();
 
 		} else {
 			_.$element.addClass(menuOpenCss);
 			$(outerElement).addClass(menuOpenCss);
+
+			$(outerElement).addClass(menuIsOpeningCss);
+			setTimeout(() => {
+				$(outerElement).removeClass(menuIsOpeningCss);
+			}, slideDuration);
 
 			_.menuOpened = true;
 			_.params.afterOpen();
@@ -180,6 +192,8 @@ export default class NavMobile {
 
 				$ul.css({ height: 0 });
 
+				
+
 				setTimeout(() => {
 					$ul.css({ height: ulHeightBeforeResetToZero });
 				}, CSS_TRANSISTION_DELAY);
@@ -205,6 +219,8 @@ export default class NavMobile {
 
 				$ul.css({ height: $ul[0].scrollHeight });
 
+			 
+
 				setTimeout(() => {
 					$ul.css({ height: 0 });
 				}, CSS_TRANSISTION_DELAY);
@@ -216,7 +232,7 @@ export default class NavMobile {
 					$ul.css({ height: '' });
 
 					_.params.afterNavItemOpen($li);
-					
+					 
 					_.allowClick = true;
 
 				}, slideDuration);

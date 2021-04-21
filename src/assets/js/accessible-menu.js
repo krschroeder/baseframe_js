@@ -1,23 +1,24 @@
-import $ from 'cash-dom';
+import $ from 'cash-dom'; 
 import validJSONFromString from './util/formatting-valid-json.js';
+import $firstVisible from './util/first-visible';
 
-const VERSION = "1.1.1";
+const VERSION = "1.2.0";
 const DATA_NAME = 'AccessibleMenu';
 const EVENT_NAME = 'accessibleMenu';
 
 const keys = {
-	ESC:   27,
-	LEFT:  37,
-	RIGHT: 39,
-	UP:    38,
-	DOWN:  40
+	ESC:   'Escape',
+	LEFT:  'ArrowLeft',
+	RIGHT: 'ArrowRight',
+	UP:    'ArrowUp',
+	DOWN:  'ArrowDown'
 }
 
 const escapeKey = (e, $ulParents, focusCss) => {
-	if (e.keyCode == keys.ESC) {
+	if (e.key == keys.ESC) {
 
 		if ($ulParents.length > 1) {
-			const $anchor = $ulParents.eq(0).parent('li').find('a').first();
+			const $anchor = $firstVisible($ulParents.eq(0).closest('li').find('a')); 
 			$anchor[0].focus();
 			$anchor.parent('li').addClass(focusCss);
 		}
@@ -31,24 +32,27 @@ const focusListItem = (activeElem, $ulParents, focusCss, prev) => {
 
 	if ($el.length) {
 		$el.addClass(focusCss).siblings('li').removeClass(focusCss);
-		$el.find('a').first()[0].focus();
+		$firstVisible($el.find('a'))[0].focus();
 
 	} else {
-		if ($ulParents.length > 1) {
-			const $anchor = $ulParents.eq(0).parent('li').find('a').first();
-			$anchor[0].focus();
-			$anchor.parent('li').addClass(focusCss);
+		if ($ulParents.length > 1 && ($el.length)) { 
+			const $anchor = $firstVisible($ulParents.eq(0).parent('li').find('a'));
+			if ($anchor.length) {
+
+				$anchor[0].focus();
+				$anchor.parent('li').addClass(focusCss);
+			}
 		}
 	}
 }
 
 
-const focusNestledListItem = (activeElem,focusCss) => {
-	const $el = $(activeElem).parent('li').find('li').first();
+const focusNestledListItem = (activeElem, focusCss) => { 
+	const $el = $firstVisible($(activeElem).parent('li').find('li'));
 
-	if ($el.length) {
+	if ($el.length) { 
 		$el.addClass(focusCss).siblings('li').removeClass(focusCss);
-		$el.find('a').first()[0].focus();
+		$firstVisible($el.find('a'))[0].focus();
 	}
 }
 
@@ -56,9 +60,9 @@ const prev = (e, $ulParents, activeElem, focusCss, keyDirections) => {
 	const l = $ulParents.length - 1;
 
 	if (
-		e.keyCode === keys.LEFT && keyDirections[l] === "horizontal" ||
-		e.keyCode === keys.UP && keyDirections[l] === "vertical"  ||
-		e.keyCode === keys.LEFT && keyDirections[l] === "vertical" && 
+		e.key === keys.LEFT && keyDirections[l] === "horizontal" ||
+		e.key === keys.UP && keyDirections[l] === "vertical"  ||
+		e.key === keys.LEFT && keyDirections[l] === "vertical" && 
 		(l > 1 && keyDirections[l - 1] === "vertical" && $(activeElem).parent('li').index() === 0) 
 	) {
 
@@ -72,21 +76,21 @@ const next = (e, $ulParents, activeElem, focusCss, keyDirections) => {
 
 	if (
 		//go to sibling <li>
-		e.keyCode === keys.RIGHT && keyDirections[l] === "horizontal" ||
-		e.keyCode === keys.DOWN && keyDirections[l] === "vertical"
+		e.key === keys.RIGHT && keyDirections[l] === "horizontal" ||
+		e.key === keys.DOWN && keyDirections[l] === "vertical"
 	) {
 
 		focusListItem(activeElem, $ulParents,focusCss, false);
-		e.preventDefault();
+		e.preventDefault(); 
 	}
 
 	if (
 		//go to the nestled <li>
-		e.keyCode === keys.RIGHT && keyDirections[l] === "vertical" ||
-		e.keyCode === keys.DOWN && keyDirections[l] === "horizontal"
+		e.key === keys.RIGHT && keyDirections[l] === "vertical" ||
+		e.key === keys.DOWN && keyDirections[l] === "horizontal"
 	) {
 
-		focusNestledListItem(activeElem, $ulParents);
+		focusNestledListItem(activeElem, focusCss);
 		e.preventDefault();
 	}
 }

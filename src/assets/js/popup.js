@@ -90,9 +90,9 @@ export default class Popup {
 
 		
 		_.key = {
-			ARROWLEFT: 37,
-			ARROWRIGHT: 39,
-			ESCAPE: 27
+			ARROWLEFT: 'ArrowLeft',
+			ARROWRIGHT: 'ArrowRight',
+			ESCAPE: 'Escape'
 		};
 		
 		//Content
@@ -115,7 +115,7 @@ export default class Popup {
 		//location hash  
 		_.isOpen = false;
 		_.isOpenHash = '';
-		_.historyID = '#' + _.params.popupID + '__' + index;
+		_.historyID = '#' + _.params.popupID + (index === 0 ? '' : '__' + index);
 		_.loadedFromHash = false;
 
 		_.initLoadEvents();
@@ -460,7 +460,7 @@ export default class Popup {
 
 			$(document).on(`keydown.${EVENT_NAME}${_.params.popupID}groupcontrols`, function (e) {
 				const ev = e || window.event;
-				const key = ev.keyCode || ev.which;
+				const key = ev.key;
 
 				if (key == _.key.ARROWLEFT || key == _.key.ARROWRIGHT) {
 					_.toggleGroup(
@@ -536,7 +536,7 @@ export default class Popup {
 		const _ = this;
 		$(document).on(`keydown.${EVENT_NAME}${_.params.popupID}`, function (ev) {
 			const e = ev || window.event;
-			const key = e.keyCode || e.which;
+			const key = e.key;
 
 			if (key === _.key.ESCAPE) {
 

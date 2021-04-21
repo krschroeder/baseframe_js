@@ -31,7 +31,7 @@ export default class Parallax {
 		}
 	}
 
-	constructor(element, options) {
+	constructor(element, options, index) {
 		const _ = this;
 		const dataOptions = validJSONFromString(
 			$(element).data(EVENT_NAME + '-options')
@@ -52,6 +52,8 @@ export default class Parallax {
 
 		_.initOffsetSet = false;
 		_.initOffset = 0;
+		_.index = index;
+		_.instanceEvent = EVENT_NAME + index;
 		//props to get updated on resize
 		_.updatableProps();
 
@@ -63,9 +65,9 @@ export default class Parallax {
 	init() {
 		const _ = this;
 		const EVENTS = [
-			`scroll.${EVENT_NAME}`,
-			`resize.${EVENT_NAME}`,
-			EVENT_NAME
+			`scroll.${_.instanceEvent}`,
+			`resize.${_.instanceEvent}`,
+			_.instanceEvent
 		].join(' ');
 
 		$(window).on(EVENTS, () => {
@@ -77,7 +79,7 @@ export default class Parallax {
 				_.parallax(_);
 			}
 
-		}).trigger(EVENT_NAME);
+		}).trigger(_.instanceEvent);
 
 		_.resizeUpdates();
 	}
@@ -106,7 +108,7 @@ export default class Parallax {
 		const _ = this;
 		let resizeThrottle = null;
 
-		$(window).on(`resize.${EVENT_NAME} ${EVENT_NAME}`, function () {
+		$(window).on(`resize.${_.instanceEvent} ${_.instanceEvent}`, function () {
 			resizeThrottle = setTimeout(() => {
 
 				if (!_.initOffsetSet && _.params.initOffset) {
@@ -116,7 +118,7 @@ export default class Parallax {
 				_.updatableProps();
 
 			}, 100);
-		});
+		}).trigger(_.instanceEvent);
 	}
 
 	parallax(_) {
@@ -148,12 +150,17 @@ export default class Parallax {
 						'transform': `translate3d(0,${speed - _.initOffset}px,0)`
 					}
 					: { //fill the background
-						'transform': `translate3d(0,${speed - bgFillRatio}px,0)`,
+						'transform': `translate3d(0,${(speed - _.initOffset) - bgFillRatio}px,0)`,
 						'padding-top': `${bgFillRatio}px`
 					} :
-				{	//scroll sideways
-					'transform': `translate3d(${speed - _.initOffset}px,0,0)`
-				}
+				!_.bgFill ? 
+					{	//scroll sideways
+						'transform': `translate3d(${speed - _.initOffset}px,0,0)`
+					} : 
+					{
+						'transform': `translate3d(${(speed - _.initOffset) - bgFillRatio}px,0,0)`,
+						'padding-left' : `${bgFillRatio}px`,
+					}
 				;
 
 			_.$element.css(cssParams);

@@ -44,9 +44,8 @@ $bg-color-img-overlay: rgba(0,0,0,.3);
 	min-width:100%;
 	height: 100%;
 	min-height: inherit;
-	padding-bottom: 190px;//needed so the bg doesn't scroll away
 	box-sizing: content-box;
-	background-position: center top;
+	background-position: center center;
 	background-repeat:no-repeat;
 	background-size: cover;
 	z-index: 0;

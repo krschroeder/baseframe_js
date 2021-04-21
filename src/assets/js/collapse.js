@@ -269,7 +269,7 @@ export default class Collapse {
 				.attr('aria-expanded', true);
 
 			_.params.afterOpen(this);
-a
+
 			if (_.params.moveToTopOnOpen) {
 				_._moveToTopOnOpen($collapsibleItem);
 			}

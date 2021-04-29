@@ -34,7 +34,7 @@ closeText| boolean |  `<i class="icon-close"><span class="sr-only">Close</span><
 prevBtnHTML| boolean |  `<i class="icon-arrow-l"><span class="sr-only">Previous</span></i>` | Previous Button html/text.
 nextBtnHTML| boolean |  `<i class="icon-arrow-r"><span class="sr-only">Next</span></i>` | Next Button html/text.
 loadingHTML | boolean |  `<div class="popup__loader"></div>` | Loading HTML.
-appendPopupTo | boolean |  'body' | the HTML element the popup appends to.
+appendPopupTo | string \| HTMLElement |  'body' | the HTML element the popup appends to.
 showPopup | boolean |  'popup--show-popup' | CSS class used to show the popup.
 enableEvent | string |  'click' | The event to show the popup, change to whatever event on the element. Could be 'hover' if we wanted to for some reason.
 useHashFilter | string | null | If there is a number of elements where the `location.hash` value is used, it may be necessary to filter it to get the intended data. Pass in a string value, i.e.: 'popup' and it'll load and filter through as needed while maintaining the remaining location hash values. Example value of this could be `#popup=#your_popup__1&foo=bar&baz=foo`. This only gets used if 'useLocationHash' option is selected. 

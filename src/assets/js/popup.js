@@ -120,6 +120,7 @@ export default class Popup {
 
 		_.initLoadEvents();
 		
+		return this;
 	}
 
 	getHistoryEntry(blank = false) {
@@ -237,10 +238,7 @@ export default class Popup {
 		const { isJsArray, popupID, group } = _.params;
 
 		//if grabbed content from before
-		if (_.grabContentsFromDom) {
-			_.elemGrabbedLocation.after($(_.currentSrc));
-			_.elemGrabbedLocation.remove();
-		}
+		_._replaceContent();
 
 		//testing to see if its simple a class or ID selector
 		const domElemRgx = /^(\#|\.)/;
@@ -298,7 +296,7 @@ export default class Popup {
 		_.currentElem = currentElem;
 		_.currentSrc = src; 
 
-		const grabContentsFromDom = isDomSelector && !isJsArray && (!isDomSelector ? false : isHidden($(src)[0]));
+		const grabContentsFromDom = isDomSelector && !isJsArray;// && (!isDomSelector ? false : isHidden($(src)[0]));
 
 		_.grabContentsFromDom = grabContentsFromDom;
 
@@ -572,14 +570,7 @@ export default class Popup {
 			_.params.afterClose(_.$element, popupID);
 			
 			_.isOpen = false;
-
-			if (_.grabContentsFromDom) {
-			
-				$(_.elemGrabbedLocation).after($(_.currentSrc));
-				_.elemGrabbedLocation.remove();
-
-				_.grabContentsFromDom = false;
-			}
+			_._replaceContent();
 
 			$(popupID).remove();
 
@@ -590,6 +581,21 @@ export default class Popup {
 			_.isOpenHash = '';
 
 		}, fadeOut + 1);
+
+	}
+
+	_replaceContent () {
+		const _ = this;
+		console.log('rpc')
+		if (_.grabContentsFromDom) {
+				console.log('was grabbed')
+			$(_.elemGrabbedLocation).after($(_.currentSrc));
+			
+			_.elemGrabbedLocation.remove();
+			
+
+			_.grabContentsFromDom = false;
+		}
 
 	}
 

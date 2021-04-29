@@ -90,6 +90,8 @@ export default class LazyLoad {
         _.params = $.store.get(element, `${DATA_NAME}_params`);
         
         _.lazyLoad();
+
+        return this;
     }
 
     lazyLoad() {

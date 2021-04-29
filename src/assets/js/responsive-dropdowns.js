@@ -60,6 +60,8 @@ export default class ResponsiveDropDown {
 		_.params = $.store.get(element, `${DATA_NAME}_params`);
 
 		_.init();
+
+		return this;
 	}
 
 

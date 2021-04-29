@@ -75,6 +75,8 @@ export default class Tabs {
 		});
 
 		_.params.onInit(_.prevTabId, _.$tabsList, _.$tabsBody);
+
+		return this;
 	}
 
 	ADA_Attributes() {

@@ -75,6 +75,8 @@ export default class NavMobile {
 			'aria-targets': elemID,
 			'aria-label': _.params.ariaLabel
 		});
+
+		return this;
 	}
 
 	mobileMenuToggle() {

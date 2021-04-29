@@ -60,6 +60,8 @@ export default class Parallax {
 		_.initiallyInView = (_.$relElem.offset().top < _.winHeight);
 
 		_.init();
+
+		return this;
 	}
 
 	init() {

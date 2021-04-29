@@ -49,6 +49,8 @@ export default class NavDesktop {
 
 		_.addCssToElems();
 		_.init();
+
+		return this;
 	}
   
 	addCssToElems() {

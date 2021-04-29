@@ -67,6 +67,8 @@ export default class Collapse {
 		_.prevItem = null;
 		
 		_.init();
+
+		return this;
 	}
 
 	init() {
@@ -148,9 +150,9 @@ export default class Collapse {
 	loadContentFromHash() {
 		const _ = this;
 
-		const {useLocationHash, useHashFilter} = _.params;
+		const {useLocationHash, loadLocationHash, useHashFilter} = _.params;
 
-		if (useLocationHash) {
+		if (useLocationHash || loadLocationHash) {
 
 			const hash = (useHashFilter ? (getHashParam(useHashFilter) || '') : location.hash);
 			

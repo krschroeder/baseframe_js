@@ -1,6 +1,6 @@
 import $ from 'cash-dom'; 
 import validJSONFromString from './util/formatting-valid-json.js';
-import $firstVisible from './util/first-visible';
+import $visible from './util/visible';
 
 const VERSION = "1.2.0";
 const DATA_NAME = 'AccessibleMenu';
@@ -18,7 +18,7 @@ const escapeKey = (e, $ulParents, focusCss) => {
 	if (e.key == keys.ESC) {
 
 		if ($ulParents.length > 1) {
-			const $anchor = $firstVisible($ulParents.eq(0).closest('li').find('a')); 
+			const $anchor = $visible($ulParents.eq(0).closest('li').find('a')); 
 			$anchor[0].focus();
 			$anchor.parent('li').addClass(focusCss);
 		}
@@ -28,19 +28,19 @@ const escapeKey = (e, $ulParents, focusCss) => {
 
 const focusListItem = (activeElem, $ulParents, focusCss, prev) => {
 	const $aeLi = $(activeElem).parent('li');
-	const $el = prev ? $aeLi.prev('li') : $aeLi.next('li');
-
+	const $el = prev ? $visible($aeLi.prev('li')) : $visible($aeLi.next('li'));
+	
 	if ($el.length) {
 		$el.addClass(focusCss).siblings('li').removeClass(focusCss);
-		$firstVisible($el.find('a'))[0].focus();
-
+		$el.find('a')[0].focus();
 	} else {
-		if ($ulParents.length > 1 && ($el.length)) { 
-			const $anchor = $firstVisible($ulParents.eq(0).parent('li').find('a'));
+		if ($ulParents.length > 1 ) { 
+			console.log('el',$el)
+			const $anchor = $visible($ulParents.eq(0).parent('li').find('a'));
 			if ($anchor.length) {
 
 				$anchor[0].focus();
-				$anchor.parent('li').addClass(focusCss);
+				$anchor.parent('li').eq(0).addClass(focusCss);
 			}
 		}
 	}
@@ -48,11 +48,11 @@ const focusListItem = (activeElem, $ulParents, focusCss, prev) => {
 
 
 const focusNestledListItem = (activeElem, focusCss) => { 
-	const $el = $firstVisible($(activeElem).parent('li').find('li'));
+	const $el = $visible($(activeElem).parent('li').find('li'));
 
 	if ($el.length) { 
 		$el.addClass(focusCss).siblings('li').removeClass(focusCss);
-		$firstVisible($el.find('a'))[0].focus();
+		$visible($el.find('a'))[0].focus();
 	}
 }
 
@@ -65,7 +65,6 @@ const prev = (e, $ulParents, activeElem, focusCss, keyDirections) => {
 		e.key === keys.LEFT && keyDirections[l] === "vertical" && 
 		(l > 1 && keyDirections[l - 1] === "vertical" && $(activeElem).parent('li').index() === 0) 
 	) {
-
 		focusListItem(activeElem, $ulParents, focusCss, true);
 		e.preventDefault();
 	}
@@ -129,6 +128,8 @@ export default class AccessibleMenu {
 		_.params = $.store.get(element, `${DATA_NAME}_params`);
 
 		_.init();
+
+		return this;
 	}
 
 	init() {

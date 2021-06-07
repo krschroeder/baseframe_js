@@ -6,7 +6,7 @@ import { isHidden, photoRegex, CSS_TRANSISTION_DELAY } from './util/helpers';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 
-const VERSION = "1.0.3";
+const VERSION = "1.0.4";
 const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
 const INSTANCE_NAME = `${DATA_NAME}_instance`;
@@ -296,7 +296,7 @@ export default class Popup {
 		_.currentElem = currentElem;
 		_.currentSrc = src; 
 
-		const grabContentsFromDom = isDomSelector && !isJsArray;// && (!isDomSelector ? false : isHidden($(src)[0]));
+		const grabContentsFromDom = isDomSelector && !isJsArray && (!isDomSelector ? false : isHidden($(src)[0]));
 
 		_.grabContentsFromDom = grabContentsFromDom;
 
@@ -485,10 +485,10 @@ export default class Popup {
 		//set setTopPosition then use that, else use the default options which set in the middle
 		const times = (vhDivisor === 0 ? 0 : $(window).height() / vhDivisor);
 		const topPos = setTopPosition || setTopPosition === 0 ?
-			setTopPosition :
+			(typeof setTopPosition === 'function' ? setTopPosition() : setTopPosition) :
 			Math.max(0, times + document.querySelector('html').scrollTop)
 		;
-
+		
 		const $popupContent = $popup.find('.popup__content');
 
 		$popup.css({ display: '' });
@@ -586,9 +586,9 @@ export default class Popup {
 
 	_replaceContent () {
 		const _ = this;
-		console.log('rpc')
+		
 		if (_.grabContentsFromDom) {
-				console.log('was grabbed')
+			
 			$(_.elemGrabbedLocation).after($(_.currentSrc));
 			
 			_.elemGrabbedLocation.remove();

@@ -35,7 +35,7 @@ const focusListItem = (activeElem, $ulParents, focusCss, prev) => {
 		$el.find('a')[0].focus();
 	} else {
 		if ($ulParents.length > 1 ) { 
-			console.log('el',$el)
+			
 			const $anchor = $visible($ulParents.eq(0).parent('li').find('a'));
 			if ($anchor.length) {
 

@@ -4,7 +4,7 @@ import getType from './util/helpers';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 
-const VERSION = "1.0.2";
+const VERSION = "1.0.3";
 const DATA_NAME = 'Tabs';
 const EVENT_NAME = 'tabs';
 
@@ -109,16 +109,22 @@ export default class Tabs {
 		const _ = this;
 
 		_.$tabsList.on(`${_.params.tabsEvent}.${EVENT_NAME} ${EVENT_NAME}`, "a", function (e) {
-			const tabId = $(this).attr('href').substring(1);
-			
-			if (_.params.useLocationHash) {
-				
-				history.pushState(null, null, getHistoryEntry(_, tabId ));
-			}
-			
-			_.loadTabContent(tabId.substring(1));
+			const href = $(this).attr('href');
+			const isHashHref = (/\#/).test(href);
 
-			e.preventDefault();
+			if (isHashHref) { 
+
+				const tabId = href.substring(1);
+				
+				if (_.params.useLocationHash) {
+					
+					history.pushState(null, null, getHistoryEntry(_, tabId ));
+				}
+				
+				_.loadTabContent(tabId );
+
+				e.preventDefault();
+			}
 		});
 	}
 

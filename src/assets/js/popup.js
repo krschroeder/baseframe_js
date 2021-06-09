@@ -6,7 +6,7 @@ import { isHidden, photoRegex, CSS_TRANSISTION_DELAY } from './util/helpers';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 
-const VERSION = "1.0.4";
+const VERSION = "1.0.6";
 const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
 const INSTANCE_NAME = `${DATA_NAME}_instance`;
@@ -307,8 +307,8 @@ export default class Popup {
 			$(src).after(_.elemGrabbedLocation);
 		}
 
-		_.params.title = title || '';
-		_.params.caption = caption || '';
+		if (title) _.params.title = title;
+		if (caption) _.params.caption = caption;
 	}
 
 	placeContent() {
@@ -324,7 +324,7 @@ export default class Popup {
 			(!isJsArray ? currentElem.data('popup-type') === "image" : currentElem.nodeName === 'img')
 			;
 
-		_.$popup.find(`#${popupID}__title`).html(`<${titleElem} class="${titleCss}">${title}</${titleElem}>`);
+		_.$popup.find(`#${popupID}__title`).html(title ? `<${titleElem} class="${titleCss}">${title}</${titleElem}>` : '');
 		_.$popup.find(`#${popupID}__caption`).html(caption);
 
 		//wipe the current body contents
@@ -403,8 +403,8 @@ export default class Popup {
 			_.groupAmountElem = null;
 		}
 
-		const title = `<div id="${popupID}__title" class="popup__title">${_.params.title}</div>`,
-			caption = `<div id="${popupID}__caption" class="popup__caption">${_.params.caption}</div>`,
+		const title = `<div id="${popupID}-title" class="popup__title">${_.params.title}</div>`,
+			caption = `<div id="${popupID}-caption" class="popup__caption">${_.params.caption}</div>`,
 			$overlay = $('<div/>').attr({ class: 'popup__overlay' }),
 			$src = $('<div/>').attr({ class: 'popup__content' }),
 			$body = $('<div/>').attr({ class: 'popup__content-body' }),

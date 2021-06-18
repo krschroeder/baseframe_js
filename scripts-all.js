@@ -2,7 +2,7 @@
 //not importing them because it can be either or
 import installStoreToLibrary from './src/assets/js/util/store';
 import libraryExtend from './src/assets/js/util/lib-extend';
-import smoothScroll from './src/assets/js/util/smoothScroll';
+import smoothScroll from './src/assets/js/util/smooth-scroll';
 import getUrlParam, {getHashParam} from './src/assets/js/util/get-param';
 import Popup from './src/assets/js/popup';
 import AccessibleMenu from './src/assets/js/accessible-menu';

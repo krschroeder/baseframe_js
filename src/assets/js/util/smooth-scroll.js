@@ -12,20 +12,23 @@ export default function smoothScroll(elemYPos, _speed = 100, afterScroll = () =>
     let prevScroll = null;
     const speed = _speed / 1000;
     let animation = null;
+    let userBreakScroll = false;
 
     const targetIsAbove = elemYPos < docTop();
     
+    $(window).on('wheel.smoothScroll',()=> {userBreakScroll = true})
    
     const scrollDone = () => {
         afterScroll.apply(null, afterScrollArgs);
         window.cancelAnimationFrame(animation);
         activeScroll = false;
+        $(window).off('wheel.smoothScroll');
     }
 
     (function smoothScrollInner() {
         const currentScroll = docTop();
 
-        if (prevScroll === currentScroll) {
+        if (prevScroll === currentScroll || userBreakScroll) {
             scrollDone();
             return;
         }
@@ -34,6 +37,7 @@ export default function smoothScroll(elemYPos, _speed = 100, afterScroll = () =>
 
         const isAtTarget = Math.floor(currentScroll - elemYPos) === 0;
         const isPastTarget = targetIsAbove ? prevScroll < currentScroll : prevScroll > currentScroll;
+        
 
         if (!isAtTarget || !isPastTarget) {
 

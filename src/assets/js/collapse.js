@@ -1,7 +1,7 @@
 import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json.js';
 import {CSS_TRANSISTION_DELAY} from './util/helpers';
-import smoothScroll from './util/smoothScroll';
+import smoothScroll from './util/smooth-scroll';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 

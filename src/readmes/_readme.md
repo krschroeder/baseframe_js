@@ -6,9 +6,9 @@ A suite of useful Javascript plugins and functions to help with Front-end Develo
 
 These are made to work with [Cash](https://github.com/fabiospampinato/cash) (with jQuery still an option) as the only dependency. Cash is a small jQuery alternative that give developers DOM traversing without the extra bloat. In my opinion, having a DOM traversing Library is essential. Also, everybody who's done any web developement is familiar with jQuery syntax.
 
-## Features and Advantages
+## Features
 ### It's small!
-Combined all together (with my minification settings at least) its ~ 59k. Add that with Cash and its less than jQuery alone!
+Combined all together its ~ 61k. Add that with Cash and its less than jQuery alone!
 
 ### Pass in parameter options with a `data-` attribute
 The data attribute is always the `data-` (of course) and then the plugin name `pluginName` followed by `-options`.
@@ -79,25 +79,6 @@ libraryExtend([
 ## Using Styles For Plugins
 Styles are located in the `src/assets/scss/` directory and all can be grabbed that way and added on in. Still should do a little more work in updating the SCSS variables to be frank. So I would just drag those files into the project directly (which is what I just do). I think it's painful anways to import in then override defaults in your own file. Bringing it in (IMO) is little more elegant.
 
-
-## Webpack Config
-
-Because were bringing in native ES6 code and by default we exclude `node_modules` from transpiling, we'll need to make an exception for this package. Below is an example of the regex in the excludes.
-
-```javascript
-rules: [
-    {
-        test: /.js$/,
-        exclude: /(node_modules\/(?!(baseframe\-js|some\-module|another\-module)))/,
-        use: [
-            {
-                loader: 'babel-loader'
-            }
-        ]
-    }
-    //... 
-]
-```
 
 ## Plugin Names and What They Do.
 

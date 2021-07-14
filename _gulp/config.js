@@ -70,9 +70,13 @@ const config = {
             jquery: 'jQuery',
             'cash-dom': '$'
         },
+        
         optimization: {
-            minimize: true,
-            mangleWasmImports: false
+            minimize: true 
+        },
+
+        output: {
+            libraryTarget: 'umd'
         }
     }
 }

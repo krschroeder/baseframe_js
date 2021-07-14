@@ -33,7 +33,7 @@
   "author": "Kevin Schroeder <kevin.r.schroeder@gmail.com>",
   "license": "MIT",
   "private": false,
-  "main": "scripts-all.js",
+  "main": "dist/all.js",
   "scripts": {
     "start": "gulp",
     "build": "gulp --prod",

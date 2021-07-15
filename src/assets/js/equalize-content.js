@@ -1,5 +1,6 @@
-import $ from 'cash-dom';
+
 import validJSONFromString from './util/formatting-valid-json.js';
+import { elData } from './util/lib-extend.js';
 
 const VERSION = "2.0.2";
 const DATA_NAME = 'EqualizeContent';
@@ -39,12 +40,12 @@ export default class EqualizeContent {
 
 	 
 
-		$.store.set(
+		elData(
 			element,
 			`${DATA_NAME}_params`,
 			$.extend(EqualizeContent.defaults, options, dataOptions) 
 		);
-		_.params = $.store.get(element,`${DATA_NAME}_params`);
+		_.params = elData(element,`${DATA_NAME}_params`);
 
 		_.elementHeight = (_.params.useHeight) ? 'height' : 'min-height';
 		_.$equalizeItems = $(_.params.equalizeItem, _.element);

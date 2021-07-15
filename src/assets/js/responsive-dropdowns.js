@@ -1,5 +1,6 @@
-import $ from 'cash-dom';
+
 import validJSONFromString from './util/formatting-valid-json.js';
+import { elData } from './util/lib-extend.js';
 
 const VERSION = "1.0.0";
 const DATA_NAME = 'ResponsiveDropDown';
@@ -52,12 +53,12 @@ export default class ResponsiveDropDown {
 		_.styleAdded = false;
 		_.is_ios = navigator.userAgent.toLowerCase().match(/(iphone|ipod|ipad)/) ? true : false;
 
-		$.store.set(
+		elData(
 			element,
 			`${DATA_NAME}_params`,
 			$.extend(ResponsiveDropDown.defaults, options, dataOptions)
 		);
-		_.params = $.store.get(element, `${DATA_NAME}_params`);
+		_.params = elData(element, `${DATA_NAME}_params`);
 
 		_.init();
 

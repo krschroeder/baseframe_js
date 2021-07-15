@@ -1,5 +1,6 @@
-import $ from 'cash-dom';
+
 import validJSONFromString from './util/formatting-valid-json.js';
+import { elData } from './util/lib-extend.js';
 
 const VERSION = "1.1.2";
 const DATA_NAME = 'NavDesktop';
@@ -40,12 +41,12 @@ export default class NavDesktop {
 		);
 
 
-		$.store.set( 
+		elData( 
 			element,
 			`${DATA_NAME}_params`,
 			$.extend(NavDesktop.defaults, options, dataOptions)
 		);
-		_.params = $.store.get(element, `${DATA_NAME}_params`);
+		_.params = elData(element, `${DATA_NAME}_params`);
 
 		_.addCssToElems();
 		_.init();

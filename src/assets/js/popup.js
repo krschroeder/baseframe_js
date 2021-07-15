@@ -1,10 +1,11 @@
-import $ from "cash-dom";
+
 import validJSONFromString from './util/formatting-valid-json.js';
 import generateGUID from './util/guid-generate.js';
 
 import { isHidden, photoRegex, CSS_TRANSISTION_DELAY } from './util/helpers';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
+import { elData } from './util/lib-extend.js';
 
 const VERSION = "1.0.6";
 const DATA_NAME = 'Popup';
@@ -77,12 +78,12 @@ export default class Popup {
 
 		_.$element = $(element);
 		
-		$.store.set(
+		elData(
 			element,
 			`${DATA_NAME}_params`,
 			$.extend(Popup.defaults,instanceDefaults, options, dataOptions)
 		);
-		_.params = $.store.get(element, `${DATA_NAME}_params`);
+		_.params = elData(element, `${DATA_NAME}_params`);
 		 
 		if (_.params.useLocationHash && popupID === _.params.popupID) {
 			console.warn('If loading from a location hash please make sure to specify an ID not auto generated. This won\'t work should the page get reloaded.');
@@ -601,7 +602,7 @@ export default class Popup {
 
 
 	static close(element, refocus = true) {
-		const instance = $.store.get(element, INSTANCE_NAME) || element;
+		const instance = elData(element, INSTANCE_NAME) || element;
 
 		if (instance) {
 			instance._close(refocus);
@@ -612,7 +613,7 @@ export default class Popup {
 
 		if (element) {
 
-			const params = $.store.get(element, `${DATA_NAME}_params`);
+			const params = elData(element, `${DATA_NAME}_params`);
 
 			$.store.remove(element, INSTANCE_NAME);
 			
@@ -627,7 +628,7 @@ export default class Popup {
 	}
 
 	static show(element) {
-		const instance = $.store.get(element, INSTANCE_NAME);
+		const instance = elData(element, INSTANCE_NAME);
 
 		if (instance) {
 			instance.loadPopup(element);

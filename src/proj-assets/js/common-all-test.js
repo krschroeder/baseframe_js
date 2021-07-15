@@ -19,7 +19,7 @@ import installStoreToLibrary, {
     getUrlParam,
     smoothScroll,
     cookies
-} from '../../../scripts-all';
+} from '../../../all-es6';
 
 //necessary for all plugin's to operate
 //much like jQuery's $.data method, the $.store is similar
@@ -38,12 +38,7 @@ libraryExtend([
     Popup,
     ResponsiveDropDown,
     Tabs
-]); 
-
-//should you just want to add in one
-//then just the plugin
-libraryExtend(Tabs);
-
+],false); 
 
 $.extend({getHashParam: getHashParam});
 $.extend({getUrlParam: getUrlParam});

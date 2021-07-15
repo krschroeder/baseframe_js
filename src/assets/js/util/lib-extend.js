@@ -9,8 +9,31 @@ const checkIfParamsExist = (setParams, params, notify = true) => {
     }
     return params;
 };
-  
+ 
+let storeFnInstalled = false;
+let storeInstallChecked = false;
 
+export const elData = (el, dName, data) => {
+    
+    if (!storeInstallChecked) {
+        storeFnInstalled = !!$.store; 
+
+        storeInstallChecked = true;
+    }
+
+    const dataArgs = [el, dName, data].filter(arg => !!arg);
+    let ret = null;
+    
+    if (storeFnInstalled) {
+        ret = dataArgs.length === 2 ? $.store.get(...dataArgs) : $.store.set(...dataArgs);
+       
+    } else {
+        ret = $(el).data(...dataArgs.slice(1));
+    }
+
+    return ret;
+}
+ 
 const libraryExtend = (Plugins, notify = false) => {
     
     const plugins = getType(Plugins) === 'array' ? Plugins : [Plugins];
@@ -18,7 +41,7 @@ const libraryExtend = (Plugins, notify = false) => {
     for (let i = 0, l = plugins.length; i < l; i++) {
        
         const Plugin = plugins[i];
-        const DataName = Plugin.pluginName;
+        const DataName = Plugin.pluginName;  
         const pluginName = DataName.charAt(0).toLowerCase() + DataName.substring(1);
         
         $.fn[pluginName] = function (params) {
@@ -27,18 +50,18 @@ const libraryExtend = (Plugins, notify = false) => {
             return _.each(function (index) {
                 const $this = $(this);
 
-                let instance = $.store.get(this, `${DataName}_instance`);
-
+                let instance = elData(this, `${DataName}_instance`);
+                 
                 if (!instance) {
                     const plugin = new Plugin($this, params, index);
 
-                    $.store.set(this, `${DataName}_instance`, plugin); 
+                    elData(this, `${DataName}_instance`, plugin); 
                 
                 } else {
-                    const instanceParams = $.store.get(this,`${DataName}_params`);
+                    const instanceParams = elData(this,`${DataName}_params`);
                     checkIfParamsExist(instanceParams, params, notify);
                   
-                    $.store.set(this,`${DataName}_params`, $.extend(instanceParams, params) );
+                    elData(this,`${DataName}_params`, $.extend(instanceParams, params) );
                     notify && console.log(`Params updated`,instanceParams)
                 }
             });

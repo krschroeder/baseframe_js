@@ -1,9 +1,10 @@
-import $ from 'cash-dom';
+
 import validJSONFromString from './util/formatting-valid-json.js';
 import {CSS_TRANSISTION_DELAY} from './util/helpers';
 import smoothScroll from './util/smooth-scroll';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
+import { elData } from './util/lib-extend.js';
 
 const VERSION = "2.1.6";
 const DATA_NAME = 'Collapse';
@@ -56,12 +57,12 @@ export default class Collapse {
 		_.onElem = element;
 		_.index = index;
 			
-		$.store.set(
+		elData(
 			element,
 			`${DATA_NAME}_params`,
 			$.extend(Collapse.defaults, options, dataOptions) 
 		);
-		_.params = $.store.get(element,`${DATA_NAME}_params`);
+		_.params = elData(element,`${DATA_NAME}_params`);
 		
 		_.toggling = false;
 		_.prevItem = null;

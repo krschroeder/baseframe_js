@@ -1,6 +1,6 @@
-import $ from 'cash-dom';
-import validJSONFromString from './util/formatting-valid-json.js';
 
+import validJSONFromString from './util/formatting-valid-json.js';
+import { elData } from './util/lib-extend.js';
 
 const VERSION = "1.0.0";
 const DATA_NAME = 'Parallax';
@@ -41,12 +41,12 @@ export default class Parallax {
 		_.$window = $(window);
 		_.$element = $(element);
 
-		$.store.set(
+		elData(
 			element,
 			`${DATA_NAME}_params`,
 			$.extend(Parallax.defaults, instanceDefaults, options, dataOptions)
 		);
-		_.params = $.store.get(element, `${DATA_NAME}_params`);
+		_.params = elData(element, `${DATA_NAME}_params`);
 
 		_.requestAnimationFrame = !!window.requestAnimationFrame;
 

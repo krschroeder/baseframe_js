@@ -1,8 +1,9 @@
-import $ from 'cash-dom';
+
 import validJSONFromString from './util/formatting-valid-json.js';
 import getType from './util/helpers';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
+import { elData } from './util/lib-extend.js';
 
 const VERSION = "1.0.3";
 const DATA_NAME = 'Tabs';
@@ -47,13 +48,13 @@ export default class Tabs {
 		//state
 		_.$element = $(element);
 
-		$.store.set(
+		elData(
 			element,
 			`${DATA_NAME}_params`,
 			$.extend(Tabs.defaults, options, dataOptions)
 		);
 
-		_.params = $.store.get(element, `${DATA_NAME}_params`);
+		_.params = elData(element, `${DATA_NAME}_params`);
 		_.$tabsList = _.$element.find(`.${_.params.tabsHeadCss} ul`).first();
 		_.$tabsBody = _.$element.find(`.${_.params.tabsBodyCss}`).first();
 

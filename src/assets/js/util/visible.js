@@ -1,4 +1,4 @@
-import $ from 'cash-dom';
+
 
 import {isVisible} from './helpers';
  

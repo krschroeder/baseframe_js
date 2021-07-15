@@ -1,6 +1,5 @@
-import $ from 'cash-dom';
-import { isVisible } from './util/helpers';
 
+import { isVisible } from './util/helpers';
 
 const defaults = {
 	delay: 200,

@@ -39,13 +39,15 @@ const config = {
 
     WEBPACK_CONFIG: {
         mode: (PROD_JS ? 'production': 'development'),
-        resolve: {
-            alias: {
-                components: SOURCE,
-            },
-            extensions: ['.js']
-        },
-        context: SOURCE,
+        // resolve: {
+        //     alias: {
+        //         components: SOURCE,
+        //     },
+        //     extensions: ['.js']
+        // },
+        // context: SOURCE,
+        target: ['web','es5'],
+
         module: {
             rules: [
                 {
@@ -67,7 +69,7 @@ const config = {
         },
         
         externals: {
-            jquery: 'jQuery',
+            // jquery: 'jQuery',
             'cash-dom': '$'
         },
         
@@ -76,7 +78,10 @@ const config = {
         },
 
         output: {
-            libraryTarget: 'umd'
+            library: {
+                // name: 'MyLibrary',
+                type: 'umd',
+              },
         }
     }
 }

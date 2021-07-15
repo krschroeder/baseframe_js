@@ -1,7 +1,7 @@
-import $ from 'cash-dom';
+
 import validJSONFromString from './util/formatting-valid-json.js';
 import { isVisible } from './util/helpers';
-
+import { elData } from './util/lib-extend.js';
 
 const VERSION = '1.0.0';
 const DATA_NAME = 'LazyLoad';
@@ -75,7 +75,7 @@ export default class LazyLoad {
             $(element).data(DATA_NAME + '-options')
         );
        
-        $.store.set(
+        elData(
             element,
             `${DATA_NAME}_params`,
             $.extend(
@@ -87,7 +87,7 @@ export default class LazyLoad {
 
         _.lazyElemObserver = null;
 
-        _.params = $.store.get(element, `${DATA_NAME}_params`);
+        _.params = elData(element, `${DATA_NAME}_params`);
         
         _.lazyLoad();
 

@@ -6,9 +6,9 @@ A suite of useful Javascript plugins and functions to help with Front-end Develo
 
 These are made to work with [Cash](https://github.com/fabiospampinato/cash) (with jQuery still an option) as the only dependency. Cash is a small jQuery alternative that give developers DOM traversing without the extra bloat. In my opinion, having a DOM traversing Library is essential. Also, everybody who's done any web developement is familiar with jQuery syntax.
 
-## Features and Advantages
+## Features
 ### It's small!
-Combined all together (with my minification settings at least) its ~ 59k. Add that with Cash and its less than jQuery alone!
+Combined all together its ~ 61k. Add that with Cash and its less than jQuery alone!
 
 ### Pass in parameter options with a `data-` attribute
 The data attribute is always the `data-` (of course) and then the plugin name `pluginName` followed by `-options`.
@@ -59,6 +59,8 @@ import installStoreToLibrary, {
 
 //necessary for all plugin's to operate
 //much like jQuery's $.data method, the $.store is similar
+//NOTE: this can be ignored if using jQuery, and it'll fallback to its 
+// $.fn.data method to store instances and their params.
 installStoreToLibrary(true);
 
 //perhaps for some reason you don't want to install
@@ -130,7 +132,7 @@ __[View](#tabs-plugin)__
 
 ------
 
-### Class Set-up for using `LibraryExtend`
+### Class Set-up for using `LibraryExtend` ###
 
 Each class just needs to have the following properties set on it
 
@@ -154,27 +156,27 @@ Each class just needs to have the following properties set on it
 
 ------
 
-### Essential Functions
+### Essential Functions ###
 
-#### libraryExtend
-Pass in an `array` for the first argument, or a single plugin class, and `notify` is optional defaulted to false. `notify` console log's when parameters get updated on an instance.
+#### libraryExtend ####
+First parameter can be one Plugin, or an array of them. Pass in the second param which will notify the user of updated parameters (good for development).
 
 ```javascript
 libraryExtend(plugins:Array<Plugin> | Plugin, notify?:boolean)
 ```
 
 
-#### installStoreToLibrary
-
+#### installStoreToLibrary ####
+If using **Cash** and installing plugins into the library, this function needs to be run to install `$.store`, which is used internally on all the plugins. If using **jQuery** this can be ignored as it'll use `$.fn.data` to store instances of plugins and their parameters.
 Pass in the first attribute to add in the `expose` method, which allows you to see all the data stored in the Map.
 
 ```javascript
 installStoreToLibrary(expose?:boolean) 
 ```
 
-#### $.store
+#### $.store ####
 
-Inside the $.store method is the following structure. The first parameter can be an `HTMLElement` or a `$(HTMLElement)`. The second parameter is a `string` and is the identifier on on which the data is stored. Multiple properties can be stored on the same element. In the plugin's the instance (`PluginName_instance`) is saved, as well as the instance paremeters (`PluginName_params`). 
+Inside the `$.store` method is the following structure. The first parameter can be an `HTMLElement` or a `$(HTMLElement)`. The second parameter is a `string` and is the identifier on on which the data is stored. Multiple properties can be stored on the same element. In the plugin's the instance (`PluginName_instance`) is saved, as well as the instance paremeters (`PluginName_params`). 
 
 ```javascript
 const Store = {

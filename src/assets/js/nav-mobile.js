@@ -1,7 +1,8 @@
-import $ from 'cash-dom';
+
 import validJSONFromString from './util/formatting-valid-json.js';
 import {isVisible,CSS_TRANSISTION_DELAY} from './util/helpers';
 import submenuBtn from './util/plugin/nav';
+import { elData } from './util/lib-extend.js';
 
 const VERSION = "1.3.0";
 const DATA_NAME = 'NavMobile';
@@ -52,12 +53,12 @@ export default class NavMobile {
 		 
 		_.$element = $(element);
 
-		$.store.set(
+		elData(
 			element,
 			`${DATA_NAME}_params`,
 			$.extend(NavMobile.defaults, options, dataOptions)
 		);
-		_.params = $.store.get(element, `${DATA_NAME}_params`);
+		_.params = elData(element, `${DATA_NAME}_params`);
 
 		//run the methods
 		_.addChildNavClass();

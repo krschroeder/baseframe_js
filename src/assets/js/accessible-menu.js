@@ -1,6 +1,6 @@
-import $ from 'cash-dom'; 
 import validJSONFromString from './util/formatting-valid-json.js';
 import $visible from './util/visible';
+import { elData } from './util/lib-extend.js';
 
 const VERSION = "1.2.0";
 const DATA_NAME = 'AccessibleMenu';
@@ -23,7 +23,7 @@ const escapeKey = (e, $ulParents, focusCss) => {
 			$anchor.parent('li').addClass(focusCss);
 		}
 		e.preventDefault();
-	}
+	} 
 }
 
 const focusListItem = (activeElem, $ulParents, focusCss, prev) => {
@@ -120,12 +120,12 @@ export default class AccessibleMenu {
 			$(element).data(DATA_NAME + '-options')
 		);
 
-		$.store.set( 
+		elData( 
 			element,
 			`${DATA_NAME}_params`,
 			$.extend(AccessibleMenu.defaults, options, dataOptions)
 		);
-		_.params = $.store.get(element, `${DATA_NAME}_params`);
+		_.params = elData(element, `${DATA_NAME}_params`); 
 
 		_.init();
 

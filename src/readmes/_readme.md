@@ -57,6 +57,13 @@ import installStoreToLibrary, {
     throttledResize
 } from 'baseframe-js';
 
+// or ES6 non-transpiled
+import installStoreToLibrary, {
+    libraryExtend,
+    AccessibleMenu,
+    // ... 
+} from 'baseframe-js/all-es6';
+
 //necessary for all plugin's to operate
 //much like jQuery's $.data method, the $.store is similar
 //NOTE: this can be ignored if using jQuery, and it'll fallback to its 
@@ -99,10 +106,6 @@ __[View](#equalize-plugin)__
 ### Lazy Load
 Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` and magically polyfills for IE11. 
 __[View](#plugin-lazy-load)__
-
-### Marketo Form
-Have you tried to style a Marketo form? It is not too fun to do! This should help slimplify the process so you won&rsquo;t pull your hair out. 
-__[View](#marketo-form-plugin)__
 
 ### Navigation Desktop
 This plugin just adds a delay to the desktop navigation for the nestled levels of a `<ul>`. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page. 
@@ -290,10 +293,6 @@ getUrlParam(search:string ,searchString?:string)
 <br>
 <br>
 @@include('./lazy-load.md')
-<br>
-<br>
-<br>
-@@include('./marketo-form.md')
 <br>
 <br>
 <br>

@@ -1,6 +1,7 @@
 
 import validJSONFromString from './util/formatting-valid-json.js';
 import { elData } from './util/lib-extend.js';
+import getBaseClass from './util/plugin/get-base-class.js';
 
 const VERSION = "1.1.2";
 const DATA_NAME = 'NavDesktop';

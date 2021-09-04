@@ -3,8 +3,9 @@ import validJSONFromString from './util/formatting-valid-json.js';
 import {isVisible,CSS_TRANSISTION_DELAY} from './util/helpers';
 import submenuBtn from './util/plugin/nav';
 import { elData } from './util/lib-extend.js';
+import getBaseClass from './util/plugin/get-base-class.js';
 
-const VERSION = "1.3.0";
+const VERSION = "1.3.1";
 const DATA_NAME = 'NavMobile';
 const EVENT_NAME = 'navMobile';
 
@@ -173,8 +174,7 @@ export default class NavMobile {
 
 	menuNavToggle() {
 		const _ = this;
-
-		_.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, `.btn-nav--mb-submenu`, function (e) { 
+		_.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, '.' + _.params.submenuBtnCss.replace(/\s/g,'.') , function (e) { 
 
 			const {hasUlCls, menuOpenCss, menuTogglingCss, slideDuration} = _.params;
 

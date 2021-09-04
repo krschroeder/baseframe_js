@@ -5,48 +5,40 @@ import smoothScroll from './util/smooth-scroll';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 import { elData } from './util/lib-extend.js';
+import getBaseClass from './util/plugin/get-base-class';
 
-const VERSION = "2.1.6";
+const VERSION = "2.1.7";
 const DATA_NAME = 'Collapse';
 const EVENT_NAME = 'collapse';
+const DEFAULTS = {
+	elemsItem: '.collapse__item',
+	elemsBtn: '.collapse__btn',
+	elemsBody: '.collapse__body',
+	openCss: 'collapse--open',
+	togglingCss: 'collapse--toggling',
+	openingCss: 'collapse--opening',
+	closingCss: 'collapse--closing',
+	openNoAnimateCss: 'collapse--no-animate',
+	toggleClickBindOn: 'group',
+	toggleDuration: 500,
+	toggleGroup: false,
+	moveToTopOnOpen: false,
+	moveToTopOffset: 0,
+	scrollSpeed: 100,
+	useHashFilter: null,
+	useLocationHash: true,
+	loadLocationHash: true,
+	afterOpen: () => { },
+	afterClose: () => { },
+	afterInit: () => { }
+}
 
-export default class Collapse {
+const BaseClass = getBaseClass(VERSION, DATA_NAME, DEFAULTS);
 
-	static get version() {
-		return VERSION;
-	}
-
-	static get pluginName() {
-		return DATA_NAME;
-	}
-
-	static get defaults() {
-		return {
-			elemsItem: '.collapse__item',
-			elemsBtn: '.collapse__btn',
-			elemsBody: '.collapse__body',
-			openCss: 'collapse--open',
-			togglingCss: 'collapse--toggling',
-			openingCss: 'collapse--opening',
-			closingCss: 'collapse--closing',
-			openNoAnimateCss: 'collapse--no-animate',
-			toggleClickBindOn: 'group',
-			toggleDuration: 500,
-			toggleGroup: false,
-			moveToTopOnOpen: false,
-			moveToTopOffset: 0,
-			scrollSpeed: 100,
-			useHashFilter: null,
-			useLocationHash: true,
-			loadLocationHash: true,
-			afterOpen: () => { },
-			afterClose: () => { },
-			afterInit: () => { }
-		}
-	}
+export default class Collapse extends BaseClass {
 
 	constructor(element, options, index) {
-
+		super();
 		const _ = this;
 
 		const dataOptions = validJSONFromString(
@@ -80,6 +72,7 @@ export default class Collapse {
 		_.toggleItems();
 		_.loadContentFromHash();
 		_.params.afterInit(_.element);
+
 	}
 
 	setDisplay() {
@@ -107,9 +100,11 @@ export default class Collapse {
 				const btnContent = $btn.eq(0).text().slice(0, 20).trim().replace(/\s/g, '-');
 				const id = `collapse_${_.index}-${index}-${btnContent}`;
 				
-				$cBody.attr({'id': id})
+				$cBody.attr({'id': id});
+
+				const hrefAttr = $btn[0].nodeName.toUpperCase() === 'BUTTON' ? 'data-href' :'href';
 				$btn.attr({
-					href: `#${id}`,
+					[hrefAttr]: `#${id}`,
 					'aria-controls': id
 				});
 			}
@@ -126,12 +121,12 @@ export default class Collapse {
 		;
 
 		$(_.onElem).on(`click.${EVENT_NAME} ${EVENT_NAME}`, _.params.elemsBtn, function (e) {
-			e.preventDefault();
+			e.preventDefault();  
 
 			if ( _.toggling ) { return;}
 			
 			const $this = $(this);
-			const collapseID = $this.attr('href') || $this.attr('data-href');
+			const collapseID = $this.attr('href') || $this.attr('data-href'); console.log(collapseID)
 
 			if (_.params.useLocationHash) {
 
@@ -186,7 +181,7 @@ export default class Collapse {
 		$btnElems.addClass(togglingCss);
 
 		if (toggleGroup) {
-			_._toggleGroup($collapsibleItem);
+			_._toggleGroup($btnElems, $collapsibleItem);
 		}
 
 		if (CLOSE) {
@@ -196,7 +191,7 @@ export default class Collapse {
 		}
 	}
 
-	_toggleGroup($clickedItem) {
+	_toggleGroup($btnElems,$clickedItem) {
 		const _ = this;
 
 		$(_.onElem).find(_.params.elemsBody).not($clickedItem).each(function () {
@@ -204,8 +199,6 @@ export default class Collapse {
 			if ($(this).hasClass(_.params.openCss)) {
 
 				const $this = $(this);
-				const thisID = $this.attr('id');
-				const $btnElems = $(_.onElem).find(`[data-href="#${thisID}"],a[href="#${thisID}"]`);
 
 				_._closeItem($btnElems, $this);
 

@@ -12,7 +12,6 @@ import NavDesktop from './nav-desktop';
 import NavMobile, {NavMobileNestled} from './nav-mobile';
 import Tabs from './tabs';
 import EqualizeContent from './equalize-content';
-import MarketoForm from './marketo-form';
 import ResponsiveDropDown from './responsive-dropdowns';
 import LazyLoad from './lazy-load';
 
@@ -29,7 +28,6 @@ export {
     AccessibleMenu,
     Collapse,
     EqualizeContent,
-    MarketoForm,
     NavDesktop,
     NavMobile,
     NavMobileNestled,

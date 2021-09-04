@@ -1,8 +1,9 @@
 
 import validJSONFromString from './util/formatting-valid-json.js';
 import generateGUID from './util/guid-generate.js';
+import getBaseClass from './util/plugin/get-base-class.js';
 
-import { isHidden, photoRegex, CSS_TRANSISTION_DELAY } from './util/helpers';
+import { photoRegex, CSS_TRANSISTION_DELAY } from './util/helpers';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 import { elData } from './util/lib-extend.js';
@@ -12,18 +13,13 @@ const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
 const INSTANCE_NAME = `${DATA_NAME}_instance`;
 
-export default class Popup {
+const getPopupSrc = ($elem) => $elem.data('popup-src') || $elem.attr('href') || null;
+const getTitleSrc = ($elem) => $elem.data('popup-title') || $elem.attr('title') || '';
 
-	static get version() {
-		return VERSION;
-	}
+const BaseClass = getBaseClass(VERSION,DATA_NAME);
 
-	static get pluginName() {
-		return DATA_NAME;
-	}
-
+export default class Popup extends BaseClass {
 	static get defaults() {
-
 		return {
 			popupID: null,
 			src: null,
@@ -60,10 +56,10 @@ export default class Popup {
 			afterLoaded: () => { },
 			afterClose: () => { },
 			onClose: () => { }
-		}
+		};
 	}
-
 	constructor(element, options, index) {
+		super();
 		const _ = this;
 
 		const dataOptions = validJSONFromString(
@@ -71,9 +67,9 @@ export default class Popup {
 		);
 
 		const popupID = 'popup_' + generateGUID();
-		const src = $(element).data('popup-src') || $(element).attr('href') || null;
+		const src = getPopupSrc($(element));
 		const caption = $(element).data('popup-caption') || '';
-		const title  = $(element).data('popup-title') || $(element).attr('title') || '';
+		const title  = getTitleSrc($(element));
 		const instanceDefaults = {popupID,src,caption,title};
 
 		_.$element = $(element);
@@ -98,8 +94,8 @@ export default class Popup {
 		
 		//Content
 		_.$popup = null;
-		_.elemGrabbedLocation = null;
-		_.grabContentsFromDom = false;
+		_.elemGrabbedLocation = $('<span/>').attr({ id: 'orig-loc_' + popupID });
+		_.contentFromDOM = false;
 		_.currentElem = null;
 		_.currentSrc = null;
 		_.$listElems = _.params.isJsArray ? _.params.src : null;
@@ -108,6 +104,8 @@ export default class Popup {
 		//click elem
 		_.$domClickElem = null;
 		_.domElemClicked = false;
+
+		_.popupEventName = EVENT_NAME + _.params.popupID;
 
 		//for groups
 		_.groupCount = 0;
@@ -136,7 +134,7 @@ export default class Popup {
 		const _ = this;
 		const { launch, useHashFilter,loadLocationHash} = _.params;
 
-		_.$element.on(`${_.params.enableEvent}.${EVENT_NAME}${_.params.popupID} ${EVENT_NAME}${_.params.popupID}`, function (e) {
+		_.$element.on(`${_.params.enableEvent}.${_.popupEventName} ${_.popupEventName}`, function (e) {
 			
 			const {useLocationHash} = _.params;
 
@@ -152,7 +150,7 @@ export default class Popup {
 		});
 
 
-		$(window).on(`popstate.${EVENT_NAME}${_.params.popupID} ${EVENT_NAME}${_.params.popupID}`,(e) => {
+		$(window).on(`popstate.${_.popupEventName} ${_.popupEventName}`,(e) => {
 			const {useLocationHash, useHashFilter} = _.params;
 			
 			if (useLocationHash) {
@@ -236,10 +234,10 @@ export default class Popup {
 
 	determineContent() {
 		const _ = this;
-		const { isJsArray, popupID, group } = _.params;
+		const { isJsArray, group } = _.params;
 
 		//if grabbed content from before
-		_._replaceContent();
+		_.placeContentBack();
 
 		//testing to see if its simple a class or ID selector
 		const domElemRgx = /^(\#|\.)/;
@@ -279,7 +277,7 @@ export default class Popup {
 			}
 
 			currentElem = _.$listElems.eq(_.groupIndex);
-			src = currentElem.data('popup-src') || currentElem.attr('href') || null;
+			src = getPopupSrc(currentElem);
 
 			if (!src) {
 				src = currentElem;
@@ -290,31 +288,33 @@ export default class Popup {
 
 			_.groupCount = _.$listElems.length;
 		
-			title = currentElem.data('popup-title') || currentElem.attr('title');
+			title = getTitleSrc(currentElem);
 			caption = currentElem.data('popup-caption');
 		}
 
 		_.currentElem = currentElem;
 		_.currentSrc = src; 
 
-		const grabContentsFromDom = isDomSelector && !isJsArray && (!isDomSelector ? false : isHidden($(src)[0]));
-
-		_.grabContentsFromDom = grabContentsFromDom;
-
-		if (grabContentsFromDom) {
-
-			_.elemGrabbedLocation = $('<span/>').attr({ id: 'orig-loc_' + popupID });
-			
-			$(src).after(_.elemGrabbedLocation);
-		}
-
+		_.contentFromDOM = isDomSelector && !isJsArray || (!isJsArray && typeof src === 'object');
+		
+		if (_.contentFromDOM) $(src).after(_.elemGrabbedLocation);
 		if (title) _.params.title = title;
 		if (caption) _.params.caption = caption;
 	}
 
 	placeContent() {
 		const _ = this;
-		const { caption, isJsArray, titleElem, titleCss, title, showGroupAmount, popupID, loadingHTML, isImage } = _.params;
+		const { 
+			caption, 
+			isJsArray, 
+			titleElem, 
+			titleCss, 
+			title, 
+			showGroupAmount, 
+			popupID, 
+			loadingHTML, 
+			isImage 
+		} = _.params;
 
 		const currentElem = _.currentElem;
 		const src = _.currentSrc;
@@ -328,35 +328,35 @@ export default class Popup {
 		_.$popup.find(`#${popupID}__title`).html(title ? `<${titleElem} class="${titleCss}">${title}</${titleElem}>` : '');
 		_.$popup.find(`#${popupID}__caption`).html(caption);
 
+		
 		//wipe the current body contents
 		$popupContentBody.html("");
 
 		if (isImg) {
 
 			const imgNode = new Image();
+			const $loader = $('<div/>').attr({ class: 'popup__loader-outer'}).html(loadingHTML);
 
 			imgNode.src = src;
 			imgNode.alt = title || "";
 
-			let loader = '';
 
 			if (!imgNode.complete) {
 				imgNode.style.opacity = "0";
 
-				loader = $('<div/>').attr({
-					class: 'popup__loader-outer'
-				}).html(loadingHTML);
+				$popupContentBody.append($loader);
 			}
 
-			$popupContentBody.append(imgNode, loader);
+			$popupContentBody.append(imgNode);
+			const $imgNode = $(imgNode);
 
-			$(imgNode).on(`load.${EVENT_NAME}`, () => {
+			$imgNode.on(`load.${EVENT_NAME}`, () => {
 
-				$('.popup__loader-outer').remove();
-				imgNode.removeAttribute("style");
+				$loader.remove();
+				$imgNode.removeAttr("style");
 
 				$popupContentBody.css({
-					'min-height': $popupContentBody.find('img').height()
+					'min-height': $imgNode.height()
 				});
 			})
 
@@ -364,9 +364,12 @@ export default class Popup {
 			$popupContentBody.append($(src)).css({ 'min-height': '0px' });
 		}
 
-
 		if (showGroupAmount) {
-			_.groupAmountElem.html(`<span>${_.groupIndex + 1}</span> <span class="popup__group-divisor">${_.params.groupOfHTML}</span> <span>${_.groupCount}</span>`);
+			_.groupAmountElem.html(
+				`<span>${_.groupIndex + 1}</span> 
+				<span class="popup__group-divisor">${_.params.groupOfHTML}</span> 
+				<span>${_.groupCount}</span>`
+			);
 		}
 	}
 
@@ -375,7 +378,7 @@ export default class Popup {
 		const { popupID, group, prevBtnHTML, nextBtnHTML, showGroupAmount } = _.params;
 
 		_.determineContent();
-
+		
 		let groupControls = null;
 
 		if (_.groupCount > 1 && (typeof group === 'string' || group)) {
@@ -431,7 +434,7 @@ export default class Popup {
 			);
 
 		_.$popup = $popupStructure;
-
+		
 		_.placeContent();
 		_.groupControls();
 		_.params.afterLoaded(_.$element, popupID);
@@ -457,7 +460,7 @@ export default class Popup {
 
 		if (_.groupCount > 1) {
 
-			$(document).on(`keydown.${EVENT_NAME}${_.params.popupID}groupcontrols`, function (e) {
+			$(document).on(`keydown.${_.popupEventName}groupcontrols`, function (e) {
 				const ev = e || window.event;
 				const key = ev.key;
 
@@ -469,10 +472,10 @@ export default class Popup {
 				}
 			});
 
-			_.$popup.on(`click.${EVENT_NAME}${_.params.popupID}`, '.btn--popup-prev', function () {
+			_.$popup.on(`click.${_.popupEventName}`, '.btn--popup-prev', function () {
 				_.toggleGroup(true, false);
 			})
-			.on(`click.${EVENT_NAME}${_.params.popupID}`, '.btn--popup-next', function () {
+			.on(`click.${_.popupEventName}`, '.btn--popup-next', function () {
 				_.toggleGroup(false, true);
 			});
 		}
@@ -522,7 +525,7 @@ export default class Popup {
 			'.popup__overlay,.popup__btn-close' :
 			'.popup__btn-close';
 
-		_.$popup.on(`click.${EVENT_NAME}${_.params.popupID}`, closeElems, function (e) {
+		_.$popup.on(`click.${_.popupEventName}`, closeElems, function (e) {
 
 
 			e.preventDefault();
@@ -533,7 +536,7 @@ export default class Popup {
 
 	escapeClose() {
 		const _ = this;
-		$(document).on(`keydown.${EVENT_NAME}${_.params.popupID}`, function (ev) {
+		$(document).on(`keydown.${_.popupEventName}`, function (ev) {
 			const e = ev || window.event;
 			const key = e.key;
 
@@ -565,13 +568,14 @@ export default class Popup {
 		_.params.onClose(_.$element, popupID);
 		
 		//detach
-		$(document).off(`keydown.${EVENT_NAME}${_.params.popupID}`);
+		$(document).off(`keydown.${_.popupEventName}`);
+		$(document).off(`keydown.${_.popupEventName}groupcontrols`);
 
 		setTimeout(() => {
 			_.params.afterClose(_.$element, popupID);
 			
 			_.isOpen = false;
-			_._replaceContent();
+			_.placeContentBack();
 
 			$(popupID).remove();
 
@@ -585,17 +589,14 @@ export default class Popup {
 
 	}
 
-	_replaceContent () {
+	placeContentBack () {
 		const _ = this;
 		
-		if (_.grabContentsFromDom) {
+		if (_.contentFromDOM) {
 			
 			$(_.elemGrabbedLocation).after($(_.currentSrc));
-			
 			_.elemGrabbedLocation.remove();
-			
-
-			_.grabContentsFromDom = false;
+			_.contentFromDOM = false;
 		}
 
 	}
@@ -616,11 +617,12 @@ export default class Popup {
 			const params = elData(element, `${DATA_NAME}_params`);
 
 			$.store.remove(element, INSTANCE_NAME);
-			
-			$(element).off(`${params.enableEvent}.${EVENT_NAME}${params.popupID}`);
-			$(element).off(`${EVENT_NAME}${params.popupID}`);
-			$(document).off(`keydown.${EVENT_NAME}${params.popupID}groupcontrols`); 
-			$(document).off(`keydown.${EVENT_NAME}${params.popupID}`);
+			const popupEventName = EVENT_NAME + params.popupID;
+
+			$(element).off(`${params.enableEvent}.${popupEventName}`);
+			$(element).off(`${popupEventName}`);
+			$(document).off(`keydown.${popupEventName}groupcontrols`); 
+			$(document).off(`keydown.${popupEventName}`);
 
 			$.store.remove(element, `${DATA_NAME}_params`);
 		}

@@ -5,15 +5,12 @@ import installStoreToLibrary, {
     Collapse,
     EqualizeContent,
     LazyLoad,
-    MarketoForm,
     NavDesktop,
     NavMobile,
     NavMobileNestled,
     Parallax,
     Popup,
-    ResponsiveDropDown,
     Tabs,
-    bgResponsiveLoad,
     formInputs,
     getHashParam,
     getUrlParam,
@@ -36,7 +33,6 @@ libraryExtend([
     // NavMobileNestled,
     Parallax,
     Popup,
-    ResponsiveDropDown,
     Tabs
 ],false); 
 
@@ -46,7 +42,6 @@ $.extend({cookies: cookies});
 
 $.extend({popup: Popup})
 
-window.MarketoForm = MarketoForm;
 
 const smoothScrollCallback = (arg,dos) => {
     console.log('yeah ' + arg + dos);

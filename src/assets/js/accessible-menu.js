@@ -1,6 +1,7 @@
 import validJSONFromString from './util/formatting-valid-json.js';
 import $visible from './util/visible';
 import { elData } from './util/lib-extend.js';
+import getBaseClass from './util/plugin/get-base-class';
 
 const VERSION = "1.2.0";
 const DATA_NAME = 'AccessibleMenu';
@@ -12,6 +13,11 @@ const keys = {
 	RIGHT: 'ArrowRight',
 	UP:    'ArrowUp',
 	DOWN:  'ArrowDown'
+}
+
+const DEFAULTS = {
+	keyDirections: ['horizontal', 'vertical', 'vertical'],
+	focusCss: 'focus'
 }
 
 const escapeKey = (e, $ulParents, focusCss) => {
@@ -93,25 +99,15 @@ const next = (e, $ulParents, activeElem, focusCss, keyDirections) => {
 		e.preventDefault();
 	}
 }
+
+
+const BaseClass = getBaseClass(VERSION, DATA_NAME, DEFAULTS);
  
-export default class AccessibleMenu {
-
- 	static get version(){
-		return VERSION;
-	}
-
-	static get pluginName() {
-		return DATA_NAME;
-	}
-
-	static get defaults() {
-		return {
-			keyDirections: ['horizontal', 'vertical', 'vertical'],
-			focusCss: 'focus'
-		}
-	}
+export default class AccessibleMenu extends BaseClass {
 
 	constructor(element, options) {
+
+		super();
 		const _ = this;
 
 		_.element = element; 

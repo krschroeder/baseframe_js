@@ -2,6 +2,7 @@
 import validJSONFromString from './util/formatting-valid-json.js';
 import { isVisible } from './util/helpers';
 import { elData } from './util/lib-extend.js';
+import getBaseClass from './util/plugin/get-base-class.js';
 
 const VERSION = '1.0.0';
 const DATA_NAME = 'LazyLoad';

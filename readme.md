@@ -57,6 +57,13 @@ import installStoreToLibrary, {
     throttledResize
 } from 'baseframe-js';
 
+// or ES6 non-transpiled
+import installStoreToLibrary, {
+    libraryExtend,
+    AccessibleMenu,
+    // ... 
+} from 'baseframe-js/all-es6';
+
 //necessary for all plugin's to operate
 //much like jQuery's $.data method, the $.store is similar
 //NOTE: this can be ignored if using jQuery, and it'll fallback to its 
@@ -99,10 +106,6 @@ __[View](#equalize-plugin)__
 ### Lazy Load
 Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` and magically polyfills for IE11. 
 __[View](#plugin-lazy-load)__
-
-### Marketo Form
-Have you tried to style a Marketo form? It is not too fun to do! This should help slimplify the process so you won&rsquo;t pull your hair out. 
-__[View](#marketo-form-plugin)__
 
 ### Navigation Desktop
 This plugin just adds a delay to the desktop navigation for the nestled levels of a `<ul>`. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page. 
@@ -566,67 +569,6 @@ $('p').lazyLoad({
 <br>
 <br>
 <br>
-<h2 id="marketo-form-plugin">Marketo Form</h2>
-
-### About
-Scripting that removes the bad things Marketo adds (classes, stylesheets and etc), and allows you to add in classes already written. Utilizes Marketo Forms 2 API. Adds in the Marketo forms 2 API script as well if its not already added, and once loaded it runs the other scripting.
-
-### Features
-Makes Marketo Form embeds great again!
-
-### Settings
-
-Option | Type | Default | Description
------- | ---- | ------- | -----------
-formID| number | null | Marketo assigns a number for each form in the embed code, needed for embedding
-inMarketo| boolean | false | This option should be __true__ if in Marketo, and keeps the 'MktoForms2.loadForm' from trying to load the form. When in Marketo the form will be loaded, we will just want to run the scripting to assist in styling!
-account| string | "487-ERY-XXX"| This is the account number, and it will be available when getting the embed code
-loadScript| string|  "//app-ab03.marketo.com"| This should be unique/will vary per Marketo account and can be accessed via the embed code
-hideLabels| boolean | false | When set to __true__ labels will be hidden
-wrapLabels| boolean | true | When set to __true__ labels for radios and checkboxes will be wrapped in a css class which displays them inline-block. This way the input and label wont separate ever.
-wrapperClass| string | 'input-wrap' | the class of the wrapped checkbox/radio label pairings.
-removeStyleSheets| boolean | true| The default stylesheets load content that usually makes styling the layout more difficult. But sometimes you may want to leverage the styling that already exists
-cols_3| string | 'md-col-4'| The column class names for those with 3 rows in them. Set responsive classes for each breakpoint as it corresponds to the page styling!
-cols_2| string | 'sm-col-6'| The column class names for those with 2 rows in them.
-cols_1| string | 'col-12'| The column class names for those with 1 rows in them.
-inlineFollowUp | string | null | If set to a __string__ it will redirect to the url passed in. Do not set __followUpUrl__ to a string as well (otherwise you'll re-direct)
-followUpUrlDelay | number | null | Delay the page will re-direct. Optionally can use the `inlineFollowUp` setting to do this as well if that was needed.
-followUpUrl| string | null | If set to a __string__ it'll display this message. The surrounding class for the message is `<span class="mkto-form-followup" />`. you can use custom `html` if necessary, should styling be attached to that element.
-whenReady| function | function(){} | Additional function to run other custom scripting when the form is ready (_whenReady event has fired_). No arguments are being passed
-afterSuccess| function | function(){} | Additional function to run other custom scripting when the form has submitted (_form.onSuccess_). No arguments are being passed.
-
-### Example
-
-__The following is an example html structure for this plugin:__
-
-__HTML__
-```html
-<div class="some-other-class mkto-something-form">
-	<!-- Added via mkto embed-->
-</div>
-```
-
-__JavaScript__
-```javascript
-function yourNiftyWhenReadyFn(){
-	console.log('the whistles go woot!');
-}
-
-new MyMarketoForm('.mkto-something-form',{
-	inlineFollowUp: "Thank You for Subscribing",
-	account: "597-BOK-146",
-	loadScript: '//app-ab05.marketo.com',
-	formID: 1470,
-	whenReady: function(){
-		yourNiftyWhenReadyFn();
-	}
-});
-
-```
-
-<br>
-<br>
-<br>
 <h2 id="nav-desktop-plugin">Desktop Navigation (Enhanced)</h2>
 
 
@@ -1002,75 +944,6 @@ $('.js-array').popup({
 });
 ```
 
-<br>
-<br>
-<br>
-<h2 id="responsive-dropdown">Responsive Navigation to Dropdown</h2>
-
-### What is it!?
-This is a plugin that will take a side-navigation element and turn it into a dropdown for mobile. Its a common thing that I've come across that the mobile needs to turn into a dropdown so hence this plugin!
-
-### Features
-There is a close button that you can add to the bottom if you'd like. Outside click support, so you can close not clicking the header or the (optional) close button.
-
-### Settings
-
-Option | Type | Default | Description
------- | ---- | ------- | -----------
-clickHeader | string| '.resp-dd__header' | CSS class for the header element
-toggleBody | string| '.resp-dd__body' | CSS class for the toggle body
-closeBtnBottom | string | true | Shows close button at the bottom.
-closeBtnText | string| 'Close' | Close text for the button
-openHeaderCss | string| 'resp-dd--active' | CSS class when the toggle body is opened for the header
-inMobileCss | string| 'resp-dd--in-mobile' | CSS class changing the element over to a 'responsive dropdown' in mobile.
-closeBtnDivCss | string| 'resp-dd__close-btn-area' | CSS class for the close button area.
-closeBtnCss | string| '' | Option to add a button class on the optional close button at the bottom.
-toggleCss | string| 'resp-dd__body--open' | CSS class added to the body when it is open.
-togglingCss | string| 'resp-dd__body--toggling' | CSS class added to the toggle body when toggling.
-duration | number | 300 | Time spent transitioning to open. Should correspond with CSS transition.
-mobileBkpt | number | 768 | Break point before entering into mobile.
-outsideClickElem | string Or HTMLELement | 'body' |
-
-### Example
-
-__The following is an example html structure for this plugin:__
-
-__HTML__
-```html
-<div class="resp-dd">
-	<div class="resp-dd__header">
-		<strong class="inline-block">Title For Dropdown</strong>
-		<i class="resp-dd__down-arrow">
-			<span class="sr-only">Down Arrow</span>
-		</i>
-	</div>
-	<div class="resp-dd__body">
-		<div class="sm-col-6 md-col-12" >
-			<h5>Listing of Things</h5>
-			<ul>
-				<li>Some Listing of Sorts</li>
-				<li>Some Listing of Sorts</li>
-			</ul>
-			<br />
-			<a href="#" class="see-more-btn">See More</a>
-		</div>
-
-		<div class="sm-col-6 md-col-12">
-			<h5>Another Listing</h5>
-			<ul>
-				<li>Some Listing of Sorts</li>
-				<li>Some Listing of Sorts</li>
-				<li>Some Listing of Sorts</li>
-			</ul>
-		</div>
-	</div>
-</div>
-```
-
-__JavaScript__
-```javascript
-$(".resp-dd").responsiveDropDown();
-```
 <br>
 <br>
 <br>

@@ -27,7 +27,6 @@ const mapData = (() => {
 					id,
 					data
 				}]);
-				
 				id++;
 
 			} else {
@@ -85,7 +84,10 @@ const mapData = (() => {
 				if (currKey.keyStore === keyStore){
 					
 					elemPropArr.splice(i,1);
-				
+					 
+					if (elemPropArr.length === 0) {
+						storeData.delete(element);
+					}
 					break;
 				}
 			}

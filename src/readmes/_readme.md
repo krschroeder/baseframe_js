@@ -8,7 +8,7 @@ These are made to work with [Cash](https://github.com/fabiospampinato/cash) (wit
 
 ## Features
 ### It's small!
-Combined all together its ~ 61k. Add that with Cash and its less than jQuery alone!
+Combined all together its ~ 55k. Add that with Cash and its less than jQuery alone!
 
 ### Pass in parameter options with a `data-` attribute
 The data attribute is always the `data-` (of course) and then the plugin name `pluginName` followed by `-options`.

@@ -1,29 +1,37 @@
 
 import validJSONFromString from './util/formatting-valid-json.js';
 import { elData } from './util/lib-extend.js';
-import getBaseClass from './util/plugin/get-base-class.js';
 
 const VERSION = "2.0.2";
 const DATA_NAME = 'EqualizeContent';
 const EVENT_NAME = 'equalizeContent';
-const DEFAULTS = {
-	equalizeItem: '.equalize',
-	startWidth: 0, 
-	stopWidth: 480,
-	timerDelay: 100,
-	useHeight: false,//instead of using min-height
-	useMargin: false,
-	aligningCss: 'flex-l',
-	resizeCss: 'in-resize',
-	fuzzy: 1
-}
 
-const BaseClass = getBaseClass(VERSION,DATA_NAME, DEFAULTS);
 
-export default class EqualizeContent extends BaseClass {
+export default class EqualizeContent {
+	static get version() {
+		return VERSION;
+	}
+
+	static get pluginName() {
+		return DATA_NAME;
+	}
+
+	static get defaults() {
+		return {
+			equalizeItem: '.equalize',
+			startWidth: 0, 
+			stopWidth: 480,
+			timerDelay: 100,
+			useHeight: false,//instead of using min-height
+			useMargin: false,
+			aligningCss: 'flex-l',
+			resizeCss: 'in-resize',
+			fuzzy: 1
+		};
+	}
 
 	constructor(element, options) {
-		super();
+		 
 		const _ = this;
 		_.element = element;
 

@@ -1,6 +1,6 @@
 {
   "name": "baseframe-js",
-  "version": "1.8.1",
+  "version": "2.0.0",
   "description": "A suite of useful Javascript plugins and functions to help with Front-end Development on websites",
   "repository": {
     "type": "git",
@@ -15,7 +15,6 @@
     "accordion",
     "collapse",
     "collapsible",
-    "marketo",
     "popup",
     "modal",
     "radios",

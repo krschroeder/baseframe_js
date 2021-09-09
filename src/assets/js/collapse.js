@@ -5,42 +5,49 @@ import smoothScroll from './util/smooth-scroll';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 import { elData } from './util/lib-extend.js';
-import getBaseClass from './util/plugin/get-base-class';
 
 const VERSION = "2.1.7";
 const DATA_NAME = 'Collapse';
 const EVENT_NAME = 'collapse';
-const DEFAULTS = {
-	elemsItem: '.collapse__item',
-	elemsBtn: '.collapse__btn',
-	elemsBody: '.collapse__body',
-	openCss: 'collapse--open',
-	togglingCss: 'collapse--toggling',
-	openingCss: 'collapse--opening',
-	closingCss: 'collapse--closing',
-	openNoAnimateCss: 'collapse--no-animate',
-	toggleClickBindOn: 'group',
-	toggleDuration: 500,
-	toggleGroup: false,
-	moveToTopOnOpen: false,
-	moveToTopOffset: 0,
-	scrollSpeed: 100,
-	useHashFilter: null,
-	useLocationHash: true,
-	loadLocationHash: true,
-	afterOpen: () => { },
-	afterClose: () => { },
-	afterInit: () => { }
-}
 
-const BaseClass = getBaseClass(VERSION, DATA_NAME, DEFAULTS);
 
-export default class Collapse extends BaseClass {
+export default class Collapse {
+	static get version() {
+		return VERSION;
+	}
+
+	static get pluginName() {
+		return DATA_NAME;
+	}
+
+	static get defaults() {
+		return {
+			elemsItem: '.collapse__item',
+			elemsBtn: '.collapse__btn',
+			elemsBody: '.collapse__body',
+			openCss: 'collapse--open',
+			togglingCss: 'collapse--toggling',
+			openingCss: 'collapse--opening',
+			closingCss: 'collapse--closing',
+			openNoAnimateCss: 'collapse--no-animate',
+			toggleClickBindOn: 'group',
+			toggleDuration: 500,
+			toggleGroup: false,
+			moveToTopOnOpen: false,
+			moveToTopOffset: 0,
+			scrollSpeed: 100,
+			useHashFilter: null,
+			useLocationHash: true,
+			loadLocationHash: true,
+			afterOpen: () => { },
+			afterClose: () => { },
+			afterInit: () => { }
+		};
+	}
 
 	constructor(element, options, index) {
-		super();
+		
 		const _ = this;
-
 		const dataOptions = validJSONFromString(
 			$(element).data(EVENT_NAME + '-options')
 		);
@@ -126,7 +133,7 @@ export default class Collapse extends BaseClass {
 			if ( _.toggling ) { return;}
 			
 			const $this = $(this);
-			const collapseID = $this.attr('href') || $this.attr('data-href'); console.log(collapseID)
+			const collapseID = $this.attr('href') || $this.attr('data-href'); 
 
 			if (_.params.useLocationHash) {
 

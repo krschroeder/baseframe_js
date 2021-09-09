@@ -1,13 +1,11 @@
 
 import validJSONFromString from './util/formatting-valid-json.js';
+import { CSS_TRANSISTION_DELAY } from './util/helpers.js';
 import { elData } from './util/lib-extend.js';
 
 const VERSION = "1.0.0";
 const DATA_NAME = 'ResponsiveDropDown';
 const EVENT_NAME = 'responsiveDropDown';
-
-const CSS_TRANS_DELAY = 100;
-
 
 export default class ResponsiveDropDown {
 
@@ -34,7 +32,7 @@ export default class ResponsiveDropDown {
 			duration: 300,
 			mobileBkpt: 768,
 			outsideClickElem: 'body'
-		}
+		};
 	}
 
 	constructor(element, options) {
@@ -209,7 +207,7 @@ export default class ResponsiveDropDown {
 					setTimeout(() => {
 						$(toggleBody, _.$element)
 							.addClass(toggleCss);
-					}, CSS_TRANS_DELAY)
+					}, CSS_TRANSISTION_DELAY)
 
 					_.isActive = true;
 				} else {

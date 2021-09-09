@@ -8,6 +8,22 @@ import { elData } from './util/lib-extend.js';
 const VERSION = "1.0.3";
 const DATA_NAME = 'Tabs';
 const EVENT_NAME = 'tabs';
+const DEFAULTS = {
+	defaultContent: 0,
+	tabsEvent: 'click',
+	activeCss: 'tab--active',
+	tabsBodyCss: 'tabs__body',
+	tabsBodyItemCss: 'tabs__body-item',
+	tabsBodyItemShowCss: 'tabs__body-item--show',
+	tabsHeadCss: 'tabs__nav',
+	useHashFilter: null,
+	useLocationHash: true,
+	loadLocationHash: true,
+	addIDtoPanel: true,
+	beforeChange: () => {},
+	afterChange: () => {},
+	onInit: () => { }
+};
 
 export default class Tabs {
 
@@ -20,22 +36,7 @@ export default class Tabs {
 	}
 
 	static get defaults() {
-		return {
-			defaultContent: 0,
-			tabsEvent: 'click',
-			activeCss: 'tab--active',
-			tabsBodyCss: 'tabs__body',
-			tabsBodyItemCss: 'tabs__body-item',
-			tabsBodyItemShowCss: 'tabs__body-item--show',
-			tabsHeadCss: 'tabs__nav',
-			useHashFilter: null,
-			useLocationHash: true,
-			loadLocationHash: true,
-			addIDtoPanel: true,
-			beforeChange: () => {},
-			afterChange: () => {},
-			onInit: () => { }
-		}
+		return DEFAULTS;
 	}
 
 	constructor(element, options, index) {

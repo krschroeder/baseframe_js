@@ -2,7 +2,7 @@
 
 const mapData = (() => {
 
-	const storeData = new Map();
+	const storeData = new WeakMap();
 	let id = 1;
 
 	return {
@@ -20,38 +20,38 @@ const mapData = (() => {
 				throw new Error(`The element doesn't exist in the DOM`);
 			}
 	
-			if (typeof element.keyStore === 'undefined') {
+			if (typeof storeData.get(element) === 'undefined') {
 
-				element.keyStore = [{
+				storeData.set(element,[{
 					keyStore,
-					id
-				}]
-
-				storeData.set(id, data);
+					id,
+					data
+				}]);
+				
 				id++;
 
 			} else {
 
-				const keyProperties = element.keyStore;
+				const elemPropArr = storeData.get(element);
+
 				let match = false;
 
-				for (let i = 0, l = keyProperties.length; i < l; i++){
-					let currKey = keyProperties[i];
+				for (let i = 0, l = elemPropArr.length; i < l; i++){
+					let currKey = elemPropArr[i];
 					
 					if (currKey.keyStore === keyStore){
-						
-						storeData.set(currKey.id, data);
+						$.extend(currKey,{data});
 						match = true;
 						break;
 					}
 				}
 
 				if (!match) {
-					element.keyStore.push({
+					elemPropArr.push({
 						keyStore,
-						id
+						id,
+						data
 					});
-					storeData.set(id, data);
 					id++;
 				}
 			}
@@ -59,41 +59,34 @@ const mapData = (() => {
 		get(_element, keyStore) {
 
 			const element = _element[0] || _element;
-
-			if (!element || typeof element.keyStore === 'undefined') {
+			
+			if (!element || typeof storeData.get(element) === 'undefined') {
 				return null;
 			}
+			
+			const store = storeData.get(element).filter((el) => el.keyStore === keyStore);
 
-			const store = element.keyStore.filter((el) => el.keyStore === keyStore);
-
-			return store.length ? storeData.get(store[0].id) : null;
+			return store.length ? store[0].data : null;
 
 		},
 		delete(_element, keyStore) {
 
 			const element = _element[0] || _element;
 
-			if (typeof element.keyStore === 'undefined') {
+			if (!element || typeof storeData.get(element) === 'undefined') {
 				return
 			}
 
-			const keyProperties = element.keyStore;
+			const elemPropArr = storeData.get(element);
 
-			if (keyProperties.keyStore === keyStore) {
-				storeData.delete(keyProperties.id);
-				delete element.keyStore;
-
-				return;
-			}
-
-			for (let i = 0, l = keyProperties.length; i < l; i++){
-				let currKey = keyProperties[i];
+			for (let i = 0, l = elemPropArr.length; i < l; i++){
+				let currKey = elemPropArr[i];
 				
 				if (currKey.keyStore === keyStore){
-					 
-					storeData.delete(currKey.id);
-					keyProperties.splice(i,1);
-					 
+					
+					elemPropArr.splice(i,1);
+				
+					break;
 				}
 			}
 		}

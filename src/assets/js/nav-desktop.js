@@ -1,12 +1,12 @@
 
 import validJSONFromString from './util/formatting-valid-json.js';
 import { elData } from './util/lib-extend.js';
-import getBaseClass from './util/plugin/get-base-class.js';
 
 const VERSION = "1.1.2";
 const DATA_NAME = 'NavDesktop';
 const EVENT_NAME = 'navDesktop';
  
+
 export default class NavDesktop {
 
  	static get version(){
@@ -28,7 +28,7 @@ export default class NavDesktop {
 			navHoveredCss: 'desktop-nav-hovered',
 			hoverCss: 'hover',
 			submenuBtnCss: 'btn-nav--mb-submenu i i-arrow-b'
-		}
+		};
 	}
 
 	constructor(element, options) {

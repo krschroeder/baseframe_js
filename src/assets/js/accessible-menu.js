@@ -1,7 +1,7 @@
 import validJSONFromString from './util/formatting-valid-json.js';
 import $visible from './util/visible';
 import { elData } from './util/lib-extend.js';
-import getBaseClass from './util/plugin/get-base-class';
+ 
 
 const VERSION = "1.2.0";
 const DATA_NAME = 'AccessibleMenu';
@@ -101,13 +101,22 @@ const next = (e, $ulParents, activeElem, focusCss, keyDirections) => {
 }
 
 
-const BaseClass = getBaseClass(VERSION, DATA_NAME, DEFAULTS);
  
-export default class AccessibleMenu extends BaseClass {
+export default class AccessibleMenu {
+
+	static get version() {
+		return VERSION;
+	}
+
+	static get pluginName() {
+		return DATA_NAME;
+	}
+
+	static get defaults() {
+		return DEFAULTS
+	}
 
 	constructor(element, options) {
-
-		super();
 		const _ = this;
 
 		_.element = element; 

@@ -2,13 +2,13 @@
 import validJSONFromString from './util/formatting-valid-json.js';
 import { isVisible } from './util/helpers';
 import { elData } from './util/lib-extend.js';
-import getBaseClass from './util/plugin/get-base-class.js';
+
+const ieScript = document.createElement('script');
+const isIE = /MSIE \d|Trident.*rv:/.test(navigator.userAgent);
 
 const VERSION = '1.0.0';
 const DATA_NAME = 'LazyLoad';
 
-const ieScript = document.createElement('script');
-const isIE = /MSIE \d|Trident.*rv:/.test(navigator.userAgent);
 
 let isLoaded = false;
 let scriptAppended = false;
@@ -64,7 +64,7 @@ export default class LazyLoad {
             unobserve: true,
             observerOpts: { rootMargin: '48px' },
             isIE: isIE
-        }
+        };
     }
 
     constructor(element, options) {

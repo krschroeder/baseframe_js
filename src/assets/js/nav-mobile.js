@@ -3,11 +3,11 @@ import validJSONFromString from './util/formatting-valid-json.js';
 import {isVisible,CSS_TRANSISTION_DELAY} from './util/helpers';
 import submenuBtn from './util/plugin/nav';
 import { elData } from './util/lib-extend.js';
-import getBaseClass from './util/plugin/get-base-class.js';
-
+ 
 const VERSION = "1.3.1";
 const DATA_NAME = 'NavMobile';
 const EVENT_NAME = 'navMobile';
+ 
 
 export default class NavMobile {
 
@@ -41,7 +41,7 @@ export default class NavMobile {
 			backLevelBtn: `<i class="nav-icon nav-icon--back" >← <span class="sr-only">Go Back</span></i>`,
 			navToggleNestled: false,
 			bkptEnable: null
-		}
+		};
 	}
 
 	constructor(element, options) {

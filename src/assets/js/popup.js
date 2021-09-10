@@ -5,7 +5,7 @@ import generateGUID from './util/guid-generate.js';
 import { photoRegex, CSS_TRANSISTION_DELAY } from './util/helpers';
 import { getHashParam } from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
-import { elData } from './util/lib-extend.js';
+import { elData } from './util/store';
 
 const VERSION = "1.0.8";
 const DATA_NAME = 'Popup';

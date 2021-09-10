@@ -4,7 +4,7 @@ import {CSS_TRANSISTION_DELAY} from './util/helpers';
 import smoothScroll from './util/smooth-scroll';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
-import { elData } from './util/lib-extend.js';
+import { elData } from './util/store';
 
 const VERSION = "2.1.7";
 const DATA_NAME = 'Collapse';

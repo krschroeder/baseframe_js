@@ -1,6 +1,6 @@
 import validJSONFromString from './util/formatting-valid-json.js';
 import $visible from './util/visible';
-import { elData } from './util/lib-extend.js';
+import { elData } from './util/store';
  
 
 const VERSION = "1.2.0";

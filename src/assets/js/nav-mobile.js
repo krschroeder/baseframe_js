@@ -2,7 +2,7 @@
 import validJSONFromString from './util/formatting-valid-json.js';
 import {isVisible,CSS_TRANSISTION_DELAY} from './util/helpers';
 import submenuBtn from './util/plugin/nav';
-import { elData } from './util/lib-extend.js';
+import { elData } from './util/store';
  
 const VERSION = "1.3.1";
 const DATA_NAME = 'NavMobile';

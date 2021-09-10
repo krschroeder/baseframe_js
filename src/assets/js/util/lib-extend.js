@@ -1,4 +1,5 @@
 import getType from './helpers';
+import { elData } from './store';
 
 const checkIfParamsExist = (setParams, params, notify = true) => {
     for (let k in params) {
@@ -9,30 +10,7 @@ const checkIfParamsExist = (setParams, params, notify = true) => {
     }
     return params;
 };
- 
-let storeFnInstalled = false;
-let storeInstallChecked = false;
 
-export const elData = (el, dName, data) => {
-    
-    if (!storeInstallChecked) {
-        storeFnInstalled = !!$.store; 
-
-        storeInstallChecked = true;
-    }
-
-    const dataArgs = [el, dName, data].filter(arg => !!arg);
-    let ret = null;
-    
-    if (storeFnInstalled) {
-        ret = dataArgs.length === 2 ? $.store.get(...dataArgs) : $.store.set(...dataArgs);
-       
-    } else {
-        ret = $(el).data(...dataArgs.slice(1));
-    }
-
-    return ret;
-}
  
 const libraryExtend = (Plugins, notify = false) => {
     

@@ -17,10 +17,12 @@ import installStoreToLibrary, {
     smoothScroll,
     cookies
 } from '../../../all-es6';
+import { installStoreAsDataToLibrary } from '../../assets/js/util/store';
 
 //necessary for all plugin's to operate
 //much like jQuery's $.data method, the $.store is similar
-installStoreToLibrary(true);
+// installStoreToLibrary(true);
+installStoreAsDataToLibrary(true); 
 
 //pass in as an array
 libraryExtend([

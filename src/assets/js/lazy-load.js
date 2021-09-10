@@ -1,7 +1,7 @@
 
 import validJSONFromString from './util/formatting-valid-json.js';
 import { isVisible } from './util/helpers';
-import { elData } from './util/lib-extend.js';
+import { elData } from './util/store';
 
 const ieScript = document.createElement('script');
 const isIE = /MSIE \d|Trident.*rv:/.test(navigator.userAgent);
@@ -18,10 +18,11 @@ const lazyElemObservers = new Map();
 const _lazyElemObserver = (_) => {
 
     
-    const { inEvt, outEvt, force, observerOpts, unobserve, loadImgs } = _.params;
-
+    
+    const { observerOpts } = _.params;
     return new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
+            const { inEvt, outEvt, force, unobserve, loadImgs } = _.params;
 
             const lazyElem = entry.target;
 

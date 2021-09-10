@@ -3,7 +3,7 @@ import validJSONFromString from './util/formatting-valid-json.js';
 import getType from './util/helpers';
 import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
-import { elData } from './util/lib-extend.js';
+import { elData } from './util/store';
 
 const VERSION = "1.0.3";
 const DATA_NAME = 'Tabs';

@@ -1,4 +1,4 @@
-const hasCrypto = (typeof(window.crypto) != 'undefined' && typeof(window.crypto.getRandomValues) != 'undefined');
+const hasCrypto = (typeof(window.crypto) !== 'undefined' && typeof(window.crypto.getRandomValues) !== 'undefined');
 
 const generateGUID = hasCrypto ?
   ()=> {

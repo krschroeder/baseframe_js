@@ -45,6 +45,19 @@ export default class Collapse {
 		};
 	}
 
+	static remove(element) {
+		$(element).each(function(){
+		 
+			const instance = elData(this, `${DATA_NAME}_instance`);
+
+			$(instance.onElem).off(`click.${EVENT_NAME} ${EVENT_NAME}`);
+			$(window).off(`popstate.${EVENT_NAME}`);
+
+			elData(this, `${DATA_NAME}_params`, null, true);
+			elData(this, `${DATA_NAME}_instance`, null, true);
+		})
+	}
+
 	constructor(element, options, index) {
 		
 		const _ = this;

@@ -37,6 +37,7 @@ These scripts all work back to IE11. One day in the future perhaps we can drop t
 ```javascript
 //lets bring it all on in
 import installStoreToLibrary, {
+    installStoreAsDataToLibrary,
     libraryExtend,
     AccessibleMenu,
     Collapse,
@@ -59,6 +60,7 @@ import installStoreToLibrary, {
 
 // or ES6 non-transpiled
 import installStoreToLibrary, {
+    installStoreAsDataToLibrary,
     libraryExtend,
     AccessibleMenu,
     // ... 
@@ -199,6 +201,14 @@ const Store = {
 		mapData.expose()
 	}
 };
+```
+#### installStoreAsDataToLibrary ####
+
+If using **jQuery** and you have plugins that use `$.fn.data` and `$.fn.removeData` this can alternatively be used to map over the **Cash Dom's** built-in data method. The data retrieval for `data-attrs` is the same pulling the first occurance on the same items queried. It first checks the data stored in the `Store`.
+
+
+```javascript
+installStoreAsDataToLibrary(expose?:boolean) 
 ```
 
 ### Functions

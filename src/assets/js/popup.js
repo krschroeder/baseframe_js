@@ -596,6 +596,9 @@ export default class Popup {
 
 	}
 
+	remove() {
+		Popup.remove(this.element);
+	}
 
 	static close(element, refocus = true) {
 		const instance = elData(element, INSTANCE_NAME) || element;
@@ -606,25 +609,26 @@ export default class Popup {
 	}
 
 	static remove(element) {
+		
+		$(element).each(function(){
+			 
+			const params = elData(this, `${DATA_NAME}_params`);
 
-		if (element) {
-
-			const params = elData(element, `${DATA_NAME}_params`);
-
-			$.store.remove(element, INSTANCE_NAME);
+			elData(this, INSTANCE_NAME, null, true);
 			const popupEventName = EVENT_NAME + params.popupID;
 
-			$(element).off(`${params.enableEvent}.${popupEventName}`);
-			$(element).off(`${popupEventName}`);
+			$(this).off(`${params.enableEvent}.${popupEventName}`);
+			$(this).off(`${popupEventName}`);
 			$(document).off(`keydown.${popupEventName}groupcontrols`);
 			$(document).off(`keydown.${popupEventName}`);
 
-			$.store.remove(element, `${DATA_NAME}_params`);
-		}
-
+			elData(this, `${DATA_NAME}_params`, null, true);
+			elData(this, `${DATA_NAME}_instance`, null, true);
+		});
 	}
 
 	static show(element) {
+		 
 		const instance = elData(element, INSTANCE_NAME);
 
 		if (instance) {

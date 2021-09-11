@@ -39,6 +39,19 @@ export default class Tabs {
 		return DEFAULTS;
 	}
 
+	static remove(element) {
+		$(element).each(function(){
+			const params = elData(this, `${DATA_NAME}_params`);
+			const instance = elData(this, `${DATA_NAME}_instance`);
+
+			instance.$tabsList.off(`${params.tabsEvent}.${EVENT_NAME} ${EVENT_NAME}`);
+			$(window).off(`hashchange.${EVENT_NAME}`);
+
+			elData(this, `${DATA_NAME}_params`, null, true);
+			elData(this, `${DATA_NAME}_instance`, null, true);
+		})
+	}
+
 	constructor(element, options, index) {
 		const _ = this;
 
@@ -68,7 +81,7 @@ export default class Tabs {
 		_.changeTabElements(_.params.defaultContent);
 		_.loadTabContent();
 
-		$(window).on("hashchange", () => {
+		$(window).on(`hashchange.${EVENT_NAME}`, () => {
 			//inside so we can change this parameter
 			//if we need too
 			if (_.params.useLocationHash) {

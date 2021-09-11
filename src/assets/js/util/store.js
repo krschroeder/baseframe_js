@@ -1,7 +1,6 @@
 import getType, { camelCase } from "./helpers";
 
 
-
 const mapData = (() => {
 
 	const storeData = new WeakMap();
@@ -184,19 +183,19 @@ function asData(el, dataName, data) {
 }
 
 // retrieves data via the jQuery method or with the Store methods
-function elData(el, dataName, data) {
+function elData(el, dataName, data, remove = false) {
 
 	const dataArgs = [el, dataName, data].filter(arg => !!arg);
-	let ret = null;
-
-	if (storeFnInstalled) {
-		ret = dataArgs.length === 2 ? Store.get(...dataArgs) : Store.set(...dataArgs);
-
-	} else {
-		ret = $(el).data(...dataArgs.slice(1));
-	}
-
-	return ret;
+	 
+	return (storeFnInstalled) ?
+		remove ? 
+			Store.remove(el, dataName) : 
+			(dataArgs.length === 2 ? Store.get(...dataArgs) : Store.set(...dataArgs)) 
+		:
+		remove ? 
+			$(el).removeData(dataName) :
+			$(el).data(...dataArgs.slice(1))
+		;
 }
 
 export default installStoreToLibrary;

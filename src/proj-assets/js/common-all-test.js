@@ -43,7 +43,9 @@ $.extend({getHashParam: getHashParam});
 $.extend({getUrlParam: getUrlParam});
 $.extend({cookies: cookies});
 
-$.extend({popup: Popup})
+$.extend({popup: Popup});
+$.extend({collapse: Collapse});
+$.extend({tabs: Tabs});
 
 
 const smoothScrollCallback = (arg,dos) => {
@@ -74,7 +76,7 @@ $('p').lazyLoad({
     loadImgs: false, 
     unobserve:false,
     inEvt: (el) => {
-        setTimeout(()=> {el.style.color = 'red';},1000);
+        setTimeout(()=> {el.style.opacity = '0.6';},1000);
     },
     outEvt: (el) => {
         setTimeout(()=> {el.style.color = '';},1000);

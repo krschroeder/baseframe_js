@@ -17,7 +17,7 @@ export {default as cookies } from './src/assets/js/cookies';
 export {default as formInputs } from './src/assets/js/form-input';
 export {default as throttledResize } from './src/assets/js/util/throttle-resize';
 export {default as bgResponsiveLoad } from './src/assets/js/bg-responsive-load';
-
+export { installStoreAsDataToLibrary } from './src/assets/js/util/store';
 // this is needed for all to operate
 // so I would say this makes sense
 export default installStoreToLibrary;

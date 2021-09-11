@@ -1,5 +1,5 @@
-import { camelCase } from "./helpers";
- 
+import getType, { camelCase } from "./helpers";
+
 
 
 const mapData = (() => {
@@ -109,98 +109,94 @@ const Store = {
 	}
 };
 
+// one state var to check if its installed the Store method
+let storeFnInstalled = false;
 
 function installStoreToLibrary(expose = false) {
+
+	storeFnInstalled = true;
+
 	if (expose) {
 		Store.expose = (p) => mapData.expose(p)
 	}
 
 	$.extend({ store: Store });
 
-	$.fn.store = function (dName, data) {
-		return elData(this, dName, data);
+	$.fn.store = function (dataName, data) {
+		return elData(this, dataName, data);
 	}
 
-	$.fn.removeStore = function (dName) {
-		Store.remove(this, dName);
+	$.fn.removeStore = function (dataName) {
+		Store.remove(this, dataName);
 	}
 }
 
 function installStoreAsDataToLibrary(expose = false) {
+
+	if (window.jQuery) {
+		return;
+	}
+	storeFnInstalled = true;
+
 	if (expose) {
 		Store.expose = (p) => mapData.expose(p)
+		$.extend({ exposeData: Store.expose });
 	}
 
-	$.extend({ store: Store });
-	$.extend({ data: asData });
-	$.extend({ removeData: (el,dName) => {
-			if (el.length) {
-				el.each(function(){
-					Store.remove(this, dName);
-				});
-			} else {
-				Store.remove(el, dName);
+	$.fn.data = function (dataName, data) {
+		let retVal = null;
+		this.each(function () {
+			retVal = asData(this, dataName, data) || retVal;
+		});
+
+		return retVal;
+	}
+
+	$.fn.removeData = function (dataName) {
+		//jquery params can be a string or an array
+		this.each(function() {
+			if (getType(dataName) === 'string') {
+				Store.remove(this, dataName);  
 			}
-		} 
-	});
 
-	$.fn.data = function (dName, data) {
-	 
-		//return asData(this, dName, data);
-
-		if (this.length) {
-			this.each(function(){
-				
-				return asData(this, dName, data);
-			});
-		} else {
-			return  asData(this, dName, data);
-		}
-	}
-
-	$.fn.removeData = function (dName) {
-		Store.remove(this, dName);
+			if (getType(dataName) === 'array') {
+				dataName.forEach(d => {
+					Store.remove(d, dataName);
+				});
+			}
+		});
 	}
 }
 
-function asData(el, dName, data) {
+function asData(el, dataName, data) {
 
-	const storedData = elData(el, dName, data);
+	const storedData = elData(el, dataName, data);
 	if (storedData) {
 		// get stored data first
 		return storedData;
 	}
 
-	const dataSet = el.dataset ? el.dataset[camelCase(dName)] : null;
+	const dataSet = el.dataset ? el.dataset[camelCase(dataName)] : null;
 
-
-	if (dataSet && (typeof data === 'undefined' || data === null)) {
+	if (dataSet) {
 		return dataSet;
 	}
 }
 
-let storeFnInstalled = false;
-let storeInstallChecked = false;
+// retrieves data via the jQuery method or with the Store methods
+function elData(el, dataName, data) {
 
-function elData(el, dName, data) {
-    
-    if (!storeInstallChecked) {
-        storeFnInstalled = !!$.store; 
+	const dataArgs = [el, dataName, data].filter(arg => !!arg);
+	let ret = null;
 
-        storeInstallChecked = true;
-    }
+	if (storeFnInstalled) {
+		ret = dataArgs.length === 2 ? Store.get(...dataArgs) : Store.set(...dataArgs);
 
-    const dataArgs = [el, dName, data].filter(arg => !!arg);
-    let ret = null;
-    
-    if (storeFnInstalled) {
-        ret = dataArgs.length === 2 ? $.store.get(...dataArgs) : $.store.set(...dataArgs);
-       
-    } else {
-        ret = $(el).data(...dataArgs.slice(1));
-    }
+	} else {
+		ret = $(el).data(...dataArgs.slice(1));
+	}
 
-    return ret;
+	return ret;
 }
 
 export default installStoreToLibrary;

@@ -11,13 +11,14 @@ import installStoreToLibrary, {
     Parallax,
     Popup,
     Tabs,
+    installStoreAsDataToLibrary,
     formInputs,
     getHashParam,
     getUrlParam,
     smoothScroll,
     cookies
 } from '../../../all-es6';
-import { installStoreAsDataToLibrary } from '../../assets/js/util/store';
+ 
 
 //necessary for all plugin's to operate
 //much like jQuery's $.data method, the $.store is similar

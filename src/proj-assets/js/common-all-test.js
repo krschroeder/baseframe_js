@@ -10,6 +10,7 @@ import installStoreToLibrary, {
     NavMobileNestled,
     Parallax,
     Popup,
+    ResponsiveDropDown,
     Tabs,
     installStoreAsDataToLibrary,
     formInputs,
@@ -36,6 +37,7 @@ libraryExtend([
     // NavMobileNestled,
     Parallax,
     Popup,
+    ResponsiveDropDown,
     Tabs
 ],false); 
 
@@ -79,7 +81,7 @@ $('p').lazyLoad({
         setTimeout(()=> {el.style.opacity = '0.6';},1000);
     },
     outEvt: (el) => {
-        setTimeout(()=> {el.style.color = '';},1000);
+        setTimeout(()=> {el.style.opacity = '';},1000);
     }
 });
 

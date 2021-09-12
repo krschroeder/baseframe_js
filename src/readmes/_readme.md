@@ -8,7 +8,7 @@ These are made to work with [Cash](https://github.com/fabiospampinato/cash) (wit
 
 ## Features
 ### It's small!
-Combined all together its ~ 55k. Add that with Cash and its less than jQuery alone!
+Combined all together its ~ 60k. Add that with Cash and its less than jQuery alone!
 
 ### Pass in parameter options with a `data-` attribute
 The data attribute is always the `data-` (of course) and then the plugin name `pluginName` followed by `-options`.
@@ -71,6 +71,8 @@ import installStoreToLibrary, {
 //NOTE: this can be ignored if using jQuery, and it'll fallback to its 
 // $.fn.data method to store instances and their params.
 installStoreToLibrary(true);
+// or the following function to mimick jQuery's data fn
+// installStoreAsDataToLibrary(true)
 
 //perhaps for some reason you don't want to install
 //but here we obviously are
@@ -132,6 +134,12 @@ __[View](#responsive-dropdown-plugin)__
 ### Tabs
 Tabs in tabs, change onhashchange this does it for tabs!
 __[View](#tabs-plugin)__
+
+#### Removing the plugin ####
+
+Each plugin can be removed by calling `$('.plugin-selector').plugin('remove')`, and it'll call the static method to remove it and all its components. Or if you want it can be stored as a method `$.plugin.remove($('.plugin-selector').eq(1))` or `$.plugin.remove('.plugin-selector')` and done that way.
+
+
 <br>
 <br>
 
@@ -150,6 +158,11 @@ Each class just needs to have the following properties set on it
         static get pluginName() {
             //Data Name is `YourClass`
             return DATA_NAME;
+        }
+
+        static remove() {
+            //... remove operations ridding of data stored
+            //    and any associated events
         }
         
         constructor(element, options, index){

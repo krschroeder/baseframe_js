@@ -44,6 +44,26 @@ export default class NavMobile {
 		};
 	}
 
+	static remove(element) {
+
+		$(element).each(function () {
+			const instance = elData(this, `${DATA_NAME}_instance`);
+			const params = elData(this, `${DATA_NAME}_params`);
+		 
+			$(params.enableBtn).off(`click.${EVENT_NAME} ${EVENT_NAME}`);
+			$(document).off(`keydown.${EVENT_NAME}`);
+			instance.$element
+				.off(`click.${EVENT_NAME} ${EVENT_NAME}`)
+				.off(`click.${EVENT_NAME} ${EVENT_NAME}`);
+
+			$(document.body).off(`click.${EVENT_NAME}`);
+			$(window).off(`resize.${EVENT_NAME} ${EVENT_NAME}`);
+
+			elData(this, `${DATA_NAME}_params`, null, true);
+			elData(this, `${DATA_NAME}_instance`, null, true);
+		});
+	}
+
 	constructor(element, options) {
 		const _ = this; 
 
@@ -257,7 +277,7 @@ export default class NavMobile {
 
 	doOutsideClick() {
 		const _ = this;
-		$('body').on(`click.${EVENT_NAME}`, this, function (e) {
+		$(document.body).on(`click.${EVENT_NAME}`, this, function (e) {
 			if (_.params.outsideClickClose) {
 				if (!_.menuOpened) { return; }//lets just exit then..
 		

@@ -63,6 +63,23 @@ export default class ResponsiveDropDown {
 		return this;
 	}
 
+	static remove(element) {
+
+		$(element).each(function () {
+			const instance = elData(this, `${DATA_NAME}_instance`);
+			const params = elData(this, `${DATA_NAME}_params`);
+			
+			$(params.outsideClickElem).trigger(`${EVENT_NAME}remove`);
+
+			$(params.outsideClickElem).off(`click.${EVENT_NAME} ${EVENT_NAME} ${EVENT_NAME}remove`);
+			$(window).off(`resize.${EVENT_NAME} ${EVENT_NAME}`);
+			instance.$element.off(`click.${EVENT_NAME} ${EVENT_NAME}`);
+			instance.$element.find(`.${params.closeBtnDivCss}`).remove();
+			
+			elData(this, `${DATA_NAME}_params`, null, true);
+			elData(this, `${DATA_NAME}_instance`, null, true);
+		});
+	}
 
 
 	init() {
@@ -81,24 +98,32 @@ export default class ResponsiveDropDown {
 
 		ResponsiveDropDown.iosOutsideClickSupport();
 
-		$(_.params.outsideClickElem).on(`click.${EVENT_NAME}`, function (e) {
+		$(_.params.outsideClickElem).on(`click.${EVENT_NAME} ${EVENT_NAME} ${EVENT_NAME}remove`, function (e) {
 
-			const { mobileBkpt, openHeaderCss, toggleBody, toggleCss } = _.params;
+			const { inMobileCss, mobileBkpt, openHeaderCss, toggleBody, toggleCss } = _.params;
 
 			const $thisToggleBody = $(toggleBody, _.$element);
 			const isInToggleBody = !!$(e.target).parents($thisToggleBody).length;
 			const isToggleBody = $thisToggleBody[0].isSameNode(e.target);
 			const isCloseBtn = $(`.resp-dd__close-nav`)[0].isSameNode(e.target);
 
+			const isRemoveEvt = e.type === `${EVENT_NAME}remove`;
+
 			if (isInToggleBody && !isCloseBtn || isToggleBody) { return }
 
-			if (_.isActive) {
+			if (_.isActive || isRemoveEvt) {
 				//need to remove the click real fast
-				if (_.windowWidth < mobileBkpt) {
+				if (_.windowWidth < mobileBkpt || isRemoveEvt) {
 					//openHeaderCss
 					$(toggleBody, _.$element).removeClass(toggleCss)
 
-					_.$element.toggleClass(openHeaderCss);
+					if (isRemoveEvt) {
+						_.$element.removeClass(openHeaderCss);
+						_.$element.removeClass(inMobileCss);
+					} else {
+
+						_.$element.toggleClass(openHeaderCss);
+					}
 
 					_.$element.off(`click.${EVENT_NAME}`);
 					_.$element.off(EVENT_NAME);
@@ -106,7 +131,7 @@ export default class ResponsiveDropDown {
 
 					//anddd add it back
 					setTimeout(function () {
-						_.headerClick();
+						!isRemoveEvt && _.headerClick();
 					}, 100);
 				}
 			}

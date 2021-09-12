@@ -68,6 +68,21 @@ export default class LazyLoad {
         };
     }
 
+    static remove(element) {
+
+		$(element).each(function () {
+			const instance = elData(this, `${DATA_NAME}_instance`);
+			const params = elData(this, `${DATA_NAME}_params`);
+
+            lazyElemObservers.delete(params.observerID);
+
+			instance.lazyElemObserver.unobserve(this);
+
+			elData(this, `${DATA_NAME}_params`, null, true);
+			elData(this, `${DATA_NAME}_instance`, null, true);
+		});
+	}
+
     constructor(element, options) {
         const _ = this;
 

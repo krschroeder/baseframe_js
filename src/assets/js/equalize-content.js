@@ -30,6 +30,21 @@ export default class EqualizeContent {
 		};
 	}
 
+	static remove(element) {
+
+		$(element).each(function () {
+			const instance = elData(this, `${DATA_NAME}_instance`);
+			const $el = $(instance.element);
+
+			$(window).off(`resize.${EVENT_NAME} ${EVENT_NAME}`);
+			$el.find('img').off(`load.${EVENT_NAME}`);
+			instance.$equalizeItems.css(instance.elementHeight, '');
+
+			elData(this, `${DATA_NAME}_params`, null, true);
+			elData(this, `${DATA_NAME}_instance`, null, true);
+		});
+	}
+
 	constructor(element, options) {
 		 
 		const _ = this;

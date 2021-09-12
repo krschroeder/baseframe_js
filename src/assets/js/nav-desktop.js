@@ -31,6 +31,20 @@ export default class NavDesktop {
 		};
 	}
 
+	static remove(element) {
+
+		$(element).each(function () {
+			const instance = elData(this, `${DATA_NAME}_instance`);
+			const $el = $(instance.element);
+
+			$el.find('ul').on(`mouseover.${EVENT_NAME}`);
+			$el.off(`mouseout.${EVENT_NAME}`);
+
+			elData(this, `${DATA_NAME}_params`, null, true);
+			elData(this, `${DATA_NAME}_instance`, null, true);
+		});
+	}
+
 	constructor(element, options) {
 		const _ = this;
 

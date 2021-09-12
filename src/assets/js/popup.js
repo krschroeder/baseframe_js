@@ -65,6 +65,25 @@ export default class Popup {
 		};
 	}
 
+	static remove(element) {
+		
+		$(element).each(function(){
+			 
+			const params = elData(this, `${DATA_NAME}_params`);
+
+			elData(this, INSTANCE_NAME, null, true);
+			const popupEventName = EVENT_NAME + params.popupID;
+
+			$(this).off(`${params.enableEvent}.${popupEventName}`);
+			$(this).off(`${popupEventName}`);
+			$(document).off(`keydown.${popupEventName}groupcontrols`);
+			$(document).off(`keydown.${popupEventName}`);
+
+			elData(this, `${DATA_NAME}_params`, null, true);
+			elData(this, `${DATA_NAME}_instance`, null, true);
+		});
+	}
+
 	constructor(element, options, index) {
 
 		const _ = this;
@@ -608,24 +627,6 @@ export default class Popup {
 		}
 	}
 
-	static remove(element) {
-		
-		$(element).each(function(){
-			 
-			const params = elData(this, `${DATA_NAME}_params`);
-
-			elData(this, INSTANCE_NAME, null, true);
-			const popupEventName = EVENT_NAME + params.popupID;
-
-			$(this).off(`${params.enableEvent}.${popupEventName}`);
-			$(this).off(`${popupEventName}`);
-			$(document).off(`keydown.${popupEventName}groupcontrols`);
-			$(document).off(`keydown.${popupEventName}`);
-
-			elData(this, `${DATA_NAME}_params`, null, true);
-			elData(this, `${DATA_NAME}_instance`, null, true);
-		});
-	}
 
 	static show(element) {
 		 

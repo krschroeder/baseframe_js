@@ -36,6 +36,14 @@ const libraryExtend = (Plugins, notify = false) => {
                     elData(this, `${DataName}_instance`, plugin); 
                 
                 } else {
+
+                    if (typeof params === 'string') {
+                        
+                        if (params === 'remove') {
+                            Plugin.remove($this);
+                        }
+                        return;
+                    }
                     const instanceParams = elData(this,`${DataName}_params`);
                     checkIfParamsExist(instanceParams, params, notify);
                   

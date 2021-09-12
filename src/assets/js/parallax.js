@@ -6,6 +6,13 @@ const VERSION = "1.0.0";
 const DATA_NAME = 'Parallax';
 const EVENT_NAME = 'parallax';
 
+
+const getEvents = (instEvt) => [
+	`scroll.${instEvt}`,
+	`resize.${instEvt}`,
+	instEvt
+].join(' ');
+
 export default class Parallax {
 
 	static get version() {
@@ -29,6 +36,21 @@ export default class Parallax {
 			minWidth: null,
 			maxWidth: null
 		}
+	}
+
+	static remove(element) {
+
+		$(element).each(function () {
+			const instance = elData(this, `${DATA_NAME}_instance`);
+			
+			$(window).off(getEvents(instance.instanceEvent));
+			$(window).off(`resize.${instance.instanceEvent} ${instance.instanceEvent}`);
+
+			$(this).css({transform:'',...(instance.bgFill ? {'padding-top': ''} : {})});
+
+			elData(this, `${DATA_NAME}_params`, null, true);
+			elData(this, `${DATA_NAME}_instance`, null, true);
+		});
 	}
 
 	constructor(element, options, index) {
@@ -66,11 +88,7 @@ export default class Parallax {
 
 	init() {
 		const _ = this;
-		const EVENTS = [
-			`scroll.${_.instanceEvent}`,
-			`resize.${_.instanceEvent}`,
-			_.instanceEvent
-		].join(' ');
+		const EVENTS = getEvents(_.instanceEvent);
 
 		$(window).on(EVENTS, () => {
 			if (_.requestAnimationFrame) {
@@ -111,6 +129,7 @@ export default class Parallax {
 		let resizeThrottle = null;
 
 		$(window).on(`resize.${_.instanceEvent} ${_.instanceEvent}`, function () {
+			resizeThrottle && clearTimeout(resizeThrottle);
 			resizeThrottle = setTimeout(() => {
 
 				if (!_.initOffsetSet && _.params.initOffset) {

@@ -4,7 +4,7 @@ import {isVisible,CSS_TRANSISTION_DELAY} from './util/helpers';
 import submenuBtn from './util/plugin/nav';
 import { elData } from './util/store';
  
-const VERSION = "1.3.1";
+const VERSION = "1.3.2";
 const DATA_NAME = 'NavMobile';
 const EVENT_NAME = 'navMobile';
  
@@ -93,8 +93,7 @@ export default class NavMobile {
 		const elemID = element[0].id || element[0].className;
 
 		$(_.params.enableBtn).attr({
-			'aria-controls': `#${elemID}`,
-			'aria-targets': elemID,
+			'aria-controls': elemID,
 			'aria-label': _.params.ariaLabel
 		});
 

@@ -2,12 +2,13 @@
 import validJSONFromString from './util/formatting-valid-json.js';
 import generateGUID from './util/guid-generate.js';
 
-import { photoRegex, CSS_TRANSISTION_DELAY } from './util/helpers';
+import { photoRegex, CSS_TRANSISTION_DELAY, isVisible } from './util/helpers';
 import { getHashParam } from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 import { elData } from './util/store';
+import trapFocus from './util/trap-focus.js';
 
-const VERSION = "1.0.8";
+const VERSION = "1.1.0";
 const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
 const INSTANCE_NAME = `${DATA_NAME}_instance`;
@@ -59,6 +60,7 @@ export default class Popup {
 			useHashFilter: null,
 			loadLocationHash: true,
 			useLocationHash: true,
+			trapPopupFocus: true,
 			afterLoaded: () => { },
 			afterClose: () => { },
 			onClose: () => { }
@@ -143,6 +145,9 @@ export default class Popup {
 		_.historyID = '#' + _.params.popupID + (index === 0 ? '' : '__' + index);
 		_.loadedFromHash = false;
 
+		// trapping focus
+		_.trappedFocus = null;
+
 		_.initLoadEvents();
 
 		return this;
@@ -226,7 +231,7 @@ export default class Popup {
 
 	addToDOM() {
 		const _ = this;
-		const { fadeIn, appendPopupTo, firstAnchorFocus } = _.params;
+		const { fadeIn, appendPopupTo, firstAnchorFocus, trapPopupFocus } = _.params;
 
 		_.createPopup();
 
@@ -236,8 +241,8 @@ export default class Popup {
 			setTimeout(() => {
 
 				const $firstAnchor = _.$popup
-					.find("[tabindex], a, input, textarea")
-					.not("[tabindex='-1'],.popup__btn-close").eq(0);
+					.find( 'button, a, input, select, textarea, [tabindex]')
+					.filter((i,el) => isVisible(el) && el.tabIndex !== -1).eq(0);
 
 
 				$firstAnchor.length ?
@@ -246,6 +251,10 @@ export default class Popup {
 					;
 
 			}, fadeIn + 100);
+		}
+
+		if (trapPopupFocus) {
+			setTimeout(() => {_.trappedFocus = trapFocus(_.$popup); }, fadeIn + 100);
 		}
 
 		_.animationIn();
@@ -452,7 +461,7 @@ export default class Popup {
 		_.placeContent();
 		_.groupControls();
 		_.params.afterLoaded(_.$element, popupID);
-
+			
 	}
 
 	toggleGroup(prevCond, nextCond) {
@@ -574,7 +583,7 @@ export default class Popup {
 
 	_close(refocus = true) {
 		const _ = this;
-		const { showPopup, fadeOut } = _.params;
+		const { showPopup, fadeOut, trapPopupFocus } = _.params;
 		const popupID = '#' + _.params.popupID;
 
 		_.$popup.removeClass(showPopup);
@@ -584,6 +593,10 @@ export default class Popup {
 		//detach
 		$(document).off(`keydown.${_.popupEventName}`);
 		$(document).off(`keydown.${_.popupEventName}groupcontrols`);
+		if (trapPopupFocus && _.trappedFocus ) {
+			_.trappedFocus.remove();
+			_.trappedFocus = null;
+		}
 
 		setTimeout(() => {
 			_.params.afterClose(_.$element, popupID);

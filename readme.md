@@ -796,6 +796,7 @@ fadeIn| number |  400 |  Time to fade-in the popup, CSS transition should corres
 zIndex | number |  2000 | CSS z-index of the popup
 vhDivisor| number | 2 | The division of the height of the popup and how it displays on the page. So, '2' means we divide it in half, and it displays in the center. '1' is not at all, and '0'. It takes any number really, and there is a use-case for this, that I can't remember exactly right now.
 firstAnchorFocus| boolean |  true | Focus's back on the anchor or element after the popup closes
+trapPopupFocus| boolean |  true | Traps the focus of tabbing to just the popup for ADA.
 setTopPosition| number |  null | Sometimes we just may manually want to tell the vertical position of the popup.
 isImage| boolean |  false | While there is a process using a regex and other parameters sometime we may just want to specify in the config.
 isJsArray| boolean |  false | If using an array instead of DOM elements

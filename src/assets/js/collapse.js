@@ -6,7 +6,7 @@ import {getHashParam} from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 import { elData } from './util/store';
 
-const VERSION = "2.1.7";
+const VERSION = "2.1.8";
 const DATA_NAME = 'Collapse';
 const EVENT_NAME = 'collapse';
 
@@ -243,8 +243,7 @@ export default class Collapse {
 			const rmClasses = `${_.params.openCss} ${_.params.togglingCss} ${_.params.closingCss}`;
 			$collapsibleItem
 				.removeClass(rmClasses)
-				.css({ height: '' })
-				.attr({'aria-hidden': true});
+				.css({ height: '' });
 
 			$btnElems
 				.removeClass(rmClasses)

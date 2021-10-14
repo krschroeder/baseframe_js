@@ -8,7 +8,7 @@ import getHistoryEntry from './util/plugin/get-history-entry';
 import { elData } from './util/store';
 import trapFocus from './util/trap-focus.js';
 
-const VERSION = "1.1.0";
+const VERSION = "1.2.0";
 const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
 const INSTANCE_NAME = `${DATA_NAME}_instance`;
@@ -435,7 +435,7 @@ export default class Popup {
 			$overlay = $('<div/>').attr({ class: 'popup__overlay' }),
 			$src = $('<div/>').attr({ class: 'popup__content' }),
 			$body = $('<div/>').attr({ class: 'popup__content-body' }),
-			$closeBtn = _.params.closeText ? $(`<a/>`).attr({ class: "popup__btn-close", href: "#" }).html(_.params.closeText) : '',
+			$closeBtn = _.params.closeText ? $(`<button/>`).attr({ class: "popup__btn-close", type: "button" }).html(_.params.closeText) : '',
 			$srcAll = $src.append(
 				$closeBtn,
 				title,

@@ -16,8 +16,6 @@ let scriptAppended = false;
 const lazyElemObservers = new Map();
 
 const _lazyElemObserver = (_) => {
-
-    
     
     const { observerOpts } = _.params;
     return new IntersectionObserver(function (entries) {
@@ -141,6 +139,11 @@ export default class LazyLoad {
 
         const src = lazyElem.dataset[imgSrcName];
         const bgImg = lazyElem.dataset[bgSrcName];
+        
+
+        if (lazyElem.loading === 'lazy') {
+            lazyElem.loading = 'eager';
+        }
 
         if (src) {
             lazyElem.src = src;

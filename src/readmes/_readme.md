@@ -264,7 +264,7 @@ Getting and setting cookies made easy!
 
  
 __params__
-Option |  Description
+Option | Description
 ------ | -------
 path | path to the cookie, default is the current `location.pathname`.
 expires | set in minutes. Time the cookie will expire.
@@ -300,6 +300,18 @@ Searches for a query-string value using `location.search`, pass in an optional s
 ```javascript
 getUrlParam(search:string ,searchString?:string)
 ```
+
+#### trapFocus
+__params__
+Option | Type | Default | Description
+------ | ---- | ------- | -------
+focusFirst | boolean | true | Focus's the first element
+nameSpace | string | 'trapFocus' | Unique namespace for the tabbing keydown event.
+focusableElements | string or array | ['button', 'a', 'input', 'select', 'textarea', '[tabindex]'] | A listing of focusable elements.
+```javascript
+trapFocus(element:JQuery<HTMLElement> | HTMLElement, params?: PlainObject);
+```
+
 <br>
 <br>
 <br>

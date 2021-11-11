@@ -73,6 +73,7 @@ formInputs.init();
 
 $('.background-area-bg').lazyLoad({observerID: 'background-area-bg', inEvt: (el)=>{console.log('el',el)}});
 $('img[data-src]').lazyLoad({observerID: 'img[data-src]'});
+$('img[loading="lazy"]').lazyLoad({observerID: 'imgLazyLoadAttr'});
 $('p').lazyLoad({
     observerID: 'p',
     loadImgs: false, 

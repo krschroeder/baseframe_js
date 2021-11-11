@@ -2,7 +2,7 @@
 import validJSONFromString from './util/formatting-valid-json.js';
 import generateGUID from './util/guid-generate.js';
 
-import { photoRegex, CSS_TRANSISTION_DELAY, isVisible } from './util/helpers';
+import { photoRegex, CSS_TRANSISTION_DELAY, isVisible, camelCase } from './util/helpers';
 import { getHashParam } from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 import { elData } from './util/store';
@@ -253,8 +253,8 @@ export default class Popup {
 			}, fadeIn + 100);
 		}
 
-		if (trapPopupFocus) {
-			setTimeout(() => {_.trappedFocus = trapFocus(_.$popup); }, fadeIn + 100);
+		if (trapPopupFocus) { 
+			setTimeout(() => {_.trappedFocus = trapFocus(_.$popup, {nameSpace: camelCase(_.params.popupID)}); }, fadeIn + 100);
 		}
 
 		_.animationIn();

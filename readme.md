@@ -264,7 +264,7 @@ Getting and setting cookies made easy!
 
  
 __params__
-Option |  Description
+Option | Description
 ------ | -------
 path | path to the cookie, default is the current `location.pathname`.
 expires | set in minutes. Time the cookie will expire.
@@ -300,6 +300,18 @@ Searches for a query-string value using `location.search`, pass in an optional s
 ```javascript
 getUrlParam(search:string ,searchString?:string)
 ```
+
+#### trapFocus
+__params__
+Option | Type | Default | Description
+------ | ---- | ------- | -------
+focusFirst | boolean | true | Focus's the first element
+nameSpace | string | 'trapFocus' | Unique namespace for the tabbing keydown event.
+focusableElements | string or array | ['button', 'a', 'input', 'select', 'textarea', '[tabindex]'] | A listing of focusable elements.
+```javascript
+trapFocus(element:JQuery<HTMLElement> | HTMLElement, params?: PlainObject);
+```
+
 <br>
 <br>
 <br>
@@ -489,7 +501,7 @@ $('.equalize-container').equalizeContent();
 <br>
 <h2 id="plugin-lazy-load">Lazy Load</h2>
 
-Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` and magically polyfills for IE11. 
+Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` and magically polyfills for IE11. This plugin works to load images with the `loading="lazy"` attribute (yes it would work by itself!). It loads the image/iframe before the first pixel enters the viewport--see settings as we can pad so it can appear loaded once scrolled to. The `loading="lazy"` attribute only works once the first pixel enters the viewport, which may cause a blank space before the image loads.
 
 
 Option | Type | Default | Description

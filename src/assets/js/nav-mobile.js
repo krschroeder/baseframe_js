@@ -1,6 +1,7 @@
 
+import { CSS_TRANSISTION_DELAY } from './util/constants.js';
 import validJSONFromString from './util/formatting-valid-json.js';
-import {isVisible,CSS_TRANSISTION_DELAY} from './util/helpers';
+import {isVisible} from './util/helpers';
 import submenuBtn from './util/plugin/nav';
 import { elData } from './util/store';
  

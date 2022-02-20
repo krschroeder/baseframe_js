@@ -11,6 +11,7 @@ import installStoreToLibrary, {
     Parallax,
     Popup,
     ResponsiveDropDown,
+    SelectEnhance,
     Tabs,
     installStoreAsDataToLibrary,
     formInputs,
@@ -38,6 +39,7 @@ libraryExtend([
     Parallax,
     Popup,
     ResponsiveDropDown,
+    SelectEnhance,
     Tabs
 ],false); 
 
@@ -70,6 +72,8 @@ $('#main-nav')
 $('#main-nav').accessibleMenu();
 
 formInputs.init();
+
+$('select').selectEnhance();
 
 $('.background-area-bg').lazyLoad({observerID: 'background-area-bg', inEvt: (el)=>{console.log('el',el)}});
 $('img[data-src]').lazyLoad({observerID: 'img[data-src]'});

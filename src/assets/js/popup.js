@@ -2,12 +2,13 @@
 import validJSONFromString from './util/formatting-valid-json.js';
 import generateGUID from './util/guid-generate.js';
 
-import { photoRegex, CSS_TRANSISTION_DELAY, isVisible, camelCase } from './util/helpers';
+import { photoRegex, isVisible, camelCase } from './util/helpers';
 import { getHashParam } from './util/get-param';
 import getHistoryEntry from './util/plugin/get-history-entry';
 import { elData } from './util/store';
 import trapFocus from './util/trap-focus.js';
-
+import { CSS_TRANSISTION_DELAY } from './util/constants.js';
+ 
 const VERSION = "1.2.0";
 const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
@@ -60,6 +61,7 @@ export default class Popup {
 			useHashFilter: null,
 			loadLocationHash: true,
 			useLocationHash: true,
+			
 			trapPopupFocus: true,
 			afterLoaded: () => { },
 			afterClose: () => { },
@@ -574,6 +576,7 @@ export default class Popup {
 		const _ = this;
 
 		if (_.params.useLocationHash) {
+
 			window.history.pushState(null, null, _.getHistoryEntry(true));
 		}
 

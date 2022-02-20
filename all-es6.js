@@ -13,6 +13,7 @@ export {default as Popup } from './src/assets/js/popup';
 export {default as NavDesktop } from './src/assets/js/nav-desktop';
 export {default as NavMobile, NavMobileNestled} from './src/assets/js/nav-mobile';
 export {default as ResponsiveDropDown} from './src/assets/js/responsive-dropdowns';
+export {default as SelectEnhance} from './src/assets/js/select-enhance';
 export {default as Tabs } from './src/assets/js/tabs';
 export {default as cookies } from './src/assets/js/cookies';
 export {default as formInputs } from './src/assets/js/form-input';

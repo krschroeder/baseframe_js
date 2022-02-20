@@ -17,6 +17,9 @@ export const isHidden = (el) => !isVisible(el);
 export const kebabCase = string => string.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/\s+/g, '-').toLowerCase();
 export const camelCase = string => string.replace(/-./g, x => x.toUpperCase()[1]);
 
+// device
+export const isMobileOS = () => /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
+
 // photo
 export const photoRegex = /\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg)((#|\?).*)?$|(\?|&|&amp;)(image|ext\=\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg))?$/i;
 

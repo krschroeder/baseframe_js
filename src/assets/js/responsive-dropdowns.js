@@ -1,6 +1,6 @@
 
-import validJSONFromString from './util/formatting-valid-json.js';
-import { CSS_TRANSISTION_DELAY } from './util/helpers.js';
+import validJSONFromString from './util/formatting-valid-json';
+import { CSS_TRANSISTION_DELAY } from './util/constants';
 import { elData } from './util/store';
 
 const VERSION = "1.0.0";

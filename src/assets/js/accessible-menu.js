@@ -1,19 +1,12 @@
 import validJSONFromString from './util/formatting-valid-json.js';
 import $visible from './util/visible';
 import { elData } from './util/store';
-
+import { KEYS } from './util/constants.js';
 
 const VERSION = "1.2.0";
 const DATA_NAME = 'AccessibleMenu';
 const EVENT_NAME = 'accessibleMenu';
 
-const keys = {
-	ESC: 'Escape',
-	LEFT: 'ArrowLeft',
-	RIGHT: 'ArrowRight',
-	UP: 'ArrowUp',
-	DOWN: 'ArrowDown'
-}
 
 const DEFAULTS = {
 	keyDirections: ['horizontal', 'vertical', 'vertical'],
@@ -21,7 +14,7 @@ const DEFAULTS = {
 }
 
 const escapeKey = (e, $ulParents, focusCss) => {
-	if (e.key == keys.ESC) {
+	if (e.key == KEYS.ESC) {
 
 		if ($ulParents.length > 1) {
 			const $anchor = $visible($ulParents.eq(0).closest('li').find('a'));
@@ -66,9 +59,9 @@ const prev = (e, $ulParents, activeElem, focusCss, keyDirections) => {
 	const l = $ulParents.length - 1;
 
 	if (
-		e.key === keys.LEFT && keyDirections[l] === "horizontal" ||
-		e.key === keys.UP && keyDirections[l] === "vertical" ||
-		e.key === keys.LEFT && keyDirections[l] === "vertical" &&
+		e.key === KEYS.LEFT && keyDirections[l] === "horizontal" ||
+		e.key === KEYS.UP && keyDirections[l] === "vertical" ||
+		e.key === KEYS.LEFT && keyDirections[l] === "vertical" &&
 		(l > 1 && keyDirections[l - 1] === "vertical" && $(activeElem).parent('li').index() === 0)
 	) {
 		focusListItem(activeElem, $ulParents, focusCss, true);
@@ -81,8 +74,8 @@ const next = (e, $ulParents, activeElem, focusCss, keyDirections) => {
 
 	if (
 		//go to sibling <li>
-		e.key === keys.RIGHT && keyDirections[l] === "horizontal" ||
-		e.key === keys.DOWN && keyDirections[l] === "vertical"
+		e.key === KEYS.RIGHT && keyDirections[l] === "horizontal" ||
+		e.key === KEYS.DOWN && keyDirections[l] === "vertical"
 	) {
 
 		focusListItem(activeElem, $ulParents, focusCss, false);
@@ -91,8 +84,8 @@ const next = (e, $ulParents, activeElem, focusCss, keyDirections) => {
 
 	if (
 		//go to the nestled <li>
-		e.key === keys.RIGHT && keyDirections[l] === "vertical" ||
-		e.key === keys.DOWN && keyDirections[l] === "horizontal"
+		e.key === KEYS.RIGHT && keyDirections[l] === "vertical" ||
+		e.key === KEYS.DOWN && keyDirections[l] === "horizontal"
 	) {
 
 		focusNestledListItem(activeElem, focusCss);

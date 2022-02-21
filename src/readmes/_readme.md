@@ -50,6 +50,7 @@ import installStoreToLibrary, {
     Parallax,
     Popup,
     ResponsiveDropDown,
+    SelectEnhance,
     Tabs,
     bgResponsiveLoad,
     cookies,
@@ -85,6 +86,7 @@ libraryExtend([
     Parallax,
     Popup,
     ResponsiveDropDown,
+    SelectEnhance,
     Tabs
 ]); 
 ```

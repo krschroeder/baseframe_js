@@ -9,9 +9,6 @@ const VERSION = "1.0.0";
 const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 
-// TODO
-// Unwrap, remove event stuff
-// refresh the list with a method
 
 const DEFAULTS = {
     cssPrefix : 'select-enhance',

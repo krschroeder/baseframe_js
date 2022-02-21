@@ -131,6 +131,10 @@ __[View](#popup-plugin)__
 Turn your left secondary navigation (or list of options) into a dropdown for mobile!
 __[View](#responsive-dropdown-plugin)__
 
+### Select Enhance
+Enhance a selectbox
+__[View](#select-enhance-plugin)__
+
 ### Tabs
 Tabs in tabs, change onhashchange this does it for tabs!
 __[View](#tabs-plugin)__
@@ -1049,6 +1053,60 @@ __JavaScript__
 ```javascript
 $(".resp-dd").responsiveDropDown();
 ```
+<br>
+<br>
+<br>
+<h2 id="select-enhance-plugin">Select Enhance</h2>
+
+
+### Features
+Plugin that allows for styled dropdowns for the `<select>` element. This dropdown is ADA accessible, featuring typing to select, proper roles and aria attributes.
+
+### Settings
+
+Option | Type | Default | Description
+------ | ---- | ------- | -----------
+cssPrefix  | string | 'select-enhance' | CSS class name for styling purposes
+mobileNative | boolean | true | Off by default this doesn't render the stylized dropdowns for mobile devices.
+focusIn | string | ($element) => {} | event when focusing in on the select box
+focusOut | string | ($element) => {} | event when focusing out on the select box
+beforeChange | string | ($element) => {} | event to fire before the change event
+afterChange | string | ($element) => {} | event to fire after the change event
+blurDuration | number | 250 | the amount of time in milliseconds the blurring CSS effect lasts
+typeAheadDuration | number | 500 | the timeout in millisconds to when the type/search feature resets
+
+
+### Example
+
+__The following is an example of the `<select>` elements for this plugin:__
+
+__HTML__
+```html
+<label for="select-1">Select 1</label>
+    <select id="select-1">
+        <optgroup label="one">
+            <option value="1">First Option</option>
+            <option value="2">Second Option</option>
+            <option value="3">Third Option</option>
+        </optgroup>
+        <optgroup label="two">
+            <option value="4">More Options</option>
+            <option value="5">Choices For Days</option>
+            <option value="6">Sixth One</option>
+        </optgroup>
+    </select>
+    <label for="another-select">Select 2</label>
+    <select id="another-select">
+        <option value="one">One Option</option>
+        <option value="two">Two Option</option>
+        <option value="three">Three!</option>
+    </select>
+```
+
+```javascript
+$('select').selectEnhance();
+```
+
 <br>
 <br>
 <br>

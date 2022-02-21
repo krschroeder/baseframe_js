@@ -1,6 +1,6 @@
 {
   "name": "baseframe-js",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "description": "A suite of useful Javascript plugins and functions to help with Front-end Development on websites",
   "repository": {
     "type": "git",
@@ -25,6 +25,8 @@
     "trap focus",
     "dropdowns",
     "lazy load",
+    "select",
+    "select box",
     "lazy",
     "cookies",
     "js plugins",

@@ -74,7 +74,7 @@ select {
 		text-align: left;
 		border: 1px solid #ddd;
 		color: $color-font-body;
-		font-weight: 600;
+		font-weight: normal;
 
 		+ button {
 			margin-top: -1px;
@@ -118,10 +118,11 @@ select {
 	}
 
     &__optgroup {
-        padding-left: 1rem;
+        padding: 0.5rem; 
         background: #fff;
         &:before {
             content: attr(label);
+			font-weight: bold;
             display: block;
             margin-top: 0.5rem;
             margin-bottom: 0.5rem;

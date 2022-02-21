@@ -131,6 +131,10 @@ __[View](#popup-plugin)__
 Turn your left secondary navigation (or list of options) into a dropdown for mobile!
 __[View](#responsive-dropdown-plugin)__
 
+### Select Enhance
+Enhance a selectbox
+__[View](#select-enhance-plugin)__
+
 ### Tabs
 Tabs in tabs, change onhashchange this does it for tabs!
 __[View](#tabs-plugin)__
@@ -348,6 +352,10 @@ trapFocus(element:JQuery<HTMLElement> | HTMLElement, params?: PlainObject);
 <br>
 <br>
 @@include('./responsive-dropdown.md')
+<br>
+<br>
+<br>
+@@include('./select-enhance.md')
 <br>
 <br>
 <br>

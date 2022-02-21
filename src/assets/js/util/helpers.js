@@ -9,6 +9,13 @@ export default function getType(val) {
 	return ({}).toString.call(val).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
 }
 
+export function IE_Event(event, params) {
+    params = params || { bubbles: false, cancelable: false, detail: undefined };
+    const evt = document.createEvent('CustomEvent');
+    evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+    return evt;
+}
+
 // visibilty
 export const isVisible = (el) => el.offsetParent !== null || !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
 export const isHidden = (el) => !isVisible(el);

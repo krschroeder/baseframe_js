@@ -16,7 +16,8 @@ const DATA_NAME = 'SelectEnhance';
 const DEFAULTS = {
     cssPrefix : 'select-enhance',
     mobileNative: true,
-    duration: 250
+    blurDuration: 250,
+    typeAheadDuration: 500
 };
 
 // wrap the select first
@@ -51,8 +52,9 @@ export default class SelectEnhance {
     constructor(element, options, index) {
 		const _ = this;
 
-        _.index = index;
+        _.index = index; 
 		_.$element = $(element);
+        _.selectId = _.$element.attr('id') + '_enhance' || 'select_enhance_' + index;
         _.$selectEnhance = null;
         _.$enableBtn = null;
         _.$selectList = null;
@@ -95,9 +97,10 @@ export default class SelectEnhance {
     eventKeyboardSearch() {
         const _ = this;
 
-        let keyInputTo = null;
-        let keyedInput = "";
-        let keyedFound = [];
+        let keyInputTo = null,
+            keyedInput = "",
+            keyedFound = []
+        ;
 
         _.$selectEnhance.on('keydown.' + EVENT_NAME, function (e) {
             const keyCurr = (e.key.length === 1 ? e.key : '');
@@ -107,7 +110,7 @@ export default class SelectEnhance {
             clearTimeout(keyInputTo);
             keyInputTo = setTimeout(() => {
                 keyedInput = "";
-            }, 500);
+            }, _.params.typeAheadDuration);
 
             if (keyedInput.trim()) {
 
@@ -148,7 +151,7 @@ export default class SelectEnhance {
 
         setTimeout(() => {
             _.$selectEnhance.removeClass(_.params.cssPrefix + '--blurring');
-        }, _.params.duration);
+        }, _.params.blurDuration);
     }
 
     setSelectionState($btn) {
@@ -241,24 +244,21 @@ export default class SelectEnhance {
         const _ = this;
 
         _.$element.each(function () {
-
-            const selectId = _.$element.attr('id') || 'sel_' + _.index;
-
             _.$selectEnhance = $('<div />').attr({ 
                 class: _.params.cssPrefix, 
                 role: "combobox", 
                 'aria-expanded' : false,
-                'aria-owns': selectId + '_listbox',
+                'aria-owns': _.selectId + '_listbox',
                 'aria-haspopup': 'listbox',
-                id: selectId + '_combobox'
+                id: _.selectId + '_combobox'
             });
 
             _.$enableBtn =  $('<button>').attr({ 
                 type: 'button', 
                 class: _.params.cssPrefix + '__enable-btn',
                 role: "textbox",
-                'aria-controls': selectId + '_listbox',
-                id: selectId + '_input'
+                'aria-controls': _.selectId + '_listbox',
+                id: _.selectId + '_input'
             });
 
             _.$element.wrap(_.$selectEnhance);
@@ -272,14 +272,12 @@ export default class SelectEnhance {
             _.$element.attr({ tabindex: '-1', 'aria-hidden': true });
 
 
-            _.buildOptionsList(selectId);
+            SelectEnhance.buildOptionsList(_);
         })
     }
 
 
-    buildOptionsList(selectId) {
-
-        const _ = this;
+    static buildOptionsList(_) {
 
         const { cssPrefix } = _.params;
 
@@ -303,11 +301,11 @@ export default class SelectEnhance {
         _.$selectList = $('<div>').attr({ 
             class: cssPrefix + '__list', 
             role: 'listbox',
-            id: selectId + '_listbox',
-            'aria-labelledby': 'Lbl' + selectId || ''
+            id: _.selectId + '_listbox',
+            'aria-labelledby': 'Lbl' + _.selectId || ''
         });
 
-        const optId = selectId || 'select_' + index;
+        const optId = _.selectId || 'select_' + index;
        
 
         for (let i = 0, l = options.length; i < l; i++) {
@@ -315,7 +313,6 @@ export default class SelectEnhance {
             const id = optId + i;
 
             const attrs = {
-                // 'data-value': opt.value,
                 role: 'option', id,
                 'aria-selected': opt.selected ? 'true' : null,
                 title: opt.value,
@@ -420,6 +417,21 @@ export default class SelectEnhance {
         }
     }
 
+    static refreshOptions(element) {
+        $(element).each(function () {
+            const instance = elData(this, `${DATA_NAME}_instance`);    
+          
+            if (instance) {
+
+                instance.$selectList.remove();
+                instance.optionSet = new WeakMap();
+                SelectEnhance.buildOptionsList(instance);
+            } else {
+                console.warn(`No instance of a selectbox`, element);
+            }
+        });
+    }
+
     static remove(element) {
 
 		$(element).each(function () {
@@ -429,6 +441,9 @@ export default class SelectEnhance {
             instance.$selectEnhance.off('click.' + EVENT_NAME);
             instance.$selectEnhance.off('focusout.' + EVENT_NAME);
             // the window event will just stay
+            instance.$element.insertAfter(instance.$selectEnhance);
+            instance.$element.attr({tabindex: null, 'aria-hidden': null});
+            instance.$selectEnhance.remove();
 
 			elData(this, `${DATA_NAME}_params`, null, true);
 			elData(this, `${DATA_NAME}_instance`, null, true);
@@ -440,7 +455,7 @@ export default class SelectEnhance {
 
 function IE_Event(event, params) {
     params = params || { bubbles: false, cancelable: false, detail: undefined };
-    var evt = document.createEvent('CustomEvent');
+    const evt = document.createEvent('CustomEvent');
     evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
     return evt;
 }

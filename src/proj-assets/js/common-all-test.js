@@ -50,6 +50,7 @@ $.extend({cookies: cookies});
 $.extend({popup: Popup});
 $.extend({collapse: Collapse});
 $.extend({tabs: Tabs});
+$.extend({selectEnhance: SelectEnhance});
 
 
 const smoothScrollCallback = (arg,dos) => {
@@ -73,7 +74,7 @@ $('#main-nav').accessibleMenu();
 
 formInputs.init();
 
-$('select').selectEnhance();
+window.selectEnhances = $('select').selectEnhance();
 
 $('.background-area-bg').lazyLoad({observerID: 'background-area-bg', inEvt: (el)=>{console.log('el',el)}});
 $('img[data-src]').lazyLoad({observerID: 'img[data-src]'});

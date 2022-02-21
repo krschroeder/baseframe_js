@@ -34,7 +34,8 @@ const libraryExtend = (Plugins, notify = false) => {
                     const plugin = new Plugin($this, params, index);
 
                     elData(this, `${DataName}_instance`, plugin); 
-                
+                    
+                    return plugin;
                 } else {
 
                     if (typeof params === 'string') {

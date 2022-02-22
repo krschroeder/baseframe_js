@@ -422,7 +422,7 @@ export default class SelectEnhance {
 
     static getListPosition() {
         const _ = currSelectInstance;
-        if (_?.$selectEnhance) {
+        if (_.$selectEnhance) {
           
             const selWrapPosTop = _.$selectEnhance.offset().top;
             const selListHeight = _.$selectList.height();

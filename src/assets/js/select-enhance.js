@@ -72,7 +72,7 @@ export default class SelectEnhance {
 		_.params = elData(element, `${DATA_NAME}_params`);
 
 
-         _.setUpSelectHtml();
+        _.setUpSelectHtml();
       
         if (mobileOS && _.params.mobileNative) {
             return;
@@ -81,14 +81,18 @@ export default class SelectEnhance {
         // 
         // attach events
         // 
-        _.eventLabelClick();
-        _.eventKeyboardSearch();
-        _.eventShowOptions();
-        _.eventOptionClick();
-        _.eventSelectToggle();
-        _.eventArrowKeys();
+        setTimeout(() => {
+
+         
+            _.eventLabelClick();
+            _.eventKeyboardSearch();
+            _.eventShowOptions();
+            _.eventOptionClick();
+            _.eventSelectToggle();
+            _.eventArrowKeys();
+            SelectEnhance.eventScrollGetListPosition();
+        },100);
         
-        SelectEnhance.eventScrollGetListPosition();
 
 		return this;
 	}
@@ -273,37 +277,40 @@ export default class SelectEnhance {
     setUpSelectHtml() {
         const _ = this;
 
-        _.$element.each(function () {
-            _.$selectEnhance = $('<div />').attr({ 
-                class: _.params.cssPrefix, 
-                role: "combobox", 
-                'aria-expanded' : false,
-                'aria-owns': _.selectId + '_listbox',
-                'aria-haspopup': 'listbox',
-                id: _.selectId + '_combobox'
-            });
+        
+        const $selectEnhance = $('<div />').attr({ 
+            class: _.params.cssPrefix, 
+            role: "combobox", 
+            'aria-expanded' : false,
+            'aria-owns': _.selectId + '_listbox',
+            'aria-haspopup': 'listbox',
+            id: _.selectId + '_combobox'
+        });
 
-            _.$enableBtn =  $('<button>').attr({ 
-                type: 'button', 
-                class: _.params.cssPrefix + '__enable-btn',
-                role: "textbox",
-                'aria-controls': _.selectId + '_listbox',
-                id: _.selectId + '_input'
-            });
+        const $enableBtn =  $('<button>').attr({ 
+            type: 'button', 
+            class: _.params.cssPrefix + '__enable-btn',
+            role: "textbox",
+            'aria-controls': _.selectId + '_listbox',
+            id: _.selectId + '_input'
+        });
 
-            _.$element.wrap(_.$selectEnhance);
+        _.$element.wrap($selectEnhance);
 
-            if (mobileOS && _.params.mobileNative) {
-                // exit if its a mobile device after wrapping for styling
-                return;
-            }
-            
-            _.$selectEnhance.append(_.$enableBtn);
-            _.$element.attr({ tabindex: '-1', 'aria-hidden': true });
+        if (mobileOS && _.params.mobileNative) {
+            // exit if its a mobile device after wrapping for styling
+            return;
+        }
+        
+        $enableBtn.insertAfter(_.$element);
+        _.$element.attr({ tabindex: '-1', 'aria-hidden': true });
 
-
-            SelectEnhance.buildOptionsList(_);
-        })
+        // jQuery, elements need to be bound to the DOM before they
+        // can have events attached to them. So this is the solution
+        _.$selectEnhance = _.$element.parent();
+        _.$enableBtn = _.$element.parent().find('#' + _.selectId + '_input');
+        
+        SelectEnhance.buildOptionsList(_);
     }
 
     nextOptionButton(dir) {
@@ -403,8 +410,8 @@ export default class SelectEnhance {
                 _.$selectList.append($optGroupWm.get(group))
             }
         }  
-        
-        _.$selectEnhance.append(_.$selectList);
+        _.$selectList.insertAfter(_.$enableBtn);
+ 
     }
 
     static eventScrollGetListPosition() {
@@ -422,7 +429,7 @@ export default class SelectEnhance {
 
     static getListPosition() {
         const _ = currSelectInstance;
-        if (_.$selectEnhance) {
+        if (_ && _.$selectEnhance) {
           
             const selWrapPosTop = _.$selectEnhance.offset().top;
             const selListHeight = _.$selectList.height();

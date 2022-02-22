@@ -74,7 +74,7 @@ $('#main-nav').accessibleMenu();
 
 formInputs.init();
 
-window.selectEnhances = $('select').selectEnhance();
+$('select').selectEnhance();
 
 $('.background-area-bg').lazyLoad({observerID: 'background-area-bg', inEvt: (el)=>{console.log('el',el)}});
 $('img[data-src]').lazyLoad({observerID: 'img[data-src]'});

@@ -5,7 +5,7 @@ import { isMobileOS, IE_Event } from "./util/helpers";
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/listbox_role
 
 
-const VERSION = "1.0.0";
+const VERSION = "1.1.0";
 const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 
@@ -32,8 +32,6 @@ let to = null,
     currSelectInstance = null
 ;
  
-
-//TODO: clean-up of events in case needs re-inited
 
 export default class SelectEnhance {
 
@@ -87,7 +85,7 @@ export default class SelectEnhance {
         _.eventKeyboardSearch();
         _.eventShowOptions();
         _.eventOptionClick();
-        _.eventFocus();
+        _.eventSelectToggle();
         _.eventArrowKeys();
         
         SelectEnhance.eventScrollGetListPosition();
@@ -101,13 +99,20 @@ export default class SelectEnhance {
         const _ = this;
 
         _.$selectEnhance.addClass(_.params.cssPrefix + '--blurring');
+        _.$selectEnhance
+            .removeClass(_.params.cssPrefix + '--focused')
+            .attr({'aria-expanded': false});
 
         setTimeout(() => {
             _.$selectEnhance.removeClass(_.params.cssPrefix + '--blurring');
+
+            $currSelectEnhance = null;
+            currSelectInstance = null;
+
         }, _.params.blurDuration);
     }
 
-    setSelectionState($btn) {
+    setSelectionState($btn, doBlur = true) {
         const _ = this;
 
         _.params.beforeChange(_.$element);
@@ -125,12 +130,15 @@ export default class SelectEnhance {
         _.$selectList.attr({ 'aria-activedescendant': $btn[0].id});
 
         _.$element[0].dispatchEvent(new (Event || IE_Event)('change'));
-        _.$enableBtn.text($btn.text())[0].focus();
-        
-        _.blurSelect();
 
-        $currSelectEnhance = null;
-        currSelectInstance = null;
+        if (doBlur) {
+
+            _.$enableBtn.text($btn.text())[0].focus();
+            _.blurSelect();
+
+        } else {
+            $btn[0].focus();
+        }   
     }
 
     eventLabelClick() {
@@ -150,6 +158,12 @@ export default class SelectEnhance {
 
             _.$selectEnhance.toggleClass(_.params.cssPrefix + '--focused')
                 .attr({'aria-expanded' : true});
+            
+            const $selectedBtn = _.$selectEnhance.find('button[aria-selected]');
+
+            if ($selectedBtn.length) {
+                $selectedBtn[0].focus();
+            }
 
             $currSelectEnhance = _.$selectEnhance;
             currSelectInstance = _;
@@ -173,29 +187,26 @@ export default class SelectEnhance {
         });
     }
 
-    eventFocus(){
+    eventSelectToggle(){
         const _ = this;
 
         _.$selectEnhance.on('focusin.' + EVENT_NAME, function (e) {
             _.params.focusIn(_.$element);
-        }) 
-        .on('focusout.' + EVENT_NAME, function (e) {
-            // in setTimeout because the activeElement is temporarily
-            // given back to the document.body it seems
-            setTimeout(() => {
 
-                if (!$(this).has(document.activeElement).length) {
-                    _.blurSelect();
-
-                    $(this).removeClass(_.params.cssPrefix + '--focused')
-                        .attr({'aria-expanded': false});
-                    $currSelectEnhance = null;
-                    currSelectInstance = null;
-
-                    _.params.focusOut(_.$element);
-                }
-
-            }, 100);
+            $(document.body).on('click.close_' + EVENT_NAME, function(e){
+                setTimeout(() => {
+                    const ae = document.activeElement;
+                    
+                    if (
+                        !_.$selectEnhance.has(ae).length || 
+                        _.$selectEnhance[0].isSameNode(ae)
+                    ) {
+                        _.blurSelect();
+                        $(document.body).off('click.close_' + EVENT_NAME);
+                     
+                    }
+                }, 100);
+            });
         });
     }
 
@@ -227,7 +238,7 @@ export default class SelectEnhance {
 
             if (keyedFound.length){
     
-                    _.setSelectionState(_.optionSet.get(keyedFound[0]));
+                    _.setSelectionState(_.optionSet.get(keyedFound[0]), false);
                 } 
             }
         });
@@ -250,13 +261,9 @@ export default class SelectEnhance {
             }
 
             if (e.key === KEYS.ESC && $currSelectEnhance) {
-
-                $currSelectEnhance.removeClass(_.params.cssPrefix + '--focused');
-                $currSelectEnhance.attr({'aria-expanded': false})
+ 
+                _.blurSelect();
                 _.$enableBtn[0].focus();
-
-                $currSelectEnhance = null;
-                currSelectInstance = null;
             }
         });
     }
@@ -319,10 +326,10 @@ export default class SelectEnhance {
                 if (dir === 'next') {
 
                     const isLast = i === l - 1;
-                    $btnList.eq(isLast ? 0 : i + 1)[0].focus();
+                    $btnList.eq(isLast ? i : i + 1)[0].focus();
                 } else {
                     const isFirst = i === 0;
-                    $btnList.eq(isFirst ? l - 1 : i - 1)[0].focus();
+                    $btnList.eq(isFirst ? i : i - 1)[0].focus();
                 }
 
                 break;
@@ -440,13 +447,13 @@ export default class SelectEnhance {
 
     static refreshOptions(element) {
         $(element).each(function () {
-            const instance = elData(this, `${DATA_NAME}_instance`);    
+            const _ = elData(this, `${DATA_NAME}_instance`);    
           
-            if (instance) {
+            if (_) {
 
-                instance.$selectList.remove();
-                instance.optionSet = new WeakMap();
-                SelectEnhance.buildOptionsList(instance);
+                _.$selectList.remove();
+                _.optionSet = new WeakMap();
+                SelectEnhance.buildOptionsList(_);
             } else {
                 console.warn(`No instance of a selectbox`, element);
             }
@@ -456,17 +463,18 @@ export default class SelectEnhance {
     static remove(element) {
 
 		$(element).each(function () {
-			const instance = elData(this, `${DATA_NAME}_instance`);
+			const _ = elData(this, `${DATA_NAME}_instance`);
             
-            instance.$selectEnhance.off('keydown.' + EVENT_NAME);
-            instance.$selectEnhance.off('keydown.navigate_' + EVENT_NAME);
-            instance.$selectEnhance.off('click.' + EVENT_NAME);
-            instance.$selectEnhance.off('focusout.' + EVENT_NAME);
-            instance.$label.off('click.' + EVENT_NAME);
+            _.$selectEnhance.off('keydown.' + EVENT_NAME);
+            _.$selectEnhance.off('keydown.navigate_' + EVENT_NAME);
+            _.$selectEnhance.off('click.' + EVENT_NAME);
+            _.$selectEnhance.off('focusout.' + EVENT_NAME);
+            _.$label.off('click.' + EVENT_NAME);
+            $(document.body).off('click.close_' + EVENT_NAME);
             // the window event will just stay
-            instance.$element.insertAfter(instance.$selectEnhance);
-            instance.$element.attr({tabindex: null, 'aria-hidden': null});
-            instance.$selectEnhance.remove();
+            _.$element.insertAfter(_.$selectEnhance);
+            _.$element.attr({tabindex: null, 'aria-hidden': null});
+            _.$selectEnhance.remove();
 
 			elData(this, `${DATA_NAME}_params`, null, true);
 			elData(this, `${DATA_NAME}_instance`, null, true);

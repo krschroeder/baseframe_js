@@ -26,10 +26,7 @@ export const qsToObject = (str = location.hash.substring(1)) => {
             val = false;
 
          } else if ((/^[\d]*$/).test(val)) {
-            // if we're a number, 
-            // shorthand notation (e.g.: 1e3 = 1000) lets just keep a string, 
-            // so when it goes back into the URL its not changed
-
+           
             val = parseFloat(val);
          }
 

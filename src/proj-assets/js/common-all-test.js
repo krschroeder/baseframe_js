@@ -79,16 +79,16 @@ window.selectEnhances = $('select').selectEnhance();
 $('.background-area-bg').lazyLoad({observerID: 'background-area-bg', inEvt: (el)=>{console.log('el',el)}});
 $('img[data-src]').lazyLoad({observerID: 'img[data-src]'});
 $('img[loading="lazy"]').lazyLoad({observerID: 'imgLazyLoadAttr'});
-$('p').lazyLoad({
-    observerID: 'p',
-    loadImgs: false, 
-    unobserve:false,
-    inEvt: (el) => {
-        setTimeout(()=> {el.style.opacity = '0.6';},1000);
-    },
-    outEvt: (el) => {
-        setTimeout(()=> {el.style.opacity = '';},1000);
-    }
-});
+// $('p').lazyLoad({
+//     observerID: 'p',
+//     loadImgs: false, 
+//     unobserve:false,
+//     inEvt: (el) => {
+//         setTimeout(()=> {el.style.opacity = '0.6';},1000);
+//     },
+//     outEvt: (el) => {
+//         setTimeout(()=> {el.style.opacity = '';},1000);
+//     }
+// });
 
 // bgResponsiveLoad('.background-area-bg');

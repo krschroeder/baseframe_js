@@ -5,7 +5,7 @@ import { isMobileOS, IE_Event } from "./util/helpers";
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/listbox_role
 
 
-const VERSION = "1.1.0";
+const VERSION = "1.1.1";
 const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 
@@ -18,7 +18,8 @@ const DEFAULTS = {
     beforeChange: (el) => {},
     afterChange: (el) => {},
     blurDuration: 250,
-    typeAheadDuration: 500
+    typeAheadDuration: 500,
+    observeSelectbox: true
 };
 
 // wrap the select first
@@ -59,6 +60,7 @@ export default class SelectEnhance {
         _.$enableBtn = null;
         _.$selectList = null;
         _.optionSet = new WeakMap();
+        _.selectboxObserver = null;
 
 		const dataOptions = validJSONFromString(
 			$(element).data(DATA_NAME + '-options')
@@ -81,18 +83,18 @@ export default class SelectEnhance {
         // 
         // attach events
         // 
-        setTimeout(() => {
-
-         
-            _.eventLabelClick();
-            _.eventKeyboardSearch();
-            _.eventShowOptions();
-            _.eventOptionClick();
-            _.eventSelectToggle();
-            _.eventArrowKeys();
-            SelectEnhance.eventScrollGetListPosition();
-        },100);
         
+        if (_.params.observeSelectbox) {
+            _.selectInputMutationObserver();
+        }
+        _.eventLabelClick();
+        _.eventKeyboardSearch();
+        _.eventShowOptions();
+        _.eventOptionClick();
+        _.eventSelectToggle();
+        _.eventArrowKeys();
+        SelectEnhance.eventScrollGetListPosition();
+      
 
 		return this;
 	}
@@ -150,8 +152,9 @@ export default class SelectEnhance {
 
         _.$label.on('click.' + EVENT_NAME, function(e){
             e.preventDefault();
-
-            _.$enableBtn[0].focus();
+            if (!_.$element[0].disabled) {
+                _.$enableBtn[0].focus();
+            }
         })
     }
 
@@ -159,6 +162,7 @@ export default class SelectEnhance {
         const _ = this;
        
         _.$selectEnhance.on('click.' + EVENT_NAME, '.' + _.params.cssPrefix + '__enable-btn', function (e) {
+            if (_.$element[0].disabled) { return }
 
             _.$selectEnhance.toggleClass(_.params.cssPrefix + '--focused')
                 .attr({'aria-expanded' : true});
@@ -173,6 +177,7 @@ export default class SelectEnhance {
             currSelectInstance = _;
 
             SelectEnhance.getListPosition();
+           
         });
     }
 
@@ -196,8 +201,8 @@ export default class SelectEnhance {
 
         _.$selectEnhance.on('focusin.' + EVENT_NAME, function (e) {
             _.params.focusIn(_.$element);
-
-            $(document.body).on('click.close_' + EVENT_NAME, function(e){
+            
+            $(document.body).on('click.close_' + _.selectId + EVENT_NAME, function(e){
                 setTimeout(() => {
                     const ae = document.activeElement;
                     
@@ -206,11 +211,11 @@ export default class SelectEnhance {
                         _.$selectEnhance[0].isSameNode(ae)
                     ) {
                         _.blurSelect();
-                        $(document.body).off('click.close_' + EVENT_NAME);
-                     
+                        $(document.body).off('click.close_' + _.selectId + EVENT_NAME);
+                    
                     }
                 }, 100);
-            });
+            });  
         });
     }
 
@@ -223,6 +228,8 @@ export default class SelectEnhance {
         ;
 
         _.$selectEnhance.on('keydown.' + EVENT_NAME, function (e) {
+
+            if (_.$element[0].disabled) { return }
             const keyCurr = (e.key.length === 1 ? e.key : '');
             
             keyedInput+= keyCurr;
@@ -253,6 +260,8 @@ export default class SelectEnhance {
         const _ = this;
         
         _.$selectEnhance.on('keydown.navigate_' + EVENT_NAME, function (e) {
+            
+            if (_.$element[0].disabled) { return }
 
             if (e.key === KEYS.DOWN) {
                 e.preventDefault();
@@ -342,6 +351,40 @@ export default class SelectEnhance {
                 break;
             }
         }
+    }
+
+    selectInputMutationObserver() {
+        const _ = this;
+
+        const selectNode = _.$element[0];
+        const config = { attributes: true, childList: true, subtree: true };
+
+        // Callback function to execute when mutations are observed
+        const callback = function(mutationsList, observer) {
+            // Use traditional 'for loops' for IE 11
+            for(let i = 0, l = mutationsList.length; i < l; i++) {
+                const mutation = mutationsList[i];
+                if (mutation.type === 'childList') {
+                    
+                    SelectEnhance.refreshOptions(_.$element[0]);
+                }
+                else if (mutation.type === 'attributes') {
+                    _.$selectEnhance.toggleClass(
+                        _.params.cssPrefix + '--disabled', 
+                        _.$element[0].disabled
+                    );
+                }
+            }
+        };
+
+        // Create an observer instance linked to the callback function
+        _.selectboxObserver = new MutationObserver(callback);
+        // Start observing the target node for configured mutations
+        _.selectboxObserver.observe(selectNode, config);
+
+        // Later, you can stop observing
+        // _.selectboxObserver.disconnect();
+
     }
 
 
@@ -477,10 +520,13 @@ export default class SelectEnhance {
             _.$selectEnhance.off('click.' + EVENT_NAME);
             _.$selectEnhance.off('focusout.' + EVENT_NAME);
             _.$label.off('click.' + EVENT_NAME);
-            $(document.body).off('click.close_' + EVENT_NAME);
+            $(document.body).off('click.close_' + _.selectId + EVENT_NAME);
             // the window event will just stay
             _.$element.insertAfter(_.$selectEnhance);
             _.$element.attr({tabindex: null, 'aria-hidden': null});
+            if (_.selectboxObserver) {
+                _.selectboxObserver.disconnect();
+            }
             _.$selectEnhance.remove();
 
 			elData(this, `${DATA_NAME}_params`, null, true);

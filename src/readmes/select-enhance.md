@@ -17,7 +17,7 @@ beforeChange | string | ($element) => {} | event to fire before the change event
 afterChange | string | ($element) => {} | event to fire after the change event
 blurDuration | number | 250 | the amount of time in milliseconds the blurring CSS effect lasts
 typeAheadDuration | number | 500 | the timeout in millisconds to when the type/search feature resets
-
+observeSelectbox | boolean | true | uses a MutationObserver to view changes on the `<select>` element or changes to the `<options>`
 
 ### Example
 

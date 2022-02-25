@@ -5,7 +5,7 @@ import { isMobileOS, IE_Event } from "./util/helpers";
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/listbox_role
 
 
-const VERSION = "1.1.1";
+const VERSION = "1.2.0";
 const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 
@@ -61,6 +61,7 @@ export default class SelectEnhance {
         _.$selectList = null;
         _.optionSet = new WeakMap();
         _.selectboxObserver = null;
+        _.selectListBoxInFullView = true;
 
 		const dataOptions = validJSONFromString(
 			$(element).data(DATA_NAME + '-options')
@@ -93,6 +94,7 @@ export default class SelectEnhance {
         _.eventOptionClick();
         _.eventSelectToggle();
         _.eventArrowKeys();
+        _.observeSelectListBoxInFullView();
         SelectEnhance.eventScrollGetListPosition();
       
 
@@ -470,9 +472,24 @@ export default class SelectEnhance {
         }
     }
 
+    observeSelectListBoxInFullView() {
+        const _ = this;
+
+        if (window.IntersectionObserver) {
+            const selectIntersectionObserver = new IntersectionObserver(function(selects) {
+
+                _.selectListBoxInFullView = selects[0].intersectionRatio === 1
+                
+            }, { threshold: [0,1] });
+
+            selectIntersectionObserver.observe(_.$selectList[0]);
+        }
+    }
+
     static getListPosition() {
         const _ = currSelectInstance;
         if (_ && _.$selectEnhance) {
+            
           
             const selWrapPosTop = _.$selectEnhance.offset().top;
             const selListHeight = _.$selectList.height();
@@ -483,7 +500,11 @@ export default class SelectEnhance {
             ;
             const winPosAndHeight = window.scrollY + $(window).height();
 
-            if (listPosAndHeight > winPosAndHeight && selWrapPosTop > selListHeight) {
+            if (
+                listPosAndHeight > winPosAndHeight && 
+                selWrapPosTop > selListHeight && 
+                !_.selectListBoxInFullView
+            ) {
                 _.$selectEnhance.addClass(_.params.cssPrefix + '--pos-bottom');
                 listPosTop = false;
 

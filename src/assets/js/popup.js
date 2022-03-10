@@ -9,7 +9,7 @@ import { elData } from './util/store';
 import trapFocus from './util/trap-focus.js';
 import { CSS_TRANSISTION_DELAY } from './util/constants.js';
  
-const VERSION = "1.2.0";
+const VERSION = "1.3.0";
 const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
 const INSTANCE_NAME = `${DATA_NAME}_instance`;
@@ -265,21 +265,21 @@ export default class Popup {
 	determineContent() {
 		const _ = this;
 		const { isJsArray, group } = _.params;
-
+		 
 		//if grabbed content from before
 		_.placeContentBack();
 
 		//testing to see if its simple a class or ID selector
 		const domElemRgx = /^(\#|\.)/;
 
-		let currentElem, src, title, caption, isDomSelector = false;
+		let currentElem, src, title, caption = '', isDomSelector = false;
 
 		if (isJsArray) {
 
 			currentElem = _.$listElems[_.groupIndex];
 			src = currentElem.src;
-			title = currentElem.title;
-			caption = currentElem.caption;
+			title = currentElem.title || '';
+			caption = currentElem.caption || '';
 			_.groupCount = _.$listElems.length;
 
 		} else {
@@ -317,18 +317,19 @@ export default class Popup {
 			caption = currentElem.data('popup-caption');
 		}
 
-		_.currentElem = currentElem;
+		_.currentElem = currentElem; 
 		_.currentSrc = src;
 
 		_.contentFromDOM = isDomSelector && !isJsArray || (!isJsArray && typeof src === 'object');
 
+		_.params.title = title;
+		_.params.caption = caption;
 		if (_.contentFromDOM) $(src).after(_.elemGrabbedLocation);
-		if (title) _.params.title = title;
-		if (caption) _.params.caption = caption;
 	}
 
 	placeContent() {
 		const _ = this;
+		
 		const {
 			caption,
 			isJsArray,
@@ -336,24 +337,22 @@ export default class Popup {
 			titleCss,
 			title,
 			showGroupAmount,
-			popupID,
 			loadingHTML,
 			isImage
 		} = _.params;
-
-		const currentElem = _.currentElem;
+	 
+		const currentElem = _.currentElem; 
 		const src = _.currentSrc;
 		const $popupContentBody = _.$popup.find(`.popup__content-body`);
-
 		const isImg = isImage ||
 			_.params.photoRegex.test(src) ||
 			(!isJsArray ? currentElem.data('popup-type') === "image" : currentElem.nodeName === 'img')
 			;
 
-		_.$popup.find(`#${popupID}__title`).html(title ? `<${titleElem} class="${titleCss}">${title}</${titleElem}>` : '');
-		_.$popup.find(`#${popupID}__caption`).html(caption);
+		_.$popup.find(`.popup__title`).html(title? `<${titleElem} class="${titleCss}">${title}</${titleElem}>` : '');
+		_.$popup.find(`.popup__caption`).html(caption);
 
-
+	 
 		//wipe the current body contents
 		$popupContentBody.html("");
 
@@ -400,11 +399,24 @@ export default class Popup {
 
 	createPopup() {
 		const _ = this;
-		const { popupID, group, prevBtnHTML, nextBtnHTML, showGroupAmount } = _.params;
+		const { 
+			caption, 
+			closeText,
+			group, 
+			groupOfHTML, 
+			prevBtnHTML, 
+			nextBtnHTML, 
+			popupID, 
+			popupOuterClass,
+			showGroupAmount, 
+			title,
+			titleElem,
+			zIndex
+		} = _.params;
 
 		_.determineContent();
 
-		let groupControls = null;
+		let $groupControls = null;
 
 		if (_.groupCount > 1 && (typeof group === 'string' || group)) {
 
@@ -418,7 +430,7 @@ export default class Popup {
 					class: "btn--popup btn--popup-next"
 				}).append(nextBtnHTML);
 
-			groupControls = $("<div/>").attr({
+			$groupControls = $("<div/>").attr({
 				class: "popup__controls"
 			}).append(btnPrev, btnNext);
 		}
@@ -426,33 +438,33 @@ export default class Popup {
 		if (showGroupAmount) {
 
 			_.groupAmountElem = $('<div/>').attr({ class: 'popup__group-count' });
-			_.groupAmountElem.html(`${_.groupIndex + 1} ${_.params.groupOfHTML} ${_.groupCount}`);
+			_.groupAmountElem.html(`${_.groupIndex + 1} ${groupOfHTML} ${_.groupCount}`);
 
 		} else {
 			_.groupAmountElem = null;
 		}
 
-		const title = `<div id="${popupID}-title" class="popup__title">${_.params.title}</div>`,
-			caption = `<div id="${popupID}-caption" class="popup__caption">${_.params.caption}</div>`,
+		const $title = $(`<div id="${popupID}-title" class="popup__title"><${titleElem}>${title}</${titleElem}></div>`),
+			$caption = $(`<div id="${popupID}-caption" class="popup__caption">${caption}</div>`),
 			$overlay = $('<div/>').attr({ class: 'popup__overlay' }),
 			$src = $('<div/>').attr({ class: 'popup__content' }),
 			$body = $('<div/>').attr({ class: 'popup__content-body' }),
-			$closeBtn = _.params.closeText ? $(`<button/>`).attr({ class: "popup__btn-close", type: "button" }).html(_.params.closeText) : '',
+			$closeBtn = closeText ? $(`<button/>`).attr({ class: "popup__btn-close", type: "button" }).html(closeText) : '',
 			$srcAll = $src.append(
 				$closeBtn,
-				title,
+				$title,
 				$body,
-				caption,
-				groupControls,
+				$caption,
+				$groupControls,
 				_.groupAmountElem
 			),
 			$popupStructure = $('<div/>').attr({
-				class: `popup ${_.params.popupOuterClass}`,
+				class: `popup ${popupOuterClass}`,
 				id: popupID,
 				role: 'dialog',
 				tabindex: '-1',
 				'aria-labelledby': popupID + "-title",
-				style: `z-index: ${_.params.zIndex}`
+				style: `z-index: ${zIndex}`
 			}).append(
 				$overlay,
 				$srcAll

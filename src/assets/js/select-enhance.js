@@ -5,7 +5,7 @@ import { isMobileOS, IE_Event } from "./util/helpers";
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/listbox_role
 
 
-const VERSION = "1.2.0";
+const VERSION = "1.3.0";
 const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 
@@ -24,6 +24,9 @@ const DEFAULTS = {
 
 // wrap the select first
 const mobileOS = isMobileOS();
+
+// helper
+const getSelectedOptNode = ($el) => $el.find('option').filter(function() {return this.selected})[0];
 
 // global private state props
 let to = null,
@@ -78,28 +81,47 @@ export default class SelectEnhance {
         _.setUpSelectHtml();
       
         if (mobileOS && _.params.mobileNative) {
-            return;
-        }
+            
+            _.mobileOnlyIfNavite();
+           
+        } else {
       
-        // 
-        // attach events
-        // 
-        
-        if (_.params.observeSelectbox) {
-            _.selectInputMutationObserver();
+            // 
+            // attach events
+            // 
+            
+            if (_.params.observeSelectbox) {
+                _.selectInputMutationObserver();
+            }
+            _.eventLabelClick();
+            _.eventKeyboardSearch();
+            _.eventShowOptions();
+            _.eventOptionClick();
+            _.eventSelectToggle();
+            _.eventArrowKeys();
+            _.observeSelectListBoxInFullView();
+            SelectEnhance.eventScrollGetListPosition();
         }
-        _.eventLabelClick();
-        _.eventKeyboardSearch();
-        _.eventShowOptions();
-        _.eventOptionClick();
-        _.eventSelectToggle();
-        _.eventArrowKeys();
-        _.observeSelectListBoxInFullView();
-        SelectEnhance.eventScrollGetListPosition();
-      
 
 		return this;
 	}
+
+    mobileOnlyIfNavite() {
+        const _ = this;
+
+        let prevElSelectedVal =  getSelectedOptNode(_.$element);
+        
+            _.$element.on('mouseup.' + EVENT_NAME, 'option', function(e) {
+
+            if (!this.isSameNode(prevElSelectedVal)) {
+                _.params.beforeChange(_.$element);
+            }
+
+        }).on('change.' + EVENT_NAME, function(e) {
+            _.params.afterChange(_.$element);
+            prevElSelectedVal =  getSelectedOptNode(_.$element);
+        }); 
+    }
 
     // Events 
 
@@ -308,6 +330,10 @@ export default class SelectEnhance {
 
         _.$element.wrap($selectEnhance);
 
+        // jQuery, elements need to be bound to the DOM before they
+        // can have events attached to them. So this is the solution
+        _.$selectEnhance = _.$element.parent();
+
         if (mobileOS && _.params.mobileNative) {
             // exit if its a mobile device after wrapping for styling
             return;
@@ -318,7 +344,6 @@ export default class SelectEnhance {
 
         // jQuery, elements need to be bound to the DOM before they
         // can have events attached to them. So this is the solution
-        _.$selectEnhance = _.$element.parent();
         _.$enableBtn = _.$element.parent().find('#' + _.selectId + '_input');
         
         SelectEnhance.buildOptionsList(_);
@@ -535,7 +560,7 @@ export default class SelectEnhance {
 
 		$(element).each(function () {
 			const _ = elData(this, `${DATA_NAME}_instance`);
-            
+          
             _.$selectEnhance.off('keydown.' + EVENT_NAME);
             _.$selectEnhance.off('keydown.navigate_' + EVENT_NAME);
             _.$selectEnhance.off('click.' + EVENT_NAME);
@@ -545,6 +570,9 @@ export default class SelectEnhance {
             // the window event will just stay
             _.$element.insertAfter(_.$selectEnhance);
             _.$element.attr({tabindex: null, 'aria-hidden': null});
+            _.$element.off('mouseup.' + EVENT_NAME);
+            _.$element.off('change.' + EVENT_NAME);
+
             if (_.selectboxObserver) {
                 _.selectboxObserver.disconnect();
             }

@@ -112,6 +112,11 @@ only screen and (min-device-width: 768px) and (max-device-width: 1024px){
 			width: 100%;
 			padding: 0;
 			margin: 0;
+
+			a, button {
+				visibility: hidden;
+				display: none;
+			}
 		}
 		//first level <ul>
 		> ul {
@@ -126,13 +131,32 @@ only screen and (min-device-width: 768px) and (max-device-width: 1024px){
 			z-index: 1000;
 			opacity: 0;
 			transition: opacity 200ms ease-in-out;
-
+			
+		 
 			> li {
 				color: #fff;
 				line-height: 1.1;
 			}
 		}
 
+		&.menu-opened {
+			> ul {
+				> li > a, 
+				> li > button {
+					visibility: visible;
+					display: inline-block;
+				}
+			}
+		}
+
+		ul.menu-toggling,
+		ul.menu-opened {
+			> li > a, 
+			> li > button {
+				visibility: visible; 
+				display: inline-block;
+			}
+		}
 
 		li {
 			position: relative;
@@ -142,7 +166,6 @@ only screen and (min-device-width: 768px) and (max-device-width: 1024px){
 
 			a {
 				color: inherit;
-				display: inline-block;
 				padding: 1rem 1.5rem;
 				font-size: 1.125rem;
 				text-decoration: none;

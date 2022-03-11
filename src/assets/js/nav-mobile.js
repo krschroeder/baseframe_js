@@ -4,8 +4,10 @@ import validJSONFromString from './util/formatting-valid-json.js';
 import {isVisible} from './util/helpers';
 import submenuBtn from './util/plugin/nav';
 import { elData } from './util/store';
+import trapFocus from './util/trap-focus.js';
  
-const VERSION = "1.3.2";
+
+const VERSION = "1.4.0";
 const DATA_NAME = 'NavMobile';
 const EVENT_NAME = 'navMobile';
  
@@ -103,33 +105,49 @@ export default class NavMobile {
 
 	mobileMenuToggle() {
 		const _ = this;
-		const {enableBtn, outerElement, menuOpenCss, menuIsOpeningCss, menuIsClosingCss, slideDuration} = _.params;
+		const {
+			enableBtn, 
+			outerElement, 
+			menuOpenCss, 
+			menuIsOpeningCss,
+			menuIsClosingCss, 
+			slideDuration
+		} = _.params;
+
+		let trappedFocus = null;
+
 		if (_.menuOpened === true) {
 			_.$element.parent()
 				.find(`.${_.params.menuOpenCss}`)
 				.removeClass(_.params.menuOpenCss)
 				.find("[style]").css('display', '');
 
-			$(outerElement).removeClass(menuOpenCss);
+			$(outerElement).removeClass(menuOpenCss + ' ' + menuIsClosingCss);
 
-			$(outerElement).addClass(menuIsClosingCss);
+			// $(outerElement).addClass(menuIsClosingCss);
 			setTimeout(() => {
 				$(outerElement).removeClass(menuIsClosingCss);
 			}, slideDuration);
 
 			_.menuOpened = false;
+
+			trappedFocus && trappedFocus.remove();
+
 			_.params.afterClose();
 
 		} else {
 			_.$element.addClass(menuOpenCss);
-			$(outerElement).addClass(menuOpenCss);
+			$(outerElement).addClass(menuOpenCss + ' ' + menuIsOpeningCss);
 
-			$(outerElement).addClass(menuIsOpeningCss);
+			// $(outerElement).addClass(menuIsOpeningCss);
 			setTimeout(() => {
 				$(outerElement).removeClass(menuIsOpeningCss);
 			}, slideDuration);
 
 			_.menuOpened = true;
+			 
+			trappedFocus = trapFocus(_.$element, { nameSpace: EVENT_NAME });
+
 			_.params.afterOpen();
 		}
 		//update aria-expanded
@@ -160,7 +178,7 @@ export default class NavMobile {
 		$(_.params.enableBtn).on(`click.${EVENT_NAME} ${EVENT_NAME}`, function (e) {
 			 
 			if (!_.allowClick) return;
-
+			
 			_.mobileMenuToggle();
 
 			e.stopPropagation();
@@ -201,11 +219,13 @@ export default class NavMobile {
 			const $li = $(this).closest(`.${hasUlCls}`);  
 			const isOpened = $li.hasClass(menuOpenCss);
 			const $ul = $li.find('ul').first();  
-			 
+	
 			//exit because were in desktop view
 			if (!_.allowClick) { return; }
 			 
 			if (!isOpened) {
+				
+				
 
 				_.allowClick = false;
 

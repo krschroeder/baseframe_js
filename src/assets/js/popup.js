@@ -3,12 +3,14 @@ import validJSONFromString from './util/formatting-valid-json.js';
 import generateGUID from './util/guid-generate.js';
 
 import { photoRegex, isVisible, camelCase } from './util/helpers';
-import { getHashParam } from './util/get-param';
-import getHistoryEntry from './util/plugin/get-history-entry';
+import { getHashParam } from './util/get-param'
+import updateHistoryEntry from './util/plugin/update-history-state';
 import { elData } from './util/store';
 import trapFocus from './util/trap-focus.js';
 import { CSS_TRANSISTION_DELAY } from './util/constants.js';
  
+import { KEYS } from './util/constants';
+
 const VERSION = "1.3.0";
 const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
@@ -61,31 +63,12 @@ export default class Popup {
 			useHashFilter: null,
 			loadLocationHash: true,
 			useLocationHash: true,
-			
+			historyType: 'replace',
 			trapPopupFocus: true,
 			afterLoaded: () => { },
 			afterClose: () => { },
 			onClose: () => { }
 		};
-	}
-
-	static remove(element) {
-		
-		$(element).each(function(){
-			 
-			const params = elData(this, `${DATA_NAME}_params`);
-
-			elData(this, INSTANCE_NAME, null, true);
-			const popupEventName = EVENT_NAME + params.popupID;
-
-			$(this).off(`${params.enableEvent}.${popupEventName}`);
-			$(this).off(`${popupEventName}`);
-			$(document).off(`keydown.${popupEventName}groupcontrols`);
-			$(document).off(`keydown.${popupEventName}`);
-
-			elData(this, `${DATA_NAME}_params`, null, true);
-			elData(this, `${DATA_NAME}_instance`, null, true);
-		});
 	}
 
 	constructor(element, options, index) {
@@ -115,16 +98,9 @@ export default class Popup {
 			console.warn('If loading from a location hash please make sure to specify an ID not auto generated. This won\'t work should the page get reloaded.');
 		}
 
-
-		_.key = {
-			ARROWLEFT: 'ArrowLeft',
-			ARROWRIGHT: 'ArrowRight',
-			ESCAPE: 'Escape'
-		};
-
 		//Content
 		_.$popup = null;
-		_.elemGrabbedLocation = $('<span/>').attr({ id: 'orig-loc_' + popupID });
+		_.elemGrabbedLocation = $('<span/>').attr({ id: 'popup_content_loc_orig_' + popupID });
 		_.contentFromDOM = false;
 		_.currentElem = null;
 		_.currentSrc = null;
@@ -144,7 +120,7 @@ export default class Popup {
 		//location hash  
 		_.isOpen = false;
 		_.isOpenHash = '';
-		_.historyID = '#' + _.params.popupID + (index === 0 ? '' : '__' + index);
+		_.historyID = '#' + _.params.popupID + (index === 0 ? '' : '_' + index);
 		_.loadedFromHash = false;
 
 		// trapping focus
@@ -155,30 +131,15 @@ export default class Popup {
 		return this;
 	}
 
-	getHistoryEntry(blank = false) {
-
-		const _ = this;
-		let historyItem = blank ? '' : _.historyID;
-
-		return getHistoryEntry(_, historyItem);
-	}
-
 	initLoadEvents() {
 		const _ = this;
 		const { launch, useHashFilter, loadLocationHash } = _.params;
 
 		_.$element.on(`${_.params.enableEvent}.${_.popupEventName} ${_.popupEventName}`, function (e) {
 
-			const { useLocationHash } = _.params;
-
 			e.preventDefault();
-
-			if (useLocationHash) {
-
-				window.history.pushState(null, null, _.getHistoryEntry());
-			}
-
-			_.isOpen ? _._close() : _.loadPopup(this);
+			updateHistoryEntry(_, _.historyID.substring(1));
+			_.isOpen ? _.close() : _.loadPopup(this);
 
 		});
 
@@ -192,7 +153,7 @@ export default class Popup {
 					_.historyID === _.isOpenHash ||
 					_.historyID === (useHashFilter ? getHashParam(useHashFilter) : location.hash)
 				) {
-					_.isOpen ? _._close() : _.loadPopup(_.$element);
+					_.isOpen ? _.close() : _.loadPopup(_.$element);
 
 				}
 			}
@@ -501,10 +462,10 @@ export default class Popup {
 				const ev = e || window.event;
 				const key = ev.key;
 
-				if (key == _.key.ARROWLEFT || key == _.key.ARROWRIGHT) {
+				if (key == KEYS.LEFT || key == KEYS.RIGHT) {
 					_.toggleGroup(
-						key == _.key.ARROWLEFT,
-						key == _.key.ARROWRIGHT
+						key == KEYS.LEFT,
+						key == KEYS.RIGHT
 					);
 				}
 			});
@@ -567,7 +528,7 @@ export default class Popup {
 
 			e.preventDefault();
 
-			_._closeEvent();
+			_.closeEvent();
 		});
 	}
 
@@ -577,26 +538,21 @@ export default class Popup {
 			const e = ev || window.event;
 			const key = e.key;
 
-			if (key === _.key.ESCAPE) {
+			if (key === KEYS.ESC) {
 
-				_._closeEvent();
+				_.closeEvent();
 			}
 		});
 	}
 
-	_closeEvent() {
+
+	closeEvent() {
 		const _ = this;
-
-		if (_.params.useLocationHash) {
-
-			window.history.pushState(null, null, _.getHistoryEntry(true));
-		}
-
-		_._close();
+		updateHistoryEntry(_,'');
+		_.close();
 	}
 
-
-	_close(refocus = true) {
+	close(refocus = true) {
 		const _ = this;
 		const { showPopup, fadeOut, trapPopupFocus } = _.params;
 		const popupID = '#' + _.params.popupID;
@@ -647,11 +603,30 @@ export default class Popup {
 		Popup.remove(this.element);
 	}
 
+	static remove(element) {
+		
+		$(element).each(function(){
+			 
+			const params = elData(this, `${DATA_NAME}_params`);
+
+			elData(this, INSTANCE_NAME, null, true);
+			const popupEventName = EVENT_NAME + params.popupID;
+
+			$(this).off(`${params.enableEvent}.${popupEventName}`);
+			$(this).off(`${popupEventName}`);
+			$(document).off(`keydown.${popupEventName}groupcontrols`);
+			$(document).off(`keydown.${popupEventName}`);
+
+			elData(this, `${DATA_NAME}_params`, null, true);
+			elData(this, `${DATA_NAME}_instance`, null, true);
+		});
+	}
+
 	static close(element, refocus = true) {
 		const instance = elData(element, INSTANCE_NAME) || element;
 
 		if (instance) {
-			instance._close(refocus);
+			instance.close(refocus);
 		}
 	}
 
@@ -663,6 +638,5 @@ export default class Popup {
 		if (instance) {
 			instance.loadPopup(element);
 		}
-
 	}
 }

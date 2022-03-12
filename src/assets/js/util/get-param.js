@@ -1,54 +1,33 @@
+import $visible from "./visible";
 
+export const qsToObject = (qs = location.search.substring(1)) => {
 
-export const qsToObject = (str = location.hash.substring(1)) => {
-   
-   const params = {};
-   const vars = str.split('&');
+   if (qs && qs.indexOf('=') !== -1) {
+      const jsonStr = '{'+ 
+         decodeURI(qs)
+            .split('&').map((el) => {
+               const kv = el.split('=');
+               return `"${kv[0]}":"${(kv[1] ? kv[1] : '')}"`;
+            }).join(',')
+         +'}';
 
-   for (let i = 0, l = vars.length; i < l; i++) {
-     
-      const pair = vars[i].split('=');
-      const key  = pair[0];
-
-      if (pair.length === 1) {
-         $.extend(params,{[key]: '' });
-      }
-      else if (pair.length === 2) {
-      
-         let val = decodeURIComponent(pair[1].replace(/\+/g, ' '));
-
-         if (val === 'true') {
-
-            val = true;
-
-         } else if (val === 'false') {
-
-            val = false;
-
-         } else if ((/^[\d]*$/).test(val)) {
-           
-            val = parseFloat(val);
+      return JSON.parse(jsonStr, (key, value) => {
+            if (value === 'true') return true;
+            if (value === 'false') return false;
+            if (value !== "" && typeof +value === 'number' && !isNaN(+value)) return +value;
+            return value;
          }
-
-         $.extend(params,{[key]: val });
-
-      } else if (pair.length > 2) {
-         // multiple assignment = operators... which is a thing for the plugins
-         const valMulti = pair.slice(1).map((val) => 
-               decodeURIComponent(val.replace(/\+/g, ' '))
-            ).join('=');
-
-         $.extend(params,{[key]: valMulti });
-      }
+      );
+   } else {
+      return {};
    }
-
-   return params;
 };
+
 
 export const objectToQs = (qs) => {
    const strArr = [];
 
-   for (key in qs) {
+   for (let key in qs) {
       if (({}).hasOwnProperty.call(qs,key)){
 
          if (qs[key]) {
@@ -61,6 +40,12 @@ export const objectToQs = (qs) => {
    }
 
    return strArr.join('&');
+}
+
+export const changeHashParam = (key, val) => {
+   const hashObj = qsToObject(location.hash.substring(1));
+   
+   return objectToQs($.extend(hashObj,{[key]: val}));
 }
 
 const _getParam = (name, 

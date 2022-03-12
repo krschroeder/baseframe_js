@@ -6,7 +6,7 @@
 	<main role="main">
 		<div class="container v-space">
 
-			<div class="tabs__container">
+			<div class="tabs__container tabs-outer">
 				<div class="inline-ul tabs__nav" role="menubar">
 					<ul>
 						<li><a href="#description"><span>Description</span></a></li>
@@ -19,7 +19,7 @@
 				</div>
 				<div class="tabs__body">
 					<div data-tab-id="description" class="tabs__body-item">
-						<div class="tabs__container inner-one">
+						<div class="tabs__container tabs-inner inner-one">
 							<div class="inline-ul tabs__nav" role="menubar">
 								<ul>
 									<li><a href="#description-inner"><span>Description Inner</span></a></li>
@@ -71,18 +71,9 @@
 {{>footer}}
 
 <script>
-$(".tabs__container").tabs({
-	// useHashFilter: 'tabs',
-	onInit: function(tab,list,body) {
-		//console.log('init',tab,list,body)
-	},
-	beforeChange: function(tab,list,body) {
-		//console.log('before',tab,list,body)
-	},
-	afterChange: function(tab,list,body) {
-		//console.log('after',tab,list,body)
-	}
-});
+$(".tabs-outer").tabs({useHashFilter: 'tabs'});
+
+$(".tabs-inner").tabs({useHashFilter: 'tabs2'});
 </script>
 
 </body>

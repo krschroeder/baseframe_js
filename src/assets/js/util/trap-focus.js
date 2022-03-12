@@ -3,28 +3,29 @@ import { isVisible } from "./helpers";
 const defaultProps = {
     focusFirst: true,
     nameSpace: 'trapFocus',
-    focusableElements: ['button', 'a', 'input', 'select', 'textarea', '[tabindex]']
+    focusable: ['button', 'a', 'input', 'select', 'textarea', '[tabindex]']
 };
+
+const canFocusEls = (i, el) => isVisible(el) && el.tabIndex !== -1;
 
 const trapFocus = (modalEl, props) => {
 
-    const { focusFirst, focusableElements, nameSpace } = $.extend(defaultProps, props);
-    const $modal = $(modalEl);  
+    const { focusFirst, focusable, nameSpace } = $.extend(defaultProps, props);
+    const $trapElem = $(modalEl);  
      
-    let firstFocusableElement = null;
+    let firstFocusable = null;
 
     $(document).on(`keydown.${nameSpace}`, function (e) {
 
-        const focusableElementsJoined = typeof focusableElements === 'string' ? focusableElements : focusableElements.join(',');
-
-        const $focusableContent = $modal.find(focusableElementsJoined)
-            .filter((i, el) => isVisible(el) && el.tabIndex !== -1);
+        const focusableJoined = typeof focusable === 'string' ? focusable : focusable.join(',');
+        const $focusable = $trapElem.find(focusableJoined).filter(canFocusEls);
  
-        if (!$focusableContent.length) return;
+        if (!$focusable.length) return;
 
-        firstFocusableElement = $focusableContent[0]; 
-        const lastFocusableElement = $focusableContent[$focusableContent.length - 1];
+        const lastFocusable = $focusable[$focusable.length - 1];
         const isTabPressed = e.key === 'Tab' || e.keyCode === 9;
+
+        firstFocusable = $focusable[0]; 
 
         if (!isTabPressed) {
             return;
@@ -32,21 +33,21 @@ const trapFocus = (modalEl, props) => {
 
         if (e.shiftKey) { 
             // if shift key pressed for shift + tab combination
-            if (document.activeElement === firstFocusableElement) {
-                lastFocusableElement.focus(); 
+            if (document.activeElement === firstFocusable) {
+                lastFocusable.focus(); 
                 e.preventDefault();
             }
         } else { 
             // if tab key is pressed
-            if (document.activeElement === lastFocusableElement) { 
-                firstFocusableElement.focus(); 
+            if (document.activeElement === lastFocusable) { 
+                firstFocusable.focus(); 
                 e.preventDefault();
             }
         }
     });
 
-    if (focusFirst && firstFocusableElement) {
-        firstFocusableElement.focus();
+    if (focusFirst && firstFocusable) {
+        firstFocusable.focus();
     }
 
     return {

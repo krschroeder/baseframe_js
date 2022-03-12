@@ -101,14 +101,15 @@
 	(function($){
 		$('.popup-w-string').popup({
 			group: '.popup-w-string',
-			useHashFilter: 'popup'
+			useHashFilter: 'popupStr'
 		});
 
 		$('.popup-w-content-id').popup();
 
 		window.picGroupPopup = $('.pic-group').popup({
 			src: '.pic-group',
-			title:'A Group of Pictures'
+			title:'A Group of Pictures',
+			useHashFilter: 'popupPicGroup'
 			 
 		}).css({outline: '1px dotted green'});
 

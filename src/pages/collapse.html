@@ -21,7 +21,7 @@
 			<div style="height: 600px;" class="spacer-div">
 				<p id='firstp' data-foo-bar="foo bar">Look a bunch of space above!</p>
 			</div>
-			<div class="md-col-6 center collapse collapse-group" >
+			<div class="md-col-6 center collapse collapse-group collapse-group-1" >
 				<div class="collapse__item">
 					<div class="collapse__header">
 						<h2><a href="#item-1" class="collapse__btn" role="button" aria-expanded="false" aria-controls="item-1"
@@ -60,7 +60,7 @@
 				Look a bunch of space below!
 			</div>
 
-			<div class="md-col-6 center collapse collapse-group" >
+			<div class="md-col-6 center collapse collapse-group collapse-group-2" >
 				<div class="collapse__item">
 					<div class="collapse__header">
 						<h2><a href="#item2-1" class="collapse__btn" role="button" aria-expanded="false" aria-controls="item-1"
@@ -168,10 +168,18 @@
 
 	$(function(){
 
-		$('.collapse-group').collapse({
+		$('.collapse-group-1').collapse({
 			moveToTopOnOpen:true,
 			toggleGroup:true,
 			useHashFilter: 'collapse',
+			loadLocationHash: true,
+			useLocationHash: true
+		});
+
+		$('.collapse-group-2').collapse({
+			moveToTopOnOpen:true,
+			toggleGroup:true,
+			useHashFilter: 'collapse2',
 			loadLocationHash: true,
 			useLocationHash: true
 		});

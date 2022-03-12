@@ -4,7 +4,7 @@ import { CSS_TRANSISTION_DELAY } from './util/constants';
 import smoothScroll from './util/smooth-scroll';
 import { getHashParam } from './util/get-param';
 import { elData } from './util/store';
-import historyState from './util/plugin/history-state.js';
+import updateHistoryState from './util/plugin/update-history-state.js';
 
 const VERSION = "2.1.8";
 const DATA_NAME = 'Collapse';
@@ -38,7 +38,7 @@ export default class Collapse {
 			scrollSpeed: 100,
 			useHashFilter: null,
 			useLocationHash: true,
-			useHistoryState: 'replace',
+			historyType: 'replace',
 			loadLocationHash: true,
 			afterOpen: () => { },
 			afterClose: () => { },
@@ -149,19 +149,7 @@ export default class Collapse {
 			const $this = $(this);
 			const collapseID = $this.attr('href') || $this.attr('data-href');
 
-			// const {useLocationHash, useHistoryState} = _.params; 
-			// const {protocol, host, pathname} = window.location;
-			// const page = protocol + '//' + host + (pathname || '');
-
-			// if (useLocationHash) {
-			// 	if (useHistoryState === 'replace') {
-			// 		history.replaceState(null, null, page + getHistoryEntry(_,collapseID));
-			// 	} else {
-			// 		history.pushState(null, null, getHistoryEntry(_,collapseID));
-			// 	}
-			// }
-
-			historyState(_, collapseID);
+			updateHistoryState(_, collapseID.substring(1));
 
 			_._toggleAction(collapseID);
 		});

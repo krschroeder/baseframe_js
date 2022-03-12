@@ -24,8 +24,8 @@ import installStoreToLibrary, {
 
 //necessary for all plugin's to operate
 //much like jQuery's $.data method, the $.store is similar
-// installStoreToLibrary(true);
-installStoreAsDataToLibrary(true); 
+installStoreToLibrary(true);
+// installStoreAsDataToLibrary(true); 
 
 //pass in as an array
 libraryExtend([

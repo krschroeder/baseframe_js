@@ -59,7 +59,7 @@ export default class EqualizeContent {
 		elData(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(EqualizeContent.defaults, options, dataOptions) 
+			$.extend({}, EqualizeContent.defaults, options, dataOptions) 
 		);
 		_.params = elData(element,`${DATA_NAME}_params`);
 

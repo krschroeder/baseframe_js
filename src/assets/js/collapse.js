@@ -6,7 +6,7 @@ import { getHashParam } from './util/get-param';
 import { elData } from './util/store';
 import updateHistoryState from './util/plugin/update-history-state.js';
 
-const VERSION = "2.1.8";
+const VERSION = "2.2.0";
 const DATA_NAME = 'Collapse';
 const EVENT_NAME = 'collapse';
 
@@ -73,12 +73,13 @@ export default class Collapse {
 		elData(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(Collapse.defaults, options, dataOptions)
+			$.extend({},Collapse.defaults, options, dataOptions)
 		);
 		_.params = elData(element, `${DATA_NAME}_params`);
 
 		_.toggling = false;
-		_.prevItem = null;
+		_.prevID = '#';
+		_.initiallyLoaded = false;
 
 		_.init();
 
@@ -90,10 +91,10 @@ export default class Collapse {
 
 		_.collapseBodyNoID();
 		_.setDisplay();
-		_.toggleItems();
 		_.loadContentFromHash();
+		_.collapseEvents();
 		_.params.afterInit(_.element);
-
+		setTimeout(() => {_.initiallyLoaded = true}, 1000);
 	}
 
 	setDisplay() {
@@ -134,7 +135,7 @@ export default class Collapse {
 		});
 	}
 
-	toggleItems() {
+	collapseEvents() {
 		const _ = this;
 		_.onElem = _.params.toggleClickBindOn == 'group' ? _.element :
 			//default to group anyway if the body isn't specified
@@ -149,49 +150,64 @@ export default class Collapse {
 			const $this = $(this);
 			const collapseID = $this.attr('href') || $this.attr('data-href');
 
-			updateHistoryState(_, collapseID.substring(1));
-
 			_._toggleAction(collapseID);
 		});
 
 		$(window).on(`popstate.${EVENT_NAME}`, (e) => {
-
-			_.loadContentFromHash();
-			e.preventDefault();
+			if (_.params.historyType === 'push') {
+				_.loadContentFromHash(false, false);
+				e.preventDefault();
+			}
 		})
 	}
 
-	loadContentFromHash() {
+	loadContentFromHash(noAnimation = true, history = true) {
 		const _ = this;
 
-		const { useLocationHash, loadLocationHash, useHashFilter } = _.params;
+		const { useLocationHash, loadLocationHash, useHashFilter, openCss } = _.params;
 
 		if (useLocationHash || loadLocationHash) {
 
 			const hash = (useHashFilter ? (getHashParam(useHashFilter) || '') : location.hash);
-
+			
 			//if there are multiples
 			const hashes = hash.split('=');
 
 			for (let i = 0, l = hashes.length; i < l; i++) {
+				const elID = '#' + hashes[i].split('&')[0].replace(/#/g, '');
 
-				_._toggleAction('#' + hashes[i].replace(/#/g, ''));
+				_._toggleAction(elID, noAnimation, history);
+			}
+
+			// if it's the last tab, then the 
+			// location hash will not exist on the element
+			// so just look for an open one
+			if (_.prevID !== '#' && _.initiallyLoaded) {
+				const $prevTab = $(_.element).find(_.prevID);
+
+				if ($prevTab.length) {
+					const isOpen = $prevTab.hasClass(openCss);
+
+					if (isOpen) {
+						_._toggleAction(_.prevID, false, history);
+					}
+				}
 			}
 		}
 
 	}
 
 
-	_toggleAction(collapseID, noAnimation = false) {
+	_toggleAction(collapseID, noAnimation = false, history = true) {
 		const _ = this;
 		if (collapseID === '#') return;
 
 		const $collapsibleItem = $(_.element).find(collapseID);
-		const { openCss, openNoAnimateCss, togglingCss, toggleGroup } = _.params;
+		const { openCss, openNoAnimateCss, togglingCss, toggleGroup, useHashFilter } = _.params;
 
 		if (!$collapsibleItem.length) { return; }
 
-		const CLOSE = $collapsibleItem.hasClass(openCss);
+		const close = $collapsibleItem.hasClass(openCss);
 		const btnElems = `[data-href="${collapseID}"],a[href="${collapseID}"]`;
 		const $btnElems = $(_.onElem).find(btnElems);
 
@@ -202,11 +218,16 @@ export default class Collapse {
 			_._toggleGroup($btnElems, $collapsibleItem);
 		}
 
-		if (CLOSE) {
+		if (close) {
 			_._closeItem($btnElems, $collapsibleItem)
 		} else {
 			_._openItem($btnElems, $collapsibleItem);
 		}
+
+		history && updateHistoryState(_, collapseID.substring(1), close, _.prevID.substring(1));
+
+
+		_.prevID = collapseID;
 	}
 
 	_toggleGroup($btnElems, $clickedItem) {

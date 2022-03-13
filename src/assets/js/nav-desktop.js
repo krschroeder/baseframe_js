@@ -59,7 +59,7 @@ export default class NavDesktop {
 		elData( 
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(NavDesktop.defaults, options, dataOptions)
+			$.extend({}, NavDesktop.defaults, options, dataOptions)
 		);
 		_.params = elData(element, `${DATA_NAME}_params`);
 

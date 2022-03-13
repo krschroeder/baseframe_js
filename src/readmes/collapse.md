@@ -26,7 +26,8 @@ moveToTopOffset | number |  0 |  Should we need to offset the move to the top if
 scrollSpeed | number |  100 |  The speed of the scroll if __moveToTopOnOpen__ is set to `true`.
 useHashFilter | string | null | If there is a number of elements where the `location.hash` value is used, it may be necessary to filter it to get the intended data. Pass in a string value, i.e.: 'collapse' and it'll load and filter through as needed while maintaining the remaining location hash values. this only gets used if 'useLocationHash' option is selected. 
 useLocationHash | boolean |  true |  Use the `window.location.hash` to open and close the items.
-loadLocationHash | boolean |  true | Loads with a location hash in the browser address bar, must of course be the ID of the item. and can pass several as follows `#idOf1=idOf2` but beware if you do one may only open based on settings.
+loadLocationHash | boolean |  true | Loads with a location hash in the browser address bar, must of course be the ID of the item.
+historyType | string | 'push' | If using using `useLocationHash` or a history of events, 'push' pushes a new state, and 'replace' replaces the current.
 afterOpen | function |  ($btnElems, $collapsibleItem) => { } |  callback function after an item is opened.
 afterClose | function |  ($btnElems, $collapsibleItem) => { } |  callback function after an item is closed.
 afterInit | function |  ($btnElems, $collapsibleItem) => { } | callback function after collapse is initialized.

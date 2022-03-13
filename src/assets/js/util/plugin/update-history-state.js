@@ -1,13 +1,13 @@
 // import getHistoryEntry from "./get-history-entry";
 import {changeHashParam} from '../get-param';
 
-const updateHistoryState = (_, val) => {
+const updateHistoryState = (_, val, remove = false, prevVal) => {
 
     const { useLocationHash, historyType, useHashFilter } = _.params;
  
     if (useLocationHash) {
-        const updatedQs = '#' + (useHashFilter ? changeHashParam(useHashFilter, val) : val);
-        
+        const updatedQs = '#' + changeHashParam(useHashFilter, val, remove, prevVal);  
+
         if (historyType === 'replace') {
             history.replaceState(null, null, updatedQs);
 

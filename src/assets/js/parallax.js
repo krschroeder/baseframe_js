@@ -66,7 +66,7 @@ export default class Parallax {
 		elData(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(Parallax.defaults, instanceDefaults, options, dataOptions)
+			$.extend({}, Parallax.defaults, instanceDefaults, options, dataOptions)
 		);
 		_.params = elData(element, `${DATA_NAME}_params`);
 

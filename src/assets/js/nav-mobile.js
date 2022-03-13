@@ -7,7 +7,7 @@ import { elData } from './util/store';
 import trapFocus from './util/trap-focus.js';
  
 
-const VERSION = "1.4.0";
+const VERSION = "1.4.1";
 const DATA_NAME = 'NavMobile';
 const EVENT_NAME = 'navMobile';
  
@@ -80,7 +80,7 @@ export default class NavMobile {
 		elData(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(NavMobile.defaults, options, dataOptions)
+			$.extend({}, NavMobile.defaults, options, dataOptions)
 		);
 		_.params = elData(element, `${DATA_NAME}_params`);
 
@@ -191,6 +191,8 @@ export default class NavMobile {
 
 			if (key === ESCAPE && _.$element.hasClass(_.params.menuOpenCss) && _.allowClick) {
 				_.mobileMenuToggle();
+
+				$(_.params.enableBtn)[0].focus();
 			}
 		});
 	}

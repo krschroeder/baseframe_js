@@ -73,7 +73,7 @@ export default class SelectEnhance {
 		elData(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(SelectEnhance.defaults, options, dataOptions)
+			$.extend({}, SelectEnhance.defaults, options, dataOptions)
 		);
 		_.params = elData(element, `${DATA_NAME}_params`);
 

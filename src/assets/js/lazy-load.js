@@ -94,6 +94,7 @@ export default class LazyLoad {
             element,
             `${DATA_NAME}_params`,
             $.extend(
+                {},
                 LazyLoad.defaults,
                 options, 
                 dataOptions

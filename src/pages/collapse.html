@@ -99,7 +99,7 @@
 
 		<div class="container v-space">
 
-			<div class="tabs__container">
+			<div class="tabs__container tabs-1">
 				<div class="inline-ul tabs__nav" role="menubar">
 					<ul>
 						<li><a href="#description"><span>Description</span></a></li>
@@ -112,7 +112,7 @@
 				</div>
 				<div class="tabs__body">
 					<div data-tab-id="description" class="tabs__body-item">
-						<div class="tabs__container inner-one">
+						<div class="tabs__container tabs-2 inner-one">
 							<div class="inline-ul tabs__nav" role="menubar">
 								<ul>
 									<li><a href="#description-inner"><span>Description Inner</span></a></li>
@@ -171,7 +171,7 @@
 		$('.collapse-group-1').collapse({
 			moveToTopOnOpen:true,
 			toggleGroup:true,
-			useHashFilter: 'collapse',
+			// useHashFilter: 'collapse',
 			loadLocationHash: true,
 			useLocationHash: true
 		});
@@ -184,18 +184,8 @@
 			useLocationHash: true
 		});
 
-		$(".tabs__container").tabs({
-			useHashFilter: 'tabs',
-			onInit: function(tab,list,body) {
-				//console.log('init',tab,list,body)
-			},
-			beforeChange: function(tab,list,body) {
-				//console.log('before',tab,list,body)
-			},
-			afterChange: function(tab,list,body) {
-				//console.log('after',tab,list,body)
-			}
-		});
+		$(".tabs-1").tabs({useHashFilter: 'tabs'});
+		$(".tabs-2").tabs({useHashFilter: 'tabs2'});
 
 	});
 

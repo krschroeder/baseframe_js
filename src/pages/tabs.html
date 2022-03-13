@@ -24,7 +24,7 @@
 								<ul>
 									<li><a href="#description-inner"><span>Description Inner</span></a></li>
 									<li><a href="#files-inner"><span>Files Inner</span></a></li>
-									<li><a href="#requirements-inner"><span>Requirements Inner</span></a></li>
+									<li><button type="button" data-href="#requirements-inner"><span>Requirements Inner</span></button></li>
 
 								</ul>
 							</div>
@@ -71,9 +71,11 @@
 {{>footer}}
 
 <script>
-$(".tabs-outer").tabs({useHashFilter: 'tabs'});
-
 $(".tabs-inner").tabs({useHashFilter: 'tabs2'});
+$(".tabs-outer").tabs({
+	useHashFilter: 'tabs'
+});
+
 </script>
 
 </body>

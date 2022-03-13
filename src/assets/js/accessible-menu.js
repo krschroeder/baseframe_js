@@ -137,7 +137,7 @@ export default class AccessibleMenu {
 		elData(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(AccessibleMenu.defaults, options, dataOptions)
+			$.extend({}, AccessibleMenu.defaults, options, dataOptions)
 		);
 		_.params = elData(element, `${DATA_NAME}_params`);
 

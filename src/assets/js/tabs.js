@@ -6,7 +6,7 @@ import updateHistoryState from './util/plugin/update-history-state.js';
 import { elData } from './util/store';
 
 
-const VERSION = "1.1.0";
+const VERSION = "1.2.0";
 const DATA_NAME = 'Tabs';
 const EVENT_NAME = 'tabs';
 const DEFAULTS = {
@@ -27,6 +27,8 @@ const DEFAULTS = {
 	onInit: () => { }
 };
 
+const getTabIDFromEl = (el) => $(el).attr(el.nodeName.toUpperCase() === 'BUTTON' ? 'data-href' : 'href').replace(/^\#/,'');
+
 export default class Tabs {
 
 	static get version() {
@@ -39,19 +41,6 @@ export default class Tabs {
 
 	static get defaults() {
 		return DEFAULTS;
-	}
-
-	static remove(element) {
-		$(element).each(function () {
-			const params = elData(this, `${DATA_NAME}_params`);
-			const instance = elData(this, `${DATA_NAME}_instance`);
-
-			instance.$tabsList.off(`${params.tabsEvent}.${EVENT_NAME} ${EVENT_NAME}`);
-			$(window).off(`hashchange.${EVENT_NAME}`);
-
-			elData(this, `${DATA_NAME}_params`, null, true);
-			elData(this, `${DATA_NAME}_instance`, null, true);
-		})
 	}
 
 	constructor(element, options, index) {
@@ -67,32 +56,53 @@ export default class Tabs {
 		elData(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(Tabs.defaults, options, dataOptions)
+			$.extend({},Tabs.defaults, options, dataOptions)
 		);
 
 		_.params = elData(element, `${DATA_NAME}_params`);
 		_.$tabsList = _.$element.find(`.${_.params.tabsHeadCss}`).first();
-		_.$tabsBody = _.$element.find(`.${_.params.tabsBodyCss}`).first();
+		_.$tabsBody = _.$element.find(`.${_.params.tabsBodyCss}`).first(); 
 
-		_.prevTabId = null;
-
+		_.prevTabId = '#';
+		const {defaultContent} = _.params;
+		 
 		//init
 		_.ADA_Attributes();
 		_.tabsChangeEvent();
-		_.changeTabElements(_.params.defaultContent);
-		_.loadTabContent();
+		_.changeTabElements( _.getTabFromHash(),true);
 
-		$(window).on(`hashchange.${EVENT_NAME}`, () => {
-			//inside so we can change this parameter
-			//if we need too
-			if (_.params.useLocationHash) {
-				_.loadTabContent();
+		$(window).on(`popstate.${EVENT_NAME}`, (e) => {
+			if (_.params.historyType === 'push') {
+
+				_.changeTabElements(_.getTabFromHash(), true);
+				e.preventDefault();
 			}
-		});
+		})
 
 		_.params.onInit(_.prevTabId, _.$tabsList, _.$tabsBody);
-
+	
 		return this;
+	}
+
+	getTabFromHash() {
+		const _ = this;
+		const { useHashFilter, tabsBodyItemCss, defaultContent} = _.params;
+ 
+		let defaultTab = '';
+
+		if (useHashFilter) {
+			defaultTab = getHashParam(useHashFilter);
+		} else {
+			defaultTab = location.hash.split('&').filter(tabHref => {
+				if (tabHref.indexOf('=') === -1) {
+					if (_.$tabsBody.find(`.${tabsBodyItemCss}[data-tab-id="${tabHref}"]`).length) {
+						return tabHref;
+					}
+				}
+			})[0];
+		}
+
+		return defaultTab || getTabIDFromEl(_.$tabsList.find('a, button')[defaultContent]);
 	}
 
 	ADA_Attributes() {
@@ -100,8 +110,8 @@ export default class Tabs {
 		const { tabsBodyItemCss, addIDtoPanel } = _.params;
 
 		_.$tabsList.find("a, button").each(function () {
-
-			const tabHref = $(this).attr('href').substr(1);
+		 
+			const tabHref = getTabIDFromEl(this);
 			const $tabBodyItem = _.$tabsBody.find(`.${tabsBodyItemCss}[data-tab-id="${tabHref}"]`);
 
 			$(this).attr({
@@ -124,62 +134,26 @@ export default class Tabs {
 	tabsChangeEvent() {
 		const _ = this;
 
-		_.$tabsList.on(`${_.params.tabsEvent}.${EVENT_NAME} ${EVENT_NAME}`, "a,button", function (e) {
-			const href = $(this).attr('href') || $(this).attr('data-href');
-			const isHashHref = (/\#/).test(href);
-
-			if (isHashHref) {
-
-				const tabId = href.substring(1);
-
-				_.loadTabContent(tabId);
-				e.preventDefault();
-			}
+		_.$tabsList.on(`${_.params.tabsEvent}.${EVENT_NAME} ${EVENT_NAME}`, "a, button", function (e) {
+			const tabId = getTabIDFromEl(this);
+			
+			_.changeTabElements(tabId);
+			e.preventDefault(); 
 		});
 	}
 
-	loadTabContent(tabId) {
-		const _ = this;
-		const { loadLocationHash, useHashFilter, useLocationHash } = _.params;
-		console.log(_.$element)
-		if (loadLocationHash) {
+	changeTabElements(tabId, init = false) {
 
-			const hash = (useHashFilter ? (getHashParam(useHashFilter) || '') : location.hash);
-			
-			_.changeTabElements(hash.replace(/#/g, ''));
-			 
-		}
-
-		if (!useLocationHash) {
-			
-			_.changeTabElements(tabId);
-		} else {
-			updateHistoryState(_, tabId);
-		}
-
-	}
-
-	changeTabElements(_tabId) {
-
-		if (_tabId === 'none') return;
+		if (tabId === 'none') return;
 
 		const _ = this;
-		const { activeCss, tabsBodyCss, tabsBodyItemCss, tabsBodyItemShowCss } = _.params;
+		const { 
+			activeCss, 
+			tabsBodyCss, 
+			tabsBodyItemCss, 
+			tabsBodyItemShowCss 
+		} = _.params;
 
-		let tabId = _tabId;
-		if (getType(_tabId) === "number") {
-			const $tabLi = _.$tabsList.find('li').eq(_tabId);
-
-			if ($tabLi.find('a').length) {
-
-				tabId = $tabLi.find('a').attr('href').substring(1);
-			}
-			if ($tabLi.find('button').length) {
-
-				tabId = $tabLi.find('button').attr('data-href').substring(1);
-			}
-		}
-			 
 
 		const $tabSelectedItem = _.$tabsBody.find(`.${tabsBodyItemCss}[data-tab-id="${tabId}"]`);
 
@@ -191,8 +165,8 @@ export default class Tabs {
 
 			if (!isInItsBody) return;
 
-			_.$tabsList.find("a,button").attr({ 'aria-selected': false });
-			_.$tabsList.find("li").removeClass(activeCss);
+			_.$tabsList.find("a, button").attr({ 'aria-selected': false });
+			_.$tabsList.find('.' + activeCss).removeClass(activeCss);
 
 			$(`.${tabsBodyItemCss}`, _.$tabsBody).each(function () {
 
@@ -204,8 +178,10 @@ export default class Tabs {
 				}
 			});
 
-			_.$tabsList.find(`a[href="#${tabId}"],button[data-href="#${tabId}]`)
+			_.$tabsList.find(`a[href="#${tabId}"], button[data-href="#${tabId}"]`)
 				.attr({ 'aria-selected': true })
+				.addClass(activeCss)
+				// if we have a list item
 				.closest('li').addClass(activeCss);
 
 			_.$tabsBody.find(`.${tabsBodyItemCss}[data-tab-id="${tabId}"]`)
@@ -213,7 +189,23 @@ export default class Tabs {
 				.attr({ 'aria-hidden': false });
 
 			_.params.afterChange(tabId, _.$tabsList, _.$tabsBody);
+
+			!init && updateHistoryState(_, tabId, false, _.prevTabId);
 			_.prevTabId = tabId;
 		}
 	}
+
+	static remove(element) {
+		$(element).each(function () {
+			const params = elData(this, `${DATA_NAME}_params`);
+			const instance = elData(this, `${DATA_NAME}_instance`);
+
+			instance.$tabsList.off(`${params.tabsEvent}.${EVENT_NAME} ${EVENT_NAME}`);
+			$(window).off(`popstate.${EVENT_NAME}`);
+
+			elData(this, `${DATA_NAME}_params`, null, true);
+			elData(this, `${DATA_NAME}_instance`, null, true);
+		})
+	}
+
 }

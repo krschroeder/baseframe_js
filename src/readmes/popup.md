@@ -41,6 +41,7 @@ enableEvent | string |  'click' | The event to show the popup, change to whateve
 useHashFilter | string | null | If there is a number of elements where the `location.hash` value is used, it may be necessary to filter it to get the intended data. Pass in a string value, i.e.: 'popup' and it'll load and filter through as needed while maintaining the remaining location hash values. Example value of this could be `#popup=#your_popup__1&foo=bar&baz=foo`. This only gets used if 'useLocationHash' option is selected. 
 loadLocationHash | boolean |  true | Loads a popup from a `window.location.hash`, if the hash matches the popup.
 useLocationHash | boolean |  true | Uses history and creates a hash in the location to toggle the popups on or off
+historyType | string | 'push' | If using using `useLocationHash` or a history of events, 'push' pushes a new state, and 'replace' replaces the current.
 afterLoaded | function |  (_.$element, popupID) => { } | Function to run after the popup is displayed. `_.$element` is the `$(HTMLElement)` the popup is intialized on.
 afterClose | function |  (_.$element, popupID) => { } | Function to run after the popup is closed.
 onClose | function |  (_.$element, popupID) => { } | Function to run after the popup at the begninning of the closing event.

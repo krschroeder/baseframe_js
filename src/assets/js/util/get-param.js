@@ -1,8 +1,7 @@
-import $visible from "./visible";
 
 export const qsToObject = (qs = location.search.substring(1)) => {
 
-   if (qs && qs.indexOf('=') !== -1) {
+   if (qs) {
       const jsonStr = '{'+ 
          decodeURI(qs)
             .split('&').map((el) => {
@@ -11,13 +10,16 @@ export const qsToObject = (qs = location.search.substring(1)) => {
             }).join(',')
          +'}';
 
-      return JSON.parse(jsonStr, (key, value) => {
+      const jsonObj = JSON.parse(jsonStr, (key, value) => {
             if (value === 'true') return true;
             if (value === 'false') return false;
             if (value !== "" && typeof +value === 'number' && !isNaN(+value)) return +value;
             return value;
          }
       );
+
+      return jsonObj;
+
    } else {
       return {};
    }
@@ -42,10 +44,33 @@ export const objectToQs = (qs) => {
    return strArr.join('&');
 }
 
-export const changeHashParam = (key, val) => {
+export const changeHashParam = (key, val, remove = false, prevVal) => {
    const hashObj = qsToObject(location.hash.substring(1));
    
-   return objectToQs($.extend(hashObj,{[key]: val}));
+   if (!key && val !== prevVal) {
+      delete hashObj[prevVal];
+   }
+   
+   if (remove) {
+
+      if (key) {
+         delete hashObj[key];
+      }
+
+      if (!key && val) {
+         delete hashObj[val];
+      }
+
+   } else {
+      if (key) {
+
+         $.extend(hashObj,{[key]: val}); 
+      } else {
+         $.extend(hashObj,{[val]: ''})   
+      }
+   }
+   
+   return objectToQs(hashObj);
 }
 
 const _getParam = (name, 

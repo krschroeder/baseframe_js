@@ -54,7 +54,7 @@ export default class ResponsiveDropDown {
 		elData(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(ResponsiveDropDown.defaults, options, dataOptions)
+			$.extend({}, ResponsiveDropDown.defaults, options, dataOptions)
 		);
 		_.params = elData(element, `${DATA_NAME}_params`);
 

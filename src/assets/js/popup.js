@@ -11,7 +11,7 @@ import { CSS_TRANSISTION_DELAY } from './util/constants.js';
  
 import { KEYS } from './util/constants';
 
-const VERSION = "1.3.0";
+const VERSION = "1.4.0";
 const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
 const INSTANCE_NAME = `${DATA_NAME}_instance`;
@@ -90,7 +90,7 @@ export default class Popup {
 		elData(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend(Popup.defaults, instanceDefaults, options, dataOptions)
+			$.extend({}, Popup.defaults, instanceDefaults, options, dataOptions)
 		);
 		_.params = elData(element, `${DATA_NAME}_params`);
 
@@ -146,8 +146,8 @@ export default class Popup {
 
 		$(window).on(`popstate.${_.popupEventName} ${_.popupEventName}`, (e) => {
 			const { useLocationHash, useHashFilter } = _.params;
-
-			if (useLocationHash) {
+			
+			if (useLocationHash && _.params.historyType === 'push') {
 
 				if (
 					_.historyID === _.isOpenHash ||
@@ -164,8 +164,11 @@ export default class Popup {
 		if (launch) {
 			_.loadPopup(document.activeElement);
 		}
-
-		if (loadLocationHash && _.historyID === (useHashFilter ? getHashParam(useHashFilter) : location.hash)) {
+	
+		if (loadLocationHash && 
+			_.historyID === (useHashFilter ? '#' + getHashParam(useHashFilter) : location.hash)
+		) {
+			
 			_.loadPopup(_.$element);
 			_.loadedFromHash = true;
 		}
@@ -548,7 +551,7 @@ export default class Popup {
 
 	closeEvent() {
 		const _ = this;
-		updateHistoryEntry(_,'');
+		updateHistoryEntry(_, _.historyID.substring(1), true);
 		_.close();
 	}
 

@@ -5,7 +5,7 @@ import { isMobileOS, IE_Event } from "./util/helpers";
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/listbox_role
 
 
-const VERSION = "1.3.1";
+const VERSION = "1.3.2";
 const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 
@@ -456,7 +456,6 @@ export default class SelectEnhance {
                 role: 'option', id,
                 'data-value': opt.value,
                 'aria-selected': opt.selected ? 'true' : null,
-                title: opt.value,
                 class: cssPrefix + '__list-btn'
             };
             const $btn = $('<button/>').attr(attrs).text(opt.textContent);

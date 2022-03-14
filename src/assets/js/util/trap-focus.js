@@ -6,7 +6,7 @@ const defaultProps = {
     focusable: ['button', 'a', 'input', 'select', 'textarea', '[tabindex]']
 };
 
-const canFocusEls = (i, el) => isVisible(el) && el.tabIndex !== -1;
+const canFocusEls = (i, el) => isVisible(el, true) && el.tabIndex !== -1;
 
 const trapFocus = (modalEl, props) => {
 
@@ -15,8 +15,7 @@ const trapFocus = (modalEl, props) => {
      
     let firstFocusable = null;
 
-    $(document).on(`keydown.${nameSpace}`, function (e) {
-
+    $(document.body).on(`keydown.${nameSpace}`, function (e) {
         const focusableJoined = typeof focusable === 'string' ? focusable : focusable.join(',');
         const $focusable = $trapElem.find(focusableJoined).filter(canFocusEls);
  
@@ -52,7 +51,7 @@ const trapFocus = (modalEl, props) => {
 
     return {
         remove: () => {
-            $(document).off(`keydown.${nameSpace}`);
+            $(document.body).off(`keydown.${nameSpace}`);
         }
     }
 }

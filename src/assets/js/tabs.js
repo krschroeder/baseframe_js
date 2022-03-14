@@ -64,7 +64,6 @@ export default class Tabs {
 		_.$tabsBody = _.$element.find(`.${_.params.tabsBodyCss}`).first(); 
 
 		_.prevTabId = '#';
-		const {defaultContent} = _.params;
 		 
 		//init
 		_.ADA_Attributes();

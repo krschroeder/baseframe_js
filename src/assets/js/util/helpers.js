@@ -17,7 +17,21 @@ export function IE_Event(event, params) {
 }
 
 // visibilty
-export const isVisible = (el) => el.offsetParent !== null || !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
+export const isVisible = (el, visibility = false) => {
+    const vis = el.offsetParent !== null || 
+        !!(el.offsetWidth || 
+        el.offsetHeight ||
+        el.getClientRects().length);
+
+    if (visibility) {
+        return $(el).css('visibility') !== 'hidden' && vis;
+    } else {
+        
+        return vis;
+    }
+}
+   
+
 export const isHidden = (el) => !isVisible(el);
 
 // string manipulation

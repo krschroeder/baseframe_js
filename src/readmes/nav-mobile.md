@@ -23,6 +23,8 @@ afterNavItemOpen | function | () => {} | Function to run after an nav item is op
 afterNavItemClose | function | () => {} | Function to run after a nav item is closed.
 afterOpen | function | () => {} | Function to run after the nav is open.
 afterClose | function | () => {} | Function to run after the nav is closed.
+doTrapFocus | boolean | true | Traps the focus to just the visible anchors and buttons within the navigation.
+trapFocusElem | string | null | selector string (or can be dom element) if we need to extend the trap focus slightly outside the main nav element.
 stopPropagation | boolean | true, | Stops the click from propagating up in the DOM from the nav element.
 nextLevelBtn | string | `<i class="nav-icon nav-icon--next" /><span class="sr-only">View menu</span></i>` | Button for the 'next level'. This only works if the base class is extended with the `NavMobileNestled`.
 backLevelBtn | string | `<i class="nav-icon nav-icon--back" >← <span class="sr-only">Go Back</span></i>` | Button for the 'previous level'. This only works if the base class is extended with the `NavMobileNestled`.

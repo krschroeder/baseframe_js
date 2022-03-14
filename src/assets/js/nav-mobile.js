@@ -7,7 +7,7 @@ import { elData } from './util/store';
 import trapFocus from './util/trap-focus.js';
  
 
-const VERSION = "1.4.1";
+const VERSION = "1.5.1";
 const DATA_NAME = 'NavMobile';
 const EVENT_NAME = 'navMobile';
  
@@ -39,32 +39,14 @@ export default class NavMobile {
 			afterNavItemClose: () => {},
 			afterOpen: () => {},
 			afterClose: () => {},
+			doTrapFocus: true,
+			trapFocusElem: null,
 			stopPropagation: true,
 			nextLevelBtn: `<i class="nav-icon nav-icon--next" /><span class="sr-only">View menu</span></i>`,
 			backLevelBtn: `<i class="nav-icon nav-icon--back" >← <span class="sr-only">Go Back</span></i>`,
 			navToggleNestled: false,
 			bkptEnable: null
 		};
-	}
-
-	static remove(element) {
-
-		$(element).each(function () {
-			const instance = elData(this, `${DATA_NAME}_instance`);
-			const params = elData(this, `${DATA_NAME}_params`);
-		 
-			$(params.enableBtn).off(`click.${EVENT_NAME} ${EVENT_NAME}`);
-			$(document).off(`keydown.${EVENT_NAME}`);
-			instance.$element
-				.off(`click.${EVENT_NAME} ${EVENT_NAME}`)
-				.off(`click.${EVENT_NAME} ${EVENT_NAME}`);
-
-			$(document.body).off(`click.${EVENT_NAME}`);
-			$(window).off(`resize.${EVENT_NAME} ${EVENT_NAME}`);
-
-			elData(this, `${DATA_NAME}_params`, null, true);
-			elData(this, `${DATA_NAME}_instance`, null, true);
-		});
 	}
 
 	constructor(element, options) {
@@ -90,7 +72,7 @@ export default class NavMobile {
 		_.menuNavigationClick();
 		_.checkIfEnabled();
 		
-		_.doOutsideClick();
+		_.outsideClickClose();
 	
 
 		const elemID = element[0].id || element[0].className;
@@ -111,7 +93,9 @@ export default class NavMobile {
 			menuOpenCss, 
 			menuIsOpeningCss,
 			menuIsClosingCss, 
-			slideDuration
+			slideDuration,
+			doTrapFocus,
+			trapFocusElem
 		} = _.params;
 
 		let trappedFocus = null;
@@ -124,7 +108,6 @@ export default class NavMobile {
 
 			$(outerElement).removeClass(menuOpenCss + ' ' + menuIsClosingCss);
 
-			// $(outerElement).addClass(menuIsClosingCss);
 			setTimeout(() => {
 				$(outerElement).removeClass(menuIsClosingCss);
 			}, slideDuration);
@@ -139,14 +122,15 @@ export default class NavMobile {
 			_.$element.addClass(menuOpenCss);
 			$(outerElement).addClass(menuOpenCss + ' ' + menuIsOpeningCss);
 
-			// $(outerElement).addClass(menuIsOpeningCss);
 			setTimeout(() => {
 				$(outerElement).removeClass(menuIsOpeningCss);
 			}, slideDuration);
 
 			_.menuOpened = true;
 			 
-			trappedFocus = trapFocus(_.$element, { nameSpace: EVENT_NAME });
+			if (doTrapFocus) {
+				trappedFocus = trapFocus(trapFocusElem || _.$element, { nameSpace: EVENT_NAME });
+			}
 
 			_.params.afterOpen();
 		}
@@ -227,17 +211,10 @@ export default class NavMobile {
 			 
 			if (!isOpened) {
 				
-				
-
 				_.allowClick = false;
-
 				$ul.addClass(menuTogglingCss);
-				
 				const ulHeightBeforeResetToZero = $ul[0].scrollHeight;
-
 				$ul.css({ height: 0 });
-
-				
 
 				setTimeout(() => {
 					$ul.css({ height: ulHeightBeforeResetToZero });
@@ -265,7 +242,6 @@ export default class NavMobile {
 				$ul.css({ height: $ul[0].scrollHeight });
 
 			 
-
 				setTimeout(() => {
 					$ul.css({ height: 0 });
 				}, CSS_TRANSISTION_DELAY);
@@ -297,7 +273,7 @@ export default class NavMobile {
 	}
 
 
-	doOutsideClick() {
+	outsideClickClose() {
 		const _ = this;
 		$(document.body).on(`click.${EVENT_NAME}`, this, function (e) {
 			if (_.params.outsideClickClose) {
@@ -334,12 +310,29 @@ export default class NavMobile {
 					$(window).width() <= _.params.bkptEnable :
 					isVisible($(_.params.enableBtn)[0])
 				;
-				 
-				 
+				  
 			}, e.type === EVENT_NAME ? 0 : 200);
-		}).trigger(EVENT_NAME);
+		}).trigger(EVENT_NAME); 
+	}
 
+	static remove(element) {
+
+		$(element).each(function () {
+			const instance = elData(this, `${DATA_NAME}_instance`);
+			const params = elData(this, `${DATA_NAME}_params`);
 		 
+			$(params.enableBtn).off(`click.${EVENT_NAME} ${EVENT_NAME}`);
+			$(document).off(`keydown.${EVENT_NAME}`);
+			instance.$element
+				.off(`click.${EVENT_NAME} ${EVENT_NAME}`)
+				.off(`click.${EVENT_NAME} ${EVENT_NAME}`);
+
+			$(document.body).off(`click.${EVENT_NAME}`);
+			$(window).off(`resize.${EVENT_NAME} ${EVENT_NAME}`);
+
+			elData(this, `${DATA_NAME}_params`, null, true);
+			elData(this, `${DATA_NAME}_instance`, null, true);
+		});
 	}
 }
 

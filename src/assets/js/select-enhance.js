@@ -5,7 +5,7 @@ import { isMobileOS, IE_Event } from "./util/helpers";
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/listbox_role
 
 
-const VERSION = "1.3.0";
+const VERSION = "1.3.1";
 const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 
@@ -340,7 +340,7 @@ export default class SelectEnhance {
         }
         
         $enableBtn.insertAfter(_.$element);
-        _.$element.attr({ tabindex: '-1', 'aria-hidden': true });
+        _.$element.attr({ tabindex: '-1', 'aria-hidden': true }); 
 
         // jQuery, elements need to be bound to the DOM before they
         // can have events attached to them. So this is the solution
@@ -436,12 +436,14 @@ export default class SelectEnhance {
         }
         
         const options = _.$element[0].getElementsByTagName('option');
+
+        
         _.$selectList = $('<div>').attr({ 
             class: cssPrefix + '__list', 
             role: 'listbox',
-            id: _.selectId + '_listbox',
-            'aria-labelledby': 'Lbl' + _.selectId || ''
+            id: _.selectId + '_listbox'
         });
+
 
         const optId = _.selectId || 'select_' + index;
        

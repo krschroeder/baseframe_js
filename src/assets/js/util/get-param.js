@@ -13,6 +13,7 @@ export const qsToObject = (qs = location.search.substring(1)) => {
       const jsonObj = JSON.parse(jsonStr, (key, value) => {
             if (value === 'true') return true;
             if (value === 'false') return false;
+            // set as number, +'' evalutes to 0... we don't want that
             if (value !== "" && typeof +value === 'number' && !isNaN(+value)) return +value;
             return value;
          }
@@ -58,6 +59,8 @@ export const changeHashParam = (key, val, remove = false, prevVal) => {
       }
 
       if (!key && val) {
+         // if we only have a value
+         // then remove that as a key
          delete hashObj[val];
       }
 
@@ -66,6 +69,9 @@ export const changeHashParam = (key, val, remove = false, prevVal) => {
 
          $.extend(hashObj,{[key]: val}); 
       } else {
+         // if we don't have a key
+         // assign the value to the key,
+         // and then it's value is blank
          $.extend(hashObj,{[val]: ''})   
       }
    }

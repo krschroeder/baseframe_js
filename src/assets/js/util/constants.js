@@ -4,10 +4,14 @@ export const KEYS = {
 	ESC: 'Escape',
 	LEFT: 'ArrowLeft',
 	RIGHT: 'ArrowRight',
+	DOWN: 'ArrowDown',
 	UP: 'ArrowUp',
-	DOWN: 'ArrowDown'
+	ENTER: 'Enter',
+	SHIFT: 'Shift',
+	SPACE: 'Space',
+	TAB: 'Tab'
 }
 
-export const photoRegex = /\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg)((#|\?).*)?$|(\?|&|&amp;)(image|ext\=\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg))?$/i;
+export const PHOTO_RGX = /\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg)((#|\?).*)?$|(\?|&|&amp;)(image|ext\=\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg))?$/i;
 
 export const CSS_TRANSISTION_DELAY = 100;

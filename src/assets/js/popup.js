@@ -2,7 +2,8 @@
 import validJSONFromString from './util/formatting-valid-json.js';
 import generateGUID from './util/guid-generate.js';
 
-import { photoRegex, isVisible, camelCase } from './util/helpers';
+import { isVisible, camelCase } from './util/helpers';
+import  { PHOTO_RGX } from './util/constants';
 import { getHashParam } from './util/get-param'
 import updateHistoryEntry from './util/plugin/update-history-state';
 import { elData } from './util/store';
@@ -52,7 +53,7 @@ export default class Popup {
 			showGroupAmount: false,
 			groupOfHTML: '/',
 			launch: false,
-			photoRegex: photoRegex,
+			photoRegex: PHOTO_RGX,
 			closeText: `<i class="icon-close"><span class="sr-only">Close</span></i>`,
 			prevBtnHTML: `<i class="icon-arrow-l"><span class="sr-only">Previous</span></i>`,
 			nextBtnHTML: `<i class="icon-arrow-r"><span class="sr-only">Next</span></i>`,

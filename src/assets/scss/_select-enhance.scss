@@ -1,6 +1,7 @@
 $select-arrow-bg: "data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M12 3L12 0L6 5L0 -5.23229e-07L-1.30807e-07 3L6 8L12 3Z' fill='%233A4455'/%3E%3C/svg%3E%0A";
 
 $select-hover-state: #eee;
+$select-selected-state: #ccc;
 $bdr-rad:  0.25rem;
 $color-font-body: #333;
 
@@ -41,7 +42,7 @@ select {
 		transition: transform 200ms ease;
 	}
 
-	&__enable-btn {
+	&__enable-text {
 		appearance: none;
 		border: 0;
 		padding:0;
@@ -53,7 +54,8 @@ select {
 		@include block-full;
 		z-index: 100;
 		overflow: hidden;
-		text-indent: -999rem;
+		text-indent: -999rem !important;
+		font-size: 0rem;
 
 		&:focus {
 			outline: 1px dashed;
@@ -86,8 +88,9 @@ select {
 			z-index: 3;
 		}
 
+
 		&[aria-selected="true"] {
-			background: $select-hover-state;
+			background: $select-selected-state;
 			border-color: #999;
 			z-index: 2;
 		}
@@ -107,7 +110,7 @@ select {
 		position: absolute;
 		left: -9999rem;
 		top: 100%;
-		background: transparent;
+		background: #fff;
 		margin-top: 0;
 		z-index: 100;
 		box-shadow: 0 0.25rem 0.5rem rgba($black, 0.25);
@@ -120,8 +123,9 @@ select {
     &__optgroup {
         padding: 0.5rem; 
         background: #fff;
-        &:before {
-            content: attr(label);
+        
+		&-label {
+            
 			font-weight: bold;
             display: block;
             margin-top: 0.5rem;
@@ -138,6 +142,7 @@ select {
 				margin-top: 0;
 				transform-origin: bottom center;
 				box-shadow: 0 -0.25rem 0.5rem rgba($black, 0.25);
+
 			}
 
 			&__list-btn {
@@ -168,6 +173,7 @@ select {
 	}
 
 	&--focused {
+		z-index: 1000;
 		&:after {
 			transform: rotateX(-180deg);
 		}

@@ -5,7 +5,7 @@ import { isMobileOS, IE_Event } from "./util/helpers";
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/listbox_role
 
 
-const VERSION = "1.3.2";
+const VERSION = "2.0.0";
 const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 
@@ -57,14 +57,19 @@ export default class SelectEnhance {
 
         _.index = index; 
 		_.$element = $(element);
-        _.$label = $(`label[for="${_.$element.attr('id')}"]`);
-        _.selectId = _.$element.attr('id') + '_enhance' || 'select_enhance_' + index;
+        _.id = _.$element.attr('id') || _.$element.attr('name') || 'select_enhance_' + index;
+        _.selectId = _.id + '_enhance';
+        _.$label = $(`label[for="${_.id}"]`);
         _.$selectEnhance = null;
-        _.$enableBtn = null;
+        _.$textInput = null;
         _.$selectList = null;
         _.optionSet = new WeakMap();
         _.selectboxObserver = null;
         _.selectListBoxInFullView = true;
+
+        if (_.$label.length) {
+            _.$label.attr({id:  _.selectId + '_lbl'});
+        }
 
 		const dataOptions = validJSONFromString(
 			$(element).data(DATA_NAME + '-options')
@@ -100,6 +105,7 @@ export default class SelectEnhance {
             _.eventSelectToggle();
             _.eventArrowKeys();
             _.observeSelectListBoxInFullView();
+            // _.eventTabBlur();
             SelectEnhance.eventScrollGetListPosition();
         }
 
@@ -129,9 +135,9 @@ export default class SelectEnhance {
         const _ = this;
 
         _.$selectEnhance.addClass(_.params.cssPrefix + '--blurring');
-        _.$selectEnhance
-            .removeClass(_.params.cssPrefix + '--focused')
-            .attr({'aria-expanded': false});
+        _.$selectEnhance.removeClass(_.params.cssPrefix + '--focused')
+            
+        _.$textInput.attr({'aria-expanded': false});
 
         setTimeout(() => {
             _.$selectEnhance.removeClass(_.params.cssPrefix + '--blurring');
@@ -160,10 +166,13 @@ export default class SelectEnhance {
         _.$selectList.attr({ 'aria-activedescendant': $btn[0].id});
 
         _.$element[0].dispatchEvent(new (Event || IE_Event)('change'));
+        
+        _.$textInput.val(_.optionSet.get($btn[0]).text);
 
         if (doBlur) {
 
-            _.$enableBtn.text($btn.text())[0].focus();
+            _.$textInput[0].focus();
+           
             _.blurSelect();
 
         } else {
@@ -177,19 +186,19 @@ export default class SelectEnhance {
         _.$label.on('click.' + EVENT_NAME, function(e){
             e.preventDefault();
             if (!_.$element[0].disabled) {
-                _.$enableBtn[0].focus();
+                _.$textInput[0].focus();
             }
         })
     }
 
     eventShowOptions(){
         const _ = this;
-       
-        _.$selectEnhance.on('click.' + EVENT_NAME, '.' + _.params.cssPrefix + '__enable-btn', function (e) {
+        
+        function showOptions(e) {
             if (_.$element[0].disabled) { return }
 
-            _.$selectEnhance.toggleClass(_.params.cssPrefix + '--focused')
-                .attr({'aria-expanded' : true});
+            _.$selectEnhance.toggleClass(_.params.cssPrefix + '--focused');
+            _.$textInput.attr({'aria-expanded' : true});
             
             const $selectedBtn = _.$selectEnhance.find('button[aria-selected]');
 
@@ -199,9 +208,25 @@ export default class SelectEnhance {
 
             $currSelectEnhance = _.$selectEnhance;
             currSelectInstance = _;
-
-            SelectEnhance.getListPosition();
            
+            SelectEnhance.getListPosition();
+        }
+
+        _.$selectEnhance.on('click.' + EVENT_NAME, '.' + _.params.cssPrefix + '__enable-text', showOptions);
+
+        _.$textInput.on('keydown.' + EVENT_NAME, function (e) {
+            
+            if (e.key !== KEYS.TAB || e.shiftKey && e.key !== KEYS.TAB) {
+                e.preventDefault();
+            }
+
+            if (
+                e.code === KEYS.SPACE || e.code === KEYS.ENTER ||
+                e.ctrlKey && e.altKey && e.shiftKey && KEYS.SPACE === e.key
+                ) {
+                
+                showOptions(e);
+            }
         });
     }
 
@@ -212,11 +237,11 @@ export default class SelectEnhance {
             
             e.preventDefault();  
             
-            _.$selectEnhance
-                .attr({'aria-expanded': false})
-                .removeClass(_.params.cssPrefix + '--focused');
+            _.$selectEnhance.removeClass(_.params.cssPrefix + '--focused');
+            _.$textInput.attr({'aria-expanded': false});
 
-            _.setSelectionState($(this))
+            _.setSelectionState($(this));
+           
         });
     }
 
@@ -226,7 +251,8 @@ export default class SelectEnhance {
         _.$selectEnhance.on('focusin.' + EVENT_NAME, function (e) {
             _.params.focusIn(_.$element);
             
-            $(document.body).on('click.close_' + _.selectId + EVENT_NAME, function(e){
+            $(document.body).on(
+                'click.close_' + _.selectId + EVENT_NAME, function(e){
                 setTimeout(() => {
                     const ae = document.activeElement;
                     
@@ -234,12 +260,13 @@ export default class SelectEnhance {
                         !_.$selectEnhance.has(ae).length || 
                         _.$selectEnhance[0].isSameNode(ae)
                     ) {
-                        _.blurSelect();
+                        _.blurSelect(); 
                         $(document.body).off('click.close_' + _.selectId + EVENT_NAME);
                     
                     }
                 }, 100);
             });  
+            
         });
     }
 
@@ -272,7 +299,7 @@ export default class SelectEnhance {
                 );
 
             if (keyedFound.length){
-    
+              
                     _.setSelectionState(_.optionSet.get(keyedFound[0]), false);
                 } 
             }
@@ -287,20 +314,34 @@ export default class SelectEnhance {
             
             if (_.$element[0].disabled) { return }
 
-            if (e.key === KEYS.DOWN) {
-                e.preventDefault();
+            let to = null;
+
+            if (e.key === KEYS.DOWN || e.key === KEYS.TAB && !e.shiftKey) {
+                if (!_.$textInput[0].isSameNode(document.activeElement)){
+
+                    e.preventDefault();
+                }
                 setTimeout(() => { _.nextOptionButton('next') }, 100);
             }
 
-            if (e.key === KEYS.UP) {
+            if (e.key === KEYS.UP ) {
                 e.preventDefault();
                 setTimeout(() => { _.nextOptionButton('prev') }, 100);
             }
 
             if (e.key === KEYS.ESC && $currSelectEnhance) {
- 
+
                 _.blurSelect();
-                _.$enableBtn[0].focus();
+                _.$textInput[0].focus();
+            }
+
+            if (e.key === KEYS.TAB && e.shiftKey) {
+                clearTimeout(to);
+                to = setTimeout(() => {
+                    if (_.$textInput[0].isSameNode(document.activeElement)) {
+                        _.blurSelect();
+                    }
+                }, 100)
             }
         });
     }
@@ -313,20 +354,20 @@ export default class SelectEnhance {
         
         const $selectEnhance = $('<div />').attr({ 
             class: _.params.cssPrefix, 
-            role: "combobox", 
-            'aria-expanded' : false,
-            'aria-owns': _.selectId + '_listbox',
-            'aria-haspopup': 'listbox',
-            id: _.selectId + '_combobox'
+            id: _.selectId + '_wrap'
         });
 
-        const $enableBtn =  $('<button>').attr({ 
-            type: 'button', 
-            class: _.params.cssPrefix + '__enable-btn',
-            role: "textbox",
+        const $textInput =  $('<input>').attr({ 
+            type: 'text', 
+            class: _.params.cssPrefix + '__enable-text',
+            role: "combobox",
             'aria-controls': _.selectId + '_listbox',
+            'aria-labelledby': _.selectId + '_lbl',
+            'aria-autocomplete': 'list',
+            'aria-expanded': false,
             id: _.selectId + '_input'
         });
+
 
         _.$element.wrap($selectEnhance);
 
@@ -339,12 +380,12 @@ export default class SelectEnhance {
             return;
         }
         
-        $enableBtn.insertAfter(_.$element);
+        $textInput.insertAfter(_.$element);
         _.$element.attr({ tabindex: '-1', 'aria-hidden': true }); 
 
         // jQuery, elements need to be bound to the DOM before they
         // can have events attached to them. So this is the solution
-        _.$enableBtn = _.$element.parent().find('#' + _.selectId + '_input');
+        _.$textInput = _.$element.parent().find('#' + _.selectId + '_input');
         
         SelectEnhance.buildOptionsList(_);
     }
@@ -356,7 +397,7 @@ export default class SelectEnhance {
         const $btnList = _.$selectList.find('button');
         const l = $btnList.length;
 
-        if (_.$enableBtn[0].isSameNode(ae)) {
+        if (_.$textInput[0].isSameNode(ae)) {
             $btnList.eq(dir === 'next' ? 0 : l - 1)[0].focus();
             return;
         }
@@ -431,7 +472,10 @@ export default class SelectEnhance {
                     class: cssPrefix + '__optgroup',
                     role:'group', 
                     label: group.label || ""
-                }));
+                }).append($('<span>').attr({
+                    class: cssPrefix + '__optgroup-label',
+                    'aria-hidden': true
+                }).text(group.label || "")));
             }
         }
         
@@ -441,7 +485,8 @@ export default class SelectEnhance {
         _.$selectList = $('<div>').attr({ 
             class: cssPrefix + '__list', 
             role: 'listbox',
-            id: _.selectId + '_listbox'
+            id: _.selectId + '_listbox',
+            'aria-label': _.$label.text() || ''
         });
 
 
@@ -471,7 +516,8 @@ export default class SelectEnhance {
 
             if (opt.selected) {
                 _.$selectList.attr({ 'aria-activedescendant': id });
-                _.$enableBtn.text(opt.textContent);  
+                _.$textInput.val(opt.textContent);  
+                
             }
         }
 
@@ -481,7 +527,7 @@ export default class SelectEnhance {
                 _.$selectList.append($optGroupWm.get(group))
             }
         }  
-        _.$selectList.insertAfter(_.$enableBtn);
+        _.$selectList.insertAfter(_.$textInput);
  
     }
 
@@ -566,6 +612,7 @@ export default class SelectEnhance {
             _.$selectEnhance.off('keydown.navigate_' + EVENT_NAME);
             _.$selectEnhance.off('click.' + EVENT_NAME);
             _.$selectEnhance.off('focusout.' + EVENT_NAME);
+            _.$selectEnhance.off('blur.' + EVENT_NAME);
             _.$label.off('click.' + EVENT_NAME);
             $(document.body).off('click.close_' + _.selectId + EVENT_NAME);
             // the window event will just stay

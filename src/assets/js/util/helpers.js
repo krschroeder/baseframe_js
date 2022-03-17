@@ -40,8 +40,3 @@ export const camelCase = string => string.replace(/-./g, x => x.toUpperCase()[1]
 
 // device
 export const isMobileOS = () => /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
-
-// photo
-export const photoRegex = /\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg)((#|\?).*)?$|(\?|&|&amp;)(image|ext\=\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg))?$/i;
-
-export const CSS_TRANSISTION_DELAY = 100;

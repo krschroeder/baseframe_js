@@ -5,7 +5,7 @@ import { isMobileOS, IE_Event } from "./util/helpers";
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/listbox_role
 
 
-const VERSION = "2.0.0";
+const VERSION = "2.0.2";
 const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 
@@ -66,6 +66,7 @@ export default class SelectEnhance {
         _.optionSet = new WeakMap();
         _.selectboxObserver = null;
         _.selectListBoxInFullView = true;
+        _.keyedInput = "";
 
         if (_.$label.length) {
             _.$label.attr({id:  _.selectId + '_lbl'});
@@ -160,7 +161,7 @@ export default class SelectEnhance {
          // update the selected
          _.$selectEnhance
             .find('button[aria-selected]')
-            .attr({ 'aria-selected': null});
+            .attr({ 'aria-selected': null}); 
             
         $btn.attr({ 'aria-selected': true });
         _.$selectList.attr({ 'aria-activedescendant': $btn[0].id});
@@ -214,15 +215,16 @@ export default class SelectEnhance {
 
         _.$selectEnhance.on('click.' + EVENT_NAME, '.' + _.params.cssPrefix + '__enable-text', showOptions);
 
-        _.$textInput.on('keydown.' + EVENT_NAME, function (e) {
-            
+        _.$textInput.on('keypress.' + EVENT_NAME, function (e) {
+           
             if (e.key !== KEYS.TAB || e.shiftKey && e.key !== KEYS.TAB) {
                 e.preventDefault();
             }
-
+            
             if (
-                e.code === KEYS.SPACE || e.code === KEYS.ENTER ||
-                e.ctrlKey && e.altKey && e.shiftKey && KEYS.SPACE === e.key
+                e.key === KEYS.ENTER ||
+                e.keyCode === KEYS.SPACE && _.keyedInput.trim() === '' ||
+                e.ctrlKey && e.altKey && e.shiftKey && KEYS.SPACE === e.keyCode
                 ) {
                 
                 showOptions(e);
@@ -274,25 +276,24 @@ export default class SelectEnhance {
         const _ = this;
 
         let keyInputTo = null,
-            keyedInput = "",
             keyedFound = []
         ;
 
-        _.$selectEnhance.on('keydown.' + EVENT_NAME, function (e) {
+        _.$selectEnhance.on('keypress.' + EVENT_NAME, function (e) {
 
             if (_.$element[0].disabled) { return }
             const keyCurr = (e.key.length === 1 ? e.key : '');
             
-            keyedInput+= keyCurr;
+            _.keyedInput+= keyCurr;
             
             clearTimeout(keyInputTo);
             keyInputTo = setTimeout(() => {
-                keyedInput = "";
+                _.keyedInput = "";
             }, _.params.typeAheadDuration);
 
-            if (keyedInput.trim()) {
+            if (_.keyedInput.trim()) {
 
-                const rgx = RegExp('^' + keyedInput.trim(), 'i');
+                const rgx = RegExp('^' + _.keyedInput.trim(), 'i');
             
                 keyedFound = [].slice.call(
                     _.$element.find('option').filter((i, el) => rgx.test(el.text) === true)
@@ -321,12 +322,14 @@ export default class SelectEnhance {
 
                     e.preventDefault();
                 }
-                setTimeout(() => { _.nextOptionButton('next') }, 100);
+                _.nextOptionButton('next');
+               
             }
 
             if (e.key === KEYS.UP ) {
                 e.preventDefault();
-                setTimeout(() => { _.nextOptionButton('prev') }, 100);
+               
+                _.nextOptionButton('prev');
             }
 
             if (e.key === KEYS.ESC && $currSelectEnhance) {

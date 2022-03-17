@@ -8,7 +8,7 @@ export const KEYS = {
 	UP: 'ArrowUp',
 	ENTER: 'Enter',
 	SHIFT: 'Shift',
-	SPACE: 'Space',
+	SPACE: 32, //use keyCode
 	TAB: 'Tab'
 }
 

@@ -5,7 +5,7 @@ import { isMobileOS, IE_Event } from "./util/helpers";
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/listbox_role
 
 
-const VERSION = "2.0.2";
+const VERSION = "2.0.3";
 const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 
@@ -161,10 +161,10 @@ export default class SelectEnhance {
          // update the selected
          _.$selectEnhance
             .find('button[aria-selected]')
-            .attr({ 'aria-selected': null}); 
+            .attr({ 'aria-selected': false}); 
             
         $btn.attr({ 'aria-selected': true });
-        _.$selectList.attr({ 'aria-activedescendant': $btn[0].id});
+        _.$textInput.attr({ 'aria-activedescendant': $btn[0].id});
 
         _.$element[0].dispatchEvent(new (Event || IE_Event)('change'));
         
@@ -503,7 +503,7 @@ export default class SelectEnhance {
             const attrs = {
                 role: 'option', id,
                 'data-value': opt.value,
-                'aria-selected': opt.selected ? 'true' : null,
+                'aria-selected': opt.selected,
                 class: cssPrefix + '__list-btn'
             };
             const $btn = $('<button/>').attr(attrs).text(opt.textContent);
@@ -518,7 +518,7 @@ export default class SelectEnhance {
             ;
 
             if (opt.selected) {
-                _.$selectList.attr({ 'aria-activedescendant': id });
+                _.$textInput.attr({ 'aria-activedescendant': id });
                 _.$textInput.val(opt.textContent);  
                 
             }

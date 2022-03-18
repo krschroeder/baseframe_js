@@ -5,7 +5,7 @@ import { isMobileOS, IE_Event } from "./util/helpers";
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/listbox_role
 
 
-const VERSION = "2.0.3";
+const VERSION = "2.1.0";
 const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 
@@ -13,6 +13,7 @@ const DATA_NAME = 'SelectEnhance';
 const DEFAULTS = {
     cssPrefix : 'select-enhance',
     mobileNative: true,
+    emptyValAsPlaceholder: true,
     focusIn: (el) => {},
     focusOut: (el) => {},
     beforeChange: (el) => {},
@@ -151,10 +152,11 @@ export default class SelectEnhance {
 
     setSelectionState($btn, doBlur = true) {
         const _ = this;
+        const selectedOpt = _.optionSet.get($btn[0]);
 
         _.params.beforeChange(_.$element);
 
-        _.optionSet.get($btn[0]).selected = true;
+        selectedOpt.selected = true;
 
         _.params.afterChange(_.$element);
 
@@ -168,7 +170,12 @@ export default class SelectEnhance {
 
         _.$element[0].dispatchEvent(new (Event || IE_Event)('change'));
         
-        _.$textInput.val(_.optionSet.get($btn[0]).text);
+        if (_.params.emptyValAsPlaceholder && selectedOpt.value.trim() === '') {
+            _.$textInput.val('');
+            _.$textInput.attr({placeholder: selectedOpt.text});
+        } else {
+            _.$textInput.val(selectedOpt.text);
+        }
 
         if (doBlur) {
 
@@ -201,7 +208,7 @@ export default class SelectEnhance {
             _.$selectEnhance.toggleClass(_.params.cssPrefix + '--focused');
             _.$textInput.attr({'aria-expanded' : true});
             
-            const $selectedBtn = _.$selectEnhance.find('button[aria-selected]');
+            const $selectedBtn = _.$selectEnhance.find('button[aria-selected="true"]');
 
             if ($selectedBtn.length) {
                 $selectedBtn[0].focus();
@@ -519,7 +526,13 @@ export default class SelectEnhance {
 
             if (opt.selected) {
                 _.$textInput.attr({ 'aria-activedescendant': id });
-                _.$textInput.val(opt.textContent);  
+
+                if (_.params.emptyValAsPlaceholder && opt.value.trim() === '') {
+                    _.$textInput.val('');
+                    _.$textInput.attr({placeholder: opt.text});
+                } else {
+                    _.$textInput.val(opt.text);
+                }
                 
             }
         }

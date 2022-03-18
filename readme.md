@@ -1075,6 +1075,7 @@ Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 cssPrefix  | string | 'select-enhance' | CSS class name for styling purposes
 mobileNative | boolean | true | Off by default this doesn't render the stylized dropdowns for mobile devices.
+emptyValAsPlaceholder | boolean | true | if the value is empty, then render placeholder copy instead of the text value inside the option its pulling data from.
 focusIn | string | ($element) => {} | event when focusing in on the select box
 focusOut | string | ($element) => {} | event when focusing out on the select box
 beforeChange | string | ($element) => {} | event to fire before the change event

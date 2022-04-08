@@ -5,7 +5,7 @@ import { isMobileOS, IE_Event } from "./util/helpers";
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/listbox_role
 
 
-const VERSION = "2.1.1";
+const VERSION = "2.2.0";
 const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 
@@ -447,7 +447,7 @@ export default class SelectEnhance {
             const id = optId + i;
 
             if (opt.hidden) continue;
-            
+
             const valCssStatus = opt.value === '' ? ' ' + cssPrefix + '__list-btn--empty' : '';
             
             const attrs = {

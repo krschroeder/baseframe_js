@@ -2,6 +2,8 @@
 // Columns
 // --------------------------------------------------
 
+@use "sass:math";
+
 $columns-amount: 12;
 
 @mixin global-col-props(){
@@ -41,7 +43,7 @@ $columns-amount: 12;
 
 		.#{$breakpoint}col-#{$i},
 		.#{$breakpoint}wide-#{$i}{
-			width: ($i / $columns-amount) * 100%;
+			width: math.div($i, $columns-amount) * 100%;
 		}
 	}
 	//in case we need to override a padding responsively

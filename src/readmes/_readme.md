@@ -1,6 +1,6 @@
 # Base_Frame Plugins &amp; Functions
 
-A suite of useful Javascript plugins and functions to help with Front-end Development on websites. The scripting features plugins for collapsible sections, popups, parallaxing elements, tabs and more. It features utilities for setting and getting cookies, smooth scrolling (without jQuery), throttled resizing, querystring parameter filtering and more. The plugin's are configurable and consistent. This scripting is designed to be imported in easily so you can start building!
+A suite of useful Javascript plugins and functions to help with front-end development on websites. Instead of searching for unconnected plugins that may not work together well, this suite is to help remedy that. It's not to solve every problem with front-end web development, but the most common. The scripting features plugins for collapsible sections, popups, parallaxing elements, tabs and more. It features utilities for setting and getting cookies, smooth scrolling (without jQuery, or with CSS), throttled resizing, querystring parameter filtering and more. The plugin's are meant to be configurable and consistent. This scripting is designed to be imported in easily so you can start building!
 
 ## Runs with [Cash](https://github.com/fabiospampinato/cash) (or JQuery if you wish)
 
@@ -19,7 +19,7 @@ __For Example:__ all have options that can be plugged in as a data attribute, in
 <div id="your-plugin-elem" data-pluginName-options="{option:'text',option2: true, etc: 'you get the idea'}"></div>
 ```
 ### Update Parameters After Init!
-__For Example:__ all can have their configuration change when added into `$.fn`. Which can come in handy sometimes when things get complex. Could come in handy for instance when you have an accordion (or collapsible section) and on mobile you want it to scroll to the top on open (that plugin does that!), but not on desktop. This works for the vast majority of params, but not all FYI. For example, I can specify a 'click' event and that can only be set on 'init'. Perhaps I'll document this later on though.
+Once initialized, each plugin when re-accessed (when not 'removed') will only get updates to their parameters. Could come in handy for instance when you have an accordion (or collapsible section) and on mobile you want it to scroll to the top on open (that plugin does that!), but not on desktop. This works for the vast majority of params, but not all FYI. For example, I can specify a 'click' event and that can only be set on 'init'. Perhaps I'll document this later on though.
     
 ```javascript
 $('.your-plugin-elem').PluginOfSorts({change:'yep', height: 1e6})
@@ -30,7 +30,7 @@ $('.your-plugin-elem').PluginOfSorts({change:'yep', height: 1e6})
 Lots of callback functions to run after and before events and such that may help you out when you need it most.
 
 ### It works in IE11
-These scripts all work back to IE11. One day in the future perhaps we can drop that support. Tried to avoid scripting that needs polyfills, or looks ugly compiled into ES5.  
+These scripts all work back to IE11. One day in the future perhaps we can drop that support, which seems like it could be soon-ish. If you look into the scripting I intentially avoid using certain properties not available in IE11.  
 
 
 ## Example Script of Importing Everything In
@@ -56,7 +56,8 @@ import installStoreToLibrary, {
     cookies,
     formInputs,
     smoothScroll,
-    throttledResize
+    throttledResize,
+    trapFocus
 } from 'baseframe-js';
 
 // or ES6 non-transpiled
@@ -308,6 +309,8 @@ getUrlParam(search:string ,searchString?:string)
 ```
 
 #### trapFocus
+This is used in the `Popup` and `NavMobile` plugin's, to trap the focus of tabbing events to just the availble focusable elements. Each tab it re-takes inventory on what is available to tab to, so you can load dynamic/change content that may not be available when the focus trap is created.
+
 __params__
 Option | Type | Default | Description
 ------ | ---- | ------- | -------
@@ -315,7 +318,10 @@ focusFirst | boolean | true | Focus's the first element
 nameSpace | string | 'trapFocus' | Unique namespace for the tabbing keydown event.
 focusableElements | string or array | ['button', 'a', 'input', 'select', 'textarea', '[tabindex]'] | A listing of focusable elements.
 ```javascript
-trapFocus(element:JQuery<HTMLElement> | HTMLElement, params?: PlainObject);
+const trappedFocus = trapFocus(element:JQuery<HTMLElement> | HTMLElement, params?: PlainObject);
+// to remove later on
+trappedFocus.remove();
+
 ```
 
 <br>

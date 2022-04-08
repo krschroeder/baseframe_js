@@ -1,12 +1,11 @@
 
 import validJSONFromString from './util/formatting-valid-json.js';
-import getType from './util/helpers';
 import { getHashParam } from './util/get-param';
 import updateHistoryState from './util/plugin/update-history-state.js';
 import { elData } from './util/store';
+import { KEYS } from './util/constants';
 
-
-const VERSION = "1.2.0";
+const VERSION = "1.3.0";
 const DATA_NAME = 'Tabs';
 const EVENT_NAME = 'tabs';
 const DEFAULTS = {
@@ -22,6 +21,8 @@ const DEFAULTS = {
 	historyType: 'push',
 	loadLocationHash: true,
 	addIDtoPanel: true,
+	tabbing: true,
+	tabDirection: 'horizontal',
 	beforeChange: () => { },
 	afterChange: () => { },
 	onInit: () => { }
@@ -64,11 +65,13 @@ export default class Tabs {
 		_.$tabsBody = _.$element.find(`.${_.params.tabsBodyCss}`).first(); 
 
 		_.prevTabId = '#';
-		 
+		_.tabFocus = 0;
+
 		//init
 		_.ADA_Attributes();
 		_.tabsChangeEvent();
 		_.changeTabElements( _.getTabFromHash(),true);
+		_.tabbing();
 
 		$(window).on(`popstate.${EVENT_NAME}`, (e) => {
 			if (_.params.historyType === 'push') {
@@ -102,6 +105,62 @@ export default class Tabs {
 		}
 
 		return defaultTab || getTabIDFromEl(_.$tabsList.find('a, button')[defaultContent]);
+	}
+
+	tabbing() {
+		const _ = this;
+
+		const {tabbing, tabDirection} = _.params;
+		const {RIGHT, LEFT, UP, DOWN} = KEYS;
+
+		_.$tabsList.on('keydown.' + EVENT_NAME, function(e){
+			
+			// if the param gets dynamically updated
+			// lets check here
+			if (!tabbing) return;
+
+			let back = LEFT,
+				forward = RIGHT;
+
+			if (tabDirection === 'horizontal') {
+				back = LEFT;
+				forward = RIGHT;
+			} else if (tabDirection === 'vertical') {
+				back = UP;
+				forward = DOWN;
+			} else {
+				console.warn(`Please specify 'horizontal' or 'vertical' for a tab direction`);
+			}
+
+			// rebuild the list per-chance any get removed dynamically or added
+			const $tabs = _.$tabsList.find('a, button');
+
+			if (e.code === forward || e.code === back) {
+				$tabs[_.tabFocus].setAttribute('tabindex', -1);
+
+				if (tabDirection === 'vertical') {
+					e.preventDefault();
+				}
+
+				if (e.code === forward) {
+					_.tabFocus++;
+					// If we're at the end, go to the start
+					if (_.tabFocus >= $tabs.length) {
+						_.tabFocus = 0;
+					}
+				  // Move left
+				} else if (e.code === back) {
+				  _.tabFocus--;
+				  // If we're at the start, move to the end
+					if (_.tabFocus < 0) {	
+						_.tabFocus = $tabs.length - 1;
+					}
+				}
+
+				$tabs[_.tabFocus].setAttribute('tabindex', 0);
+      			$tabs[_.tabFocus].focus();
+			}
+		});
 	}
 
 	ADA_Attributes() {
@@ -164,7 +223,7 @@ export default class Tabs {
 
 			if (!isInItsBody) return;
 
-			_.$tabsList.find("a, button").attr({ 'aria-selected': false });
+			_.$tabsList.find("a, button").attr({ 'aria-selected': false, tabindex: -1 });
 			_.$tabsList.find('.' + activeCss).removeClass(activeCss);
 
 			$(`.${tabsBodyItemCss}`, _.$tabsBody).each(function () {
@@ -177,11 +236,18 @@ export default class Tabs {
 				}
 			});
 
-			_.$tabsList.find(`a[href="#${tabId}"], button[data-href="#${tabId}"]`)
-				.attr({ 'aria-selected': true })
+			const $selected = _.$tabsList.find(`a[href="#${tabId}"], button[data-href="#${tabId}"]`);
+
+			$selected.attr({ 'aria-selected': true, tabindex: 0 })
 				.addClass(activeCss)
 				// if we have a list item
 				.closest('li').addClass(activeCss);
+			
+			_.$tabsList.find('a,button').each(function(i){
+				if (this.classList.contains(activeCss)) {
+					_.tabFocus = i;
+				}
+			})
 
 			_.$tabsBody.find(`.${tabsBodyItemCss}[data-tab-id="${tabId}"]`)
 				.addClass(tabsBodyItemShowCss)
@@ -200,6 +266,8 @@ export default class Tabs {
 			const instance = elData(this, `${DATA_NAME}_instance`);
 
 			instance.$tabsList.off(`${params.tabsEvent}.${EVENT_NAME} ${EVENT_NAME}`);
+			instance.$tabsList.off('keydown.' + EVENT_NAME);
+			instance.$tabsList.find('a, button').attr({tabindex: null})
 			$(window).off(`popstate.${EVENT_NAME}`);
 
 			elData(this, `${DATA_NAME}_params`, null, true);

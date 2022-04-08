@@ -66,7 +66,7 @@ $main-nav-color-lvl-2: $main-nav-color !default;
 			}
 			ul {
 				&.open {
-					@include level-2-dropdown-pos() ul {
+					@include level-2-dropdown-pos(); ul {
 						@include level-2-dropdown-inner-pos();
 					}
 				}
@@ -127,7 +127,7 @@ $main-nav-color-lvl-2: $main-nav-color !default;
 				&:focus,
 				&.focus {
 					> ul {
-						@include level-1-dropdown-pos() li {
+						@include level-1-dropdown-pos(); li {
 							&:hover,
 							&.hover,
 							&:focus,

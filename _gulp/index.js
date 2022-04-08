@@ -2,7 +2,7 @@ import gulp, { src } from 'gulp';
 import path from 'path';
 import browser from 'browser-sync';
 import rename from 'gulp-rename';
-import sass from 'gulp-sass';
+const sass = require('gulp-sass')(require('sass'));
 import sourcemaps from 'gulp-sourcemaps';
 import gulpIf from 'gulp-if';
 

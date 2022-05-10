@@ -148,13 +148,16 @@ export default class NavMobile {
 		$('li', _.$element).has('ul').each(function () {
 			const $this = $(this);
 
-
+		 
 			if (!$this.next('button').length) {
 				const $a = $this.find('a').first();
 
 				$a.addClass(_.params.hasUlCls);
 
-				$a.after(submenuBtn(_.params, $a.text()))
+				if ($a[0].parentNode.isSameNode(this)) {
+					// make sure the <a> is a direct child of <li>
+					$a.after(submenuBtn(_.params, $a.text()))
+				}
 			}
 		});
 	}

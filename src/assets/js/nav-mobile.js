@@ -1,13 +1,13 @@
 
 import { CSS_TRANSISTION_DELAY } from './util/constants.js';
 import validJSONFromString from './util/formatting-valid-json.js';
-import {isVisible} from './util/helpers';
+import { isVisible } from './util/helpers';
 import submenuBtn from './util/plugin/nav';
 import { elData } from './util/store';
 import trapFocus from './util/trap-focus.js';
- 
 
-const VERSION = "1.6.0";
+
+const VERSION = "1.6.1";
 const DATA_NAME = 'NavMobile';
 const EVENT_NAME = 'navMobile';
 
@@ -29,17 +29,18 @@ export default class NavMobile {
 			slideDuration: 400,
 			outerElement: document.body,
 			outsideClickClose: true,
+			animateHeight: true,
 			hasUlCls: 'has-ul',
-			menuOuterOpenCss: 'menu-opened', 
-			menuOpenCss: 'menu-opened', 
+			menuOuterOpenCss: 'menu-opened',
+			menuOpenCss: 'menu-opened',
 			menuTogglingCss: 'menu-toggling',
 			menuIsOpeningCss: 'menu-is-opening',
 			menuIsClosingCss: 'menu-is-closing',
 			submenuBtnCss: 'btn-nav--mb-submenu i i-arrow-b',
-			afterNavItemOpen: () => {},
-			afterNavItemClose: () => {},
-			afterOpen: () => {},
-			afterClose: () => {},
+			afterNavItemOpen: () => { },
+			afterNavItemClose: () => { },
+			afterOpen: () => { },
+			afterClose: () => { },
 			doTrapFocus: true,
 			trapFocusElem: null,
 			stopPropagation: true,
@@ -49,13 +50,13 @@ export default class NavMobile {
 	}
 
 	constructor(element, options) {
-		const _ = this; 
+		const _ = this;
 
 		const dataOptions = validJSONFromString(
 			$(element).data(EVENT_NAME + '-options')
 		);
 		//props
-		 
+
 		_.$element = $(element);
 
 		elData(
@@ -71,7 +72,7 @@ export default class NavMobile {
 		_.navigationClick();
 		_.checkIfEnabled();
 		_.outsideClickClose();
-	
+
 
 		const elemID = element[0].id || element[0].className;
 
@@ -86,12 +87,12 @@ export default class NavMobile {
 	menuToggle() {
 		const _ = this;
 		const {
-			enableBtn, 
-			outerElement, 
-			menuOpenCss, 
+			enableBtn,
+			outerElement,
+			menuOpenCss,
 			menuOuterOpenCss,
 			menuIsOpeningCss,
-			menuIsClosingCss, 
+			menuIsClosingCss,
 			slideDuration,
 			doTrapFocus,
 			trapFocusElem
@@ -130,7 +131,7 @@ export default class NavMobile {
 			}, slideDuration);
 
 			_.menuOpened = true;
-			 
+
 			if (doTrapFocus) {
 				trappedFocus = trapFocus(trapFocusElem || _.$element, { nameSpace: EVENT_NAME });
 			}
@@ -138,7 +139,7 @@ export default class NavMobile {
 			_.params.afterOpen();
 		}
 		//update aria-expanded
-		$(enableBtn).attr({'aria-expanded': _.menuOpened});
+		$(enableBtn).attr({ 'aria-expanded': _.menuOpened });
 	}
 
 	addChildNavClass() {
@@ -146,9 +147,9 @@ export default class NavMobile {
 
 		$('li', _.$element).has('ul').each(function () {
 			const $this = $(this);
-			 
-			 
-			if (!$this.next('button').length) { 
+
+
+			if (!$this.next('button').length) {
 				const $a = $this.find('a').first();
 
 				$a.addClass(_.params.hasUlCls);
@@ -160,12 +161,12 @@ export default class NavMobile {
 
 	buttonClick() {
 		const _ = this;
-	 
+
 
 		$(_.params.enableBtn).on(`click.${EVENT_NAME} ${EVENT_NAME}`, function (e) {
-			 
+
 			if (!_.allowClick) return;
-			
+
 			_.menuToggle();
 
 			e.stopPropagation();
@@ -187,7 +188,7 @@ export default class NavMobile {
 
 		if (!_.params.navToggleNestled) {
 			_.navToggle();
-		
+
 		} else {
 			//non-standards, but alternative behavior
 			//of clicking into a link item and seeing only
@@ -199,65 +200,81 @@ export default class NavMobile {
 
 	navToggle() {
 		const _ = this;
-		_.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, '.' + _.params.submenuBtnCss.replace(/\s/g,'.') , function (e) { 
+		_.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, '.' + _.params.submenuBtnCss.replace(/\s/g, '.'), function (e) {
 
-			const {hasUlCls, menuOpenCss, menuTogglingCss, slideDuration} = _.params;
+			const { 
+				animateHeight, 
+				hasUlCls, 
+				menuOpenCss, 
+				menuIsOpeningCss, 
+				menuIsClosingCss, 
+				menuTogglingCss, 
+				slideDuration 
+			} = _.params;
 
-			const $li = $(this).closest(`.${hasUlCls}`);  
+			const $li = $(this).closest(`.${hasUlCls}`);
 			const isOpened = $li.hasClass(menuOpenCss);
-			const $ul = $li.find('ul').first();  
-	
+			const $ul = $li.find('ul').first();
+
 			//exit because were in desktop view
 			if (!_.allowClick) { return; }
-			 
+
+			// const toggleCss = isOpened ? menuIsClosingCss : menuIsOpeningCss;
+			const actionCss = `${menuTogglingCss} ${isOpened ? menuIsClosingCss : menuIsOpeningCss}`;
+			
 			if (!isOpened) {
-				
+
 				_.allowClick = false;
 
-				$li.addClass(menuTogglingCss);
-				$ul.addClass(menuTogglingCss);
+				$li.addClass(actionCss);
+				$ul.addClass(actionCss);
 
-				const ulHeightBeforeResetToZero = $ul[0].scrollHeight;
-
-				$ul.css({ height: 0 });
+				if (animateHeight) {
+					const ulHeightBeforeResetToZero = $ul[0].scrollHeight;
+					$ul.css({ height: 0 });
+					
+					
+					setTimeout(() => {
+						$ul.css({ height: ulHeightBeforeResetToZero });
+					}, CSS_TRANSISTION_DELAY);
+				}
 
 				setTimeout(() => {
-					$ul.css({ height: ulHeightBeforeResetToZero });
-				}, CSS_TRANSISTION_DELAY);
-			
-				setTimeout(() => {
-					$li.removeClass(menuTogglingCss).addClass(menuOpenCss);
-					$ul.removeClass(menuTogglingCss).addClass(menuOpenCss);
+					$li.removeClass(actionCss).addClass(menuOpenCss);
+					$ul.removeClass(actionCss).addClass(menuOpenCss);
 
 					$ul.css({ height: '' });
 
 					_.params.afterNavItemOpen($li);
-					
+
 					_.allowClick = true;
 
 				}, slideDuration);
+
 			} else {
+
 				_.allowClick = false;
-				$li.addClass(menuTogglingCss).removeClass(menuOpenCss);
-				$ul.removeClass(menuOpenCss).addClass(menuTogglingCss);
-					
+				$li.addClass(actionCss).removeClass(menuOpenCss);
+				$ul.addClass(actionCss).removeClass(menuOpenCss);
+
 				$ul.find(`.${menuOpenCss}`).removeClass(menuOpenCss);
 
 				$ul.css({ height: $ul[0].scrollHeight });
 
-			 
-				setTimeout(() => {
-					$ul.css({ height: 0 });
-				}, CSS_TRANSISTION_DELAY);
+				if (animateHeight) {
+					setTimeout(() => {
+						$ul.css({ height: 0 });
+					}, CSS_TRANSISTION_DELAY);
+				}
 
 				setTimeout(() => {
-					$li.removeClass(`${menuTogglingCss} ${menuOpenCss}`);
-					$ul.removeClass(`${menuTogglingCss} ${menuOpenCss}`);
+					$li.removeClass(actionCss);
+					$ul.removeClass(actionCss);
 
 					$ul.css({ height: '' });
 
 					_.params.afterNavItemClose($li);
-					 
+
 					_.allowClick = true;
 
 				}, slideDuration);
@@ -267,12 +284,12 @@ export default class NavMobile {
 			e.stopPropagation();
 
 		})
-		.on(`click.${EVENT_NAME} ${EVENT_NAME}`, 'a', function (e) {
-			//prohibit closing if an anchor is clicked
-			if (_.params.stopPropagation) {
-				e.stopPropagation();
-			}
-		});
+			.on(`click.${EVENT_NAME} ${EVENT_NAME}`, 'a', function (e) {
+				//prohibit closing if an anchor is clicked
+				if (_.params.stopPropagation) {
+					e.stopPropagation();
+				}
+			});
 
 	}
 
@@ -282,7 +299,7 @@ export default class NavMobile {
 		$(document.body).on(`click.${EVENT_NAME}`, this, function (e) {
 			if (_.params.outsideClickClose) {
 				if (!_.menuOpened) { return; }//lets just exit then..
-		
+
 				const menuClicked = (_.$element.has(e.target).length > 0);
 
 				//if the menu item is not clicked and its opened
@@ -297,26 +314,26 @@ export default class NavMobile {
 
 	checkIfEnabled() {
 		const _ = this;
-		
+
 		let resizeTimer;
-		 
+
 		//basically if the navigational button is visible then
 		//we can allow the click to open the navigation
 		//this is so it doesn't clash with any other plugins
 		//and allows for the control of this click via CSS
 		$(window).on(`resize.${EVENT_NAME} ${EVENT_NAME}`, function (e) {
-			
+
 			resizeTimer && clearTimeout(resizeTimer);
 
 			resizeTimer = setTimeout(() => {
-				
-				_.allowClick = typeof _.params.bkptEnable ==='number' ? 
+
+				_.allowClick = typeof _.params.bkptEnable === 'number' ?
 					$(window).width() <= _.params.bkptEnable :
 					isVisible($(_.params.enableBtn)[0])
-				;
-				  
+					;
+
 			}, e.type === EVENT_NAME ? 0 : 200);
-		}).trigger(EVENT_NAME); 
+		}).trigger(EVENT_NAME);
 	}
 
 	static remove(element) {
@@ -324,7 +341,7 @@ export default class NavMobile {
 		$(element).each(function () {
 			const instance = elData(this, `${DATA_NAME}_instance`);
 			const params = elData(this, `${DATA_NAME}_params`);
-		 
+
 			$(params.enableBtn).off(`click.${EVENT_NAME} ${EVENT_NAME}`);
 			$(document).off(`keydown.${EVENT_NAME}`);
 			instance.$element

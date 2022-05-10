@@ -7,7 +7,6 @@ import installStoreToLibrary, {
     LazyLoad,
     NavDesktop,
     NavMobile,
-    NavMobileNestled,
     Parallax,
     Popup,
     ResponsiveDropDown,
@@ -67,7 +66,17 @@ $('body').on('click', 'a.smooth-scroll', function(e){
 })
 
 $('#main-nav')
-    .navMobile({navToggleNestled:false})
+    .navMobile({
+        navToggleNestled:false,
+        afterNavItemOpen($li) {
+            console.log('open',$li, $li.parentsUntil('#main-nav'))
+
+            
+        },
+        afterNavItemClose($li) {
+            console.log('close', $li.parentsUntil('#main-nav').length)
+        }
+    })
     .navDesktop();
 
 $('#main-nav').accessibleMenu();

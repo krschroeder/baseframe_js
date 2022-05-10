@@ -11,7 +11,7 @@ export { default as LazyLoad } from './src/assets/js/lazy-load';
 export { default as Parallax } from './src/assets/js/parallax';
 export { default as Popup } from './src/assets/js/popup';
 export { default as NavDesktop } from './src/assets/js/nav-desktop';
-export { default as NavMobile, NavMobileNestled } from './src/assets/js/nav-mobile';
+export { default as NavMobile } from './src/assets/js/nav-mobile';
 export { default as ResponsiveDropDown } from './src/assets/js/responsive-dropdowns';
 export { default as SelectEnhance } from './src/assets/js/select-enhance';
 export { default as Tabs } from './src/assets/js/tabs';
@@ -24,4 +24,4 @@ export { default as focusTrap } from './src/assets/js/util/trap-focus';
 
 // this is needed for all to operate
 // so I would say this makes sense
-export default installStoreToLibrary;
+export default installStoreToLibrary; 

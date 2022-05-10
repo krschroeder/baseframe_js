@@ -9,7 +9,7 @@ import AccessibleMenu from './accessible-menu';
 import Collapse from './collapse';
 import Parallax from './parallax';
 import NavDesktop from './nav-desktop';
-import NavMobile, {NavMobileNestled} from './nav-mobile';
+import NavMobile from './nav-mobile';
 import Tabs from './tabs';
 import EqualizeContent from './equalize-content';
 import ResponsiveDropDown from './responsive-dropdowns';
@@ -30,7 +30,6 @@ export {
     EqualizeContent,
     NavDesktop,
     NavMobile,
-    NavMobileNestled,
     Parallax,
     Popup,
     ResponsiveDropDown,
@@ -43,4 +42,4 @@ export {
     getUrlParam,
     smoothScroll,
     throttledResize
-}
+} 

@@ -100,12 +100,13 @@ export default class NavMobile {
 		let trappedFocus = null;
 
 		if (_.menuOpened) {
+			// closing
 			_.$element.parent()
 				.find(`.${menuOpenCss}`)
 				.removeClass(menuOpenCss)
 				.find("[style]").css('display', '');
 
-			$(outerElement).removeClass(menuOuterOpenCss);
+			$(outerElement).removeClass(menuOuterOpenCss).addClass(menuIsClosingCss);
 
 			setTimeout(() => {
 				$(outerElement).removeClass(menuIsClosingCss);
@@ -118,13 +119,13 @@ export default class NavMobile {
 			_.params.afterClose();
 
 		} else {
-			
+			// opening
 			$(outerElement).addClass(menuIsOpeningCss);
 			_.$element.addClass(menuIsOpeningCss);
 
 			setTimeout(() => {
 				_.$element.removeClass(menuIsOpeningCss).addClass(menuOpenCss);
-				$(outerElement).removeClass(menuIsOpeningCss).addClass(menuOpenCss);
+				$(outerElement).removeClass(menuIsOpeningCss).addClass(menuOuterOpenCss);
 
 			}, slideDuration);
 

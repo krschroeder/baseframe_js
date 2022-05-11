@@ -663,7 +663,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 
 
-var VERSION = "1.4.0";
+var VERSION = "1.4.1";
 var DATA_NAME = 'Popup';
 var EVENT_NAME = 'popup';
 var INSTANCE_NAME = "".concat(DATA_NAME, "_instance");
@@ -947,7 +947,7 @@ var Popup = /*#__PURE__*/function () {
       _.currentSrc = src;
       _.contentFromDOM = isDomSelector && !isJsArray || !isJsArray && _typeof(src) === 'object';
       _.params.title = title;
-      _.params.caption = caption;
+      if (caption) _.params.caption = caption;
       if (_.contentFromDOM) $(src).after(_.elemGrabbedLocation);
     }
   }, {

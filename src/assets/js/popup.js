@@ -12,13 +12,14 @@ import { CSS_TRANSISTION_DELAY } from './util/constants.js';
  
 import { KEYS } from './util/constants';
 
-const VERSION = "1.4.0";
+const VERSION = "1.4.1";
 const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
 const INSTANCE_NAME = `${DATA_NAME}_instance`;
 
 const getPopupSrc = ($elem) => $elem.data('popup-src') || $elem.attr('href') || null;
 const getTitleSrc = ($elem) => $elem.data('popup-title') || $elem.attr('title') || '';
+ 
 
 export default class Popup {
 
@@ -288,7 +289,7 @@ export default class Popup {
 		_.contentFromDOM = isDomSelector && !isJsArray || (!isJsArray && typeof src === 'object');
 
 		_.params.title = title;
-		_.params.caption = caption;
+		if (caption) _.params.caption = caption;
 		if (_.contentFromDOM) $(src).after(_.elemGrabbedLocation);
 	}
 

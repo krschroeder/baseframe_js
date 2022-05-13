@@ -10,22 +10,24 @@ const canFocusEls = (i, el) => isVisible(el, true) && el.tabIndex !== -1;
 
 const trapFocus = (modalEl, props) => {
 
-    const { focusFirst, focusable, nameSpace } = $.extend(defaultProps, props);
+    const { focusFirst, focusable, nameSpace } = $.extend({}, defaultProps, props);
     const $trapElem = $(modalEl);  
-     
-    let firstFocusable = null;
+    const focusableJoined = typeof focusable === 'string' ? focusable : focusable.join(',');
+    const $firstFocusable = $trapElem.find(focusableJoined).filter(canFocusEls);
+
+    let firstFocusable = $firstFocusable.length ? $firstFocusable[0] : null;
 
     $(document.body).on(`keydown.${nameSpace}`, function (e) {
-        const focusableJoined = typeof focusable === 'string' ? focusable : focusable.join(',');
+        
         const $focusable = $trapElem.find(focusableJoined).filter(canFocusEls);
- 
+       
         if (!$focusable.length) return;
 
         const lastFocusable = $focusable[$focusable.length - 1];
         const isTabPressed = e.key === 'Tab' || e.keyCode === 9;
 
         firstFocusable = $focusable[0]; 
-
+        
         if (!isTabPressed) {
             return;
         }
@@ -45,7 +47,9 @@ const trapFocus = (modalEl, props) => {
         }
     });
 
+
     if (focusFirst && firstFocusable) {
+
         firstFocusable.focus();
     }
 

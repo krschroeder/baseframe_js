@@ -1,13 +1,13 @@
 
 import { CSS_TRANSISTION_DELAY } from './util/constants.js';
 import validJSONFromString from './util/formatting-valid-json.js';
-import { isVisible } from './util/helpers';
+import getType, { isVisible } from './util/helpers';
 import submenuBtn from './util/plugin/nav';
 import { elData } from './util/store';
 import trapFocus from './util/trap-focus.js';
 
 
-const VERSION = "1.6.1";
+const VERSION = "1.7.0";
 const DATA_NAME = 'NavMobile';
 const EVENT_NAME = 'navMobile';
 
@@ -37,6 +37,7 @@ export default class NavMobile {
 			menuIsOpeningCss: 'menu-is-opening',
 			menuIsClosingCss: 'menu-is-closing',
 			submenuBtnCss: 'btn-nav--mb-submenu i i-arrow-b',
+			submenuBtnSkip: false,
 			afterNavItemOpen: () => { },
 			afterNavItemClose: () => { },
 			afterOpen: () => { },
@@ -144,12 +145,22 @@ export default class NavMobile {
 
 	addChildNavClass() {
 		const _ = this;
+		const {submenuBtnSkip} = _.params;
 
 		$('li', _.$element).has('ul').each(function () {
 			const $this = $(this);
+			let skipUl = false;
 
+			if (
+				getType(submenuBtnSkip) === 'function' &&
+				// condition in function must return false
+				submenuBtnSkip(this)
+			) {
+				skipUl = true;
+			}
 		 
-			if (!$this.next('button').length) {
+		 
+			if (!$this.next('button').length && !skipUl) {
 				const $a = $this.find('a').first();
 
 				$a.addClass(_.params.hasUlCls);

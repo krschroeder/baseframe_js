@@ -2,7 +2,7 @@
 import validJSONFromString from './util/formatting-valid-json.js';
 import { elData } from './util/store';
 
-const VERSION = "1.1.2";
+const VERSION = "1.2.0";
 const DATA_NAME = 'NavDesktop';
 const EVENT_NAME = 'navDesktop';
  
@@ -22,10 +22,12 @@ export default class NavDesktop {
 			stopWidth: 768,
 			delay: 800,
 			edgeCss: 'ul-on-edge', 
-			outerElem: 'body',
+			outerElem: document.body,
 			ulHasCss: 'has-ul',
 			ulNotCss: 'no-ul',
 			navHoveredCss: 'desktop-nav-hovered',
+			navLeavingCss: 'desktop-nav-leaving',
+			navLeavingDelay: 800,
 			hoverCss: 'hover',
 			submenuBtnCss: 'btn-nav--mb-submenu i i-arrow-b'
 		};
@@ -49,6 +51,7 @@ export default class NavDesktop {
 		const _ = this;
 
 		_.stayHover = null;
+		_.navLeaving = null;
 		_.element = element; 
 
 		const dataOptions = validJSONFromString(
@@ -108,7 +111,7 @@ export default class NavDesktop {
 		$(_.element).find('ul').on(`mouseover.${EVENT_NAME}`, 'li,ul',function(e){
 
 			const li = this;
-			const {outerElem, navHoveredCss, hoverCss} = _.params;
+			const {outerElem, navHoveredCss, hoverCss, navLeavingCss} = _.params;
 
 			evtTracker(li,e, () => {
 				_.edgeDetector(li);
@@ -124,15 +127,17 @@ export default class NavDesktop {
 				liLiParents.length === 0 && 
 					$(_.element).find(`.${hoverCss}`).removeClass(hoverCss);
 
+				_.navLeaving && clearTimeout(_.navLeaving);
 				_.stayHover && clearTimeout(_.stayHover);
 
-				$(outerElem).addClass(navHoveredCss);
+				$(outerElem).addClass(navHoveredCss).removeClass(_.navLeavingCss)
+
 			});
 			
 		}).on(`mouseout.${EVENT_NAME}`, 'li,ul', function(e){
 
 			const li = this;
-			const {edgeCss, delay, navHoveredCss, hoverCss, outerElem} = _.params;
+			const {edgeCss, delay, navHoveredCss, hoverCss, navLeavingCss, navLeavingDelay, outerElem} = _.params;
 
 			evtTracker(li,e,() => {
 			
@@ -140,9 +145,17 @@ export default class NavDesktop {
 					() => { 
 						$(_.element).find(`.${hoverCss}`).removeClass(`${hoverCss} ${edgeCss}`);
 						$(_.element).find(`.${edgeCss}`).removeClass(edgeCss);
-						$(outerElem).removeClass(navHoveredCss);
+						$(outerElem)
+							.removeClass(navHoveredCss)
+							.addClass(navLeavingCss);
+
+						_.navleaving = setTimeout(() => {
+							$(outerElem).removeClass(navLeavingCss);
+						}, navLeavingDelay);
 					},
 				delay);
+
+
 
 			});
 		});

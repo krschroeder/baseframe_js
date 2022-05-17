@@ -68,6 +68,10 @@ $('body').on('click', 'a.smooth-scroll', function(e){
 $('#main-nav')
     .navMobile({
         navToggleNestled:false,
+        submenuBtnSkip(ul) {
+            // console.log(ul.classList.contains('skip'),ul)
+            return ul.classList.contains('skip');
+        },
         afterNavItemOpen($li) {
             console.log('open',$li, $li.parentsUntil('#main-nav'))
 

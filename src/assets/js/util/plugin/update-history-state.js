@@ -11,9 +11,9 @@ const updateHistoryState = (_, val, remove = false, prevVal) => {
         if (historyType === 'replace') {
             history.replaceState(null, null, updatedQs);
 
-        } else if (historyType === 'push') {
+        } else if (historyType === 'push') {  
             history.pushState(null, null, updatedQs);
-
+            
         } else {
             console.warn(`Please specifiy either 'push' or 'replace' for the state`);
         }

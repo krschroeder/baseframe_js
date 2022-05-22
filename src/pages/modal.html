@@ -19,6 +19,7 @@
 						data-modal-options="{title:'How About That'}"
 					>Modal With HTML</a>
 
+					<button type="button" id="btn-gen-content">Generated Content</button>
 				</div>
 				 
 			</div>
@@ -33,6 +34,22 @@
 		$('.btn-modal').modal({
 			useHashFilter: 'modal'
 		});
+
+		$('#btn-gen-content').modal({
+			useHashFilter: 'modal',
+			src: $('<div>').attr({class: 'gen-content'}),
+			fromDOM: false,
+			modalID: 'gen-content',
+			onOpen(modalObj) {
+				if (modalObj.$content.text() === "") {
+	
+					modalObj.$content.append(`
+						<h2>Some generated Content</h2>
+						<p>Ullamco <a href="#">link</a> laboris nisi ut aliquid ex ea commodi consequat. Sed haec quis possit intrepidus aestimare tellus. Quam diu etiam furor <a href="#">iste tuus</a> nos eludet? Curabitur est gravida et libero vitae dictum.</p>
+					`);
+				}
+			}
+		})
 	})($);
 
 	</script>

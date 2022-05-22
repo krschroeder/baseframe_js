@@ -5,11 +5,11 @@ import installStoreToLibrary, {
     Collapse,
     EqualizeContent,
     LazyLoad,
+    Modal,
     NavDesktop,
     NavMobile,
     Parallax,
     Popup,
-    ResponsiveDropDown,
     SelectEnhance,
     Tabs,
     installStoreAsDataToLibrary,
@@ -20,7 +20,7 @@ import installStoreToLibrary, {
     cookies
 } from '../../../all-es6';
  
-
+ 
 //necessary for all plugin's to operate
 //much like jQuery's $.data method, the $.store is similar
 installStoreToLibrary(true);
@@ -32,12 +32,11 @@ libraryExtend([
     Collapse,
     EqualizeContent,
     LazyLoad,
+    Modal,
     NavDesktop,
     NavMobile,
-    // NavMobileNestled,
     Parallax,
     Popup,
-    ResponsiveDropDown,
     SelectEnhance,
     Tabs
 ],false); 

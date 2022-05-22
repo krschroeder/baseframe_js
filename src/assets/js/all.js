@@ -1,41 +1,41 @@
 //cash dom or jquery are a dependency
 //not importing them because it can be either or
 import installStoreToLibrary from './util/store';
-import libraryExtend from './util/lib-extend';
+import libraryExtend from './util/library-extend';
 import smoothScroll from './util/smooth-scroll';
 import getUrlParam, {getHashParam} from './util/get-param';
-import Popup from './popup';
+
 import AccessibleMenu from './accessible-menu';
 import Collapse from './collapse';
-import Parallax from './parallax';
+import EqualizeContent from './equalize-content';
+import LazyLoad from './lazy-load';
 import NavDesktop from './nav-desktop';
 import NavMobile from './nav-mobile';
+import Parallax from './parallax';
+import Popup from './popup';
 import Tabs from './tabs';
-import EqualizeContent from './equalize-content';
-import ResponsiveDropDown from './responsive-dropdowns';
-import LazyLoad from './lazy-load';
+import Modal from './modal';
 
 import cookies from './cookies';
 import formInputs from './form-input';
 import throttledResize from './util/throttle-resize';
-import bgResponsiveLoad from './bg-responsive-load';
 
 // this is needed for all to operate
 // so I would say this makes sense
 export default installStoreToLibrary;
+console.log('all js')
 export {
     libraryExtend,
     AccessibleMenu,
     Collapse,
     EqualizeContent,
+    Modal,
     NavDesktop,
     NavMobile,
     Parallax,
     Popup,
-    ResponsiveDropDown,
     Tabs,
     LazyLoad,
-    bgResponsiveLoad,
     cookies,
     formInputs,
     getHashParam,

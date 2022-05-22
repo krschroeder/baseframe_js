@@ -1,0 +1,41 @@
+{{>top-head title="Modal"}}
+
+</head>
+<body>
+	{{>header}}
+	<main role="main">
+		<div class="container v-space">
+			<div style="display: none;">
+				<div id="modal-content">
+					<h1>Pop-up</h1>
+					<p>This is for a basic modal content</p>
+					<p>Cum sociis natoque <a href="#"> some link </a>penatibus et magnis dis parturient. Etiam habebis sem dicantur magna mollis euismod. Curabitur blandit tempus ardua ridiculus sed magna. <button type="button" disabled>Some Button</button> Unam incolunt Belgae, aliam Aquitani, tertiam. Nihil hic munitissimus habendi <button type="button">clickable btn</button> senatus locus, nihil horum?</p>
+				</div>
+			</div>
+			<div class="flex-l">
+				<div class="md-col-4">
+
+					<a href="#modal-content" class="button btn-modal"
+						data-modal-options="{title:'How About That'}"
+					>Modal With HTML</a>
+
+				</div>
+				 
+			</div>
+		</div>
+	</main>
+
+	{{>footer}}
+
+	<script>
+	 
+	(function($){
+		$('.btn-modal').modal({
+			useHashFilter: 'modal'
+		});
+	})($);
+
+	</script>
+
+</body>
+</html>

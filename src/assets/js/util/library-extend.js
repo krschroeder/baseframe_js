@@ -18,9 +18,10 @@ const libraryExtend = (Plugins, notify = false) => {
    
     for (let i = 0, l = plugins.length; i < l; i++) {
        
-        const Plugin = plugins[i];
-        const DataName = Plugin.pluginName;  
-        const pluginName = DataName.charAt(0).toLowerCase() + DataName.substring(1);
+        const Plugin = plugins[i],
+            DataName = Plugin.pluginName,
+            pluginName = DataName.charAt(0).toLowerCase() + DataName.substring(1)
+        ;
         
         $.fn[pluginName] = function (params) {
             const _ = this;
@@ -28,13 +29,12 @@ const libraryExtend = (Plugins, notify = false) => {
             return _.each(function (index) {
                 const $this = $(this);
 
-                let instance = elData(this, `${DataName}_instance`);
+                const instance = elData(this, `${DataName}_instance`);
                  
                 if (!instance) {
                     const plugin = new Plugin($this, params, index);
 
                     elData(this, `${DataName}_instance`, plugin); 
-                    
                     
                 } else {
 

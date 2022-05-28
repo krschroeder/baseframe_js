@@ -22,14 +22,7 @@ export default class Collapse {
 
 	static get defaults() {
 		return {
-			elemsItem: '.collapse__item',
-			elemsBtn: '.collapse__btn',
-			elemsBody: '.collapse__body',
-			openCss: 'collapse--open',
-			togglingCss: 'collapse--toggling',
-			openingCss: 'collapse--opening',
-			closingCss: 'collapse--closing',
-			openNoAnimateCss: 'collapse--no-animate',
+			cssPrefix: 'collapse',
 			toggleClickBindOn: 'group',
 			toggleDuration: 500,
 			toggleGroup: false,
@@ -73,7 +66,7 @@ export default class Collapse {
 		elData(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend({},Collapse.defaults, options, dataOptions)
+			$.extend({}, Collapse.defaults, options, dataOptions)
 		);
 		_.params = elData(element, `${DATA_NAME}_params`);
 
@@ -94,18 +87,20 @@ export default class Collapse {
 		_.loadContentFromHash();
 		_.collapseEvents();
 		_.params.afterInit(_.element);
-		setTimeout(() => {_.initiallyLoaded = true}, 1000);
+		setTimeout(() => { _.initiallyLoaded = true }, 1000);
 	}
 
 	setDisplay() {
 		const _ = this;
-		$(_.element).find(_.params.elemsBody).each(function () {
-			if ($(this).hasClass(_.params.openCss)) {
+		const { cssPrefix } = _.params;
+
+		$(_.element).find(`.${cssPrefix}__body`).each(function () {
+			if ($(this).hasClass(`.${cssPrefix}--open`)) {
 
 				const collapseID = `#${$(this).attr('id')}`;
 				const btnElems = `[data-href="${collapseID}"],a[href="${collapseID}"]`;
 				$('body').find(btnElems)
-					.addClass(_.params.openCss)
+					.addClass(`.${cssPrefix}--open`)
 					.attr('aria-expanded', true);
 			}
 		});
@@ -113,10 +108,12 @@ export default class Collapse {
 
 	collapseBodyNoID() {
 		const _ = this;
-		$(_.element).find(_.params.elemsItem).each(function (index) {
+		const { cssPrefix } = _.params;
 
-			const $cBody = $(this).find(_.params.elemsBody);
-			const $btn = $(this).find(_.params.elemsBtn);
+		$(_.element).find(`.${cssPrefix}`).each(function (index) {
+
+			const $cBody = $(this).find(`.${cssPrefix}__body`);
+			const $btn = $(this).find(`.${cssPrefix}__btn`);
 
 			if (!!!$cBody.attr('id')) {
 				const btnContent = $btn.eq(0).text().slice(0, 20).trim().replace(/\s/g, '-');
@@ -137,12 +134,14 @@ export default class Collapse {
 
 	collapseEvents() {
 		const _ = this;
-		_.onElem = _.params.toggleClickBindOn == 'group' ? _.element :
+		const { cssPrefix, toggleClickBindOn } = _.params;
+
+		_.onElem = toggleClickBindOn == 'group' ? _.element :
 			//default to group anyway if the body isn't specified
-			(_.params.toggleClickBindOn == 'body' ? 'body' : 'group')
+			(toggleClickBindOn == 'body' ? 'body' : 'group')
 			;
 
-		$(_.onElem).on(`click.${EVENT_NAME} ${EVENT_NAME}`, _.params.elemsBtn, function (e) {
+		$(_.onElem).on(`click.${EVENT_NAME} ${EVENT_NAME}`, `.${cssPrefix}__btn`, function (e) {
 			e.preventDefault();
 
 			if (_.toggling) { return; }
@@ -169,7 +168,7 @@ export default class Collapse {
 		if (useLocationHash || loadLocationHash) {
 
 			const hash = (useHashFilter ? (getHashParam(useHashFilter) || '') : location.hash);
-			
+
 			//if there are multiples
 			const hashes = hash.split('=');
 
@@ -200,19 +199,20 @@ export default class Collapse {
 
 	_toggleAction(collapseID, noAnimation = false, history = true) {
 		const _ = this;
+
 		if (collapseID === '#') return;
 
 		const $collapsibleItem = $(_.element).find(collapseID);
-		const { openCss, openNoAnimateCss, togglingCss, toggleGroup, useHashFilter } = _.params;
+		const { cssPrefix, openNoAnimateCss, toggleGroup } = _.params;
 
 		if (!$collapsibleItem.length) { return; }
 
-		const close = $collapsibleItem.hasClass(openCss);
+		const close = $collapsibleItem.hasClass(`${cssPrefix}--open`);
 		const btnElems = `[data-href="${collapseID}"],a[href="${collapseID}"]`;
 		const $btnElems = $(_.onElem).find(btnElems);
 
-		$collapsibleItem.addClass(noAnimation ? (openCss + " " + openNoAnimateCss) : togglingCss);
-		$btnElems.addClass(togglingCss);
+		$collapsibleItem.addClass(noAnimation ? (`${cssPrefix}--open ${openNoAnimateCss}`) : `${cssPrefix}--toggling`);
+		$btnElems.addClass(`${cssPrefix}--toggling`);
 
 		if (toggleGroup) {
 			_._toggleGroup($btnElems, $collapsibleItem);
@@ -232,10 +232,11 @@ export default class Collapse {
 
 	_toggleGroup($btnElems, $clickedItem) {
 		const _ = this;
+		const { cssPrefix } = _.params;
 
-		$(_.onElem).find(_.params.elemsBody).not($clickedItem).each(function () {
+		$(_.onElem).find(`.${cssPrefix}__body`).not($clickedItem).each(function () {
 
-			if ($(this).hasClass(_.params.openCss)) {
+			if ($(this).hasClass(`.${cssPrefix}--open`)) {
 
 				const $this = $(this);
 
@@ -247,11 +248,12 @@ export default class Collapse {
 
 	_closeItem($btnElems, $collapsibleItem) {
 		const _ = this;
+		const { cssPrefix } = _.params;
 
 		_.toggling = true;
 
 		$collapsibleItem
-			.addClass(`${_.params.togglingCss} ${_.params.closingCss}`)
+			.addClass(`${cssPrefix}--toggling ${cssPrefix}--closing`)
 			.css({ height: $collapsibleItem.height() })
 
 		setTimeout(() => {
@@ -259,7 +261,8 @@ export default class Collapse {
 		}, CSS_TRANSISTION_DELAY);
 
 		setTimeout(() => {
-			const rmClasses = `${_.params.openCss} ${_.params.togglingCss} ${_.params.closingCss}`;
+
+			const rmClasses = `${cssPrefix}--open ${cssPrefix}--toggling ${cssPrefix}--closing`;
 			$collapsibleItem
 				.removeClass(rmClasses)
 				.css({ height: '' });
@@ -277,10 +280,11 @@ export default class Collapse {
 
 	_openItem($btnElems, $collapsibleItem) {
 		const _ = this;
+		const { cssPrefix, moveToTopOnOpen, toggleDuration } = _.params;
 
 		_.toggling = true;
 
-		$collapsibleItem.addClass(`${_.params.togglingCss} ${_.params.openingCss}`);
+		$collapsibleItem.addClass(`${cssPrefix}--toggling ${cssPrefix}--opening`);
 		const height = $collapsibleItem.height();
 
 		$collapsibleItem.css({ height: '0px' })
@@ -291,35 +295,37 @@ export default class Collapse {
 
 
 		setTimeout(() => {
-			const rmClasses = `${_.params.togglingCss} ${_.params.openingCss} ${_.params.openNoAnimateCss}`;
 
-			$collapsibleItem.addClass(`${_.params.openCss}`);
+			const rmClasses = `${cssPrefix}--toggling ${cssPrefix}--opening ${cssPrefix}--no-animate`;
+
+			$collapsibleItem.addClass(`${cssPrefix}--open`);
 			$collapsibleItem.removeClass(rmClasses)
 				.css({ height: '' });
 
 			$btnElems
-				.addClass(_.params.openCss)
+				.addClass(`${cssPrefix}--open`)
 				.removeClass(rmClasses)
 				.attr('aria-expanded', true);
 
 			_.params.afterOpen(this);
 
-			if (_.params.moveToTopOnOpen) {
+			if (moveToTopOnOpen) {
 				_._moveToTopOnOpen($collapsibleItem);
 			}
 			_.toggling = false;
-		}, _.params.toggleDuration + CSS_TRANSISTION_DELAY);
+		}, toggleDuration + CSS_TRANSISTION_DELAY);
 	}
 
 	_moveToTopOnOpen($collapsibleItem) {
 		const _ = this;
-		const $item = $collapsibleItem.parent(_.params.elemsItem) || $collapsibleItem;
+		const { cssPrefix, moveToTopOffset, scrollSpeed } = _.params;
+		const $item = $collapsibleItem.parent(`${cssPrefix}__item`) || $collapsibleItem;
 
 		if (!$item.length) return;
 
 		const elemOffsetTop = $item.offset().top;
-		const top = elemOffsetTop - _.params.moveToTopOffset;
+		const top = elemOffsetTop - moveToTopOffset;
 
-		smoothScroll(top, _.params.scrollSpeed)
+		smoothScroll(top, scrollSpeed)
 	}
 }

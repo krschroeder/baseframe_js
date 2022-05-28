@@ -1,5 +1,7 @@
-<h2 id="popup-plugin">Pop-Up</h2>
+<h2 id="popup-plugin">Pop-Up [DEPRECATED]</h2>
 
+### Note:
+This will be removed in subsequent versions. Use 'Modal' in favor of this plugin.
 
 ### Features
 Where do I begin? Look at the settings. Pretty light-weight for what it does and has all the configurable options you should need. Simple CSS styling and all that fun stuff.

@@ -84,9 +84,9 @@ libraryExtend([
     LazyLoad,
     NavDesktop,
     NavMobile,
+    Modal,
     Parallax,
-    Popup,
-    ResponsiveDropDown,
+    Popup, //[Deprecated]
     SelectEnhance,
     Tabs
 ]); 
@@ -126,13 +126,9 @@ __[View](#nav-mobile-plugin)__
 For making a parallaxing elements on the page. Lots of configurable options.
 __[View](#parallax-plugin)__
 
-### Popup
+### Popup [DEPRECATED]
 There is like a few dozen of these, right?! Well this is easy to style and configurable. Also, tons of options, from loading in images, to traversing a JavaScript Array (instead of the DOM), which can come from an AJAX request (which that'd be a separate bit of code, but you get the idea). Load on location.hash etc.
 __[View](#popup-plugin)__
-
-### Responsive Dropdown
-Turn your left secondary navigation (or list of options) into a dropdown for mobile!
-__[View](#responsive-dropdown-plugin)__
 
 ### Select Enhance
 Enhance a selectbox
@@ -233,22 +229,6 @@ installStoreAsDataToLibrary(expose?:boolean)
 
 ### Functions
 
-
-#### bgResponsiveLoad
-
-This plugin simply loads an background image of a specified element, if it's visible. This function exists because most browsers load an image (even a background one) even if the element isn't visible. The event removes itself if nothing is left to load.
-
-
-__params__
-Option |  Default | Description
------- | ------- | -----
-delay | 200 | Time delay in which the function will run after the resize event.
-eventName | 'BackgroundImageLoad' | Event namespace of the load event.
-bgDataName | 'bg-img' | The data attribute name that holds the background image to load.
-
-```javascript
-bgResponsiveLoad(selector: string | HTMLElement, params?:any );
-```
 
 #### formInputs
 formInputs function currently adds in space-bar support for radio buttons, and checkbox inputs. As long as there is a `for` attribute on a `<label>` that maps to an input.
@@ -389,14 +369,7 @@ This has a move-to-top after open feature, open with location hash, and callback
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-elemsItem | string |  '.collapse__item' |   CSS class name for the entire item.
-elemsBtn | string |  '.collapse__btn' |   CSS class name for the button on which the click event occurs
-elemsBody | string |  '.collapse__body' |  CSS class name for the element to be collapsed
-openCss | string |  'collapse--open' |  CSS class name for an opened element, attaches to click item and the body of the collapse item.
-togglingCss | string |  'collapse--toggling' |  CSS class name for a toggling element.
-openingCss | string |  'collapse--opening' |  CSS class name for opening an element.
-closingCss | string |  'collapse--closing' |  CSS class name for closing an element.
-openNoAnimateCss | string |  'collapse--no-animate' |  CSS rule to kill the transition, which gets set only when its loaded from a hash.
+cssPrefix | string |  'collapse' |   CSS class name for styling purposes that is used as prefix to all other classes (btn, body, etc).
 toggleClickBindOn | string |  'group' |  Attaches the click to the selector or `$('.your-selector').colla...`, other option is __'body'__ and it'll then be set on the body. Can come in handy, I had a use-case for it, forgot exactly why.
 toggleDuration | number |  500 |  The speed at which the items will open, should pair with CSS transition settings.
 toggleGroup | boolean |  false |  More or less toggles the other opened element(s) closed, and make it behave like an accordion.
@@ -802,8 +775,10 @@ $('.parallax-bg').parallax({
 <br>
 <br>
 <br>
-<h2 id="popup-plugin">Pop-Up</h2>
+<h2 id="popup-plugin">Pop-Up [DEPRECATED]</h2>
 
+### Note:
+This will be removed in subsequent versions. Use 'Modal' in favor of this plugin.
 
 ### Features
 Where do I begin? Look at the settings. Pretty light-weight for what it does and has all the configurable options you should need. Simple CSS styling and all that fun stuff.
@@ -998,75 +973,6 @@ $('.js-array').popup({
 });
 ```
 
-<br>
-<br>
-<br>
-<h2 id="responsive-dropdown">Responsive Navigation to Dropdown</h2>
-
-### What is it!?
-This is a plugin that will take a side-navigation element and turn it into a dropdown for mobile. Its a common thing that I've come across that the mobile needs to turn into a dropdown so hence this plugin!
-
-### Features
-There is a close button that you can add to the bottom if you'd like. Outside click support, so you can close not clicking the header or the (optional) close button.
-
-### Settings
-
-Option | Type | Default | Description
------- | ---- | ------- | -----------
-clickHeader | string| '.resp-dd__header' | CSS class for the header element
-toggleBody | string| '.resp-dd__body' | CSS class for the toggle body
-closeBtnBottom | string | true | Shows close button at the bottom.
-closeBtnText | string| 'Close' | Close text for the button
-openHeaderCss | string| 'resp-dd--active' | CSS class when the toggle body is opened for the header
-inMobileCss | string| 'resp-dd--in-mobile' | CSS class changing the element over to a 'responsive dropdown' in mobile.
-closeBtnDivCss | string| 'resp-dd__close-btn-area' | CSS class for the close button area.
-closeBtnCss | string| '' | Option to add a button class on the optional close button at the bottom.
-toggleCss | string| 'resp-dd__body--open' | CSS class added to the body when it is open.
-togglingCss | string| 'resp-dd__body--toggling' | CSS class added to the toggle body when toggling.
-duration | number | 300 | Time spent transitioning to open. Should correspond with CSS transition.
-mobileBkpt | number | 768 | Break point before entering into mobile.
-outsideClickElem | string Or HTMLELement | 'body' |
-
-### Example
-
-__The following is an example html structure for this plugin:__
-
-__HTML__
-```html
-<div class="resp-dd">
-	<div class="resp-dd__header">
-		<strong class="inline-block">Title For Dropdown</strong>
-		<i class="resp-dd__down-arrow">
-			<span class="sr-only">Down Arrow</span>
-		</i>
-	</div>
-	<div class="resp-dd__body">
-		<div class="sm-col-6 md-col-12" >
-			<h5>Listing of Things</h5>
-			<ul>
-				<li>Some Listing of Sorts</li>
-				<li>Some Listing of Sorts</li>
-			</ul>
-			<br />
-			<a href="#" class="see-more-btn">See More</a>
-		</div>
-
-		<div class="sm-col-6 md-col-12">
-			<h5>Another Listing</h5>
-			<ul>
-				<li>Some Listing of Sorts</li>
-				<li>Some Listing of Sorts</li>
-				<li>Some Listing of Sorts</li>
-			</ul>
-		</div>
-	</div>
-</div>
-```
-
-__JavaScript__
-```javascript
-$(".resp-dd").responsiveDropDown();
-```
 <br>
 <br>
 <br>

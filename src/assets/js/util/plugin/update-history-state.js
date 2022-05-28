@@ -8,12 +8,14 @@ const updateHistoryState = (_, val, remove = false, prevVal) => {
     if (useLocationHash) {
         const updatedQs = '#' + changeHashParam(useHashFilter, val, remove, prevVal);  
 
-        if (historyType === 'replace') {
+        if (!historyType || historyType === 'replace') {
+            // if we don't have this parameter then
+            // we just replace the state
             history.replaceState(null, null, updatedQs);
 
         } else if (historyType === 'push') {  
             history.pushState(null, null, updatedQs);
-            
+
         } else {
             console.warn(`Please specifiy either 'push' or 'replace' for the state`);
         }

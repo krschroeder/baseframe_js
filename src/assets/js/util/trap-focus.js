@@ -20,13 +20,12 @@ const trapFocus = (modalEl, props) => {
     if (focusFirst && firstFocusable) {
 
         firstFocusable.focus();
-        
     }
     
     $(document.body).on(`keydown.${nameSpace}`, function (e) {
          
         const $focusable = $trapElem.find(focusableJoined).filter(canFocusEls);
-        console.log($focusable)
+      
         if (!$focusable.length) return;
 
         const lastFocusable = $focusable[$focusable.length - 1];

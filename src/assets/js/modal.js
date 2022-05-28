@@ -6,6 +6,7 @@ import { CSS_TRANSISTION_DELAY } from './util/constants';
 import getType, { camelCase } from './util/helpers';
 import { getHashParam } from './util/get-param'
 import updateHistoryEntry from './util/plugin/update-history-state';
+import { noop } from './util/helpers';
 
 
 const VERSION = '1.0.0';
@@ -17,7 +18,6 @@ const hasCb = (cb, modalObj) => {
         cb(modalObj);
     }
 }
-
 
 export default class Modal {
 
@@ -45,23 +45,23 @@ export default class Modal {
             src: null,
             useHashFilter: null,
             loadLocationHash: true,
-			useLocationHash: true,
-			historyType: 'replace',
-            onOpen: () => {},
-            afterClose: () => {}
+            useLocationHash: true,
+            onOpenOnce: noop,
+            onOpen: noop,
+            afterClose: noop
         };
     }
 
     static remove(element) {
 
-		$(element).each(function () {
+        $(element).each(function () {
 
-			const 
+            const
                 _ = elData(this, `${DATA_NAME}_instance`),
-			    params = elData(this, `${DATA_NAME}_params`),
-                {$backdrop, $closeBtn} = _.modalObj
-            ;
-            
+                params = elData(this, `${DATA_NAME}_params`),
+                { $backdrop, $closeBtn } = _.modalObj
+                ;
+
             _.modalObj.show && disableModal();
             $(_.element).off(`${_.params.enableEvent}.${_.modalEvent}`);
             $closeBtn.off(`click.${_.modalEvent}Dismiss`);
@@ -70,27 +70,28 @@ export default class Modal {
                 .off(`keydown.${_.modalEvent}Dismiss`)
                 .off(`${_.modalEvent}Dismiss`);
             $(window).off(`popstate.${_.modalEvent} ${_.modalEvent}`);
-			elData(this, `${DATA_NAME}_params`, null, true);
-			elata(this, `${DATA_NAME}_instance`, null, true);
-		});
-	}
+            elData(this, `${DATA_NAME}_params`, null, true);
+            elata(this, `${DATA_NAME}_instance`, null, true);
+        });
+    }
 
     constructor($element, options) {
         const _ = this;
-        
+
         _.element = $element[0];
 
         const dataOptions = validJSONFromString(
             $element.data(DATA_NAME + '-options')
         );
-       
-        elData( $element, `${DATA_NAME}_params`,
+
+        elData($element, `${DATA_NAME}_params`,
             $.extend({}, Modal.defaults, options, dataOptions)
         );
 
         _.params = elData($element, `${DATA_NAME}_params`);
         _.trappedFocus = null;
         _.enabledElem = null;
+        _.openedOnce = false;
 
         if (!_.params.modalID) {
             let idPartIfParamSrc, autoGen = false;
@@ -98,8 +99,8 @@ export default class Modal {
             if (_.params.src && getType(_.params.src) !== 'string') {
                 idPartIfParamSrc = generateGUID();
                 autoGen = true;
-            } 
-            
+            }
+
             _.modalID = (idPartIfParamSrc || _.element.hash || _.element.dataset.modalSrc).replace('#', '');
 
             if (_.params.useLocationHash && autoGen) {
@@ -120,34 +121,33 @@ export default class Modal {
     clickEnable() {
         const _ = this;
 
-        $(_.element).on(`${_.params.enableEvent}.${_.modalEvent}`, function (e) { 
+        $(_.element).on(`${_.params.enableEvent}.${_.modalEvent}`, function (e) {
             _.setDisplayAndEvents();
             e.preventDefault();
         });
     }
 
     setDisplayAndEvents() {
-        
+
         const _ = this;
-        
-        // !_.modalObj.show && 
+
         _.enableModal();
-        
+
         $(document).on(`keydown.${_.modalEvent}Dismiss`, function (e) {
             if (e.code == 'Escape') {
                 _.disableModal();
                 e.preventDefault();
-            } 
+            }
         });
 
         $(document).on(`${_.modalEvent}Dismiss`, _.disableModal);
     }
 
     getModalObj() {
-        
+
         const
             _ = this,
-            {ariaLabel, ariaLabelledby, closeBtnIconCss, modalCss} = _.params,
+            { ariaLabel, ariaLabelledby, closeBtnIconCss, modalCss } = _.params,
             modalID = _.modalID,
             modalAttr = {
                 class: 'modal' + (modalCss ? ' ' + modalCss : ''),
@@ -162,86 +162,91 @@ export default class Modal {
             $backdrop = $('<div/>').attr({ class: 'modal__backdrop' }),
             $modal = $('<div/>').attr(modalAttr).append($backdrop, $dialog),
             $content = $(_.params.src || _.element.hash || _.element.dataset.modalSrc)
-        ;
+            ;
 
-        return { 
+        return {
             $backdrop,
-            $content, 
+            $content,
             contentAppended: false,
             $dialog,
-            $dialogContent, 
-            $closeBtn, 
-            id: modalID, 
+            $dialogContent,
+            $closeBtn,
+            id: modalID,
             $modal,
-            disableModal: _.disableModal,
+            disableModal: () => _.disableModal(),
             show: false
         };
     }
 
     enableModal() {
-        
+
         const _ = this,
-            {$backdrop, $closeBtn, $content, $modal} = _.modalObj,
-            {appendTo, backDropClose, cssPrefix, fromDOM, onOpen} = _.params
-        ;
+            { $backdrop, $closeBtn, $content, $modal } = _.modalObj,
+            { appendTo, backDropClose, cssPrefix, fromDOM, onOpen, onOpenOnce } = _.params
+            ;
 
         _.enabledElem = document.activeElement;
-        
+
         if (fromDOM) {
             $content.after(
-                $('<span/>').attr({ 
-                    class: cssPrefix + '-content-placemarker', 
-                    id: _.modalObj.id + '_marker' 
+                $('<span/>').attr({
+                    class: cssPrefix + '-content-placemarker',
+                    id: _.modalObj.id + '_marker'
                 })
             );
         }
-    
+
         if (!_.modalObj.contentAppended) {
-    
+
             _.modalObj.$dialogContent.append($content);
-            $.extend(_.modalObj, {contentAppended: true});
+            $.extend(_.modalObj, { contentAppended: true });
         }
-    
+
         $(appendTo).append($modal);
-        
+
         // attach events after appended to DOM
         $closeBtn.on(`click.${_.modalEvent}Dismiss`, () => _.disableModal());
         if (backDropClose) $backdrop.on(`click.${_.modalEvent}Dismiss`, () => _.disableModal());
 
         hasCb(onOpen, _.modalObj);
-    
+
+        if (!_.openedOnce) {
+            hasCb(onOpenOnce, _.modalObj);
+            _.openedOnce = true;
+        }
+
         $modal.attr({
             role: 'dialog',
             'aria-modal': 'true'
         })
-    
-        setTimeout(() => { 
+
+        setTimeout(() => {
             $modal.addClass(cssPrefix + '--show');
-           
-            _.trappedFocus = trapFocus($modal, {nameSpace: camelCase(_.modalID)});
-            $.extend(_.modalObj, {show: true});
+
+            _.trappedFocus = trapFocus($modal, { nameSpace: camelCase(_.modalID) });
+            $.extend(_.modalObj, { show: true });
         }, CSS_TRANSISTION_DELAY);
-        
-    
+
+
         $(document.body).addClass(cssPrefix + '-open').css({
             overflow: 'hidden',
             'padding-right': '0px'
         });
-        
+
         updateHistoryEntry(_, _.modalID);
     }
 
     disableModal() {
-        
-        const _ = this,
-            {$backdrop, $closeBtn, $content, $modal} = _.modalObj,
-            {afterClose, backDropClose, cssPrefix, closeOutDelay, fromDOM, onClose} = _.params
-        ;
 
-        hasCb(onClose, _.modalObj); 
+        const _ = this,
+            { $backdrop, $closeBtn, $content, $modal } = _.modalObj,
+            { afterClose, backDropClose, cssPrefix, closeOutDelay, fromDOM, onClose } = _.params
+            ;
+
+        hasCb(onClose, _.modalObj);
 
         $modal.addClass(cssPrefix + '--dismissing');
-        $modal.removeClass(cssPrefix + '--show'); 
+        $modal.removeClass(cssPrefix + '--show');
 
         // detach events
         $closeBtn.off(`click.${_.modalEvent}Dismiss`);
@@ -249,9 +254,9 @@ export default class Modal {
         $(document)
             .off(`keydown.${_.modalEvent}Dismiss`)
             .off(`${_.modalEvent}Dismiss`);
-        
+
         updateHistoryEntry(_, _.modalID, true);
-        
+
         setTimeout(() => {
             $modal.attr({
                 role: 'dialog',
@@ -270,12 +275,12 @@ export default class Modal {
 
             if (fromDOM) {
                 $('#' + _.modalObj.id + '_marker').after($content).remove();
-                $.extend(_.modalObj, {contentAppended: false});
+                $.extend(_.modalObj, { contentAppended: false });
             }
-            
+
             hasCb(afterClose, _.modalObj);
             $modal.remove();
-            $.extend(_.modalObj, {show: false});
+            $.extend(_.modalObj, { show: false });
 
         }, CSS_TRANSISTION_DELAY + closeOutDelay);
     }
@@ -292,15 +297,15 @@ export default class Modal {
                     _.modalObj.show ? _.disableModal() : _.setDisplayAndEvents();
                 }
             }
-		}
+        }
 
         loadIfHashMatches();
 
         $(window).on(`popstate.${_.modalEvent} ${_.modalEvent}`, (e) => {
-			if (_.params.historyType === 'push') {
+            if (_.params.historyType === 'push') {
                 loadIfHashMatches();
                 e.preventDefault();
-			}
-		});
+            }
+        });
     }
 }

@@ -84,9 +84,9 @@ libraryExtend([
     LazyLoad,
     NavDesktop,
     NavMobile,
+    Modal,
     Parallax,
-    Popup,
-    ResponsiveDropDown,
+    Popup, //[Deprecated]
     SelectEnhance,
     Tabs
 ]); 
@@ -126,13 +126,9 @@ __[View](#nav-mobile-plugin)__
 For making a parallaxing elements on the page. Lots of configurable options.
 __[View](#parallax-plugin)__
 
-### Popup
+### Popup [DEPRECATED]
 There is like a few dozen of these, right?! Well this is easy to style and configurable. Also, tons of options, from loading in images, to traversing a JavaScript Array (instead of the DOM), which can come from an AJAX request (which that'd be a separate bit of code, but you get the idea). Load on location.hash etc.
 __[View](#popup-plugin)__
-
-### Responsive Dropdown
-Turn your left secondary navigation (or list of options) into a dropdown for mobile!
-__[View](#responsive-dropdown-plugin)__
 
 ### Select Enhance
 Enhance a selectbox
@@ -233,22 +229,6 @@ installStoreAsDataToLibrary(expose?:boolean)
 
 ### Functions
 
-
-#### bgResponsiveLoad
-
-This plugin simply loads an background image of a specified element, if it's visible. This function exists because most browsers load an image (even a background one) even if the element isn't visible. The event removes itself if nothing is left to load.
-
-
-__params__
-Option |  Default | Description
------- | ------- | -----
-delay | 200 | Time delay in which the function will run after the resize event.
-eventName | 'BackgroundImageLoad' | Event namespace of the load event.
-bgDataName | 'bg-img' | The data attribute name that holds the background image to load.
-
-```javascript
-bgResponsiveLoad(selector: string | HTMLElement, params?:any );
-```
 
 #### formInputs
 formInputs function currently adds in space-bar support for radio buttons, and checkbox inputs. As long as there is a `for` attribute on a `<label>` that maps to an input.
@@ -356,10 +336,6 @@ trappedFocus.remove();
 <br>
 <br>
 @@include('./popup.md')
-<br>
-<br>
-<br>
-@@include('./responsive-dropdown.md')
 <br>
 <br>
 <br>

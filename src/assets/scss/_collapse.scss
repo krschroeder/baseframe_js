@@ -7,6 +7,10 @@ $collapse-body-pad: 0 0 !default;
 $collapse-duration: 500ms;
 
 .collapse__item {
+
+	[aria-expanded="true"] {
+		color: #000;
+	}
 	.collapse__header {
 		padding: $collapse-header-pad;
 	}

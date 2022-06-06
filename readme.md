@@ -630,10 +630,12 @@ Option | Type | Default | Description
 stopWidth | number | 768 | the width in which the navigaiton will stop for mobile.
 delay | number | 800 | The delay in time you can hover off a sub menu item.
 edgeCss | string | 'ul-on-edge' | The CSS class that moves the nav when if goes over the egde of the page.
-outerElem | string | 'body' | Element to attach the `navHoveredCss` option.
+outerElem | string | document.body | Element to attach the `navHoveredCss` option.
 ulHasCss | string | 'has-ul' | CSS class for `<li>` that have a `<ul>` nestled.
 ulNotCss | string | 'no-ul' | CSS class for `<li>` that don't have a `<ul>` nestled.
 navHoveredCss | string | 'desktop-nav-hovered' | The CSS class added to the `outerElem` (defaulted to the `<body>`).
+navLeavingCss | string | 'desktop-nav-leaving' | The CSS class added to the `outerElem` as the nav is leaving. An opportunity to add styling to fade away any open navigations.
+navLeavingDelay | number | 800 | delay in milliseconds in which the `navLeavingCss` gets added to the `outerElem`
 hoverCss | string | 'hover' | The hover class to work in conjuction with the `delay` option to keep the item on the page when hovered off.
 
 ### Example
@@ -685,6 +687,7 @@ menuTogglingCss | string | 'menu-toggling' | CSS class added while the element i
 menuIsOpeningCss | string | 'menu-is-opening' | CSS class added to the body/outerElement when the menu is opening.
 menuIsClosingCss | string | 'menu-is-closing' | CSS class added to the body/outerElement when the menu is closing.
 arrowSubMenuItemCss | string | 'i i-arrow-b' | CSS class of the button added to the `<li>` element for toggling open/closed.
+submenuBtnSkip| function | false | (li) => { return true|false } | Function that takes the `li` as the parameter, which tests whether or not to skip adding a button adjacent to it's `<a/>` element. Ex. (in the mark-up) `<li class="skip-li">` and the config the following: `submenuBtnSkip(li) { return li.classList.contains('skip-li')}` in which it'd skip adding a button to that level in the nav.
 afterNavItemOpen | function | ($li) => {} | Function to run after an nav item is opened.
 afterNavItemClose | function | ($li) => {} | Function to run after a nav item is closed.
 afterOpen | function | () => {} | Function to run after the nav is open.

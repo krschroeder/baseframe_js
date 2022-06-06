@@ -6,6 +6,7 @@ import { getHashParam } from './util/get-param';
 import { elData } from './util/store';
 import updateHistoryState from './util/plugin/update-history-state.js';
 
+
 const VERSION = "2.2.0";
 const DATA_NAME = 'Collapse';
 const EVENT_NAME = 'collapse';
@@ -209,13 +210,13 @@ export default class Collapse {
 
 		const close = $collapsibleItem.hasClass(openCss);
 		const btnElems = `[data-href="${collapseID}"],a[href="${collapseID}"]`;
-		const $btnElems = $(_.onElem).find(btnElems);
+		const $btnElems = $(_.onElem).find(btnElems); console.log($btnElems, btnElems)
 
 		$collapsibleItem.addClass(noAnimation ? (openCss + " " + openNoAnimateCss) : togglingCss);
 		$btnElems.addClass(togglingCss);
 
 		if (toggleGroup) {
-			_._toggleGroup($btnElems, $collapsibleItem);
+			_._toggleGroup($btnElems,$collapsibleItem);
 		}
 
 		if (close) {
@@ -230,8 +231,13 @@ export default class Collapse {
 		_.prevID = collapseID;
 	}
 
-	_toggleGroup($btnElems, $clickedItem) {
+	_toggleGroup($btnElems,$clickedItem) {
 		const _ = this;
+		const rmClasses = `${_.params.togglingCss} ${_.params.openingCss} ${_.params.openNoAnimateCss}`;
+
+		$(_.onElem).find(`[data-href="${_.prevID}"],a[href="${_.prevID}"]`)
+			.removeClass(rmClasses).attr('aria-expanded', false);
+	 
 
 		$(_.onElem).find(_.params.elemsBody).not($clickedItem).each(function () {
 
@@ -268,7 +274,7 @@ export default class Collapse {
 				.removeClass(rmClasses)
 				.attr('aria-expanded', false);
 
-			_.params.afterClose(this);
+			_.params.afterClose($btnElems, $collapsibleItem);
 
 			_.toggling = false;
 
@@ -302,7 +308,7 @@ export default class Collapse {
 				.removeClass(rmClasses)
 				.attr('aria-expanded', true);
 
-			_.params.afterOpen(this);
+			_.params.afterOpen($btnElems, $collapsibleItem);
 
 			if (_.params.moveToTopOnOpen) {
 				_._moveToTopOnOpen($collapsibleItem);

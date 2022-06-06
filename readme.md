@@ -409,7 +409,7 @@ loadLocationHash | boolean |  true | Loads with a location hash in the browser a
 historyType | string | 'push' | If using using `useLocationHash` or a history of events, 'push' pushes a new state, and 'replace' replaces the current.
 afterOpen | function |  ($btnElems, $collapsibleItem) => { } |  callback function after an item is opened.
 afterClose | function |  ($btnElems, $collapsibleItem) => { } |  callback function after an item is closed.
-afterInit | function |  ($btnElems, $collapsibleItem) => { } | callback function after collapse is initialized.
+afterInit | function |  (element) => { } | callback function after collapse is initialized.
 
 
 ### Example

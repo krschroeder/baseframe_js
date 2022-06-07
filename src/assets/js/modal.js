@@ -80,18 +80,12 @@ export default class Modal {
 
         _.element = $element[0];
 
-        const dataOptions = validJSONFromString(
-            $element.data(DATA_NAME + '-options')
-        );
+        const dataOptions = validJSONFromString($element.data(DATA_NAME + '-options'));
+        const instanceOptions = $.extend({}, Modal.defaults, options, dataOptions);
 
-        elData($element, `${DATA_NAME}_params`,
-            $.extend({}, Modal.defaults, options, dataOptions)
-        );
+        elData($element, `${DATA_NAME}_params`, instanceOptions);
 
         _.params = elData($element, `${DATA_NAME}_params`);
-        _.trappedFocus = null;
-        _.enabledElem = null;
-        _.openedOnce = false;
 
         if (!_.params.modalID) {
             let idPartIfParamSrc, autoGen = false;
@@ -101,7 +95,11 @@ export default class Modal {
                 autoGen = true;
             }
 
-            _.modalID = (idPartIfParamSrc || _.element.hash || _.element.dataset.modalSrc).replace('#', '');
+            _.modalID = (
+                _.element.hash || 
+                _.element.dataset.modalSrc ||
+                (autoGen && idPartIfParamSrc)
+            ).replace('#', '');
 
             if (_.params.useLocationHash && autoGen) {
                 console.warn('If loading from a location hash please make sure to specify an ID not auto generated. This won\'t work should the page get reloaded.');
@@ -112,6 +110,10 @@ export default class Modal {
 
         _.modalObj = _.getModalObj();
         _.modalEvent = EVENT_NAME + '_' + _.modalID;
+        _.trappedFocus = null;
+        _.enabledElem = null;
+        _.openedOnce = false;
+        
         _.clickEnable();
         _.loadLocationHash();
 

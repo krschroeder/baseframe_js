@@ -3,15 +3,9 @@ import validJSONFromString from './util/formatting-valid-json.js';
 import { isVisible } from './util/helpers';
 import { elData } from './util/store';
 
-const ieScript = document.createElement('script');
-const isIE = /MSIE \d|Trident.*rv:/.test(navigator.userAgent);
-
-const VERSION = '1.0.0';
+const VERSION = '2.0.0';
 const DATA_NAME = 'LazyLoad';
 
-
-let isLoaded = false;
-let scriptAppended = false;
 
 const lazyElemObservers = new Map();
 
@@ -28,12 +22,12 @@ const _lazyElemObserver = (_) => {
 
                 loadImgs && _.imgAndBg(_,lazyElem);
 
-                typeof inEvt === 'function' && inEvt(lazyElem);
+                typeof inEvt === 'function' && inEvt(lazyElem, entry);
         
                 unobserve && _.lazyElemObserver.unobserve(lazyElem);
 
             } else {
-                typeof outEvt === 'function' && outEvt(lazyElem);
+                typeof outEvt === 'function' && outEvt(lazyElem, entry);
             }
         });
     }, observerOpts);
@@ -61,8 +55,7 @@ export default class LazyLoad {
             polyfillSrc: 'https://polyfill.io/v3/polyfill.js?features=IntersectionObserver',
             observerID: null,
             unobserve: true,
-            observerOpts: { rootMargin: '48px' },
-            isIE: isIE
+            observerOpts: { rootMargin: '48px' }
         };
     }
 
@@ -110,30 +103,6 @@ export default class LazyLoad {
         return this;
     }
 
-    lazyLoad() {
-        const _ = this;
-
-        if (isIE && !isLoaded) {
-
-            if (!scriptAppended) {
-
-                ieScript.src = _.params.polyfillSrc;
-                document.body.appendChild(ieScript);
-
-                scriptAppended = true;
-            }
-
-            ieScript.addEventListener('load', () => {
-                _.lazyLoadInner();
-                isLoaded = true;
-
-            });
-
-        } else {
-            _.lazyLoadInner();
-        }
-    }
-
     imgAndBg(_,lazyElem) {
 
         const {imgSrcName, bgSrcName } = _.params;
@@ -157,30 +126,24 @@ export default class LazyLoad {
 
     }
 
-    lazyLoadInner() {
+    lazyLoad() {
         const _ = this;
         const {observerID} = _.params;
 
-        if (window.IntersectionObserver) {
+        if (observerID && !lazyElemObservers.has(observerID)) {
 
-            if (observerID && !lazyElemObservers.has(observerID)) {
+            lazyElemObservers.set(observerID,_lazyElemObserver(_));
 
-                lazyElemObservers.set(observerID,_lazyElemObserver(_));
-
-                _.lazyElemObserver = lazyElemObservers.get(observerID);
-
-            } else {
-                _.lazyElemObserver = _lazyElemObserver(_);
-            }
-
-            if (!observerID) {
-                console.warn(`It recommended to set an 'observerID', so the element group can leverage the same one.`,_.element);
-            }
-
-            _.lazyElemObserver.observe(_.element[0]);
+            _.lazyElemObserver = lazyElemObservers.get(observerID);
 
         } else {
-            console.warn(`You're window doesn't contain the "IntersectionObserver" property, please use a polyfill`);
+            _.lazyElemObserver = _lazyElemObserver(_);
         }
+
+        if (!observerID) {
+            console.warn(`It recommended to set an 'observerID', so the element group can leverage the same one.`,_.element);
+        }
+
+        _.lazyElemObserver.observe(_.element[0]);
     }
 }

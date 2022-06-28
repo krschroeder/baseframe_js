@@ -31,6 +31,7 @@ export const isVisible = (el, visibility = false) => {
     }
 }
    
+export const noop = () => {};
 
 export const isHidden = (el) => !isVisible(el);
 

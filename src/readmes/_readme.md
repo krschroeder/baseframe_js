@@ -43,7 +43,6 @@ import installStoreToLibrary, {
     Collapse,
     EqualizeContent,
     LazyLoad,
-    MarketoForm,
     NavDesktop,
     NavMobile,
     NavMobileNestled,
@@ -84,16 +83,16 @@ libraryExtend([
     LazyLoad,
     NavDesktop,
     NavMobile,
+    Modal,
     Parallax,
-    Popup,
-    ResponsiveDropDown,
+    Popup, //[Deprecated]
     SelectEnhance,
     Tabs
 ]); 
 ```
 
 ## Using Styles For Plugins
-Styles are located in the `src/assets/scss/` directory and all can be grabbed that way and added on in. Still should do a little more work in updating the SCSS variables to be frank. So I would just drag those files into the project directly (which is what I just do). I think it's painful anways to import in then override defaults in your own file. Bringing it in (IMO) is little more elegant.
+Styles are located in the `src/assets/scss/` directory and all can be grabbed that way and added on in. Still should do a little more work in updating the SCSS variables to be frank. So I would just drag those files into the project directly. The SCSS should be pretty minimal and generic so it'll more easily take on custom styling.
 
 
 ## Plugin Names and What They Do.
@@ -108,39 +107,39 @@ __[View](#collapse-plugin)__
 
 ### Equalize Content
 When Flexbox, or other options won&rsquo;t work, use this to equalize content 
-__[View](#equalize-plugin)__
+__[View Equalize Content](#equalize-plugin)__
 
 ### Lazy Load
-Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` and magically polyfills for IE11. 
-__[View](#plugin-lazy-load)__
+Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` API. 
+__[View Lazy Load](#plugin-lazy-load)__
+
+### Modal
+This is a more minimalistic version of the 'popup' plugin. Nice bit of flexibility do things like image carousels, confirm prompts and such with just a little peppering of custom code.
+__[View Modal](#modal-plugin)__
 
 ### Navigation Desktop
 This plugin just adds a delay to the desktop navigation for the nestled levels of a `<ul>`. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page. 
-__[View](#nav-desktop-plugin)__
+__[View Navigation Desktop](#nav-desktop-plugin)__
 
 ### Navigation Mobile
 Neat little mobile navigation plugin 
-__[View](#nav-mobile-plugin)__
+__[View Navigation Mobile](#nav-mobile-plugin)__
 
 ### Parallax Elements
 For making a parallaxing elements on the page. Lots of configurable options.
-__[View](#parallax-plugin)__
+__[View Parallax Elements](#parallax-plugin)__
 
-### Popup
-There is like a few dozen of these, right?! Well this is easy to style and configurable. Also, tons of options, from loading in images, to traversing a JavaScript Array (instead of the DOM), which can come from an AJAX request (which that'd be a separate bit of code, but you get the idea). Load on location.hash etc.
-__[View](#popup-plugin)__
-
-### Responsive Dropdown
-Turn your left secondary navigation (or list of options) into a dropdown for mobile!
-__[View](#responsive-dropdown-plugin)__
+### Popup [DEPRECATED]
+Leaving in on version 4, but soon to remove in subsequent minor version updates. Use 'Modal' instead for anything new, its a smaller version of this that is better to say the least.
+__[View Popup](#popup-plugin)__
 
 ### Select Enhance
 Enhance a selectbox
-__[View](#select-enhance-plugin)__
+__[View Select Enhance](#select-enhance-plugin)__
 
 ### Tabs
 Tabs in tabs, change onhashchange this does it for tabs!
-__[View](#tabs-plugin)__
+__[View Tabs](#tabs-plugin)__
 
 #### Removing the plugin ####
 
@@ -233,22 +232,6 @@ installStoreAsDataToLibrary(expose?:boolean)
 
 ### Functions
 
-
-#### bgResponsiveLoad
-
-This plugin simply loads an background image of a specified element, if it's visible. This function exists because most browsers load an image (even a background one) even if the element isn't visible. The event removes itself if nothing is left to load.
-
-
-__params__
-Option |  Default | Description
------- | ------- | -----
-delay | 200 | Time delay in which the function will run after the resize event.
-eventName | 'BackgroundImageLoad' | Event namespace of the load event.
-bgDataName | 'bg-img' | The data attribute name that holds the background image to load.
-
-```javascript
-bgResponsiveLoad(selector: string | HTMLElement, params?:any );
-```
 
 #### formInputs
 formInputs function currently adds in space-bar support for radio buttons, and checkbox inputs. As long as there is a `for` attribute on a `<label>` that maps to an input.
@@ -356,10 +339,6 @@ trappedFocus.remove();
 <br>
 <br>
 @@include('./popup.md')
-<br>
-<br>
-<br>
-@@include('./responsive-dropdown.md')
 <br>
 <br>
 <br>

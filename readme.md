@@ -43,7 +43,6 @@ import installStoreToLibrary, {
     Collapse,
     EqualizeContent,
     LazyLoad,
-    MarketoForm,
     NavDesktop,
     NavMobile,
     NavMobileNestled,
@@ -84,16 +83,16 @@ libraryExtend([
     LazyLoad,
     NavDesktop,
     NavMobile,
+    Modal,
     Parallax,
-    Popup,
-    ResponsiveDropDown,
+    Popup, //[Deprecated]
     SelectEnhance,
     Tabs
 ]); 
 ```
 
 ## Using Styles For Plugins
-Styles are located in the `src/assets/scss/` directory and all can be grabbed that way and added on in. Still should do a little more work in updating the SCSS variables to be frank. So I would just drag those files into the project directly (which is what I just do). I think it's painful anways to import in then override defaults in your own file. Bringing it in (IMO) is little more elegant.
+Styles are located in the `src/assets/scss/` directory and all can be grabbed that way and added on in. Still should do a little more work in updating the SCSS variables to be frank. So I would just drag those files into the project directly. The SCSS should be pretty minimal and generic so it'll more easily take on custom styling.
 
 
 ## Plugin Names and What They Do.
@@ -108,39 +107,39 @@ __[View](#collapse-plugin)__
 
 ### Equalize Content
 When Flexbox, or other options won&rsquo;t work, use this to equalize content 
-__[View](#equalize-plugin)__
+__[View Equalize Content](#equalize-plugin)__
 
 ### Lazy Load
-Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` and magically polyfills for IE11. 
-__[View](#plugin-lazy-load)__
+Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` API. 
+__[View Lazy Load](#plugin-lazy-load)__
+
+### Modal
+This is a more minimalistic version of the 'popup' plugin. Nice bit of flexibility do things like image carousels, confirm prompts and such with just a little peppering of custom code.
+__[View Modal](#modal-plugin)__
 
 ### Navigation Desktop
 This plugin just adds a delay to the desktop navigation for the nestled levels of a `<ul>`. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page. 
-__[View](#nav-desktop-plugin)__
+__[View Navigation Desktop](#nav-desktop-plugin)__
 
 ### Navigation Mobile
 Neat little mobile navigation plugin 
-__[View](#nav-mobile-plugin)__
+__[View Navigation Mobile](#nav-mobile-plugin)__
 
 ### Parallax Elements
 For making a parallaxing elements on the page. Lots of configurable options.
-__[View](#parallax-plugin)__
+__[View Parallax Elements](#parallax-plugin)__
 
-### Popup
-There is like a few dozen of these, right?! Well this is easy to style and configurable. Also, tons of options, from loading in images, to traversing a JavaScript Array (instead of the DOM), which can come from an AJAX request (which that'd be a separate bit of code, but you get the idea). Load on location.hash etc.
-__[View](#popup-plugin)__
-
-### Responsive Dropdown
-Turn your left secondary navigation (or list of options) into a dropdown for mobile!
-__[View](#responsive-dropdown-plugin)__
+### Popup [DEPRECATED]
+Leaving in on version 4, but soon to remove in subsequent minor version updates. Use 'Modal' instead for anything new, its a smaller version of this that is better to say the least.
+__[View Popup](#popup-plugin)__
 
 ### Select Enhance
 Enhance a selectbox
-__[View](#select-enhance-plugin)__
+__[View Select Enhance](#select-enhance-plugin)__
 
 ### Tabs
 Tabs in tabs, change onhashchange this does it for tabs!
-__[View](#tabs-plugin)__
+__[View Tabs](#tabs-plugin)__
 
 #### Removing the plugin ####
 
@@ -233,22 +232,6 @@ installStoreAsDataToLibrary(expose?:boolean)
 
 ### Functions
 
-
-#### bgResponsiveLoad
-
-This plugin simply loads an background image of a specified element, if it's visible. This function exists because most browsers load an image (even a background one) even if the element isn't visible. The event removes itself if nothing is left to load.
-
-
-__params__
-Option |  Default | Description
------- | ------- | -----
-delay | 200 | Time delay in which the function will run after the resize event.
-eventName | 'BackgroundImageLoad' | Event namespace of the load event.
-bgDataName | 'bg-img' | The data attribute name that holds the background image to load.
-
-```javascript
-bgResponsiveLoad(selector: string | HTMLElement, params?:any );
-```
 
 #### formInputs
 formInputs function currently adds in space-bar support for radio buttons, and checkbox inputs. As long as there is a `for` attribute on a `<label>` that maps to an input.
@@ -389,14 +372,7 @@ This has a move-to-top after open feature, open with location hash, and callback
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-elemsItem | string |  '.collapse__item' |   CSS class name for the entire item.
-elemsBtn | string |  '.collapse__btn' |   CSS class name for the button on which the click event occurs
-elemsBody | string |  '.collapse__body' |  CSS class name for the element to be collapsed
-openCss | string |  'collapse--open' |  CSS class name for an opened element, attaches to click item and the body of the collapse item.
-togglingCss | string |  'collapse--toggling' |  CSS class name for a toggling element.
-openingCss | string |  'collapse--opening' |  CSS class name for opening an element.
-closingCss | string |  'collapse--closing' |  CSS class name for closing an element.
-openNoAnimateCss | string |  'collapse--no-animate' |  CSS rule to kill the transition, which gets set only when its loaded from a hash.
+cssPrefix | string |  'collapse' |   CSS class name for styling purposes that is used as prefix to all other classes (btn, body, etc).
 toggleClickBindOn | string |  'group' |  Attaches the click to the selector or `$('.your-selector').colla...`, other option is __'body'__ and it'll then be set on the body. Can come in handy, I had a use-case for it, forgot exactly why.
 toggleDuration | number |  500 |  The speed at which the items will open, should pair with CSS transition settings.
 toggleGroup | boolean |  false |  More or less toggles the other opened element(s) closed, and make it behave like an accordion.
@@ -514,7 +490,7 @@ $('.equalize-container').equalizeContent();
 <br>
 <h2 id="plugin-lazy-load">Lazy Load</h2>
 
-Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` and magically polyfills for IE11. This plugin works to load images with the `loading="lazy"` attribute (yes it would work by itself!). It loads the image/iframe before the first pixel enters the viewport--see settings as we can pad so it can appear loaded once scrolled to. The `loading="lazy"` attribute only works once the first pixel enters the viewport, which may cause a blank space before the image loads.
+By default it will load background images and images lazily once they appear in the viewport. But also run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses [window.IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API). This plugin works to load images with the `loading="lazy"` attribute (yes it would work by itself!). It loads the image/iframe before the first pixel enters the viewport--see settings as we can pad so it can appear loaded once scrolled to. The `loading="lazy"` attribute only works once the first pixel enters the viewport, which may cause a blank space before the image loads.
 
 
 Option | Type | Default | Description
@@ -522,14 +498,15 @@ Option | Type | Default | Description
 imgSrcName | string | 'src' | Name of the data attribute to load an image source. For example `<img src="cleardot.gif" data-src="your-lazy-image.jpg">`.
 bgSrcName | string | 'bgSrc' | Name of the data attribute to load a background image. Use camel casing when changing.
 loadImgs | boolean | true | Load images and background images. Built-in function for this since its the core intended functionality.
-inEvt | Function | null | Custom function that hooks into the element appearing on screen. the `lazyElem` is the only parameter passed, so `inEvt(lazyElem) = > {console.log(lazyElem)}`.
-outEvt | Function | null | Custom function that hooks into the element disappearing in the viewport.
+inEvt | Function | null | Custom function that hooks into the element appearing on screen. the `lazyElem` and `entry` are the two parameters passed, so `inEvt(lazyElem, entry) = > {console.log(lazyElem, entry)}`.
+outEvt | Function | null | Custom function that hooks into the element disappearing in the viewport. Same parameters are passed as the inEvt function.
 force | boolean | false | Pass in a custom condition that will just bypass the lazy load.
 polyfillSrc | string | 'https://polyfill.io/v3/polyfill.js?features=IntersectionObserver' | Source of the polyfill for IE11. Can be changed if necessary should this need changed for any reason.
 observerID| string | null | ID of `window.IntersectionObserver` which gets created with the 'new' operator, so one can get used for each instance.
 unobserve| string | true | once entered in on the viewport, it'll unobserve. Make `false` should you want to re-observe an element.
 observerOpts| string | { rootMargin: '48px' } | Object being passed is the 'options' argument for the IntersectionObserver, please refer to documentation regarding that [here](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#Creating_an_intersection_observer).
-isIE | regexp | Browser dependent |  If its IE it'll resolve to `true` else `false`.
+
+
 
 ### Example
 
@@ -802,23 +779,29 @@ $('.parallax-bg').parallax({
 <br>
 <br>
 <br>
-<h2 id="popup-plugin">Pop-Up</h2>
+<h2 id="popup-plugin">Pop-Up [DEPRECATED]</h2>
+
+### Note: ###
+This will be removed in subsequent versions. Use 'Modal' in favor of this plugin.
+
+<details>
+<summary>View details</summary>
 
 
-### Features
+### Features ###
 Where do I begin? Look at the settings. Pretty light-weight for what it does and has all the configurable options you should need. Simple CSS styling and all that fun stuff.
 
-### Settings
+### Settings ###
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 popupID| string | 'popup_' + generateGUID() | ID for the popup. Good idea to set one if loading from a hash, else its dynamically generated
 src | string | src | Can be a CSS selector `.your-popup-content` or `#yeah-your-content` or `<h2>Yeah Your Popup Content</h2><p>etc...</p>` and `https://placekitten.com/900/1200?ext=.jpg`. 
 popupOuterClass| string |  "" | CSS class name to add to the outer element of the popup.
-title | string |  <code>$(element).data('popup-title') &#124;&#124; $(element).attr('title') &#124;&#124; ''</code> | Title to get added above to the content. Looks for that in that order specified in the default, if not overridden.
+title | string | `$(element).data('popup-title') OR $(element).attr('title') OR ''`| Title to get added above to the content. Looks for that in that order specified in the default, if not overridden.
 titleElem |string |  'h3' | The element of the title
 titleCss| string |  '' | A CSS class for that above title
-caption| string |  <code>$(element).data('popup-caption') &#124;&#124; ''</code> | Text below the main content
+caption| string | <code>$(element).data('popup-caption') &#124;&#124; ''</code> | Text below the main content
 clickOutsideClose| boolean |  true | closes if the popup is clicked outside of the box
 fadeOut| number |  500 | Time to fade-out the popup, CSS transition should correspond.
 fadeIn| number |  400 |  Time to fade-in the popup, CSS transition should correspond.
@@ -997,76 +980,7 @@ $('.js-array').popup({
 	title:'A JavaScript Array of Objects!'
 });
 ```
-
-<br>
-<br>
-<br>
-<h2 id="responsive-dropdown">Responsive Navigation to Dropdown</h2>
-
-### What is it!?
-This is a plugin that will take a side-navigation element and turn it into a dropdown for mobile. Its a common thing that I've come across that the mobile needs to turn into a dropdown so hence this plugin!
-
-### Features
-There is a close button that you can add to the bottom if you'd like. Outside click support, so you can close not clicking the header or the (optional) close button.
-
-### Settings
-
-Option | Type | Default | Description
------- | ---- | ------- | -----------
-clickHeader | string| '.resp-dd__header' | CSS class for the header element
-toggleBody | string| '.resp-dd__body' | CSS class for the toggle body
-closeBtnBottom | string | true | Shows close button at the bottom.
-closeBtnText | string| 'Close' | Close text for the button
-openHeaderCss | string| 'resp-dd--active' | CSS class when the toggle body is opened for the header
-inMobileCss | string| 'resp-dd--in-mobile' | CSS class changing the element over to a 'responsive dropdown' in mobile.
-closeBtnDivCss | string| 'resp-dd__close-btn-area' | CSS class for the close button area.
-closeBtnCss | string| '' | Option to add a button class on the optional close button at the bottom.
-toggleCss | string| 'resp-dd__body--open' | CSS class added to the body when it is open.
-togglingCss | string| 'resp-dd__body--toggling' | CSS class added to the toggle body when toggling.
-duration | number | 300 | Time spent transitioning to open. Should correspond with CSS transition.
-mobileBkpt | number | 768 | Break point before entering into mobile.
-outsideClickElem | string Or HTMLELement | 'body' |
-
-### Example
-
-__The following is an example html structure for this plugin:__
-
-__HTML__
-```html
-<div class="resp-dd">
-	<div class="resp-dd__header">
-		<strong class="inline-block">Title For Dropdown</strong>
-		<i class="resp-dd__down-arrow">
-			<span class="sr-only">Down Arrow</span>
-		</i>
-	</div>
-	<div class="resp-dd__body">
-		<div class="sm-col-6 md-col-12" >
-			<h5>Listing of Things</h5>
-			<ul>
-				<li>Some Listing of Sorts</li>
-				<li>Some Listing of Sorts</li>
-			</ul>
-			<br />
-			<a href="#" class="see-more-btn">See More</a>
-		</div>
-
-		<div class="sm-col-6 md-col-12">
-			<h5>Another Listing</h5>
-			<ul>
-				<li>Some Listing of Sorts</li>
-				<li>Some Listing of Sorts</li>
-				<li>Some Listing of Sorts</li>
-			</ul>
-		</div>
-	</div>
-</div>
-```
-
-__JavaScript__
-```javascript
-$(".resp-dd").responsiveDropDown();
-```
+</details>
 <br>
 <br>
 <br>

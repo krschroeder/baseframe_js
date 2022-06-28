@@ -1,20 +1,26 @@
-<h2 id="popup-plugin">Pop-Up</h2>
+<h2 id="popup-plugin">Pop-Up [DEPRECATED]</h2>
+
+### Note: ###
+This will be removed in subsequent versions. Use 'Modal' in favor of this plugin.
+
+<details>
+<summary>View details</summary>
 
 
-### Features
+### Features ###
 Where do I begin? Look at the settings. Pretty light-weight for what it does and has all the configurable options you should need. Simple CSS styling and all that fun stuff.
 
-### Settings
+### Settings ###
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 popupID| string | 'popup_' + generateGUID() | ID for the popup. Good idea to set one if loading from a hash, else its dynamically generated
 src | string | src | Can be a CSS selector `.your-popup-content` or `#yeah-your-content` or `<h2>Yeah Your Popup Content</h2><p>etc...</p>` and `https://placekitten.com/900/1200?ext=.jpg`. 
 popupOuterClass| string |  "" | CSS class name to add to the outer element of the popup.
-title | string |  <code>$(element).data('popup-title') &#124;&#124; $(element).attr('title') &#124;&#124; ''</code> | Title to get added above to the content. Looks for that in that order specified in the default, if not overridden.
+title | string | `$(element).data('popup-title') OR $(element).attr('title') OR ''`| Title to get added above to the content. Looks for that in that order specified in the default, if not overridden.
 titleElem |string |  'h3' | The element of the title
 titleCss| string |  '' | A CSS class for that above title
-caption| string |  <code>$(element).data('popup-caption') &#124;&#124; ''</code> | Text below the main content
+caption| string | <code>$(element).data('popup-caption') &#124;&#124; ''</code> | Text below the main content
 clickOutsideClose| boolean |  true | closes if the popup is clicked outside of the box
 fadeOut| number |  500 | Time to fade-out the popup, CSS transition should correspond.
 fadeIn| number |  400 |  Time to fade-in the popup, CSS transition should correspond.
@@ -193,3 +199,4 @@ $('.js-array').popup({
 	title:'A JavaScript Array of Objects!'
 });
 ```
+</details>

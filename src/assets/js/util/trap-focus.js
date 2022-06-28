@@ -17,10 +17,15 @@ const trapFocus = (modalEl, props) => {
 
     let firstFocusable = $firstFocusable.length ? $firstFocusable[0] : null;
 
+    if (focusFirst && firstFocusable) {
+
+        firstFocusable.focus();
+    }
+    
     $(document.body).on(`keydown.${nameSpace}`, function (e) {
-        
+         
         const $focusable = $trapElem.find(focusableJoined).filter(canFocusEls);
-       
+      
         if (!$focusable.length) return;
 
         const lastFocusable = $focusable[$focusable.length - 1];
@@ -34,24 +39,18 @@ const trapFocus = (modalEl, props) => {
 
         if (e.shiftKey) { 
             // if shift key pressed for shift + tab combination
-            if (document.activeElement === firstFocusable) {
+            if (document.activeElement.isSameNode(firstFocusable)) {
                 lastFocusable.focus(); 
                 e.preventDefault();
             }
         } else { 
             // if tab key is pressed
-            if (document.activeElement === lastFocusable) { 
+            if (document.activeElement.isSameNode(lastFocusable)) { 
                 firstFocusable.focus(); 
                 e.preventDefault();
             }
         }
     });
-
-
-    if (focusFirst && firstFocusable) {
-
-        firstFocusable.focus();
-    }
 
     return {
         remove: () => {

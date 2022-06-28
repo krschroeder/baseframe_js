@@ -1,0 +1,93 @@
+ 
+ 
+.modal {
+
+    &__dialog {
+        position: relative;
+        max-width: 40rem;
+        max-height: 100%;
+        width: 100%;
+        margin: 1.75rem auto;
+        opacity: 0;
+        transform: translate(0,-5rem);
+        transition: transform 300ms ease-out, opacity 200ms ease-out;
+    }
+
+    &--show {
+        display: block;
+        
+        .modal__dialog {
+            transform: translate(0,0);
+            opacity: 1;
+        }
+    }
+}
+
+ 
+.modal {
+    position: fixed;
+	top: 0;
+	left: -500%;
+	z-index: 1060;
+	width: 100%;
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
+	outline: 0;
+	display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+	background: none;
+	box-shadow: none;
+
+
+    &__backdrop {
+        position: fixed;
+        inset: 0 0 0 0;
+        background: rgba(#000,0.2);
+    }
+
+	&__dialog {
+	 
+		opacity: 0;
+		display: block;
+	 
+		transition: transform 300ms ease-out, opacity 200ms ease-out;
+		box-shadow: 0 0 1.5rem rgba(#000, 0.2);  
+	}
+
+    &__dialog-content {
+        background: #fff;
+		padding: 1.5rem 1rem;
+    }
+
+	&--show {
+		border: 0;
+		padding: 0;
+		left: 0;
+	}
+
+	&--dismissing {
+		left: 0;
+	}
+}
+
+.modal {
+    &__btn-dismiss {
+        cursor: pointer;
+        appearance: none;
+        display: block;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        border: 0;
+        background: transparent;
+        color: $link-color;
+
+        &:hover,
+        &:focus {
+            color: $link-hover-color;
+        }
+    }
+}

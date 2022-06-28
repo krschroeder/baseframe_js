@@ -10,14 +10,7 @@ This has a move-to-top after open feature, open with location hash, and callback
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-elemsItem | string |  '.collapse__item' |   CSS class name for the entire item.
-elemsBtn | string |  '.collapse__btn' |   CSS class name for the button on which the click event occurs
-elemsBody | string |  '.collapse__body' |  CSS class name for the element to be collapsed
-openCss | string |  'collapse--open' |  CSS class name for an opened element, attaches to click item and the body of the collapse item.
-togglingCss | string |  'collapse--toggling' |  CSS class name for a toggling element.
-openingCss | string |  'collapse--opening' |  CSS class name for opening an element.
-closingCss | string |  'collapse--closing' |  CSS class name for closing an element.
-openNoAnimateCss | string |  'collapse--no-animate' |  CSS rule to kill the transition, which gets set only when its loaded from a hash.
+cssPrefix | string |  'collapse' |   CSS class name for styling purposes that is used as prefix to all other classes (btn, body, etc).
 toggleClickBindOn | string |  'group' |  Attaches the click to the selector or `$('.your-selector').colla...`, other option is __'body'__ and it'll then be set on the body. Can come in handy, I had a use-case for it, forgot exactly why.
 toggleDuration | number |  500 |  The speed at which the items will open, should pair with CSS transition settings.
 toggleGroup | boolean |  false |  More or less toggles the other opened element(s) closed, and make it behave like an accordion.

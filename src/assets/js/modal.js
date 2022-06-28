@@ -252,7 +252,9 @@ export default class Modal {
 
         // detach events
         $closeBtn.off(`click.${_.modalEvent}Dismiss`);
+
         if (backDropClose) $backdrop.off(`click.${_.modalEvent}Dismiss`);
+        
         $(document)
             .off(`keydown.${_.modalEvent}Dismiss`)
             .off(`${_.modalEvent}Dismiss`);

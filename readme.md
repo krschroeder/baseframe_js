@@ -43,7 +43,6 @@ import installStoreToLibrary, {
     Collapse,
     EqualizeContent,
     LazyLoad,
-    MarketoForm,
     NavDesktop,
     NavMobile,
     NavMobileNestled,
@@ -93,7 +92,7 @@ libraryExtend([
 ```
 
 ## Using Styles For Plugins
-Styles are located in the `src/assets/scss/` directory and all can be grabbed that way and added on in. Still should do a little more work in updating the SCSS variables to be frank. So I would just drag those files into the project directly (which is what I just do). I think it's painful anways to import in then override defaults in your own file. Bringing it in (IMO) is little more elegant.
+Styles are located in the `src/assets/scss/` directory and all can be grabbed that way and added on in. Still should do a little more work in updating the SCSS variables to be frank. So I would just drag those files into the project directly. The SCSS should be pretty minimal and generic so it'll more easily take on custom styling.
 
 
 ## Plugin Names and What They Do.
@@ -108,35 +107,39 @@ __[View](#collapse-plugin)__
 
 ### Equalize Content
 When Flexbox, or other options won&rsquo;t work, use this to equalize content 
-__[View](#equalize-plugin)__
+__[View Equalize Content](#equalize-plugin)__
 
 ### Lazy Load
-Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` and magically polyfills for IE11. 
-__[View](#plugin-lazy-load)__
+Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` API. 
+__[View Lazy Load](#plugin-lazy-load)__
+
+### Modal
+This is a more minimalistic version of the 'popup' plugin. Nice bit of flexibility do things like image carousels, confirm prompts and such with just a little peppering of custom code.
+__[View Modal](#modal-plugin)__
 
 ### Navigation Desktop
 This plugin just adds a delay to the desktop navigation for the nestled levels of a `<ul>`. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page. 
-__[View](#nav-desktop-plugin)__
+__[View Navigation Desktop](#nav-desktop-plugin)__
 
 ### Navigation Mobile
 Neat little mobile navigation plugin 
-__[View](#nav-mobile-plugin)__
+__[View Navigation Mobile](#nav-mobile-plugin)__
 
 ### Parallax Elements
 For making a parallaxing elements on the page. Lots of configurable options.
-__[View](#parallax-plugin)__
+__[View Parallax Elements](#parallax-plugin)__
 
 ### Popup [DEPRECATED]
-There is like a few dozen of these, right?! Well this is easy to style and configurable. Also, tons of options, from loading in images, to traversing a JavaScript Array (instead of the DOM), which can come from an AJAX request (which that'd be a separate bit of code, but you get the idea). Load on location.hash etc.
-__[View](#popup-plugin)__
+Leaving in on version 4, but soon to remove in subsequent minor version updates. Use 'Modal' instead for anything new, its a smaller version of this that is better to say the least.
+__[View Popup](#popup-plugin)__
 
 ### Select Enhance
 Enhance a selectbox
-__[View](#select-enhance-plugin)__
+__[View Select Enhance](#select-enhance-plugin)__
 
 ### Tabs
 Tabs in tabs, change onhashchange this does it for tabs!
-__[View](#tabs-plugin)__
+__[View Tabs](#tabs-plugin)__
 
 #### Removing the plugin ####
 
@@ -487,7 +490,7 @@ $('.equalize-container').equalizeContent();
 <br>
 <h2 id="plugin-lazy-load">Lazy Load</h2>
 
-Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` and magically polyfills for IE11. This plugin works to load images with the `loading="lazy"` attribute (yes it would work by itself!). It loads the image/iframe before the first pixel enters the viewport--see settings as we can pad so it can appear loaded once scrolled to. The `loading="lazy"` attribute only works once the first pixel enters the viewport, which may cause a blank space before the image loads.
+By default it will load background images and images lazily once they appear in the viewport. But also run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses [window.IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API). This plugin works to load images with the `loading="lazy"` attribute (yes it would work by itself!). It loads the image/iframe before the first pixel enters the viewport--see settings as we can pad so it can appear loaded once scrolled to. The `loading="lazy"` attribute only works once the first pixel enters the viewport, which may cause a blank space before the image loads.
 
 
 Option | Type | Default | Description
@@ -495,14 +498,15 @@ Option | Type | Default | Description
 imgSrcName | string | 'src' | Name of the data attribute to load an image source. For example `<img src="cleardot.gif" data-src="your-lazy-image.jpg">`.
 bgSrcName | string | 'bgSrc' | Name of the data attribute to load a background image. Use camel casing when changing.
 loadImgs | boolean | true | Load images and background images. Built-in function for this since its the core intended functionality.
-inEvt | Function | null | Custom function that hooks into the element appearing on screen. the `lazyElem` is the only parameter passed, so `inEvt(lazyElem) = > {console.log(lazyElem)}`.
-outEvt | Function | null | Custom function that hooks into the element disappearing in the viewport.
+inEvt | Function | null | Custom function that hooks into the element appearing on screen. the `lazyElem` and `entry` are the two parameters passed, so `inEvt(lazyElem, entry) = > {console.log(lazyElem, entry)}`.
+outEvt | Function | null | Custom function that hooks into the element disappearing in the viewport. Same parameters are passed as the inEvt function.
 force | boolean | false | Pass in a custom condition that will just bypass the lazy load.
 polyfillSrc | string | 'https://polyfill.io/v3/polyfill.js?features=IntersectionObserver' | Source of the polyfill for IE11. Can be changed if necessary should this need changed for any reason.
 observerID| string | null | ID of `window.IntersectionObserver` which gets created with the 'new' operator, so one can get used for each instance.
 unobserve| string | true | once entered in on the viewport, it'll unobserve. Make `false` should you want to re-observe an element.
 observerOpts| string | { rootMargin: '48px' } | Object being passed is the 'options' argument for the IntersectionObserver, please refer to documentation regarding that [here](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#Creating_an_intersection_observer).
-isIE | regexp | Browser dependent |  If its IE it'll resolve to `true` else `false`.
+
+
 
 ### Example
 

@@ -1,6 +1,7 @@
 {{>top-head title="Modal"}}
 
 </head>
+
 <body>
 	{{>header}}
 	<main role="main">
@@ -9,51 +10,136 @@
 				<div id="modal-content">
 					<h1>Pop-up</h1>
 					<p>This is for a basic modal content</p>
-					<p>Cum sociis natoque <a href="#"> some link </a>penatibus et magnis dis parturient. Etiam habebis sem dicantur magna mollis euismod. Curabitur blandit tempus ardua ridiculus sed magna. <button type="button" disabled>Some Button</button> Unam incolunt Belgae, aliam Aquitani, tertiam. Nihil hic munitissimus habendi <button type="button">clickable btn</button> senatus locus, nihil horum?</p>
+					<p>Cum sociis natoque <a href="#"> some link </a>penatibus et magnis dis parturient. Etiam habebis
+						sem dicantur magna mollis euismod. Curabitur blandit tempus ardua ridiculus sed magna. <button
+							type="button" disabled>Some Button</button> Unam incolunt Belgae, aliam Aquitani, tertiam.
+						Nihil hic munitissimus habendi <button type="button">clickable btn</button> senatus locus, nihil
+						horum?</p>
 				</div>
 			</div>
 			<div class="flex-l">
 				<div class="md-col-4">
 
 					<a href="#modal-content" class="button btn-modal"
-						data-modal-options="{title:'How About That'}"
-					>Modal With HTML</a>
+						data-modal-options="{title:'How About That'}">Modal With HTML</a>
 
 					<button type="button" id="btn-gen-content">Generated Content</button>
 				</div>
-				 
+
+				<div class="md-col-4 pic-group-holder">
+					<button type="button" 
+						data-img-src="https://placekitten.com/1200/800"
+						alt="Kittens (1)" class="pic-group"
+					>
+						<img src="https://placekitten.com/600/400" />
+					</button>
+
+					<button type="button" 
+						data-img-src="https://placekitten.com/900/550"
+						class="pic-group"
+					>
+					<img src="https://placekitten.com/600/500" alt="Kittens (2)"/>
+					</button>
+
+					<button type="button" 
+						data-img-src="https://placekitten.com/900/450"
+						class="pic-group"
+					>
+						<img src="https://placekitten.com/600/300" alt="Kittens (3)" />
+					</button>
+
+					<button type="button" 
+						data-img-src="https://placekitten.com/900/450"
+						class="pic-group"
+					>
+						<img src="https://placekitten.com/600/400"alt="Kittens (4)" />
+					</button>
+				</div>
 			</div>
 		</div>
 	</main>
 
 	{{>footer}}
 
+	<style>
+		.pic-group-nav {
+			display: flex;
+			flex-flow: row nowrap;
+			justify-content: space-between;
+			margin-top: 1rem;
+		}
+	</style>
 	<script>
-	 
-	(function($){
-		$('.btn-modal').modal({
-			useHashFilter: 'modal'
-		});
 
-		$('#btn-gen-content').modal({
-			useHashFilter: 'modal',
-			src: $('<div>').attr({class: 'gen-content'}),
-			fromDOM: false,
-			modalID: 'gen-content',
-			onOpenOnce(modalObj) { 
-				console.log(modalObj.$content)
-				modalObj.$content.on('click','.dismiss', modalObj.disableModal );
+		(function ($) {
+			$('.btn-modal').modal({
+				useHashFilter: 'modal'
+			});
 
-				modalObj.$content.append(`
+
+			$('#btn-gen-content').modal({
+				useHashFilter: 'modal',
+				src: $('<div>').attr({ class: 'gen-content' }),
+				fromDOM: false,
+				modalID: 'gen-content',
+				onOpenOnce(modalObj) {
+					console.log(modalObj.$content)
+					modalObj.$content.on('click', '.dismiss', modalObj.disableModal);
+
+					modalObj.$content.append(`
 					<h2>Some generated Content</h2>
 					<p>Ullamco <a href="#">link</a> laboris nisi ut aliquid ex ea commodi consequat. Sed haec quis possit intrepidus aestimare tellus. Quam diu etiam furor <a href="#">iste tuus</a> nos eludet? Curabitur est gravida et libero vitae dictum.</p>
 					<button type="button" class="button dismiss">Dimiss</button>
 				`);
-			}
-		})
-	})($);
+				}
+			});
+		})($);
+
+		// quick and dirty image carousel
+		(function ($) {
+			const $picGroup = $('.pic-group');
+
+			$picGroup.each(function (index) {
+				const src = $('<img>').attr({ src: this.dataset.imgSrc, loading: 'lazy' });
+				const modalID = 'pic-group_' + index;
+
+				$(this).modal({
+					src,
+					modalID,
+					useHashFilter: 'modal',
+					fromDOM: false,
+					onOpenOnce(modalObj) {
+						
+						const $img = modalObj.$dialogContent.find('img');
+						
+						let imgIndex = index;
+
+						modalObj.$dialogContent.append(`
+							<footer class="pic-group-nav">
+								<button type="button" class="prev-btn">previous image</button>
+								<button type="button" class="next-btn">next image</button>
+							</footer>
+						`);
+
+						modalObj.$dialogContent.on('click', 'button', function(e){
+							if (this.classList.contains('prev-btn')) {
+
+								imgIndex = imgIndex === 0 ? $picGroup.length - 1 : imgIndex - 1;
+								 
+							} else {
+								imgIndex = imgIndex === $picGroup.length - 1 ? 0 : imgIndex + 1;
+
+							}
+								 
+							$img.attr({src: $picGroup[imgIndex].dataset.imgSrc});
+						})
+					}
+				});
+			})
+		})($);
 
 	</script>
 
 </body>
+
 </html>

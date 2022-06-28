@@ -29,8 +29,8 @@ $('.your-plugin-elem').PluginOfSorts({change:'yep', height: 1e6})
 
 Lots of callback functions to run after and before events and such that may help you out when you need it most.
 
-### It works in IE11
-These scripts all work back to IE11. One day in the future perhaps we can drop that support, which seems like it could be soon-ish. If you look into the scripting I intentially avoid using certain properties not available in IE11.  
+### IE11 usage
+Most of these scripts all work back to IE11. There should be some polyfilling needed for this "retired" browser, that may still be a requirement for some of you out there.
 
 
 ## Example Script of Importing Everything In
@@ -323,6 +323,10 @@ trappedFocus.remove();
 <br>
 <br>
 @@include('./lazy-load.md')
+<br>
+<br>
+<br>
+@@include('./modal.md')
 <br>
 <br>
 <br>

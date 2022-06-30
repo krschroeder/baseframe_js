@@ -3,8 +3,6 @@
 
 ### Features
 This has a move-to-top after open feature, open with location hash, and callbacks after events and such.
-- hash to load not only a collapsible element, but multiple.
-	- i.e.: add this to the location `#collapsible-elem` open multipe with an '=' sign so `#cool-collapsible=cooler-collapsible`, or run with a filter as well so it can work in conjuction with other plugin's that use a hash. See 'useHashFilter' option below.
 
 ### Settings
 

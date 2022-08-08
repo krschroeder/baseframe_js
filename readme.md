@@ -98,35 +98,35 @@ Styles are located in the `src/assets/scss/` directory and all can be grabbed th
 ## Plugin Names and What They Do.
 
 ### Accessible Menu
-Adds tabbing, allows the use of arrows for toggling around the navigation, which is configurable depending on the menu design. The use of the escape key to go up a level.<br/>
+Adds tabbing, allows the use of arrows for toggling around the navigation, which is configurable depending on the menu design. The use of the escape key to go up a level.
 __[View](#accessible-menu-plugin)__
 
 ### Collapse 
-It's is for toggling collapsible sections. Can be used like an accordion and etc.<br/>
+It's is for toggling collapsible sections. Can be used like an accordion and etc. 
 __[View](#collapse-plugin)__
 
 ### Equalize Content
-When Flexbox, or other options won&rsquo;t work, use this to equalize content<br/> 
+When Flexbox, or other options won&rsquo;t work, use this to equalize content 
 __[View Equalize Content](#equalize-plugin)__
 
 ### Lazy Load
-Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` API. <br/>
+Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` API. 
 __[View Lazy Load](#plugin-lazy-load)__
 
 ### Modal
-This is a more minimalistic version of the 'popup' plugin. Nice bit of flexibility do things like image carousels, confirm prompts and such with just a little peppering of custom code.<br/>
+This is a more minimalistic version of the 'popup' plugin. Nice bit of flexibility do things like image carousels, confirm prompts and such with just a little peppering of custom code.
 __[View Modal](#modal-plugin)__
 
 ### Navigation Desktop
-This plugin just adds a delay to the desktop navigation for the nestled levels of a `<ul>`. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page. <br/>
+This plugin just adds a delay to the desktop navigation for the nestled levels of a `<ul>`. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page. 
 __[View Navigation Desktop](#nav-desktop-plugin)__
 
 ### Navigation Mobile
-Neat little mobile navigation plugin <br/>
+Neat little mobile navigation plugin 
 __[View Navigation Mobile](#nav-mobile-plugin)__
 
 ### Parallax Elements
-For making a parallaxing elements on the page. Lots of configurable options.<br/>
+For making a parallaxing elements on the page. Lots of configurable options.
 __[View Parallax Elements](#parallax-plugin)__
 
 ### Popup [DEPRECATED]
@@ -134,11 +134,11 @@ Leaving in on version 4, but soon to remove in subsequent minor version updates.
 __[View Popup](#popup-plugin)__
 
 ### Select Enhance
-Enhance a selectbox<br/>
+Enhance a selectbox
 __[View Select Enhance](#select-enhance-plugin)__
 
 ### Tabs
-Tabs in tabs, change onhashchange this does it for tabs!<br/>
+Tabs in tabs, change onhashchange this does it for tabs!
 __[View Tabs](#tabs-plugin)__
 
 #### Removing the plugin ####

@@ -9,9 +9,29 @@ import updateHistoryEntry from './util/plugin/update-history-state';
 import { noop } from './util/helpers';
 
 
-const VERSION = '1.0.0';
+const VERSION = '1.0.1';
 const EVENT_NAME = 'modal';
 const DATA_NAME = 'Modal';
+const DEFAULTS = {
+    enableEvent: 'click',
+    appendTo: document.body,
+    ariaLabelledby: null,
+    ariaLabel: null,
+    cssPrefix: 'modal',
+    closeBtnIconCss: 'ico i-close',
+    closeOutDelay: 250,
+    backDropClose: true,
+    fromDOM: true,
+    modalCss: null,
+    modalID: null,
+    src: null,
+    useHashFilter: null,
+    loadLocationHash: true,
+    useLocationHash: true,
+    onOpenOnce: noop,
+    onOpen: noop,
+    afterClose: noop
+};
 
 const hasCb = (cb, modalObj) => {
     if (cb && typeof cb === 'function') {
@@ -27,29 +47,6 @@ export default class Modal {
 
     static get pluginName() {
         return DATA_NAME;
-    }
-
-    static get defaults() {
-        return {
-            enableEvent: 'click',
-            appendTo: document.body,
-            ariaLabelledby: null,
-            ariaLabel: null,
-            cssPrefix: 'modal',
-            closeBtnIconCss: 'ico i-close',
-            closeOutDelay: 250,
-            backDropClose: true,
-            fromDOM: true,
-            modalCss: null,
-            modalID: null,
-            src: null,
-            useHashFilter: null,
-            loadLocationHash: true,
-            useLocationHash: true,
-            onOpenOnce: noop,
-            onOpen: noop,
-            afterClose: noop
-        };
     }
 
     static remove(element) {
@@ -316,3 +313,5 @@ export default class Modal {
         });
     }
 }
+
+Modal.defaults = DEFAULTS;

@@ -5,7 +5,17 @@ import { elData } from './util/store';
 
 const VERSION = '2.0.0';
 const DATA_NAME = 'LazyLoad';
-
+const DEFAULTS = {
+    imgSrcName: 'src',
+    bgSrcName: 'bgSrc',
+    loadImgs: true,
+    inEvt: null,
+    outEvt: null,
+    force: false,
+    observerID: null,
+    unobserve: true,
+    observerOpts: { rootMargin: '48px' }
+};
 
 const lazyElemObservers = new Map();
 
@@ -42,21 +52,6 @@ export default class LazyLoad {
 
     static get pluginName() {
         return DATA_NAME;
-    }
-
-    static get defaults() {
-        return {
-            imgSrcName: 'src',
-            bgSrcName: 'bgSrc',
-            loadImgs: true,
-            inEvt: null,
-            outEvt: null,
-            force: false,
-            polyfillSrc: 'https://polyfill.io/v3/polyfill.js?features=IntersectionObserver',
-            observerID: null,
-            unobserve: true,
-            observerOpts: { rootMargin: '48px' }
-        };
     }
 
     static remove(element) {
@@ -147,3 +142,5 @@ export default class LazyLoad {
         _.lazyElemObserver.observe(_.element[0]);
     }
 }
+
+LazyLoad.defaults = DEFAULTS;

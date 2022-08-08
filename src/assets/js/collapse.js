@@ -11,6 +11,22 @@ import { noop } from './util/helpers.js';
 const VERSION = "3.0.0";
 const DATA_NAME = 'Collapse';
 const EVENT_NAME = 'collapse';
+const DEFAULTS = {
+	cssPrefix: 'collapse',
+	toggleClickBindOn: 'group',
+	toggleDuration: 500,
+	toggleGroup: false,
+	moveToTopOnOpen: false,
+	moveToTopOffset: 0,
+	scrollSpeed: 100,
+	useHashFilter: null,
+	useLocationHash: true,
+	historyType: 'replace',
+	loadLocationHash: true,
+	afterOpen: noop,
+	afterClose: noop,
+	afterInit: noop
+};
 
 export default class Collapse {
 	static get version() {
@@ -21,24 +37,24 @@ export default class Collapse {
 		return DATA_NAME;
 	}
 
-	static get defaults() {
-		return {
-			cssPrefix: 'collapse',
-			toggleClickBindOn: 'group',
-			toggleDuration: 500,
-			toggleGroup: false,
-			moveToTopOnOpen: false,
-			moveToTopOffset: 0,
-			scrollSpeed: 100,
-			useHashFilter: null,
-			useLocationHash: true,
-			historyType: 'replace',
-			loadLocationHash: true,
-			afterOpen: noop,
-			afterClose: noop,
-			afterInit: noop
-		};
-	}
+	// static defaults() {
+	// 	return {
+	// 		cssPrefix: 'collapse',
+	// 		toggleClickBindOn: 'group',
+	// 		toggleDuration: 500,
+	// 		toggleGroup: false,
+	// 		moveToTopOnOpen: false,
+	// 		moveToTopOffset: 0,
+	// 		scrollSpeed: 100,
+	// 		useHashFilter: null,
+	// 		useLocationHash: true,
+	// 		historyType: 'replace',
+	// 		loadLocationHash: true,
+	// 		afterOpen: noop,
+	// 		afterClose: noop,
+	// 		afterInit: noop
+	// 	};
+	// }
 
 	static remove(element) {
 		$(element).each(function () {
@@ -280,3 +296,5 @@ export default class Collapse {
 		return $(this.onElem).find(`button[data-href="${id}"], a[href="${id}"]`);
 	}
 }
+
+Collapse.defaults = DEFAULTS;

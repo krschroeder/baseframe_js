@@ -22,7 +22,9 @@ const libraryExtend = (Plugins, notify = false) => {
             DataName = Plugin.pluginName,
             pluginName = DataName.charAt(0).toLowerCase() + DataName.substring(1)
         ;
-        
+
+        Plugin.Constructor = Plugin;
+         
         $.fn[pluginName] = function (params) {
             const _ = this;
 

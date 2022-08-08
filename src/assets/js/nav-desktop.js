@@ -5,7 +5,19 @@ import { elData } from './util/store';
 const VERSION = "1.2.0";
 const DATA_NAME = 'NavDesktop';
 const EVENT_NAME = 'navDesktop';
- 
+const DEFAULTS = {
+	stopWidth: 768,
+	delay: 800,
+	edgeCss: 'ul-on-edge', 
+	outerElem: document.body,
+	ulHasCss: 'has-ul',
+	ulNotCss: 'no-ul',
+	navHoveredCss: 'desktop-nav-hovered',
+	navLeavingCss: 'desktop-nav-leaving',
+	navLeavingDelay: 800,
+	hoverCss: 'hover',
+	submenuBtnCss: 'btn-nav--mb-submenu i i-arrow-b'
+};
 
 export default class NavDesktop {
 
@@ -15,22 +27,6 @@ export default class NavDesktop {
 
 	static get pluginName() {
 		return DATA_NAME;
-	}
-
-	static get defaults() {
-		return {
-			stopWidth: 768,
-			delay: 800,
-			edgeCss: 'ul-on-edge', 
-			outerElem: document.body,
-			ulHasCss: 'has-ul',
-			ulNotCss: 'no-ul',
-			navHoveredCss: 'desktop-nav-hovered',
-			navLeavingCss: 'desktop-nav-leaving',
-			navLeavingDelay: 800,
-			hoverCss: 'hover',
-			submenuBtnCss: 'btn-nav--mb-submenu i i-arrow-b'
-		};
 	}
 
 	static remove(element) {
@@ -180,3 +176,5 @@ export default class NavDesktop {
 		}
 	}
 } 
+
+NavDesktop.defaults = DEFAULTS;

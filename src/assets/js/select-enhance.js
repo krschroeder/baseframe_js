@@ -49,10 +49,6 @@ export default class SelectEnhance {
         return DATA_NAME;
     }
 
-    static get defaults() {
-        return DEFAULTS
-    }
-
     constructor(element, options, index) {
         const _ = this;
 
@@ -659,3 +655,6 @@ export default class SelectEnhance {
     }
 
 }
+
+
+SelectEnhance.defaults = DEFAULTS;

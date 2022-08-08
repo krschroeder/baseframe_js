@@ -105,10 +105,6 @@ export default class AccessibleMenu {
 		return DATA_NAME;
 	}
 
-	static get defaults() {
-		return DEFAULTS
-	}
-
 	static remove(element) {
 
 		$(element).each(function () {
@@ -180,3 +176,5 @@ export default class AccessibleMenu {
 		});
 	}
 }
+
+AccessibleMenu.defaults = DEFAULTS;

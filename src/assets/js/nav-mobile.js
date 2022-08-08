@@ -10,7 +10,31 @@ import trapFocus from './util/trap-focus.js';
 const VERSION = "1.7.0";
 const DATA_NAME = 'NavMobile';
 const EVENT_NAME = 'navMobile';
-
+const DEFAULTS = {
+	enableBtn: '#mobile-nav-btn',
+	ariaLabel: 'Toggle site navigation',
+	slideDuration: 400,
+	outerElement: document.body,
+	outsideClickClose: true,
+	animateHeight: true,
+	hasUlCls: 'has-ul',
+	menuOuterOpenCss: 'menu-opened',
+	menuOpenCss: 'menu-opened',
+	menuTogglingCss: 'menu-toggling',
+	menuIsOpeningCss: 'menu-is-opening',
+	menuIsClosingCss: 'menu-is-closing',
+	submenuBtnCss: 'btn-nav--mb-submenu i i-arrow-b',
+	submenuBtnSkip: false,
+	afterNavItemOpen: () => { },
+	afterNavItemClose: () => { },
+	afterOpen: () => { },
+	afterClose: () => { },
+	doTrapFocus: true,
+	trapFocusElem: null,
+	stopPropagation: true,
+	navToggleNestled: false,
+	bkptEnable: null
+};
 
 export default class NavMobile {
 
@@ -20,34 +44,6 @@ export default class NavMobile {
 
 	static get pluginName() {
 		return DATA_NAME;
-	}
-
-	static get defaults() {
-		return {
-			enableBtn: '#mobile-nav-btn',
-			ariaLabel: 'Toggle site navigation',
-			slideDuration: 400,
-			outerElement: document.body,
-			outsideClickClose: true,
-			animateHeight: true,
-			hasUlCls: 'has-ul',
-			menuOuterOpenCss: 'menu-opened',
-			menuOpenCss: 'menu-opened',
-			menuTogglingCss: 'menu-toggling',
-			menuIsOpeningCss: 'menu-is-opening',
-			menuIsClosingCss: 'menu-is-closing',
-			submenuBtnCss: 'btn-nav--mb-submenu i i-arrow-b',
-			submenuBtnSkip: false,
-			afterNavItemOpen: () => { },
-			afterNavItemClose: () => { },
-			afterOpen: () => { },
-			afterClose: () => { },
-			doTrapFocus: true,
-			trapFocusElem: null,
-			stopPropagation: true,
-			navToggleNestled: false,
-			bkptEnable: null
-		};
 	}
 
 	constructor(element, options) {
@@ -370,3 +366,5 @@ export default class NavMobile {
 		});
 	}
 }
+
+NavMobile.defaults = DEFAULTS;

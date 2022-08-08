@@ -5,6 +5,18 @@ import { elData } from './util/store';
 const VERSION = "1.0.0";
 const DATA_NAME = 'Parallax';
 const EVENT_NAME = 'parallax';
+const DEFAULTS = {
+	speed: 7,
+	axis: 'y',
+	relativeElem: false,
+	$heightElem: null,
+	initOffset: false,
+	bgFill: false,
+	outStop: 1,
+	scrollMaxPxStop: 5000,
+	minWidth: null,
+	maxWidth: null
+};
 
 
 const getEvents = (instEvt) => [
@@ -21,21 +33,6 @@ export default class Parallax {
 
 	static get pluginName() {
 		return DATA_NAME;
-	}
-
-	static get defaults() {
-		return {
-			speed: 7,
-			axis: 'y',
-			relativeElem: false,
-			$heightElem: null,
-			initOffset: false,
-			bgFill: false,
-			outStop: 1,
-			scrollMaxPxStop: 5000,
-			minWidth: null,
-			maxWidth: null
-		}
 	}
 
 	static remove(element) {
@@ -238,3 +235,5 @@ export default class Parallax {
 			;
 	}
 }
+
+Parallax.defaults = DEFAULTS;

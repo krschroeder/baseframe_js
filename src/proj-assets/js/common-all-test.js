@@ -41,11 +41,15 @@ libraryExtend([
     Tabs
 ],false); 
 
+// Defaults overrides
+// Modal.defaults = $.extend(Modal.defaults, {backDropClose: false});
+
 $.extend({getHashParam: getHashParam});
 $.extend({getUrlParam: getUrlParam});
 $.extend({cookies: cookies});
 
 $.extend({popup: Popup});
+$.extend({modal: Modal});
 $.extend({collapse: Collapse});
 $.extend({tabs: Tabs});
 $.extend({selectEnhance: SelectEnhance});
@@ -102,5 +106,3 @@ $('p').lazyLoad({
         setTimeout(()=> {el.style.opacity = '';},1000);
     }
 });
-
-// bgResponsiveLoad('.background-area-bg');

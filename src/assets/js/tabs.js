@@ -40,10 +40,6 @@ export default class Tabs {
 		return DATA_NAME;
 	}
 
-	static get defaults() {
-		return DEFAULTS;
-	}
-
 	constructor(element, options, index) {
 		const _ = this;
 
@@ -274,5 +270,6 @@ export default class Tabs {
 			elData(this, `${DATA_NAME}_instance`, null, true);
 		})
 	}
-
 }
+
+Tabs.defaults = DEFAULTS;

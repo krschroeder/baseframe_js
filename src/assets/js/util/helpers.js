@@ -2,6 +2,8 @@
 // General purposed helpers
 // 
 
+import { CSS_TRANSISTION_DELAY } from "./constants";
+
 
 export default function getType(val) {
 	if (typeof val === 'undefined') return 'undefined';
@@ -29,6 +31,14 @@ export const isVisible = (el, visibility = false) => {
         
         return vis;
     }
+}
+ 
+export const transitionElem = (fn, duration = 0) => {
+    if (typeof fn !== 'function') {
+        throw new Error(`first parameter must be a function`);
+        return;
+    }
+    setTimeout(fn, CSS_TRANSISTION_DELAY + duration)
 }
    
 export const noop = () => {};

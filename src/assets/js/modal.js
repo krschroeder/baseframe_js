@@ -2,14 +2,13 @@ import validJSONFromString from './util/formatting-valid-json';
 import { elData } from './util/store';
 import trapFocus from './util/trap-focus';
 import generateGUID from './util/guid-generate.js';
-import { CSS_TRANSISTION_DELAY } from './util/constants';
-import getType, { camelCase } from './util/helpers';
+import getType, { camelCase, transitionElem } from './util/helpers';
 import { getHashParam } from './util/get-param'
 import updateHistoryEntry from './util/plugin/update-history-state';
 import { noop } from './util/helpers';
 
 
-const VERSION = '1.0.1';
+const VERSION = '1.1.0';
 const EVENT_NAME = 'modal';
 const DATA_NAME = 'Modal';
 const DEFAULTS = {
@@ -68,7 +67,7 @@ export default class Modal {
                 .off(`${_.modalEvent}Dismiss`);
             $(window).off(`popstate.${_.modalEvent} ${_.modalEvent}`);
             elData(this, `${DATA_NAME}_params`, null, true);
-            elata(this, `${DATA_NAME}_instance`, null, true);
+            elData(this, `${DATA_NAME}_instance`, null, true);
         });
     }
 
@@ -222,12 +221,12 @@ export default class Modal {
             'aria-modal': 'true'
         })
 
-        setTimeout(() => {
+        transitionElem(() => {
             $modal.addClass(cssPrefix + '--show');
 
             _.trappedFocus = trapFocus($modal, { nameSpace: camelCase(_.modalID) });
             $.extend(_.modalObj, { show: true });
-        }, CSS_TRANSISTION_DELAY);
+        });
 
 
         $(document.body).addClass(cssPrefix + '-open').css({
@@ -261,7 +260,7 @@ export default class Modal {
 
         updateHistoryEntry(_, _.modalID, true);
 
-        setTimeout(() => {
+        transitionElem(() => {
             $modal.attr({
                 role: 'dialog',
                 'aria-modal': ''
@@ -286,7 +285,7 @@ export default class Modal {
             $modal.remove();
             $.extend(_.modalObj, { show: false });
 
-        }, CSS_TRANSISTION_DELAY + closeOutDelay);
+        }, closeOutDelay);
     }
 
     loadLocationHash() {

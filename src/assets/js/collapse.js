@@ -1,14 +1,12 @@
 
 import validJSONFromString from './util/formatting-valid-json.js';
-import { CSS_TRANSISTION_DELAY } from './util/constants';
 import smoothScroll from './util/smooth-scroll';
 import { getHashParam } from './util/get-param';
 import { elData } from './util/store';
 import updateHistoryState from './util/plugin/update-history-state.js';
-import { noop } from './util/helpers.js';
+import { noop, transitionElem } from './util/helpers.js';
 
-
-const VERSION = "3.0.0";
+const VERSION = "3.1.1";
 const DATA_NAME = 'Collapse';
 const EVENT_NAME = 'collapse';
 const DEFAULTS = {
@@ -36,25 +34,6 @@ export default class Collapse {
 	static get pluginName() {
 		return DATA_NAME;
 	}
-
-	// static defaults() {
-	// 	return {
-	// 		cssPrefix: 'collapse',
-	// 		toggleClickBindOn: 'group',
-	// 		toggleDuration: 500,
-	// 		toggleGroup: false,
-	// 		moveToTopOnOpen: false,
-	// 		moveToTopOffset: 0,
-	// 		scrollSpeed: 100,
-	// 		useHashFilter: null,
-	// 		useLocationHash: true,
-	// 		historyType: 'replace',
-	// 		loadLocationHash: true,
-	// 		afterOpen: noop,
-	// 		afterClose: noop,
-	// 		afterInit: noop
-	// 	};
-	// }
 
 	static remove(element) {
 		$(element).each(function () {
@@ -175,7 +154,10 @@ export default class Collapse {
 				(`${cssPrefix}--open ${cssPrefix}--no-animate`) : 
 				`${cssPrefix}--toggling`
 			);
-			_.$btnElems.addClass(`${cssPrefix}--toggling`);
+
+			_.$btnElems
+				.addClass(`${cssPrefix}--toggling`)
+				.attr('aria-expanded', true);
 
 			_.toggleOpenItems();
 			close ? _.closeItems(_.$btnElems, _.$collapsibleItem) : _.openItems();
@@ -220,11 +202,11 @@ export default class Collapse {
 			.addClass(`${cssPrefix}--toggling ${cssPrefix}--closing`)
 			.css({ height: $openItem.height() })
 
-		setTimeout(() => {
+		transitionElem(() => {
 			$openItem.css({ height: '0px' });
-		}, CSS_TRANSISTION_DELAY);
+		})
 
-		setTimeout(() => {
+		transitionElem(() => {
 
 			const rmClasses = `${cssPrefix}--open ${cssPrefix}--toggling ${cssPrefix}--closing`;
 			$openItem
@@ -239,7 +221,8 @@ export default class Collapse {
 
 			_.toggling = false;
 
-		}, _.params.toggleDuration + CSS_TRANSISTION_DELAY);
+		}, _.params.toggleDuration);
+ 
 	}
 
 	openItems() {
@@ -253,12 +236,12 @@ export default class Collapse {
 
 		_.$collapsibleItem.css({ height: '0px' })
 
-		setTimeout(() => {
+		transitionElem(() => {
 			_.$collapsibleItem.css({ height: height });
-		}, CSS_TRANSISTION_DELAY);
+		});
 
 
-		setTimeout(() => {
+		transitionElem(() => {
 
 			const rmClasses = `${cssPrefix}--toggling ${cssPrefix}--opening ${cssPrefix}--no-animate`;
 
@@ -268,15 +251,14 @@ export default class Collapse {
 
 			_.$btnElems
 				.addClass(`${cssPrefix}--open`)
-				.removeClass(rmClasses)
-				.attr('aria-expanded', true);
+				.removeClass(rmClasses);
 
 			_.params.afterOpen(this);
  
 			_.moveToTopOnOpen();
 		 
 			_.toggling = false;
-		}, toggleDuration + CSS_TRANSISTION_DELAY);
+		}, toggleDuration);
 	}
 
 	moveToTopOnOpen() {

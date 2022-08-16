@@ -1,13 +1,11 @@
-
-import { CSS_TRANSISTION_DELAY } from './util/constants.js';
 import validJSONFromString from './util/formatting-valid-json.js';
-import getType, { isVisible } from './util/helpers';
+import getType, { isVisible, transitionElem } from './util/helpers';
 import submenuBtn from './util/plugin/nav';
 import { elData } from './util/store';
 import trapFocus from './util/trap-focus.js';
 
 
-const VERSION = "1.7.0";
+const VERSION = "1.8.0";
 const DATA_NAME = 'NavMobile';
 const EVENT_NAME = 'navMobile';
 const DEFAULTS = {
@@ -106,7 +104,7 @@ export default class NavMobile {
 
 			$(outerElement).removeClass(menuOuterOpenCss).addClass(menuIsClosingCss);
 
-			setTimeout(() => {
+			transitionElem(() => {
 				$(outerElement).removeClass(menuIsClosingCss);
 			}, slideDuration);
 
@@ -121,7 +119,7 @@ export default class NavMobile {
 			$(outerElement).addClass(menuIsOpeningCss);
 			_.$element.addClass(menuIsOpeningCss);
 
-			setTimeout(() => {
+			transitionElem(() => {
 				_.$element.removeClass(menuIsOpeningCss).addClass(menuOpenCss);
 				$(outerElement).removeClass(menuIsOpeningCss).addClass(menuOuterOpenCss);
 
@@ -244,9 +242,9 @@ export default class NavMobile {
 					$ul.css({ height: 0 });
 					
 					
-					setTimeout(() => {
+					transitionElem(() => {
 						$ul.css({ height: ulHeightBeforeResetToZero });
-					}, CSS_TRANSISTION_DELAY);
+					});
 				}
 
 				setTimeout(() => {
@@ -272,12 +270,12 @@ export default class NavMobile {
 				$ul.css({ height: $ul[0].scrollHeight });
 
 				if (animateHeight) {
-					setTimeout(() => {
+					transitionElem(() => {
 						$ul.css({ height: 0 });
-					}, CSS_TRANSISTION_DELAY);
+					});
 				}
 
-				setTimeout(() => {
+				transitionElem(() => {
 					$li.removeClass(actionCss);
 					$ul.removeClass(actionCss);
 

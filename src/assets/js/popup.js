@@ -2,17 +2,16 @@
 import validJSONFromString from './util/formatting-valid-json.js';
 import generateGUID from './util/guid-generate.js';
 
-import { isVisible, camelCase } from './util/helpers';
+import { isVisible, camelCase, transitionElem } from './util/helpers';
 import  { PHOTO_RGX } from './util/constants';
 import { getHashParam } from './util/get-param'
 import updateHistoryEntry from './util/plugin/update-history-state';
 import { elData } from './util/store';
 import trapFocus from './util/trap-focus.js';
-import { CSS_TRANSISTION_DELAY } from './util/constants.js';
  
 import { KEYS } from './util/constants';
 
-const VERSION = "1.4.1";
+const VERSION = "1.5.0";
 const DATA_NAME = 'Popup';
 const EVENT_NAME = 'popup';
 const INSTANCE_NAME = `${DATA_NAME}_instance`;
@@ -508,13 +507,13 @@ export default class Popup {
 		//hide the overflow on the body until we stahp the animationIn in
 		$('body').css({ 'overflow-x': 'hidden' });
 
-		setTimeout(() => {
+		transitionElem(() => {
 			_.$popup.addClass(showPopup);
 			$popupContent.addClass(showPopup);
 
-		}, CSS_TRANSISTION_DELAY);
+		});
 
-		setTimeout(() => {
+		transitionElem(() => {
 			//remove after the fade-in
 			$('body').css({ 'overflow-x': '' });
 

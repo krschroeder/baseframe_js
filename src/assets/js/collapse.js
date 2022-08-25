@@ -6,7 +6,7 @@ import { elData } from './util/store';
 import updateHistoryState from './util/plugin/update-history-state.js';
 import { noop, transitionElem } from './util/helpers.js';
 
-const VERSION = "3.1.1";
+const VERSION = "3.1.2";
 const DATA_NAME = 'Collapse';
 const EVENT_NAME = 'collapse';
 const DEFAULTS = {
@@ -171,11 +171,6 @@ export default class Collapse {
 
 	toggleOpenItems($clickedItem) {
 		const _ = this;
-		const rmClasses = `${_.params.togglingCss} ${_.params.openCss} ${_.params.openingCss} ${_.params.openNoAnimateCss}`;
-		 
-		$(_.onElem).find(`button[data-href="${_.prevID}"],a[href="${_.prevID}"]`)
-			.removeClass(rmClasses).attr('aria-expanded', false);
-	 
 
 		if (!_.params.toggleGroup) return;
 

@@ -132,10 +132,8 @@ export default class Modal {
         _.enableModal();
 
         $(document).on(`keydown.${_.modalEvent}Dismiss`, function (e) {
-            if (
-                e.code === 'Escape' || //cash-dom
-                e.originalEvent.key === 'Escape' //jquery
-            ) {
+            const ekey = e.code || e.originalEvent.key; //cash-dom || jquery
+            if (ekey === 'Escape') {
                 _.disableModal();
                 e.preventDefault();
             }

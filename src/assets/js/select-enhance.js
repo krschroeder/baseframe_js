@@ -5,7 +5,7 @@ import { isMobileOS, IE_Event } from "./util/helpers";
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/listbox_role
 
 
-const VERSION = "2.2.0";
+const VERSION = "2.2.1";
 const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 
@@ -70,7 +70,7 @@ export default class SelectEnhance {
         }
 
         const dataOptions = validJSONFromString(
-            $(element).data(DATA_NAME + '-options')
+            $(element).data(EVENT_NAME + '-options')
         );
 
         elData(

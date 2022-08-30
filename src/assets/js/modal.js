@@ -8,7 +8,7 @@ import updateHistoryEntry from './util/plugin/update-history-state';
 import { noop } from './util/helpers';
 
 
-const VERSION = '1.1.0';
+const VERSION = '1.1.1';
 const EVENT_NAME = 'modal';
 const DATA_NAME = 'Modal';
 const DEFAULTS = {
@@ -76,7 +76,7 @@ export default class Modal {
 
         _.element = $element[0];
 
-        const dataOptions = validJSONFromString($element.data(DATA_NAME + '-options'));
+        const dataOptions = validJSONFromString($element.data(EVENT_NAME + '-options'));
         const instanceOptions = $.extend({}, Modal.defaults, options, dataOptions);
 
         elData($element, `${DATA_NAME}_params`, instanceOptions);

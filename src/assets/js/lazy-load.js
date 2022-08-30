@@ -3,8 +3,9 @@ import validJSONFromString from './util/formatting-valid-json.js';
 import { isVisible } from './util/helpers';
 import { elData } from './util/store';
 
-const VERSION = '2.0.0';
+const VERSION = '2.0.1';
 const DATA_NAME = 'LazyLoad';
+const EVENT_NAME = 'lazyLoad';
 const DEFAULTS = {
     imgSrcName: 'src',
     bgSrcName: 'bgSrc',
@@ -75,7 +76,7 @@ export default class LazyLoad {
         _.element = element;
 
         const dataOptions = validJSONFromString(
-            $(element).data(DATA_NAME + '-options')
+            $(element).data(EVENT_NAME + '-options')
         );
        
         elData(

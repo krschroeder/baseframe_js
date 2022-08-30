@@ -5,7 +5,7 @@ import updateHistoryState from './util/plugin/update-history-state.js';
 import { elData } from './util/store';
 import { KEYS } from './util/constants';
 
-const VERSION = "1.3.0";
+const VERSION = "1.3.1";
 const DATA_NAME = 'Tabs';
 const EVENT_NAME = 'tabs';
 const DEFAULTS = {
@@ -44,7 +44,7 @@ export default class Tabs {
 		const _ = this;
 
 		const dataOptions = validJSONFromString(
-			$(element).data(DATA_NAME + '-options')
+			$(element).data(EVENT_NAME + '-options')
 		);
 
 		//state

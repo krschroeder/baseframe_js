@@ -3,7 +3,7 @@ import $visible from './util/visible';
 import { elData } from './util/store';
 import { KEYS } from './util/constants.js';
 
-const VERSION = "1.2.0";
+const VERSION = "1.2.1";
 const DATA_NAME = 'AccessibleMenu';
 const EVENT_NAME = 'accessibleMenu';
 
@@ -127,7 +127,7 @@ export default class AccessibleMenu {
 		_.element = element;
 
 		const dataOptions = validJSONFromString(
-			$(element).data(DATA_NAME + '-options')
+			$(element).data(EVENT_NAME + '-options')
 		);
 
 		elData(

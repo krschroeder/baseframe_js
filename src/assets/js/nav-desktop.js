@@ -2,7 +2,7 @@
 import validJSONFromString from './util/formatting-valid-json.js';
 import { elData } from './util/store';
 
-const VERSION = "1.2.0";
+const VERSION = "1.2.1";
 const DATA_NAME = 'NavDesktop';
 const EVENT_NAME = 'navDesktop';
 const DEFAULTS = {
@@ -51,7 +51,7 @@ export default class NavDesktop {
 		_.element = element; 
 
 		const dataOptions = validJSONFromString(
-			$(element).data(DATA_NAME + '-options')
+			$(element).data(EVENT_NAME + '-options')
 		);
 
 

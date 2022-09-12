@@ -18,7 +18,7 @@ import installStoreToLibrary, {
     getUrlParam,
     smoothScroll,
     cookies
-} from '../../../all-es6';
+} from '../../assets/js/all';
  
  
 //necessary for all plugin's to operate
@@ -41,6 +41,7 @@ libraryExtend([
     Tabs
 ],false); 
 
+console.log(Collapse)
 // Defaults overrides
 // Modal.defaults = $.extend(Modal.defaults, {backDropClose: false});
 

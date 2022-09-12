@@ -3,18 +3,19 @@
 import installStoreToLibrary from './util/store';
 import libraryExtend from './util/library-extend';
 import smoothScroll from './util/smooth-scroll';
-import getUrlParam, {getHashParam} from './util/get-param';
+import getUrlParam, { getHashParam } from './util/get-param';
 
 import AccessibleMenu from './accessible-menu';
 import Collapse from './collapse';
 import EqualizeContent from './equalize-content';
 import LazyLoad from './lazy-load';
+import Modal from './modal';
 import NavDesktop from './nav-desktop';
 import NavMobile from './nav-mobile';
 import Parallax from './parallax';
 import Popup from './popup';
+import SelectEnhance from './select-enhance';
 import Tabs from './tabs';
-import Modal from './modal';
 
 import cookies from './cookies';
 import formInputs from './form-input';
@@ -29,13 +30,14 @@ export {
     AccessibleMenu,
     Collapse,
     EqualizeContent,
+    LazyLoad,
     Modal,
     NavDesktop,
     NavMobile,
     Parallax,
     Popup,
+    SelectEnhance,
     Tabs,
-    LazyLoad,
     cookies,
     formInputs,
     getHashParam,

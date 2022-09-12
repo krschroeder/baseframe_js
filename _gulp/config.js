@@ -7,7 +7,7 @@ const PRODUCTION = !!yargs.argv.prod;
 const PROD_JS = (!!yargs.argv.productionjs || PRODUCTION);
 const USE_JQUERY = !!yargs.argv.jquery;
 
-const SOURCE = path.resolve(__dirname, './src');
+// const SOURCE = path.resolve(__dirname, './src');
 const excludeRgx = /(node_modules)/;
 
 const config = {
@@ -16,9 +16,9 @@ const config = {
     PRODUCTION: PRODUCTION,
     
     SRC: {
-        CSS: ['src/proj-assets/scss/**/*.scss','src/assets/scss/**/*.scss'],
+        CSS: PRODUCTION ? 'src/assets/scss/**/*.scss' : ['src/proj-assets/scss/**/*.scss','src/assets/scss/**/*.scss'],
         HTML: ['src/pages/**/*.{html,hbs}'],
-        JS: ['src/assets/js/**/*.js','src/proj-assets/js/common-all-test.js']
+        JS: PRODUCTION ? 'src/assets/js/**/*.js' : ['src/proj-assets/js/common-all-test.js', 'src/assets/js/**/*.js']
     },
 
     HBS:  {
@@ -39,25 +39,14 @@ const config = {
 
     WEBPACK_CONFIG: {
         mode: (PROD_JS ? 'production': 'development'),
-        // resolve: {
-        //     alias: {
-        //         components: SOURCE,
-        //     },
-        //     extensions: ['.js']
-        // },
-        // context: SOURCE,
-        target: ['web','es5'],
+        target: ['web','es6'],
 
         module: {
             rules: [
                 {
                     test: /.js$/,
                     exclude: excludeRgx,
-                    use: [
-                        {
-                            loader: 'babel-loader'
-                        }
-                    ]
+                    loader: 'babel-loader'
                 },
                 // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
                 {
@@ -68,8 +57,7 @@ const config = {
             ]
         },
         
-        externals: {
-            // jquery: 'jQuery',
+        externals: { 
             'cash-dom': '$'
         },
         
@@ -80,7 +68,7 @@ const config = {
         output: {
             library: {
                 // name: 'MyLibrary',
-                type: 'umd',
+                type: 'umd'
               },
         }
     }

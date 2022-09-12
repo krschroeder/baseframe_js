@@ -44,7 +44,7 @@ helpers({
 
 //tasks
 
-function buildCSS(done) {
+function buildCSS() {
 	if (!PRODUCTION) {
 		return gulp.src(CSS)
 			.pipe(sourcemaps.init())
@@ -58,9 +58,10 @@ function buildCSS(done) {
 			.pipe(sourcemaps.write('./'))
 			.pipe(gulp.dest(`${DEST}/assets/css`))
 			.pipe(browser.reload({ stream: true }));
+	} else {
+		// Production
+		return gulp.src(CSS).pipe(gulp.dest(`${DEST}/scss`))
 	}
-
-	done();
 }
 
 
@@ -75,12 +76,15 @@ function buildHTML(done) {
 }
 
 function buildJS() {
-	const dest = PRODUCTION ? 'dist/' : DEST + '/assets/js';
-
-	return gulp.src(JS)
-		.pipe(named())
-		.pipe(webpackStream(WEBPACK_CONFIG, webpack))
-		.pipe(gulp.dest(dest));
+	if (!PRODUCTION) {
+		return gulp.src(JS)
+			.pipe(named())
+			.pipe(webpackStream(WEBPACK_CONFIG, webpack))
+			.pipe(gulp.dest(`${DEST}/assets/js`));
+	} else {
+		// Production
+		return gulp.src(JS).pipe(gulp.dest(`${DEST}/js`));
+	}
 }
 
 function copyAssets(done) {
@@ -92,14 +96,10 @@ function copyAssets(done) {
 }
 
 function cleanUp() {
-	return gulp.src([
-		path.resolve(DEST, '**/*.{html,css,js}'),
-		'dist/'
-	], {
+	return gulp.src(DEST, {
 		read: false,
 		allowEmpty: true
-	})
-		.pipe(clean());
+	}).pipe(clean());
 }
 
 function compileReadme() {

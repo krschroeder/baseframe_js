@@ -59,14 +59,6 @@ import installStoreToLibrary, {
     trapFocus
 } from 'baseframe-js';
 
-// or ES6 non-transpiled
-import installStoreToLibrary, {
-    installStoreAsDataToLibrary,
-    libraryExtend,
-    AccessibleMenu,
-    // ... 
-} from 'baseframe-js/all-es6';
-
 //necessary for all plugin's to operate
 //much like jQuery's $.data method, the $.store is similar
 //NOTE: this can be ignored if using jQuery, and it'll fallback to its 
@@ -92,7 +84,7 @@ libraryExtend([
 ```
 
 ## Using Styles For Plugins
-Styles are located in the `src/assets/scss/` directory and all can be grabbed that way and added on in. Still should do a little more work in updating the SCSS variables to be frank. So I would just drag those files into the project directly. The SCSS should be pretty minimal and generic so it'll more easily take on custom styling.
+Styles are located in the `build/assets/scss/` directory and all can be grabbed that way and added on in. Still should do a little more work in updating the SCSS variables to be frank. So I would just drag those files into the project directly. The SCSS should be pretty minimal and generic so it'll more easily take on custom styling.
 
 
 ## Plugin Names and What They Do.

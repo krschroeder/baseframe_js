@@ -6,7 +6,8 @@ const updateHistoryState = (_, val, remove = false, prevVal) => {
     const { useLocationHash, historyType, useHashFilter } = _.params;
  
     if (useLocationHash) {
-        const updatedQs = '#' + changeHashParam(useHashFilter, val, remove, prevVal);  
+        const qsParams = changeHashParam(useHashFilter, val, remove, prevVal);
+        const updatedQs = qsParams ? '#' + qsParams : ' ';//space allows a change if there are no params
 
         if (!historyType || historyType === 'replace') {
             // if we don't have this parameter then

@@ -18,7 +18,7 @@ const throttledResize = (callback, _namespace = 'throttledResize', manualTrigger
     });
 
     if (manualTrigger) {
-        $(window).trigger(_namespace);
+        setTimeout(callback, 0);
     }
 
 }

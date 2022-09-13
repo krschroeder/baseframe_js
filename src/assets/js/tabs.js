@@ -5,7 +5,7 @@ import updateHistoryState from './util/plugin/update-history-state.js';
 import { elData } from './util/store';
 import { KEYS } from './util/constants';
 
-const VERSION = "1.3.1";
+const VERSION = "1.4.0";
 const DATA_NAME = 'Tabs';
 const EVENT_NAME = 'tabs';
 const DEFAULTS = {
@@ -28,7 +28,7 @@ const DEFAULTS = {
 	onInit: () => { }
 };
 
-const getTabIDFromEl = (el) => $(el).attr(el.nodeName.toUpperCase() === 'BUTTON' ? 'data-href' : 'href').replace(/^\#/,'');
+const getTabIDFromEl = (el) => $(el).attr(el.nodeName.toUpperCase() === 'BUTTON' ? 'data-href' : 'href').replace(/^\#/, '');
 
 export default class Tabs {
 
@@ -40,7 +40,7 @@ export default class Tabs {
 		return DATA_NAME;
 	}
 
-	constructor(element, options, index) {
+	constructor(element, options) {
 		const _ = this;
 
 		const dataOptions = validJSONFromString(
@@ -53,20 +53,21 @@ export default class Tabs {
 		elData(
 			element,
 			`${DATA_NAME}_params`,
-			$.extend({},Tabs.defaults, options, dataOptions)
+			$.extend({}, Tabs.defaults, options, dataOptions)
 		);
 
 		_.params = elData(element, `${DATA_NAME}_params`);
 		_.$tabsList = _.$element.find(`.${_.params.tabsHeadCss}`).first();
-		_.$tabsBody = _.$element.find(`.${_.params.tabsBodyCss}`).first(); 
+		_.$tabsBody = _.$element.find(`.${_.params.tabsBodyCss}`).first();
 
 		_.prevTabId = '#';
 		_.tabFocus = 0;
+		_.initDefaultContent = _.params.defaultContent;  
 
 		//init
 		_.ADA_Attributes();
 		_.tabsChangeEvent();
-		_.changeTabElements( _.getTabFromHash(),true);
+		_.changeTabElements(_.getTabFromHash(), true);
 		_.tabbing();
 
 		$(window).on(`popstate.${EVENT_NAME}`, (e) => {
@@ -78,14 +79,14 @@ export default class Tabs {
 		})
 
 		_.params.onInit(_.prevTabId, _.$tabsList, _.$tabsBody);
-	
+
 		return this;
 	}
 
 	getTabFromHash() {
 		const _ = this;
-		const { useHashFilter, tabsBodyItemCss, defaultContent} = _.params;
- 
+		const { useHashFilter, tabsBodyItemCss, defaultContent } = _.params;
+
 		let defaultTab = '';
 
 		if (useHashFilter) {
@@ -106,11 +107,11 @@ export default class Tabs {
 	tabbing() {
 		const _ = this;
 
-		const {tabbing, tabDirection} = _.params;
-		const {RIGHT, LEFT, UP, DOWN} = KEYS;
+		const { tabbing, tabDirection } = _.params;
+		const { RIGHT, LEFT, UP, DOWN } = KEYS;
 
-		_.$tabsList.on('keydown.' + EVENT_NAME, function(e){
-			
+		_.$tabsList.on('keydown.' + EVENT_NAME, function (e) {
+
 			// if the param gets dynamically updated
 			// lets check here
 			if (!tabbing) return;
@@ -144,17 +145,17 @@ export default class Tabs {
 					if (_.tabFocus >= $tabs.length) {
 						_.tabFocus = 0;
 					}
-				  // Move left
+					// Move left
 				} else if (e.code === back) {
-				  _.tabFocus--;
-				  // If we're at the start, move to the end
-					if (_.tabFocus < 0) {	
+					_.tabFocus--;
+					// If we're at the start, move to the end
+					if (_.tabFocus < 0) {
 						_.tabFocus = $tabs.length - 1;
 					}
 				}
 
 				$tabs[_.tabFocus].setAttribute('tabindex', 0);
-      			$tabs[_.tabFocus].focus();
+				$tabs[_.tabFocus].focus();
 			}
 		});
 	}
@@ -164,7 +165,7 @@ export default class Tabs {
 		const { tabsBodyItemCss, addIDtoPanel } = _.params;
 
 		_.$tabsList.find("a, button").each(function () {
-		 
+
 			const tabHref = getTabIDFromEl(this);
 			const $tabBodyItem = _.$tabsBody.find(`.${tabsBodyItemCss}[data-tab-id="${tabHref}"]`);
 
@@ -190,9 +191,9 @@ export default class Tabs {
 
 		_.$tabsList.on(`${_.params.tabsEvent}.${EVENT_NAME} ${EVENT_NAME}`, "a, button", function (e) {
 			const tabId = getTabIDFromEl(this);
-			
+
 			_.changeTabElements(tabId);
-			e.preventDefault(); 
+			e.preventDefault();
 		});
 	}
 
@@ -201,11 +202,11 @@ export default class Tabs {
 		if (tabId === 'none') return;
 
 		const _ = this;
-		const { 
-			activeCss, 
-			tabsBodyCss, 
-			tabsBodyItemCss, 
-			tabsBodyItemShowCss 
+		const {
+			activeCss,
+			tabsBodyCss,
+			tabsBodyItemCss,
+			tabsBodyItemShowCss
 		} = _.params;
 
 
@@ -219,7 +220,10 @@ export default class Tabs {
 
 			if (!isInItsBody) return;
 
-			_.$tabsList.find("a, button").attr({ 'aria-selected': false, tabindex: -1 });
+			const $tabs = _.$tabsList.find("a, button");
+			let removeIdFormHash = false;
+			
+			$tabs.attr({ 'aria-selected': false, tabindex: -1 });
 			_.$tabsList.find('.' + activeCss).removeClass(activeCss);
 
 			$(`.${tabsBodyItemCss}`, _.$tabsBody).each(function () {
@@ -238,10 +242,14 @@ export default class Tabs {
 				.addClass(activeCss)
 				// if we have a list item
 				.closest('li').addClass(activeCss);
-			
-			_.$tabsList.find('a,button').each(function(i){
+
+			$tabs.each(function (i) {
 				if (this.classList.contains(activeCss)) {
 					_.tabFocus = i;
+				}
+
+				if (getTabIDFromEl(this) === tabId && i === _.initDefaultContent) {
+					removeIdFormHash = true;
 				}
 			})
 
@@ -251,7 +259,13 @@ export default class Tabs {
 
 			_.params.afterChange(tabId, _.$tabsList, _.$tabsBody);
 
-			!init && updateHistoryState(_, tabId, false, _.prevTabId);
+
+			if (init) {
+				_.initTabId = tabId;
+			} else {
+				updateHistoryState(_, tabId, removeIdFormHash, _.prevTabId);
+			}
+
 			_.prevTabId = tabId;
 		}
 	}
@@ -263,7 +277,7 @@ export default class Tabs {
 
 			instance.$tabsList.off(`${params.tabsEvent}.${EVENT_NAME} ${EVENT_NAME}`);
 			instance.$tabsList.off('keydown.' + EVENT_NAME);
-			instance.$tabsList.find('a, button').attr({tabindex: null})
+			instance.$tabsList.find('a, button').attr({ tabindex: null })
 			$(window).off(`popstate.${EVENT_NAME}`);
 
 			elData(this, `${DATA_NAME}_params`, null, true);

@@ -59,13 +59,10 @@ import installStoreToLibrary, {
     trapFocus
 } from 'baseframe-js';
 
-// or ES6 non-transpiled
-import installStoreToLibrary, {
-    installStoreAsDataToLibrary,
-    libraryExtend,
-    AccessibleMenu,
-    // ... 
-} from 'baseframe-js/all-es6';
+// or bring in individually
+import AccessibleMenu from 'baseframe-js/build/js/accessible-menu';
+import Collapse from 'baseframe-js/build/js/collapse';
+// etc
 
 //necessary for all plugin's to operate
 //much like jQuery's $.data method, the $.store is similar

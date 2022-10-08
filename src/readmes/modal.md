@@ -23,9 +23,9 @@ src | string |  null | CSS selector for DOM elements, or can be custom created e
 useHashFilter | string |  null | If there is a number of elements where the `location.hash` value is used, it may be necessary to filter it to get the intended data. Pass in a string value, i.e.: 'modal' and it'll load and filter through as needed while maintaining the remaining location hash values. this only gets used if 'useLocationHash' option is selected. 
 useLocationHash | boolean |  true |  Use the `window.location.hash` to open and close the items.
 loadLocationHash | boolean |  true | Loads with a location hash in the browser address bar, must of course be the ID of the item.
-onOpenOnce | string |  (modalObj) => {} | Event that fires only the first time the modal is enabled
-onOpen | string |  (modalObj) => {} | Event that fires when the element is opened
-afterClose | string | (modalObj) => {} | Event that fires after the element is closed
+onOpenOnce | object |  (modalObj) => {} | Event that fires only the first time the modal is enabled
+onOpen | object |  (modalObj) => {} | Event that fires when the element is opened
+afterClose | object | (modalObj) => {} | Event that fires after the element is closed
 
 #### Modal Object
 This is an object with the following props/elements that is the first (and only) argument above in the callback functions (`onOpenOnce`,`onOpen` and `afterClose`). This should help allow for more flexibility with the prompt to attach any additional events or styling more easily. Below some examples with a little bit of custom code with this object.

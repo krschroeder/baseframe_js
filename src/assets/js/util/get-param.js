@@ -1,4 +1,6 @@
 
+const qsArrayFormat = /(^\[)((?:(?!\]$)(.|\n|))*)(\]$)/;//begins with '[' and ends with ']';
+
 export const qsToObject = (qs = location.search.substring(1)) => {
 
    if (qs) {
@@ -11,10 +13,15 @@ export const qsToObject = (qs = location.search.substring(1)) => {
          +'}';
 
       const jsonObj = JSON.parse(jsonStr, (key, value) => {
+            
             if (value === 'true') return true;
             if (value === 'false') return false;
             // set as number, +'' evalutes to 0... we don't want that
             if (value !== "" && typeof +value === 'number' && !isNaN(+value)) return +value;
+            // returns an array
+            if (qsArrayFormat.test(value) && typeof value === 'string') {    
+               return value.replace(qsArrayFormat, '$2').split('%2C');
+            } 
             return value;
          }
       );
@@ -32,10 +39,15 @@ export const objectToQs = (qs) => {
 
    for (let key in qs) {
       if (({}).hasOwnProperty.call(qs,key)){
+         
+         let qsKey = qs[key];
 
-         if (qs[key]) {
+         if (qsKey) {
+            if (qsKey instanceof Array) {
+               qsKey = '[' + qsKey + ']';
+            }
 
-            strArr.push(`${key}=${encodeURIComponent((qs[key] + '')).replace(/%20/g,'+')}`);
+            strArr.push(`${key}=${encodeURIComponent((qsKey + '')).replace(/%20/g,'+')}`);
          } else {
             strArr.push(key);
          }

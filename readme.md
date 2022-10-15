@@ -59,10 +59,9 @@ import installStoreToLibrary, {
     trapFocus
 } from 'baseframe-js';
 
-// or bring in individually
+// or individually
 import AccessibleMenu from 'baseframe-js/build/js/accessible-menu';
 import Collapse from 'baseframe-js/build/js/collapse';
-// etc
 
 //necessary for all plugin's to operate
 //much like jQuery's $.data method, the $.store is similar
@@ -497,8 +496,8 @@ inEvt | Function | null | Custom function that hooks into the element appearing 
 outEvt | Function | null | Custom function that hooks into the element disappearing in the viewport. Same parameters are passed as the inEvt function.
 force | boolean | false | Pass in a custom condition that will just bypass the lazy load.
 observerID| string | null | ID of `window.IntersectionObserver` which gets created with the 'new' operator, so one can get used for each instance.
-unobserve| string | true | once entered in on the viewport, it'll unobserve. Make `false` should you want to re-observe an element.
-observerOpts| string | { rootMargin: '48px' } | Object being passed is the 'options' argument for the IntersectionObserver, please refer to documentation regarding that [here](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#Creating_an_intersection_observer).
+unobserve| boolean | true | once entered in on the viewport, it'll unobserve. Make `false` should you want to re-observe an element.
+observerOpts| object | { rootMargin: '48px' } | Object being passed is the 'options' argument for the IntersectionObserver, please refer to documentation regarding that [here](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#Creating_an_intersection_observer).
 
 
 
@@ -613,9 +612,9 @@ src | string |  null | CSS selector for DOM elements, or can be custom created e
 useHashFilter | string |  null | If there is a number of elements where the `location.hash` value is used, it may be necessary to filter it to get the intended data. Pass in a string value, i.e.: 'modal' and it'll load and filter through as needed while maintaining the remaining location hash values. this only gets used if 'useLocationHash' option is selected. 
 useLocationHash | boolean |  true |  Use the `window.location.hash` to open and close the items.
 loadLocationHash | boolean |  true | Loads with a location hash in the browser address bar, must of course be the ID of the item.
-onOpenOnce | string |  (modalObj) => {} | Event that fires only the first time the modal is enabled
-onOpen | string |  (modalObj) => {} | Event that fires when the element is opened
-afterClose | string | (modalObj) => {} | Event that fires after the element is closed
+onOpenOnce | object |  (modalObj) => {} | Event that fires only the first time the modal is enabled
+onOpen | object |  (modalObj) => {} | Event that fires when the element is opened
+afterClose | object | (modalObj) => {} | Event that fires after the element is closed
 
 #### Modal Object
 This is an object with the following props/elements that is the first (and only) argument above in the callback functions (`onOpenOnce`,`onOpen` and `afterClose`). This should help allow for more flexibility with the prompt to attach any additional events or styling more easily. Below some examples with a little bit of custom code with this object.

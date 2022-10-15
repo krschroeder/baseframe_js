@@ -41,7 +41,7 @@ libraryExtend([
     Tabs
 ],false); 
 
-console.log(Collapse)
+// console.log(Collapse)
 // Defaults overrides
 // Modal.defaults = $.extend(Modal.defaults, {backDropClose: false});
 
@@ -91,7 +91,7 @@ $('#main-nav').accessibleMenu();
 
 formInputs.init();
 
-$('select').selectEnhance();
+$('select').selectEnhance({afterChange(el){console.log('yeahh',el)}});
 
 $('.background-area-bg').lazyLoad({observerID: 'background-area-bg', inEvt: (el)=>{console.log('el',el)}});
 $('img[data-src]').lazyLoad({observerID: 'img[data-src]',inEvt: (el, entry)=>{console.log('el and entry',el, entry)}});

@@ -1,7 +1,7 @@
 import { elData } from "./util/store";
 import validJSONFromString from './util/formatting-valid-json';
 import { KEYS } from "./util/constants";
-import { isMobileOS, IE_Event } from "./util/helpers";
+import { isMobileOS, IE_Event, noop } from "./util/helpers";
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/listbox_role
 
 
@@ -14,10 +14,10 @@ const DEFAULTS = {
     cssPrefix: 'select-enhance',
     mobileNative: true,
     emptyValAsPlaceholder: true,
-    focusIn: (el) => { },
-    focusOut: (el) => { },
-    beforeChange: (el) => { },
-    afterChange: (el) => { },
+    focusIn: noop,
+    focusOut: noop,
+    beforeChange: noop,
+    afterChange: noop,
     blurDuration: 250,
     typeAheadDuration: 500,
     observeSelectbox: true
@@ -61,6 +61,7 @@ export default class SelectEnhance {
         _.$textInput = null;
         _.$selectList = null;
         _.optionSet = new WeakMap();
+        _.optionsShown = false;
         _.selectboxObserver = null;
         _.selectListBoxInFullView = true;
         _.keyedInput = "";
@@ -142,6 +143,7 @@ export default class SelectEnhance {
 
             $currSelectEnhance = null;
             currSelectInstance = null;
+            _.optionsShown = false;
 
         }, _.params.blurDuration);
     }
@@ -200,28 +202,41 @@ export default class SelectEnhance {
         })
     }
 
+    showOptions(_) {
+        
+
+        if (_.$element[0].disabled) { return }
+
+        _.optionsShown = true;
+        _.$selectEnhance.toggleClass(_.params.cssPrefix + '--focused');
+        _.$textInput.attr({ 'aria-expanded': true });
+
+        const $selectedBtn = _.$selectEnhance.find('button[aria-selected="true"]');
+
+        if ($selectedBtn.length) {
+            $selectedBtn[0].focus();
+        }
+
+        $currSelectEnhance = _.$selectEnhance;
+        currSelectInstance = _;
+
+        SelectEnhance.getListPosition();
+    }
+
     eventShowOptions() {
         const _ = this;
 
-        function showOptions(e) {
-            if (_.$element[0].disabled) { return }
+        _.$selectEnhance.on('click.' + EVENT_NAME, '.' + _.params.cssPrefix + '__enable-text', (e) => {
+            _.showOptions(_)
+        });
 
-            _.$selectEnhance.toggleClass(_.params.cssPrefix + '--focused');
-            _.$textInput.attr({ 'aria-expanded': true });
-
-            const $selectedBtn = _.$selectEnhance.find('button[aria-selected="true"]');
-
-            if ($selectedBtn.length) {
-                $selectedBtn[0].focus();
+        // Only works on keydown event
+        _.$textInput.on('keydown.' + EVENT_NAME, function (e) {
+            if ((e.key === KEYS.DOWN || e.key === KEYS.UP) && !_.optionsShown) {
+                _.showOptions(_);
+                e.preventDefault();
             }
-
-            $currSelectEnhance = _.$selectEnhance;
-            currSelectInstance = _;
-
-            SelectEnhance.getListPosition();
-        }
-
-        _.$selectEnhance.on('click.' + EVENT_NAME, '.' + _.params.cssPrefix + '__enable-text', showOptions);
+        });
 
         _.$textInput.on('keypress.' + EVENT_NAME, function (e) {
 
@@ -229,13 +244,13 @@ export default class SelectEnhance {
                 e.preventDefault();
             }
 
-            if (
+            if ( 
                 e.key === KEYS.ENTER ||
                 e.keyCode === KEYS.SPACE && _.keyedInput.trim() === '' ||
                 e.ctrlKey && e.altKey && e.shiftKey && KEYS.SPACE === e.keyCode
             ) {
 
-                showOptions(e);
+                _.showOptions(_);
             }
         });
     }
@@ -301,7 +316,7 @@ export default class SelectEnhance {
 
             if (_.keyedInput.trim()) {
 
-                const rgx = RegExp('^' + _.keyedInput.trim(), 'i');
+                const rgx = RegExp(_.keyedInput.trim(), 'i');
 
                 keyedFound = [].slice.call(
                     _.$element.find('option').filter((i, el) => rgx.test(el.text) === true)
@@ -322,10 +337,8 @@ export default class SelectEnhance {
         _.$selectEnhance.on('keydown.navigate_' + EVENT_NAME, function (e) {
 
             if (_.$element[0].disabled) { return }
-
-            let to = null;
-
-            if (e.key === KEYS.DOWN || e.key === KEYS.TAB && !e.shiftKey) {
+            
+            if (e.key === KEYS.DOWN) {
                 if (!_.$textInput[0].isSameNode(document.activeElement)) {
 
                     e.preventDefault();
@@ -344,15 +357,6 @@ export default class SelectEnhance {
 
                 _.blurSelect();
                 _.$textInput[0].focus();
-            }
-
-            if (e.key === KEYS.TAB && e.shiftKey) {
-                clearTimeout(to);
-                to = setTimeout(() => {
-                    if (_.$textInput[0].isSameNode(document.activeElement)) {
-                        _.blurSelect();
-                    }
-                }, 100)
             }
         });
     }

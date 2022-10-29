@@ -36,6 +36,7 @@
   "license": "MIT",
   "private": false,
   "main": "build/js/all.js",
+  "types": "build/js/types",
   "scripts": {
     "start": "gulp",
     "build": "gulp --prod",

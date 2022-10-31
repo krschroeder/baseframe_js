@@ -5,7 +5,7 @@ import { isMobileOS, IE_Event, noop } from "./util/helpers";
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/listbox_role
 
 
-const VERSION = "2.2.1";
+const VERSION = "2.3.0";
 const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 
@@ -137,7 +137,7 @@ export default class SelectEnhance {
         _.$selectEnhance.removeClass(_.params.cssPrefix + '--focused')
 
         _.$textInput.attr({ 'aria-expanded': false });
-
+         
         setTimeout(() => {
             _.$selectEnhance.removeClass(_.params.cssPrefix + '--blurring');
 
@@ -145,7 +145,9 @@ export default class SelectEnhance {
             currSelectInstance = null;
             _.optionsShown = false;
 
+            _.params.focusOut(_.$element);
         }, _.params.blurDuration);
+
     }
 
     setSelectionState($btn, doBlur = true) {
@@ -183,7 +185,7 @@ export default class SelectEnhance {
         if (doBlur) {
 
             _.$textInput[0].focus();
-
+           
             _.blurSelect();
 
         } else {
@@ -221,6 +223,8 @@ export default class SelectEnhance {
         currSelectInstance = _;
 
         SelectEnhance.getListPosition();
+
+        _.params.focusIn(_.$element);
     }
 
     eventShowOptions() {
@@ -272,12 +276,12 @@ export default class SelectEnhance {
 
     eventSelectToggle() {
         const _ = this;
-
         _.$selectEnhance.on('focusin.' + EVENT_NAME, function (e) {
-            _.params.focusIn(_.$element);
+            
+            const closeEvent = 'click.close_' + _.selectId + EVENT_NAME;
 
-            $(document.body).on(
-                'click.close_' + _.selectId + EVENT_NAME, function (e) {
+            $(document.body).off(closeEvent).on(
+                closeEvent, function (e) {
                     setTimeout(() => {
                         const ae = document.activeElement;
 
@@ -286,7 +290,8 @@ export default class SelectEnhance {
                             _.$selectEnhance[0].isSameNode(ae)
                         ) {
                             _.blurSelect();
-                            $(document.body).off('click.close_' + _.selectId + EVENT_NAME);
+                             
+                            $(document.body).off(closeEvent);
 
                         }
                     }, 100);

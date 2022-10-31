@@ -9,7 +9,6 @@ import installStoreToLibrary, {
     NavDesktop,
     NavMobile,
     Parallax,
-    Popup,
     SelectEnhance,
     Tabs,
     installStoreAsDataToLibrary,
@@ -36,7 +35,6 @@ libraryExtend([
     NavDesktop,
     NavMobile,
     Parallax,
-    Popup,
     SelectEnhance,
     Tabs
 ],false); 
@@ -49,7 +47,6 @@ $.extend({getHashParam: getHashParam});
 $.extend({getUrlParam: getUrlParam});
 $.extend({cookies: cookies});
 
-$.extend({popup: Popup});
 $.extend({modal: Modal});
 $.extend({collapse: Collapse});
 $.extend({tabs: Tabs});
@@ -76,6 +73,9 @@ $('#main-nav')
             // console.log(ul.classList.contains('skip'),ul)
             return ul.classList.contains('skip');
         },
+        afterOpen($element, outerElement, enableBtn) {
+            console.log($element, outerElement, enableBtn);
+        },
         afterNavItemOpen($li) {
             console.log('open',$li, $li.parentsUntil('#main-nav'))
 
@@ -91,7 +91,11 @@ $('#main-nav').accessibleMenu();
 
 formInputs.init();
 
-$('select').selectEnhance({afterChange(el){console.log('yeahh',el)}});
+$('select').selectEnhance({
+    afterChange(el){console.log('after change',el)},
+    focusIn($el) {console.log('focus in select',$el)},
+    focusOut($el) {console.log('focus out select',$el)}
+});
 
 $('.background-area-bg').lazyLoad({observerID: 'background-area-bg', inEvt: (el)=>{console.log('el',el)}});
 $('img[data-src]').lazyLoad({observerID: 'img[data-src]',inEvt: (el, entry)=>{console.log('el and entry',el, entry)}});

@@ -20,11 +20,11 @@ menuTogglingCss | string | 'menu-toggling' | CSS class added while the element i
 menuIsOpeningCss | string | 'menu-is-opening' | CSS class added to the body/outerElement when the menu is opening.
 menuIsClosingCss | string | 'menu-is-closing' | CSS class added to the body/outerElement when the menu is closing.
 arrowSubMenuItemCss | string | 'i i-arrow-b' | CSS class of the button added to the `<li>` element for toggling open/closed.
-submenuBtnSkip| function | false | (li) => { return true|false } | Function that takes the `li` as the parameter, which tests whether or not to skip adding a button adjacent to it's `<a/>` element. Ex. (in the mark-up) `<li class="skip-li">` and the config the following: `submenuBtnSkip(li) { return li.classList.contains('skip-li')}` in which it'd skip adding a button to that level in the nav.
+submenuBtnSkip| () => : boolean \| false | (li) => { return true|false } | Function that takes the `li` as the parameter, which tests whether or not to skip adding a button adjacent to it's `<a/>` element. Ex. (in the mark-up) `<li class="skip-li">` and the config the following: `submenuBtnSkip(li) { return li.classList.contains('skip-li')}` in which it'd skip adding a button to that level in the nav.
 afterNavItemOpen | function | ($li) => {} | Function to run after an nav item is opened.
 afterNavItemClose | function | ($li) => {} | Function to run after a nav item is closed.
-afterOpen | function | () => {} | Function to run after the nav is open.
-afterClose | function | () => {} | Function to run after the nav is closed.
+afterOpen | function | ($element, outerElement, enableBtn) => {} | Function to run after the nav is open.
+afterClose | function | ($element, outerElement, enableBtn) => {} | Function to run after the nav is closed.
 doTrapFocus | boolean | true | Traps the focus to just the visible anchors and buttons within the navigation.
 trapFocusElem | string | null | selector string (or can be dom element) if we need to extend the trap focus slightly outside the main nav element.
 stopPropagation | boolean | true, | Stops the click from propagating up in the DOM from the nav element.

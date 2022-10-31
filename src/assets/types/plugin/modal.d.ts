@@ -1,7 +1,6 @@
-import type { Selector } from "cash-dom";
-import type { Cash } from "cash-dom";
+import type { Cash, Selector } from "cash-dom";
 import type BaseFramePluginBase from "../shared";
-import type { BaseFramePluginArgChoices } from '../shared';
+import type { StringPluginArgChoices } from '../shared';
 
 type ModalObj = {
     $backdrop: Cash;
@@ -16,8 +15,9 @@ type ModalObj = {
     show: boolean //state
 }
 
-interface IModalOptions {
-
+export interface IModalOptions {
+    src: Selector;
+    modalID: string;
     enableEvent?: string;
     appendTo?: Selector;
     ariaLabelledby?: string;
@@ -28,8 +28,6 @@ interface IModalOptions {
     backDropClose?: boolean;
     fromDOM?: boolean;
     modalCss?: string;
-    modalID: string;
-    src: Selector;
     useHashFilter?: string;
     useLocationHash?: boolean;
     loadLocationHash?: boolean;
@@ -39,14 +37,11 @@ interface IModalOptions {
 }
 
 declare class Modal implements BaseFramePluginBase<IModalOptions> {
-    constructor(options?: IModalOptions | BaseFramePluginArgChoices);
-    remove(element: Cash | HTMLElement): void;
-    defaults: IModalOptions;
-    pluginName: string;
-    version: string;
+    constructor(options?: IModalOptions | StringPluginArgChoices);
+    static remove(element: Selector): void;
+    static defaults: IModalOptions;
+    static pluginName: string;
+    static version: string;
 }
 
-
-export function FnModal(options?: IModalOptions | BaseFramePluginArgChoices): Cash;
-
-export { Modal }
+export default Modal;

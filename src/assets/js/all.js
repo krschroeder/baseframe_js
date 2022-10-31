@@ -13,7 +13,6 @@ import Modal from './modal';
 import NavDesktop from './nav-desktop';
 import NavMobile from './nav-mobile';
 import Parallax from './parallax';
-import Popup from './popup';
 import SelectEnhance from './select-enhance';
 import Tabs from './tabs';
 
@@ -35,7 +34,6 @@ export {
     NavDesktop,
     NavMobile,
     Parallax,
-    Popup,
     SelectEnhance,
     Tabs,
     cookies,

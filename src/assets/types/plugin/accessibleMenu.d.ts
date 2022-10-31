@@ -1,20 +1,20 @@
-import type { Cash } from "cash-dom";
+import type { Cash, Selector } from "cash-dom";
 import type BaseFramePluginBase from "../shared";
-import type { BaseFramePluginArgChoices } from '../shared';
+import type { StringPluginArgChoices } from '../shared';
 
 type keyDirections = 'horizontal'| 'vertical';
 
-interface IAccessibleMenuOptions {
+export interface IAccessibleMenuOptions {
     keyDirections: keyDirections[];
     focusCss: string;
 }
 
 declare class AccessibleMenu implements BaseFramePluginBase<IAccessibleMenuOptions> {
-    constructor(options?: IAccessibleMenuOptions | BaseFramePluginArgChoices);
-    remove(element: Cash | HTMLElement): void;
-    defaults: IAccessibleMenuOptions;
-    pluginName: string;
-    version: string;
+    constructor(options?: IAccessibleMenuOptions | StringPluginArgChoices);
+    static remove(element: Selector): void;
+    static defaults: IAccessibleMenuOptions;
+    static pluginName: string;
+    static version: string;
 }
 
-export function FnAccessibleMenu(options?: IAccessibleMenuOptions | BaseFramePluginArgChoices): Cash;
+export default AccessibleMenu;

@@ -112,7 +112,7 @@ export default class NavMobile {
 
 			trappedFocus && trappedFocus.remove();
 
-			_.params.afterClose();
+			_.params.afterClose(_.$element, outerElement, enableBtn);
 
 		} else {
 			// opening
@@ -131,7 +131,7 @@ export default class NavMobile {
 				trappedFocus = trapFocus(trapFocusElem || _.$element, { nameSpace: EVENT_NAME });
 			}
 
-			_.params.afterOpen();
+			_.params.afterOpen(_.$element, outerElement, enableBtn);
 		}
 		//update aria-expanded
 		$(enableBtn).attr({ 'aria-expanded': _.menuOpened });

@@ -1,12 +1,22 @@
-import {Cash} from 'cash-dom';
+import { Selector } from 'cash-dom';
 
 interface BaseFramePluginBase<Defaults> {
-	version: string;
-	pluginName: string;
-	remove(element:Cash | HTMLElement): void;
-	defaults: Defaults;
+	static version: string;
+	static pluginName: string;
+	static remove(element: Selector): void;
+	static defaults: Defaults;
 }
 
-export type BaseFramePluginArgChoices = 'remove';
+export interface LocationHashTracking {
+	useHashFilter?: string;
+	useLocationHash?: boolean;
+	loadLocationHash?: boolean;
+}
+
+export interface LocationHashTrackingHistory extends LocationHashTracking {
+	historyType?: 'push' | 'push' | 'replace';
+}
+
+export type StringPluginArgChoices = 'remove';
 
 export default BaseFramePluginBase;

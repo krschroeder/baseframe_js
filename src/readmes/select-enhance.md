@@ -12,10 +12,10 @@ Option | Type | Default | Description
 cssPrefix  | string | 'select-enhance' | CSS class name for styling purposes
 mobileNative | boolean | true | Off by default this doesn't render the stylized dropdowns for mobile devices.
 emptyValAsPlaceholder | boolean | true | if the value is empty, then render placeholder copy instead of the text value inside the option its pulling data from.
-focusIn | string | ($element) => {} | event when focusing in on the select box
-focusOut | string | ($element) => {} | event when focusing out on the select box
-beforeChange | string | ($element) => {} | event to fire before the change event
-afterChange | string | ($element) => {} | event to fire after the change event
+focusIn | Function | ($element) => {} | event when focusing in on the select box
+focusOut | Function | ($element) => {} | event when focusing out on the select box
+beforeChange | Function | ($element) => {} | event to fire before the change event
+afterChange | Function | ($element) => {} | event to fire after the change event
 blurDuration | number | 250 | the amount of time in milliseconds the blurring CSS effect lasts
 typeAheadDuration | number | 500 | the timeout in millisconds to when the type/search feature resets
 observeSelectbox | boolean | true | uses a MutationObserver to view changes on the `<select>` element or changes to the `<options>`

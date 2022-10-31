@@ -6,8 +6,10 @@ export interface ICookieOptions {
     sameSite?: 'SameSite' | 'Strict' | 'Lax';
 }
 
-export type cookies = {
+export interface ICookies {
     set(cookieName: string, value: string, options: ICookieOptions): void;
     get(cookieName: string): string;
     remove(cookieName: string, pathToCookie: string, domain: string): void;
 }
+
+export const cookies: ICookies;

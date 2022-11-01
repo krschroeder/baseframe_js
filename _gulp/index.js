@@ -13,7 +13,7 @@ import autoprefixer from 'gulp-autoprefixer';
 import cleanCss from 'gulp-clean-css';
 import clean from 'gulp-clean';
 import fileinclude from 'gulp-file-include';
-
+import flatten from 'gulp-flatten';
 //es6 javascript
 //this version of babel is needed for the plugin generation
 //since webpack isn't playing well with outputting to the same directory
@@ -88,8 +88,14 @@ function buildJS() {
 }
 
 function copyDeclarationFiles() {
-	return gulp.src(dts)
-		.pipe(gulp.dest(`${DEST}/assets/js`));
+	if (!PRODUCTION) {
+		return gulp.src(dts)
+			.pipe(flatten())
+			.pipe(gulp.dest(`${DEST}/assets/js`));
+	} else {
+		return gulp.src(dts)
+			.pipe(gulp.dest(`${DEST}/js`));
+	}
 }
 
 function copyAssets(done) {

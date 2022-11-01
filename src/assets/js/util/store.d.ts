@@ -1,6 +1,6 @@
 import type { Selector } from "cash-dom";
 
-declare function installStoreToLibrary(expose: boolean): void;
+declare function installStoreToLibrary(expose?: boolean): void;
 
 export declare function store<T>(dataName: string, data?: T): void | T;
 export declare function removeStore<T>(dataName: string): void;

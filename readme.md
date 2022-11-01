@@ -56,7 +56,7 @@ import installStoreToLibrary, {
     trapFocus
 } from 'baseframe-js';
 
-// or individually
+// or individually (best for TS type support)
 import AccessibleMenu from 'baseframe-js/build/js/accessible-menu';
 import Collapse from 'baseframe-js/build/js/collapse';
 

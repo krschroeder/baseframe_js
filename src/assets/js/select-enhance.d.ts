@@ -20,7 +20,7 @@ declare class SelectEnhance extends PluginBase<ISelectEnhanceOptions> {
     static defaults: ISelectEnhanceOptions;
 }
 
-declare global {
+declare module 'cash-dom' {
     interface Cash {
         selectEnhance(options?: ISelectEnhanceOptions | StringPluginArgChoices): Cash;
     }

@@ -5,8 +5,8 @@ import type { StringPluginArgChoices } from './shared';
 type keyDirections = 'horizontal'| 'vertical';
 
 export interface IAccessibleMenuOptions {
-    keyDirections: keyDirections[];
-    focusCss: string;
+    keyDirections?: keyDirections[];
+    focusCss?: string;
 }
 
 declare class AccessibleMenu extends PluginBase{

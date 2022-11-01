@@ -6,7 +6,7 @@ interface ITrapFocusProps {
     focusable?: ('button' | 'a' | 'input' | 'select' | 'textarea' | '[tabindex]')[]
 };
 
-declare const trapFocus: (modalEl: Selector, props: ITrapFocusProps) => {
+declare const trapFocus: (modalEl: Selector, props?: ITrapFocusProps) => {
     remove: () => void;
 }
 

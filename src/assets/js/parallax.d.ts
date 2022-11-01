@@ -1,6 +1,6 @@
-import type { Cash, Selector } from "cash-dom";
-import type BaseFramePluginBase from "../shared";
-import type { StringPluginArgChoices } from '../shared';
+import type { Cash } from "cash-dom";
+import type PluginBase from './shared';
+import type { StringPluginArgChoices } from './shared';
 
 export interface IParallaxOptions {
     speed?: number;
@@ -15,12 +15,15 @@ export interface IParallaxOptions {
     scrollMaxPxStop?: number;
 }
 
-declare class Parallax implements BaseFramePluginBase<IParallaxOptions> {
+declare class Parallax extends PluginBase<IParallaxOptions> {
     constructor(options?: IParallaxOptions | StringPluginArgChoices);
-    static remove(element: Selector): void;
     static defaults: IParallaxOptions;
-    static pluginName: string;
-    static version: string;
+}
+
+declare module 'cash-dom' {
+    interface Cash {
+        parallax(options?: IParallaxOptions | StringPluginArgChoices): Cash;
+    }
 }
 
 export default Parallax;

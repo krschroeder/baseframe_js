@@ -12,4 +12,6 @@ export interface ICookies {
     remove(cookieName: string, pathToCookie: string, domain: string): void;
 }
 
-export const cookies: ICookies;
+declare const cookies: ICookies;
+
+export default cookies;

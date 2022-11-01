@@ -1,6 +1,6 @@
 import type { Cash } from "cash-dom";
-import type BaseFramePluginBase from "../shared";
-import type { LocationHashTrackingHistory, StringPluginArgChoices } from '../shared';
+import type PluginBase from './shared';
+import type { LocationHashTrackingHistory, StringPluginArgChoices } from './shared';
 
 export interface ICollapseOptions extends LocationHashTrackingHistory {
     cssPrefix?: string;
@@ -15,12 +15,15 @@ export interface ICollapseOptions extends LocationHashTrackingHistory {
     afterInit?(element: HTMLElement): void;
 }
 
-declare class Collapse implements BaseFramePluginBase<ICollapseOptions> {
+declare class Collapse extends PluginBase {
     constructor(options?: ICollapseOptions | StringPluginArgChoices);
-    static remove(element: Selector): void;
     static defaults: ICollapseOptions;
-    static pluginName: string;
-    static version: string;
+}
+
+declare module 'cash-dom' {
+    export interface Cash {
+        collapse(options?: ICollapseOptions | StringPluginArgChoices): Cash;
+    }
 }
 
 export default Collapse;

@@ -1,7 +1,5 @@
-import type { Cash } from "cash-dom";
-import type { Selector } from "cash-dom";
-import type BaseFramePluginBase from "../shared";
-import type { StringPluginArgChoices } from '../shared';
+import type PluginBase from './shared';
+import type { StringPluginArgChoices } from './shared';
 
 export interface ILazyLoadOptions {
     observerID: string;
@@ -15,12 +13,15 @@ export interface ILazyLoadOptions {
     observerOpts?: IntersectionObserverInit;
 }
 
-declare class LazyLoad implements BaseFramePluginBase<ILazyLoadOptions> {
+declare class LazyLoad extends PluginBase<ILazyLoadOptions> {
     constructor(options?: ILazyLoadOptions | StringPluginArgChoices);
-    static remove(element: Selector): void;
     static defaults: ILazyLoadOptions;
-    static pluginName: string;
-    static version: string;
+}
+
+declare module 'cash-dom' {
+    export interface Cash {
+        lazyLoad(options?: ILazyLoadOptions | StringPluginArgChoices): Cash;
+    }
 }
 
 export default LazyLoad;

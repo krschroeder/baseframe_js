@@ -1,6 +1,6 @@
 import type { Cash, Selector } from "cash-dom";
-import type BaseFramePluginBase from "../shared";
-import type { StringPluginArgChoices } from '../shared';
+import type PluginBase from './shared';
+import type { StringPluginArgChoices } from './shared';
 
 type ModalObj = {
     $backdrop: Cash;
@@ -36,12 +36,15 @@ export interface IModalOptions {
     afterClose?(modalObj: ModalObj): void;
 }
 
-declare class Modal implements BaseFramePluginBase<IModalOptions> {
+declare class Modal extends PluginBase {
     constructor(options?: IModalOptions | StringPluginArgChoices);
-    static remove(element: Selector): void;
     static defaults: IModalOptions;
-    static pluginName: string;
-    static version: string;
+}
+
+declare module 'cash-dom' {
+    export interface Cash {
+        modal(options?: IModalOptions | StringPluginArgChoices): Cash;
+    }
 }
 
 export default Modal;

@@ -25,9 +25,9 @@ historyType | string | 'push' | If using using `useLocationHash` or a history of
 tabbing | boolean | true | Enables tabbing with keyboard arrows. A tab list should only be focusable one at a time with the 'tab' key.
 tabDirection| string | 'horizontal' | Typically tabs are 'horizontal' but may also go 'vertical'. They take either or as an option, otherwise it'll throw a `console.warn` to correct.
 addIDtoPanel | boolean | true | Adds an ID attribute to the panel for ADA compliance, but isn't necessary for its functionality.
-beforeChange | function | () => {} | Function to run before the tab change, passed variables are the 'previous tab ID', 'tabs list', 'tabs body' elements.
-afterChange | function | () => {}  | Function to run after the tab change, passed variables are the 'previous tab ID', 'tabs list', 'tabs body' elements.
-onInit | function | () => {} | Function to run after the the plugin intializes, passed variables are the 'previous tab ID', 'tabs list', 'tabs body' elements.
+beforeChange | (prevTabId: string, tabsList: Cash, tabsBody: Cash): void | () => {} | Function to run before the tab change, passed variables are the 'previous tab ID', 'tabs list', 'tabs body' elements.
+afterChange | (prevTabId: string, tabsList: Cash, tabsBody: Cash): void | () => {}  | Function to run after the tab change, passed variables are the 'previous tab ID', 'tabs list', 'tabs body' elements.
+onInit | (tabsList: Cash, tabsBody: Cash): void | () => {} | Function to run after the the plugin intializes, passed variables are the  'tabs list', 'tabs body' elements.
 
 
 ### Example

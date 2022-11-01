@@ -1,10 +1,9 @@
 import { Selector } from 'cash-dom';
 
-interface BaseFramePluginBase<Defaults> {
+declare abstract class PluginBase {
 	static version: string;
 	static pluginName: string;
 	static remove(element: Selector): void;
-	static defaults: Defaults;
 }
 
 export interface LocationHashTracking {
@@ -19,4 +18,4 @@ export interface LocationHashTrackingHistory extends LocationHashTracking {
 
 export type StringPluginArgChoices = 'remove';
 
-export default BaseFramePluginBase;
+export default PluginBase;

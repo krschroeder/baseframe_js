@@ -33,7 +33,7 @@ const {
 	WEBPACK_CONFIG
 } = config;
 
-const { CSS, JS, HTML } = SRC;
+const { css, dts, js, html } = SRC;
 
 // Load Handlebars helpers
 helpers({
@@ -46,7 +46,7 @@ helpers({
 
 function buildCSS() {
 	if (!PRODUCTION) {
-		return gulp.src(CSS)
+		return gulp.src(css)
 			.pipe(sourcemaps.init())
 			.pipe(sass().on('error', sass.logError))
 			.pipe(autoprefixer({
@@ -60,14 +60,14 @@ function buildCSS() {
 			.pipe(browser.reload({ stream: true }));
 	} else {
 		// Production
-		return gulp.src(CSS).pipe(gulp.dest(`${DEST}/scss`))
+		return gulp.src(css).pipe(gulp.dest(`${DEST}/scss`))
 	}
 }
 
 
 function buildHTML(done) {
 	if (!PRODUCTION) {
-		return gulp.src(HTML)
+		return gulp.src(html)
 			.pipe(handlebars(HBS.vars, HBS.handlebars))
 			.pipe(gulp.dest(DEST));
 	}
@@ -77,14 +77,19 @@ function buildHTML(done) {
 
 function buildJS() {
 	if (!PRODUCTION) {
-		return gulp.src(JS)
+		return gulp.src(js)
 			.pipe(named())
 			.pipe(webpackStream(WEBPACK_CONFIG, webpack))
 			.pipe(gulp.dest(`${DEST}/assets/js`));
 	} else {
 		// Production
-		return gulp.src(JS).pipe(gulp.dest(`${DEST}/js`));
+		return gulp.src(js).pipe(gulp.dest(`${DEST}/js`));
 	}
+}
+
+function copyDeclarationFiles() {
+	return gulp.src(dts)
+		.pipe(gulp.dest(`${DEST}/assets/js`));
 }
 
 function copyAssets(done) {
@@ -117,8 +122,8 @@ function compileReadme() {
 
 function watch(done) {
 	if (!PRODUCTION) {
-		gulp.watch(JS).on('all', gulp.series(buildJS, reload));
-		gulp.watch(CSS).on('all', gulp.series(buildCSS));
+		gulp.watch(js).on('all', gulp.series(buildJS, reload));
+		gulp.watch(css).on('all', gulp.series(buildCSS));
 		gulp.watch('src/assets/scss/**/*.scss').on('all', gulp.series(buildCSS));
 		gulp.watch('src/proj-assets/img/**/*').on('all', gulp.series(copyAssets));
 		gulp.watch(['src/**/*.{html,hbs}']).on('all', gulp.series(buildHTML, reload));
@@ -155,7 +160,7 @@ const BUILD = gulp.parallel(
 		cleanUp,
 		buildCSS,
 		buildJS,
-		// buildJSDist,
+		copyDeclarationFiles,
 		buildHTML,
 		copyAssets,
 		server,

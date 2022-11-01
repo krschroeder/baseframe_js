@@ -47,11 +47,8 @@ import installStoreToLibrary, {
     NavMobile,
     NavMobileNestled,
     Parallax,
-    Popup,
-    ResponsiveDropDown,
     SelectEnhance,
     Tabs,
-    bgResponsiveLoad,
     cookies,
     formInputs,
     smoothScroll,
@@ -81,7 +78,6 @@ libraryExtend([
     NavMobile,
     Modal,
     Parallax,
-    Popup, //[Deprecated]
     SelectEnhance,
     Tabs
 ]); 
@@ -124,10 +120,6 @@ __[View Navigation Mobile](#nav-mobile-plugin)__
 ### Parallax Elements
 For making a parallaxing elements on the page. Lots of configurable options.
 __[View Parallax Elements](#parallax-plugin)__
-
-### Popup [DEPRECATED]
-Leaving in on version 4, but soon to remove in subsequent minor version updates. Use 'Modal' instead for anything new, its a smaller version of this that is better to say the least.
-__[View Popup](#popup-plugin)__
 
 ### Select Enhance
 Enhance a selectbox
@@ -335,10 +327,6 @@ trappedFocus.remove();
 <br>
 <br>
 @@include('./parallax.md')
-<br>
-<br>
-<br>
-@@include('./popup.md')
 <br>
 <br>
 <br>

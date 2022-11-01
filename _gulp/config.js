@@ -16,9 +16,10 @@ const config = {
     PRODUCTION: PRODUCTION,
     
     SRC: {
-        CSS: PRODUCTION ? 'src/assets/scss/**/*.scss' : ['src/proj-assets/scss/**/*.scss','src/assets/scss/**/*.scss'],
-        HTML: ['src/pages/**/*.{html,hbs}'],
-        JS: PRODUCTION ? 'src/assets/js/**/*.js' : ['src/proj-assets/js/common-all-test.js', 'src/assets/js/**/*.js']
+        css: PRODUCTION ? 'src/assets/scss/**/*.scss' : ['src/proj-assets/scss/**/*.scss','src/assets/scss/**/*.scss'],
+        html: ['src/pages/**/*.{html,hbs}'],
+        js: PRODUCTION ? 'src/assets/js/**/*.js' : ['src/proj-assets/js/common-all-test.js', 'src/assets/js/**/*.js'],
+        dts: 'src/assets/js/**/*.d.ts'
     },
 
     HBS:  {

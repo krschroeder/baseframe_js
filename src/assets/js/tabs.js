@@ -78,7 +78,7 @@ export default class Tabs {
 			}
 		})
 
-		_.params.onInit(_.prevTabId, _.$tabsList, _.$tabsBody);
+		_.params.onInit(_.$tabsList, _.$tabsBody);
 
 		return this;
 	}

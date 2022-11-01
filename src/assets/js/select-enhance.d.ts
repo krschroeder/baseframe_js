@@ -1,6 +1,6 @@
-import type { Cash, Selector } from "cash-dom";
-import type BaseFramePluginBase from "../shared";
-import type { StringPluginArgChoices } from '../shared';
+import type { Cash } from "cash-dom";
+import type PluginBase from './shared';
+import type { StringPluginArgChoices } from './shared';
 
 export interface ISelectEnhanceOptions {
     cssPrefix?: string;
@@ -15,12 +15,15 @@ export interface ISelectEnhanceOptions {
     afterChange?($element: Cash);
 }
 
-declare class SelectEnhance implements BaseFramePluginBase<ISelectEnhanceOptions> {
+declare class SelectEnhance extends PluginBase<ISelectEnhanceOptions> {
     constructor(options?: ISelectEnhanceOptions | StringPluginArgChoices);
-    static remove(element: Selector): void;
     static defaults: ISelectEnhanceOptions;
-    static pluginName: string;
-    static version: string;
+}
+
+declare global {
+    interface Cash {
+        selectEnhance(options?: ISelectEnhanceOptions | StringPluginArgChoices): Cash;
+    }
 }
 
 export default SelectEnhance;

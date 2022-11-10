@@ -1,4 +1,7 @@
 //lets bring it all on in
+import $ from 'cash-dom';
+import type { Cash } from 'cash-dom';
+
 import installStoreToLibrary, {
     libraryExtend,
     AccessibleMenu,
@@ -96,6 +99,8 @@ $('select').selectEnhance({
     focusIn($el) {console.log('focus in select',$el)},
     focusOut($el) {console.log('focus out select',$el)}
 });
+
+$('select.nope').lazyLoad('remove')
 
 $('.background-area-bg').lazyLoad({observerID: 'background-area-bg', inEvt: (el)=>{console.log('el',el)}});
 $('img[data-src]').lazyLoad({observerID: 'img[data-src]',inEvt: (el, entry)=>{console.log('el and entry',el, entry)}});

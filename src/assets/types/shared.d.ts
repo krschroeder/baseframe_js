@@ -1,13 +1,8 @@
 import { Selector } from 'cash-dom';
 
-declare abstract class PluginBase {
-	static version: string;
-	static pluginName: string;
-	static remove(element: Selector): void;
-}
 
 export interface LocationHashTracking {
-	useHashFilter?: string;
+	useHashFilter?: string | null;
 	useLocationHash?: boolean;
 	loadLocationHash?: boolean;
 }
@@ -18,4 +13,12 @@ export interface LocationHashTrackingHistory extends LocationHashTracking {
 
 export type StringPluginArgChoices = 'remove';
 
-export default PluginBase;
+type PluginBaseClass = {
+    version: string;
+	pluginName: string;
+    remove: (element: Selector) => void;
+    Constructor?: Function;
+    new (...args: any[]);
+}
+
+export default PluginBaseClass;

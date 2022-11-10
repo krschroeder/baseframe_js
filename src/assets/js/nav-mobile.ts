@@ -1,11 +1,72 @@
+import type { Cash, Selector } from "cash-dom";
+import type { StringPluginArgChoices } from '../types/shared';
+
+import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json.js';
 import getType, { isVisible, transitionElem } from './util/helpers';
 import submenuBtn from './util/plugin/nav';
-import { elData } from './util/store';
-import trapFocus from './util/trap-focus.js';
+import { elemData } from './util/store';
+import trapFocus, { ITrapFocusRemove } from './util/trap-focus.js';
+import { KEYS } from "./util/constants";
 
+type submenuBtnSkipFn = (elem: HTMLElement) => boolean;
 
-const VERSION = "1.8.0";
+export interface INavMobileOptions {
+	enableBtn: Selector;
+	ariaLabel?: string;
+	slideDuration?: number;
+	outerElement?: Selector;
+	outsideClickClose?: boolean;
+	hasUlCls?: string;
+	menuOuterOpenCss?: string;
+	menuOpenCss?: string;
+	menuTogglingCss?: string;
+	menuIsOpeningCss?: string;
+	menuIsClosingCss?: string;
+	submenuBtnCss?: string;
+	submenuBtnSkip?: submenuBtnSkipFn | boolean;
+	doTrapFocus?: boolean;
+	trapFocusElem?: Selector | null;
+	stopPropagation?: boolean;
+	bkptEnable?: number | null;
+	animateHeight: boolean;
+	afterNavItemOpen?: ($li: Cash) => {};
+	afterNavItemClose?: ($li: Cash) => {};
+	afterOpen?($element: Cash, outerElement: Cash | HTMLElement, enableBtn: string);
+	afterClose?($element: Cash, outerElement: Cash | HTMLElement, enableBtn: string);
+}
+
+export interface INavMobileDefaults {
+	enableBtn: Selector;
+	ariaLabel: string;
+	slideDuration: number;
+	outerElement: string;
+	outsideClickClose: boolean;
+	hasUlCls: string;
+	menuOuterOpenCss: string;
+	menuOpenCss: string;
+	menuTogglingCss: string;
+	menuIsOpeningCss: string;
+	menuIsClosingCss: string;
+	submenuBtnCss: string;
+	submenuBtnSkip: submenuBtnSkipFn | boolean;
+	doTrapFocus: boolean;
+	trapFocusElem: Selector | null;
+	stopPropagation: boolean;
+	bkptEnable: number | null;
+	animateHeight: boolean;
+	afterNavItemOpen: ($li: Cash) => {};
+	afterNavItemClose: ($li: Cash) => {};
+	afterOpen($element: Cash, outerElement: Cash, enableBtn: Cash);
+	afterClose($element: Cash, outerElement: Cash, enableBtn: Cash);
+}
+
+declare module 'cash-dom' {
+	interface Cash {
+		navMobile(options?: INavMobileOptions | StringPluginArgChoices): Cash;
+	}
+}
+const VERSION = "2.0.0";
 const DATA_NAME = 'NavMobile';
 const EVENT_NAME = 'navMobile';
 const DEFAULTS = {
@@ -36,35 +97,32 @@ const DEFAULTS = {
 
 export default class NavMobile {
 
-	static get version() {
-		return VERSION;
-	}
+	$element: Cash;
+	params: INavMobileDefaults;
+	menuOpened: boolean;
+	allowClick: boolean;
 
-	static get pluginName() {
-		return DATA_NAME;
-	}
+	static get version() { return VERSION; }
+	static get pluginName() { return DATA_NAME; }
+	public static Defaults = DEFAULTS;
 
 	constructor(element, options) {
 		const _ = this;
 
-		const dataOptions = validJSONFromString(
-			$(element).data(EVENT_NAME + '-options')
-		);
+		const dataOptions = validJSONFromString($(element).data(EVENT_NAME + '-options'));
+		const instanceOptions = $.extend({}, NavMobile.Defaults, options, dataOptions)
 		//props
 
 		_.$element = $(element);
 
-		elData(
-			element,
-			`${DATA_NAME}_params`,
-			$.extend({}, NavMobile.defaults, options, dataOptions)
-		);
-		_.params = elData(element, `${DATA_NAME}_params`);
+		elemData(element, `${DATA_NAME}_params`, instanceOptions);
+
+		_.params = elemData(element, `${DATA_NAME}_params`);
 
 		//run the methods
 		_.addChildNavClass();
 		_.buttonClick();
-		_.navigationClick();
+		_.navToggle();
 		_.checkIfEnabled();
 		_.outsideClickClose();
 
@@ -77,6 +135,26 @@ export default class NavMobile {
 		});
 
 		return this;
+	}
+
+	static remove(element) {
+
+		$(element).each(function () {
+			const instance = elemData(this, `${DATA_NAME}_instance`);
+			const params = elemData(this, `${DATA_NAME}_params`);
+
+			$(params.enableBtn).off(`click.${EVENT_NAME} ${EVENT_NAME}`);
+			$(document).off(`keydown.${EVENT_NAME}`);
+			instance.$element
+				.off(`click.${EVENT_NAME} ${EVENT_NAME}`)
+				.off(`click.${EVENT_NAME} ${EVENT_NAME}`);
+
+			$(document.body).off(`click.${EVENT_NAME}`);
+			$(window).off(`resize.${EVENT_NAME} ${EVENT_NAME}`);
+
+			elemData(this, `${DATA_NAME}_params`, null, true);
+			elemData(this, `${DATA_NAME}_instance`, null, true);
+		});
 	}
 
 	menuToggle() {
@@ -93,7 +171,8 @@ export default class NavMobile {
 			trapFocusElem
 		} = _.params;
 
-		let trappedFocus = null;
+		let trappedFocus: ITrapFocusRemove | null = null;
+		const $enableBtn = $(enableBtn);
 
 		if (_.menuOpened) {
 			// closing
@@ -110,9 +189,9 @@ export default class NavMobile {
 
 			_.menuOpened = false;
 
-			trappedFocus && trappedFocus.remove();
+			trappedFocus && (trappedFocus as ITrapFocusRemove).remove();
 
-			_.params.afterClose(_.$element, outerElement, enableBtn);
+			_.params.afterClose(_.$element, $(outerElement), $enableBtn);
 
 		} else {
 			// opening
@@ -131,15 +210,15 @@ export default class NavMobile {
 				trappedFocus = trapFocus(trapFocusElem || _.$element, { nameSpace: EVENT_NAME });
 			}
 
-			_.params.afterOpen(_.$element, outerElement, enableBtn);
+			_.params.afterOpen(_.$element, $(outerElement), $enableBtn);
 		}
 		//update aria-expanded
-		$(enableBtn).attr({ 'aria-expanded': _.menuOpened });
+		$(enableBtn).attr({ 'aria-expanded': _.menuOpened + '' });
 	}
 
 	addChildNavClass() {
 		const _ = this;
-		const {submenuBtnSkip} = _.params;
+		const { submenuBtnSkip } = _.params;
 
 		$('li', _.$element).has('ul').each(function () {
 			const $this = $(this);
@@ -148,20 +227,22 @@ export default class NavMobile {
 			if (
 				getType(submenuBtnSkip) === 'function' &&
 				// condition in function must return false
-				submenuBtnSkip(this)
+				(submenuBtnSkip as submenuBtnSkipFn)(this)
 			) {
 				skipUl = true;
 			}
-		 
-		 
+
+
 			if (!$this.next('button').length && !skipUl) {
 				const $a = $this.find('a').first();
 
 				$a.addClass(_.params.hasUlCls);
 
-				if ($a[0].parentNode.isSameNode(this)) {
-					// make sure the <a> is a direct child of <li>
-					$a.after(submenuBtn(_.params, $a.text()))
+				if ($a.length) {
+					if (($a as any)[0].parentNode.isSameNode(this)) {
+						// make sure the <a> is a direct child of <li>
+						$a.after(submenuBtn(_.params, $a.text()))
+					}
 				}
 			}
 		});
@@ -170,8 +251,10 @@ export default class NavMobile {
 	buttonClick() {
 		const _ = this;
 
+		const $enableBtn = $(_.params.enableBtn);
 
-		$(_.params.enableBtn).on(`click.${EVENT_NAME} ${EVENT_NAME}`, function (e) {
+
+		$enableBtn.on(`click.${EVENT_NAME} ${EVENT_NAME}`, function (e) {
 
 			if (!_.allowClick) return;
 
@@ -181,43 +264,31 @@ export default class NavMobile {
 			e.preventDefault();
 		});
 
-		$(document).on(`keydown.${EVENT_NAME}`, (e) => {
+		$(document).on(`keydown.${EVENT_NAME}`, (e: KeyboardEvent) => {
 
-			if (e.code === 'Escape' && _.$element.hasClass(_.params.menuOpenCss) && _.allowClick) {
+			if (e.code === KEYS.ESC && _.$element.hasClass(_.params.menuOpenCss) && _.allowClick) {
 				_.menuToggle();
 
-				$(_.params.enableBtn)[0].focus();
+				if ($enableBtn.length) {
+
+					($enableBtn as any)[0].focus();
+				}
 			}
 		});
 	}
 
-	navigationClick() {
-		const _ = this;
-
-		if (!_.params.navToggleNestled) {
-			_.navToggle();
-
-		} else {
-			//non-standards, but alternative behavior
-			//of clicking into a link item and seeing only
-			//its subnav items with a back button option
-			_.navToggleNestled();
-		}
-
-	}
-
 	navToggle() {
 		const _ = this;
-		_.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, '.' + _.params.submenuBtnCss.replace(/\s/g, '.'), function (e) {
+		_.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, `.${_.params.submenuBtnCss.replace(/\s/g, '.')}`, function (e: KeyboardEvent) {
 
-			const { 
-				animateHeight, 
-				hasUlCls, 
-				menuOpenCss, 
-				menuIsOpeningCss, 
-				menuIsClosingCss, 
-				menuTogglingCss, 
-				slideDuration 
+			const {
+				animateHeight,
+				hasUlCls,
+				menuOpenCss,
+				menuIsOpeningCss,
+				menuIsClosingCss,
+				menuTogglingCss,
+				slideDuration
 			} = _.params;
 
 			const $li = $(this).closest(`.${hasUlCls}`);
@@ -229,7 +300,8 @@ export default class NavMobile {
 
 			// const toggleCss = isOpened ? menuIsClosingCss : menuIsOpeningCss;
 			const actionCss = `${menuTogglingCss} ${isOpened ? menuIsClosingCss : menuIsOpeningCss}`;
-			
+			//closing: toggle open-css
+			//opening toggle close-css
 			if (!isOpened) {
 
 				_.allowClick = false;
@@ -238,10 +310,10 @@ export default class NavMobile {
 				$ul.addClass(actionCss);
 
 				if (animateHeight) {
-					const ulHeightBeforeResetToZero = $ul[0].scrollHeight;
+					const ulHeightBeforeResetToZero = $ul.length ? ($ul as any)[0].scrollHeight : 0;
 					$ul.css({ height: 0 });
-					
-					
+
+
 					transitionElem(() => {
 						$ul.css({ height: ulHeightBeforeResetToZero });
 					});
@@ -267,7 +339,9 @@ export default class NavMobile {
 
 				$ul.find(`.${menuOpenCss}`).removeClass(menuOpenCss);
 
-				$ul.css({ height: $ul[0].scrollHeight });
+				if ($ul.length) {
+					$ul.css({ height: ($ul as any)[0].scrollHeight });
+				}
 
 				if (animateHeight) {
 					transitionElem(() => {
@@ -278,11 +352,9 @@ export default class NavMobile {
 				transitionElem(() => {
 					$li.removeClass(actionCss);
 					$ul.removeClass(actionCss);
-
 					$ul.css({ height: '' });
 
 					_.params.afterNavItemClose($li);
-
 					_.allowClick = true;
 
 				}, slideDuration);
@@ -291,25 +363,24 @@ export default class NavMobile {
 
 			e.stopPropagation();
 
-		})
-			.on(`click.${EVENT_NAME} ${EVENT_NAME}`, 'a', function (e) {
-				//prohibit closing if an anchor is clicked
-				if (_.params.stopPropagation) {
-					e.stopPropagation();
-				}
-			});
+		});
 
+		_.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, 'a', function (e: MouseEvent) {
+			//prohibit closing if an anchor is clicked
+			if (_.params.stopPropagation) {
+				
+				e.stopPropagation();
+			}
+		});
 	}
-
 
 	outsideClickClose() {
 		const _ = this;
-		$(document.body).on(`click.${EVENT_NAME}`, this, function (e) {
+		$(document.body).on(`click.${EVENT_NAME}`, function (e: MouseEvent) {
 			if (_.params.outsideClickClose) {
 				if (!_.menuOpened) { return; }//lets just exit then..
-
-				const menuClicked = (_.$element.has(e.target).length > 0);
-
+				 
+				const menuClicked = e.target ?_.$element.has((e as any).target).length > 0: false;
 				//if the menu item is not clicked and its opened
 				//the menu button shouldn't register because propogation is prevented to the body
 				if (!menuClicked && _.menuOpened) {
@@ -331,38 +402,15 @@ export default class NavMobile {
 		//and allows for the control of this click via CSS
 		$(window).on(`resize.${EVENT_NAME} ${EVENT_NAME}`, function (e) {
 
-			resizeTimer && clearTimeout(resizeTimer);
-
+			clearTimeout(resizeTimer);
 			resizeTimer = setTimeout(() => {
 
 				_.allowClick = typeof _.params.bkptEnable === 'number' ?
 					$(window).width() <= _.params.bkptEnable :
 					isVisible($(_.params.enableBtn)[0])
-					;
+				;
 
 			}, e.type === EVENT_NAME ? 0 : 200);
 		}).trigger(EVENT_NAME);
 	}
-
-	static remove(element) {
-
-		$(element).each(function () {
-			const instance = elData(this, `${DATA_NAME}_instance`);
-			const params = elData(this, `${DATA_NAME}_params`);
-
-			$(params.enableBtn).off(`click.${EVENT_NAME} ${EVENT_NAME}`);
-			$(document).off(`keydown.${EVENT_NAME}`);
-			instance.$element
-				.off(`click.${EVENT_NAME} ${EVENT_NAME}`)
-				.off(`click.${EVENT_NAME} ${EVENT_NAME}`);
-
-			$(document.body).off(`click.${EVENT_NAME}`);
-			$(window).off(`resize.${EVENT_NAME} ${EVENT_NAME}`);
-
-			elData(this, `${DATA_NAME}_params`, null, true);
-			elData(this, `${DATA_NAME}_instance`, null, true);
-		});
-	}
 }
-
-NavMobile.defaults = DEFAULTS;

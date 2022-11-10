@@ -2,7 +2,7 @@
 import validJSONFromString from './util/formatting-valid-json.js';
 import { getHashParam } from './util/get-param';
 import updateHistoryState from './util/plugin/update-history-state.js';
-import { elData } from './util/store';
+import { elemData } from './util/store';
 import { KEYS } from './util/constants';
 
 const VERSION = "1.4.0";
@@ -50,13 +50,13 @@ export default class Tabs {
 		//state
 		_.$element = $(element);
 
-		elData(
+		elemData(
 			element,
 			`${DATA_NAME}_params`,
 			$.extend({}, Tabs.defaults, options, dataOptions)
 		);
 
-		_.params = elData(element, `${DATA_NAME}_params`);
+		_.params = elemData(element, `${DATA_NAME}_params`);
 		_.$tabsList = _.$element.find(`.${_.params.tabsHeadCss}`).first();
 		_.$tabsBody = _.$element.find(`.${_.params.tabsBodyCss}`).first();
 
@@ -272,16 +272,16 @@ export default class Tabs {
 
 	static remove(element) {
 		$(element).each(function () {
-			const params = elData(this, `${DATA_NAME}_params`);
-			const instance = elData(this, `${DATA_NAME}_instance`);
+			const params = elemData(this, `${DATA_NAME}_params`);
+			const instance = elemData(this, `${DATA_NAME}_instance`);
 
 			instance.$tabsList.off(`${params.tabsEvent}.${EVENT_NAME} ${EVENT_NAME}`);
 			instance.$tabsList.off('keydown.' + EVENT_NAME);
 			instance.$tabsList.find('a, button').attr({ tabindex: null })
 			$(window).off(`popstate.${EVENT_NAME}`);
 
-			elData(this, `${DATA_NAME}_params`, null, true);
-			elData(this, `${DATA_NAME}_instance`, null, true);
+			elemData(this, `${DATA_NAME}_params`, null, true);
+			elemData(this, `${DATA_NAME}_instance`, null, true);
 		})
 	}
 }

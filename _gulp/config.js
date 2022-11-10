@@ -41,7 +41,6 @@ const config = {
     WEBPACK_CONFIG: {
         mode: (PROD_JS ? 'production': 'development'),
         target: ['web','es6'],
-
         module: {
             rules: [
                 {
@@ -51,7 +50,7 @@ const config = {
                 },
                 // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
                 {
-                    test: /\.(tsx|ts)?$/,
+                    test: /\.(tsx|ts|d\.ts)?$/,
                     exclude: excludeRgx,
                     loader: "ts-loader" 
                 }

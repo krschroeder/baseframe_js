@@ -1,6 +1,6 @@
 
 import validJSONFromString from './util/formatting-valid-json.js';
-import { elData } from './util/store';
+import { elemData } from './util/store';
 
 const VERSION = "2.0.2";
 const DATA_NAME = 'EqualizeContent';
@@ -29,15 +29,15 @@ export default class EqualizeContent {
 	static remove(element) {
 
 		$(element).each(function () {
-			const instance = elData(this, `${DATA_NAME}_instance`);
+			const instance = elemData(this, `${DATA_NAME}_instance`);
 			const $el = $(instance.element);
 
 			$(window).off(`resize.${EVENT_NAME} ${EVENT_NAME}`);
 			$el.find('img').off(`load.${EVENT_NAME}`);
 			instance.$equalizeItems.css(instance.elementHeight, '');
 
-			elData(this, `${DATA_NAME}_params`, null, true);
-			elData(this, `${DATA_NAME}_instance`, null, true);
+			elemData(this, `${DATA_NAME}_params`, null, true);
+			elemData(this, `${DATA_NAME}_instance`, null, true);
 		});
 	}
 
@@ -52,12 +52,12 @@ export default class EqualizeContent {
 
 	 
 
-		elData(
+		elemData(
 			element,
 			`${DATA_NAME}_params`,
 			$.extend({}, EqualizeContent.defaults, options, dataOptions) 
 		);
-		_.params = elData(element,`${DATA_NAME}_params`);
+		_.params = elemData(element,`${DATA_NAME}_params`);
 
 		_.elementHeight = (_.params.useHeight) ? 'height' : 'min-height';
 		_.$equalizeItems = $(_.params.equalizeItem, _.element);

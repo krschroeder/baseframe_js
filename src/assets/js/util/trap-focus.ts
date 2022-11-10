@@ -1,14 +1,28 @@
+import type { Selector, Cash } from 'cash-dom';
+
+import $ from 'cash-dom';
 import { isVisible } from "./helpers";
 
-const defaultProps = {
+
+interface ITrapFocusProps {
+    focusFirst?: boolean,
+    nameSpace?: string,
+    focusable?: ('button' | 'a' | 'input' | 'select' | 'textarea' | '[tabindex]')[]
+};
+
+const defaultProps: ITrapFocusProps = {
     focusFirst: true,
     nameSpace: 'trapFocus',
     focusable: ['button', 'a', 'input', 'select', 'textarea', '[tabindex]']
 };
 
+export interface ITrapFocusRemove {
+    remove(): void
+};
+
 const canFocusEls = (i, el) => isVisible(el, true) && el.tabIndex !== -1;
 
-const trapFocus = (modalEl, props) => {
+const trapFocus = (modalEl: Selector, props?: ITrapFocusProps): ITrapFocusRemove => {
 
     const { focusFirst, focusable, nameSpace } = $.extend({}, defaultProps, props);
     const $trapElem = $(modalEl);  
@@ -22,7 +36,7 @@ const trapFocus = (modalEl, props) => {
         firstFocusable.focus();
     }
     
-    $(document.body).on(`keydown.${nameSpace}`, function (e) {
+    $(document.body).on(`keydown.${nameSpace}`, function (e:KeyboardEvent) {
          
         const $focusable = $trapElem.find(focusableJoined).filter(canFocusEls);
       
@@ -39,14 +53,20 @@ const trapFocus = (modalEl, props) => {
 
         if (e.shiftKey) { 
             // if shift key pressed for shift + tab combination
-            if (document.activeElement.isSameNode(firstFocusable)) {
-                lastFocusable.focus(); 
+            if (document.activeElement && 
+                firstFocusable && 
+                document.activeElement.isSameNode(firstFocusable)
+            ) {
+                lastFocusable && lastFocusable.focus(); 
                 e.preventDefault();
             }
         } else { 
             // if tab key is pressed
-            if (document.activeElement.isSameNode(lastFocusable)) { 
-                firstFocusable.focus(); 
+            if (document.activeElement && 
+                lastFocusable && 
+                document.activeElement.isSameNode(lastFocusable)
+            ) { 
+                firstFocusable && firstFocusable.focus(); 
                 e.preventDefault();
             }
         }

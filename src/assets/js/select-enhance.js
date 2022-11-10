@@ -1,7 +1,7 @@
-import { elData } from "./util/store";
+import { elemData } from "./util/store";
 import validJSONFromString from './util/formatting-valid-json';
 import { KEYS } from "./util/constants";
-import { isMobileOS, IE_Event, noop } from "./util/helpers";
+import { isMobileOS, noop } from "./util/helpers";
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/listbox_role
 
 
@@ -74,12 +74,12 @@ export default class SelectEnhance {
             $(element).data(EVENT_NAME + '-options')
         );
 
-        elData(
+        elemData(
             element,
             `${DATA_NAME}_params`,
             $.extend({}, SelectEnhance.defaults, options, dataOptions)
         );
-        _.params = elData(element, `${DATA_NAME}_params`);
+        _.params = elemData(element, `${DATA_NAME}_params`);
 
 
         _.setUpSelectHtml();
@@ -173,7 +173,7 @@ export default class SelectEnhance {
         // add a class whether there is an input value or not
         _.$selectEnhance.toggleClass(cssPrefix + '--empty-val', !selectedOpt.value.trim());
 
-        _.$element[0].dispatchEvent(new (Event || IE_Event)('change'));
+        _.$element[0].dispatchEvent(new Event('change'));
 
         if (_.params.emptyValAsPlaceholder && selectedOpt.value.trim() === '') {
             _.$textInput.val('');
@@ -622,7 +622,7 @@ export default class SelectEnhance {
 
     static refreshOptions(element) {
         $(element).each(function () {
-            const _ = elData(this, `${DATA_NAME}_instance`);
+            const _ = elemData(this, `${DATA_NAME}_instance`);
 
             if (_) {
 
@@ -638,7 +638,7 @@ export default class SelectEnhance {
     static remove(element) {
 
         $(element).each(function () {
-            const _ = elData(this, `${DATA_NAME}_instance`);
+            const _ = elemData(this, `${DATA_NAME}_instance`);
 
             _.$selectEnhance.off('keydown.' + EVENT_NAME);
             _.$selectEnhance.off('keydown.navigate_' + EVENT_NAME);
@@ -658,8 +658,8 @@ export default class SelectEnhance {
             }
             _.$selectEnhance.remove();
 
-            elData(this, `${DATA_NAME}_params`, null, true);
-            elData(this, `${DATA_NAME}_instance`, null, true);
+            elemData(this, `${DATA_NAME}_params`, null, true);
+            elemData(this, `${DATA_NAME}_instance`, null, true);
         });
     }
 

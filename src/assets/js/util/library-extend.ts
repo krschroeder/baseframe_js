@@ -1,5 +1,7 @@
+import $ from 'cash-dom';
 import getType from './helpers';
-import { elData } from './store';
+import { elemData } from './store';
+import type PluginBaseClass from '../../types/shared';
 
 const checkIfParamsExist = (setParams, params, notify = true) => {
     for (let k in params) {
@@ -11,10 +13,12 @@ const checkIfParamsExist = (setParams, params, notify = true) => {
     return params;
 };
 
- 
-const libraryExtend = (Plugins, notify = false) => {
+
+const libraryExtend = <T>(Plugins: PluginBaseClass | PluginBaseClass[], notify = false) => {
     
-    const plugins = getType(Plugins) === 'array' ? Plugins : [Plugins];
+    const plugins: PluginBaseClass[] = getType(Plugins) === 'array' ? 
+        Plugins as PluginBaseClass[] : [Plugins as PluginBaseClass]
+    ;
    
     for (let i = 0, l = plugins.length; i < l; i++) {
        
@@ -25,18 +29,18 @@ const libraryExtend = (Plugins, notify = false) => {
 
         Plugin.Constructor = Plugin;
          
-        $.fn[pluginName] = function (params) {
+        $.fn.extend({[pluginName]: function (params) {
             const _ = this;
 
             return _.each(function (index) {
                 const $this = $(this);
 
-                const instance = elData(this, `${DataName}_instance`);
+                const instance = elemData(this, `${DataName}_instance`);
                  
                 if (!instance) {
                     const plugin = new Plugin($this, params, index);
 
-                    elData(this, `${DataName}_instance`, plugin); 
+                    elemData(this, `${DataName}_instance`, plugin); 
                     
                 } else {
 
@@ -47,14 +51,14 @@ const libraryExtend = (Plugins, notify = false) => {
                         }
                         return;
                     }
-                    const instanceParams = elData(this,`${DataName}_params`);
+                    const instanceParams = elemData(this,`${DataName}_params`);
                     checkIfParamsExist(instanceParams, params, notify);
                   
-                    elData(this,`${DataName}_params`, $.extend(instanceParams, params) );
+                    elemData(this,`${DataName}_params`, $.extend(instanceParams, params) );
                     notify && console.log(`Params updated`,instanceParams)
                 }
             });
-        };
+        }});
     }
 }
 

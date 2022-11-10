@@ -1,5 +1,9 @@
+import type { Cash, Selector } from "cash-dom";
+import type { LocationHashTracking, StringPluginArgChoices } from '../types/shared';
+
+import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json';
-import { elData } from './util/store';
+import { elemData } from './util/store';
 import trapFocus from './util/trap-focus';
 import generateGUID from './util/guid-generate.js';
 import getType, { camelCase, transitionElem } from './util/helpers';
@@ -8,10 +12,65 @@ import updateHistoryEntry from './util/plugin/update-history-state';
 import { noop } from './util/helpers';
 
 
+type ModalObj = {
+    $backdrop: Cash;
+    $content: Cash;
+    contentAppended: boolean; //state
+    $dialog: Cash //modal dialog
+    $dialogContent: Cash // modal dialog content
+    $closeBtn: Cash
+    id: string,
+    $modal: Cash, //outermost element
+    disableModal: () => void, //disable modal fn
+    show: boolean //state
+}
+
+export interface IModalOptions extends LocationHashTracking {
+    src: Selector;
+    modalID: string;
+    enableEvent?: string;
+    appendTo?: Selector;
+    ariaLabelledby?: string;
+    ariaLabel?: string;
+    cssPrefix?: string;
+    closeBtnIconCss?: string;
+    closeOutDelay?: number;
+    backDropClose?: boolean;
+    fromDOM?: boolean;
+    modalCss?: string;
+    useHashFilter?: string;
+    useLocationHash?: boolean;
+    loadLocationHash?: boolean;
+    onOpenOnce?(modalObj: ModalObj): void;
+    onClose(modalObj: ModalObj): void;
+    onOpen?(modalObj: ModalObj): void;
+    afterClose?(modalObj: ModalObj): void;
+}
+
+export interface IModalDefaults extends LocationHashTracking {
+    src: Selector;
+    modalID: string | null;
+    enableEvent: string;
+    appendTo: Selector;
+    ariaLabelledby: string | null;
+    ariaLabel: string | null;
+    cssPrefix: string;
+    closeBtnIconCss: string;
+    closeOutDelay: number;
+    backDropClose: boolean;
+    fromDOM: boolean;
+    modalCss: string | null;
+    onOpenOnce(modalObj: ModalObj): void;
+    onOpen(modalObj: ModalObj): void;
+    onClose(modalObj: ModalObj): void;
+    afterClose(modalObj: ModalObj): void;
+}
+
 const VERSION = '1.1.1';
 const EVENT_NAME = 'modal';
 const DATA_NAME = 'Modal';
-const DEFAULTS = {
+
+const DEFAULTS: IModalDefaults = {
     enableEvent: 'click',
     appendTo: document.body,
     ariaLabelledby: null,
@@ -29,6 +88,7 @@ const DEFAULTS = {
     useLocationHash: true,
     onOpenOnce: noop,
     onOpen: noop,
+    onClose: noop,
     afterClose: noop
 };
 
@@ -39,6 +99,63 @@ const hasCb = (cb, modalObj) => {
 }
 
 export default class Modal {
+
+    public element: HTMLElement;
+    public params: IModalDefaults;
+    public modalID: string;
+    public modalObj: ModalObj;
+    public modalEvent: string;
+    public trappedFocus: any;
+    public enabledElem: Element | null;
+    public openedOnce: boolean;
+
+    public static Defaults = DEFAULTS;
+
+
+    constructor(element: HTMLAnchorElement | HTMLElement | HTMLButtonElement, options) {
+        const _ = this;
+
+        _.element = element;
+
+        const dataOptions = validJSONFromString($(element).data(EVENT_NAME + '-options'));
+        const instanceOptions = $.extend({}, Modal.Defaults, options, dataOptions);
+
+        elemData(element, `${DATA_NAME}_params`, instanceOptions);
+
+        _.params = elemData(element, `${DATA_NAME}_params`);
+
+        if (!_.params.modalID) {
+            let idPartIfParamSrc, autoGen = false;
+
+            if (_.params.src && getType(_.params.src) !== 'string') {
+                idPartIfParamSrc = generateGUID();
+                autoGen = true;
+            }
+
+            _.modalID = (
+                (<HTMLAnchorElement>_.element).hash || 
+                _.element.dataset.modalSrc ||
+                (autoGen && idPartIfParamSrc)
+            ).replace('#', '');
+
+            if (_.params.useLocationHash && autoGen) {
+                console.warn('If loading from a location hash please make sure to specify an ID not auto generated. This won\'t work should the page get reloaded.');
+            }
+        } else {
+            _.modalID = _.params.modalID;
+        }
+
+        _.modalObj = _.getModalObj();
+        _.modalEvent = EVENT_NAME + '_' + _.modalID;
+        _.trappedFocus;
+        _.enabledElem;
+        _.openedOnce = false;
+        
+        _.clickEnable();
+        _.loadLocationHash();
+
+        return this;
+    }
 
     static get version() {
         return VERSION;
@@ -53,12 +170,12 @@ export default class Modal {
         $(element).each(function () {
 
             const
-                _ = elData(this, `${DATA_NAME}_instance`),
-                params = elData(this, `${DATA_NAME}_params`),
+                _ = elemData(this, `${DATA_NAME}_instance`),
+                params = elemData(this, `${DATA_NAME}_params`),
                 { $backdrop, $closeBtn } = _.modalObj
                 ;
 
-            _.modalObj.show && disableModal();
+            _.modalObj.show && _.modalObj.disableModal();
             $(_.element).off(`${_.params.enableEvent}.${_.modalEvent}`);
             $closeBtn.off(`click.${_.modalEvent}Dismiss`);
             if (params.backDropClose) $backdrop.off(`click.${_.modalEvent}Dismiss`);
@@ -66,54 +183,9 @@ export default class Modal {
                 .off(`keydown.${_.modalEvent}Dismiss`)
                 .off(`${_.modalEvent}Dismiss`);
             $(window).off(`popstate.${_.modalEvent} ${_.modalEvent}`);
-            elData(this, `${DATA_NAME}_params`, null, true);
-            elData(this, `${DATA_NAME}_instance`, null, true);
+            elemData(this, `${DATA_NAME}_params`, null, true);
+            elemData(this, `${DATA_NAME}_instance`, null, true);
         });
-    }
-
-    constructor($element, options) {
-        const _ = this;
-
-        _.element = $element[0];
-
-        const dataOptions = validJSONFromString($element.data(EVENT_NAME + '-options'));
-        const instanceOptions = $.extend({}, Modal.defaults, options, dataOptions);
-
-        elData($element, `${DATA_NAME}_params`, instanceOptions);
-
-        _.params = elData($element, `${DATA_NAME}_params`);
-
-        if (!_.params.modalID) {
-            let idPartIfParamSrc, autoGen = false;
-
-            if (_.params.src && getType(_.params.src) !== 'string') {
-                idPartIfParamSrc = generateGUID();
-                autoGen = true;
-            }
-
-            _.modalID = (
-                _.element.hash || 
-                _.element.dataset.modalSrc ||
-                (autoGen && idPartIfParamSrc)
-            ).replace('#', '');
-
-            if (_.params.useLocationHash && autoGen) {
-                console.warn('If loading from a location hash please make sure to specify an ID not auto generated. This won\'t work should the page get reloaded.');
-            }
-        } else {
-            _.modalID = _.params.modalID;
-        }
-
-        _.modalObj = _.getModalObj();
-        _.modalEvent = EVENT_NAME + '_' + _.modalID;
-        _.trappedFocus = null;
-        _.enabledElem = null;
-        _.openedOnce = false;
-        
-        _.clickEnable();
-        _.loadLocationHash();
-
-        return this;
     }
 
     clickEnable() {
@@ -144,14 +216,13 @@ export default class Modal {
 
     getModalObj() {
 
-        const
-            _ = this,
+        const _ = this,
             { ariaLabel, ariaLabelledby, closeBtnIconCss, modalCss } = _.params,
             modalID = _.modalID,
             modalAttr = {
                 class: 'modal' + (modalCss ? ' ' + modalCss : ''),
-                'aria-label': (ariaLabel || _.element.dataset.ariaLabel) || null,
-                'aria-labelledby': (ariaLabelledby || _.element.dataset.ariaLabelledby) || null,
+                'aria-label': (ariaLabel || _.element.dataset.ariaLabel) || '',
+                'aria-labelledby': (ariaLabelledby || _.element.dataset.ariaLabelledby) || '',
                 id: modalID
             },
             closeBtnAttrs = { class: 'modal__btn-dismiss', type: 'button', 'aria-label': 'Close' },
@@ -160,8 +231,8 @@ export default class Modal {
             $dialog = $('<div/>').attr({ class: 'modal__dialog' }).append($closeBtn, $dialogContent),
             $backdrop = $('<div/>').attr({ class: 'modal__backdrop' }),
             $modal = $('<div/>').attr(modalAttr).append($backdrop, $dialog),
-            $content = $(_.params.src || _.element.hash || _.element.dataset.modalSrc)
-            ;
+            $content = $(_.params.src || (<HTMLAnchorElement>_.element).hash || _.element.dataset.modalSrc)
+        ;
 
         return {
             $backdrop,
@@ -185,7 +256,7 @@ export default class Modal {
             ;
 
         _.enabledElem = document.activeElement;
-
+        
         if (fromDOM) {
             $content.after(
                 $('<span/>').attr({
@@ -272,7 +343,10 @@ export default class Modal {
             });
 
             _.trappedFocus.remove();
-            _.enabledElem.focus();
+
+            if (_.enabledElem && _.enabledElem instanceof HTMLElement) {
+                _.enabledElem.focus();
+            }
 
             if (fromDOM) {
                 $('#' + _.modalObj.id + '_marker').after($content).remove();
@@ -292,7 +366,7 @@ export default class Modal {
 
         const loadIfHashMatches = () => {
 
-            if (useLocationHash || loadLocationHash) {
+            if ((useLocationHash || loadLocationHash) && useHashFilter) {
                 const hash = getHashParam(useHashFilter) || location.hash.replace(/#/g, '');
                 if (useHashFilter && _.modalObj.id === hash) {
                     _.modalObj.show ? _.disableModal() : _.setDisplayAndEvents();
@@ -303,12 +377,14 @@ export default class Modal {
         loadIfHashMatches();
 
         $(window).on(`popstate.${_.modalEvent} ${_.modalEvent}`, (e) => {
-            if (_.params.historyType === 'push') {
-                loadIfHashMatches();
-                e.preventDefault();
-            }
+            loadIfHashMatches();
+            e.preventDefault();
         });
     }
 }
 
-Modal.defaults = DEFAULTS;
+declare module 'cash-dom' {
+    export interface Cash {
+        modal(options?: IModalOptions | StringPluginArgChoices): Cash;
+    }
+}

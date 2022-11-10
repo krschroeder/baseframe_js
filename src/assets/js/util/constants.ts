@@ -1,6 +1,17 @@
 
+export interface IUsedKeys {
+	ESC: 'Escape';
+	LEFT: 'ArrowLeft';
+	RIGHT: 'ArrowRight';
+	DOWN: 'ArrowDown';
+	UP: 'ArrowUp';
+	ENTER: 'Enter';
+	SHIFT: 'Shift';
+	SPACE: 32; //use keyCode
+	TAB: 'Tab';
+}
 
-export const KEYS = {
+export const KEYS: IUsedKeys = {
 	ESC: 'Escape',
 	LEFT: 'ArrowLeft',
 	RIGHT: 'ArrowRight',

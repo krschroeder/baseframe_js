@@ -1,6 +1,6 @@
 
 import validJSONFromString from './util/formatting-valid-json.js';
-import { elData } from './util/store';
+import { elemData } from './util/store';
  
 const VERSION = "1.1.0";
 const DATA_NAME = 'Parallax';
@@ -38,15 +38,15 @@ export default class Parallax {
 	static remove(element) {
 
 		$(element).each(function () {
-			const instance = elData(this, `${DATA_NAME}_instance`);
+			const instance = elemData(this, `${DATA_NAME}_instance`);
 			
 			$(window).off(getEvents(instance.instanceEvent));
 			$(window).off(`resize.${instance.instanceEvent} ${instance.instanceEvent}`);
 
 			$(this).css({transform:'',...(instance.bgFill ? {'padding-top': ''} : {})});
 
-			elData(this, `${DATA_NAME}_params`, null, true);
-			elData(this, `${DATA_NAME}_instance`, null, true);
+			elemData(this, `${DATA_NAME}_params`, null, true);
+			elemData(this, `${DATA_NAME}_instance`, null, true);
 		});
 	}
 
@@ -60,12 +60,12 @@ export default class Parallax {
 		_.$window = $(window);
 		_.$element = $(element);
 
-		elData(
+		elemData(
 			element,
 			`${DATA_NAME}_params`,
 			$.extend({}, Parallax.defaults, instanceDefaults, options, dataOptions)
 		);
-		_.params = elData(element, `${DATA_NAME}_params`);
+		_.params = elemData(element, `${DATA_NAME}_params`);
 
 		_.requestAnimationFrame = !!window.requestAnimationFrame;
 

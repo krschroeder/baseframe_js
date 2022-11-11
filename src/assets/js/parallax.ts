@@ -1,11 +1,41 @@
-
+import { Cash } from "cash-dom";
+import type { StringPluginArgChoices } from '../types/shared';
+import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json.js';
 import { elemData } from './util/store';
- 
+
+type axis =  'x' | 'y';
+
+export interface IParallaxOptions {
+    speed?: number;
+    axis?: axis;
+    relativeElem?: false | Cash;
+    $heightElem?: Cash | null;
+    initOffset?: boolean;
+    bgFill?: boolean;
+    outStop?: number;
+    minWidth?: number | null;
+    maxWidth?: number | null;
+    scrollMaxPxStop?: number;
+}
+
+export interface IParallaxDefaults {
+    speed: number;
+    axis: axis;
+    relativeElem: false | Cash;
+    $heightElem: Cash | null;
+    initOffset: boolean;
+    bgFill: boolean;
+    outStop: number;
+    minWidth: number | null;
+    maxWidth: number | null;
+    scrollMaxPxStop: number;
+}
+
 const VERSION = "1.1.0";
 const DATA_NAME = 'Parallax';
 const EVENT_NAME = 'parallax';
-const DEFAULTS = {
+const DEFAULTS: IParallaxDefaults = {
 	speed: 7,
 	axis: 'y',
 	relativeElem: false,
@@ -27,12 +57,57 @@ const getEvents = (instEvt) => [
 
 export default class Parallax {
 
-	static get version() {
-		return VERSION;
-	}
+	public params: IParallaxDefaults;
+	public initOffsetSet: boolean;
+	public initOffset: number;
+	public index: number;
+	public instanceEvent: string;
+	public $window: Cash;
+	public $element: Cash;
+	public $relElem: Cash;
+	public winHeight: number;
+	public winWidth: number;
+	public initiallyInView: boolean;
+	public elemHeight: number;
+	public speed: number;
+	public bgFillRatio: number;
+	public bgFill: boolean;
+	public axis: axis;
+	public outStop: number;
+	public scrollMaxPxStop: number;
+	public minWidthIfSet: boolean;
+	public maxWidthIfSet: boolean;
+	public effectCleared: boolean;
 
-	static get pluginName() {
-		return DATA_NAME;
+	static get version() { return VERSION; }
+	static get pluginName() {return DATA_NAME; }
+	static Defaults = DEFAULTS;
+
+	constructor(element, options, index) {
+		const _ = this;
+		const dataOptions = validJSONFromString($(element).data(EVENT_NAME + '-options'));
+		const instanceDefaults = {$heightElem: $(element)};
+
+		_.$window = $(window);
+		_.$element = $(element);
+		 
+        const instanceOptions = $.extend({}, Parallax.Defaults, instanceDefaults, options, dataOptions)
+		
+		elemData( element,`${DATA_NAME}_params`,instanceOptions);
+
+		_.params = elemData(element, `${DATA_NAME}_params`);
+		_.initOffsetSet = false;
+		_.initOffset = 0;
+		_.index = index;
+		_.instanceEvent = EVENT_NAME + index;
+		//props to get updated on resize
+		_.updatableProps();
+
+		_.initiallyInView = ((_.$relElem as any).offset().top < _.winHeight);
+
+		_.init();
+
+		return this;
 	}
 
 	static remove(element) {
@@ -50,52 +125,14 @@ export default class Parallax {
 		});
 	}
 
-	constructor(element, options, index) {
-		const _ = this;
-		const dataOptions = validJSONFromString(
-			$(element).data(EVENT_NAME + '-options')
-		);
-		const instanceDefaults = {$heightElem: $(element)};
-
-		_.$window = $(window);
-		_.$element = $(element);
-
-		elemData(
-			element,
-			`${DATA_NAME}_params`,
-			$.extend({}, Parallax.defaults, instanceDefaults, options, dataOptions)
-		);
-		_.params = elemData(element, `${DATA_NAME}_params`);
-
-		_.requestAnimationFrame = !!window.requestAnimationFrame;
-
-		_.initOffsetSet = false;
-		_.initOffset = 0;
-		_.index = index;
-		_.instanceEvent = EVENT_NAME + index;
-		//props to get updated on resize
-		_.updatableProps();
-
-		_.initiallyInView = (_.$relElem.offset().top < _.winHeight);
-
-		_.init();
-
-		return this;
-	}
-
 	init() {
 		const _ = this;
 		const EVENTS = getEvents(_.instanceEvent);
 
 		$(window).on(EVENTS, () => {
-			if (_.requestAnimationFrame) {
-				window.requestAnimationFrame(function () {
-					_.parallax(_);
-				});
-			} else {
+			window.requestAnimationFrame(function () {
 				_.parallax(_);
-			}
-
+			});
 		}).trigger(_.instanceEvent);
 
 		_.resizeUpdates();
@@ -106,11 +143,11 @@ export default class Parallax {
 
 		_.winHeight = _.$window.height();
 		_.winWidth = _.$window.width();
-		_.elemHeight = _.params.$heightElem.height();
+		_.elemHeight = _.params.$heightElem ? _.params.$heightElem.height() : -1;
 		_.speed = _._speed;
 		_.bgFillRatio = _._bgFillRatio;
 		_.bgFill = _.params.bgFill;
-		_.axis = _.params.axis.toUpperCase();
+		_.axis = _.params.axis;
 		_.$relElem = _._relElem;
 		_.outStop = _.params.outStop;
 		_.scrollMaxPxStop = _.params.scrollMaxPxStop;
@@ -123,7 +160,7 @@ export default class Parallax {
 
 	resizeUpdates() {
 		const _ = this;
-		let resizeThrottle = null;
+		let resizeThrottle: ReturnType<typeof setTimeout> | null = null;
 
 		$(window).on(`resize.${_.instanceEvent} ${_.instanceEvent}`, function () {
 			resizeThrottle && clearTimeout(resizeThrottle);
@@ -162,7 +199,7 @@ export default class Parallax {
 
 			if (Math.abs(speed) > _.scrollMaxPxStop) return;
 
-			const cssParams = (_.axis === 'Y') ?
+			const cssParams = (_.axis === 'y') ?
 				!_.bgFill ?
 					{	//don't fill it
 						'transform': `translate3d(0,${speed - _.initOffset}px,0)`
@@ -202,6 +239,10 @@ export default class Parallax {
 	_isScrolledIntoView(elemTop, scrollTop) {
 		const _ = this;
 
+		if (_.elemHeight === -1) {
+			// negative 1 if we don't have a relative element;
+			throw new Error('Please Specify a Relative Element to base the height of the parallax off of');
+		}
 
 		const elemBottom = (_.elemHeight * _.outStop) + elemTop;
 		const inView = (
@@ -236,4 +277,8 @@ export default class Parallax {
 	}
 }
 
-Parallax.defaults = DEFAULTS;
+declare module 'cash-dom' {
+    interface Cash {
+        parallax(options?: IParallaxOptions | StringPluginArgChoices): Cash;
+    }
+}

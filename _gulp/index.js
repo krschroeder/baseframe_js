@@ -14,7 +14,7 @@ import cleanCss from 'gulp-clean-css';
 import clean from 'gulp-clean';
 import fileinclude from 'gulp-file-include';
 import tap from 'gulp-tap';
-import flatten from 'gulp-flatten';
+ 
 //es6 javascript
 //this version of babel is needed for the plugin generation
 //since webpack isn't playing well with outputting to the same directory
@@ -23,7 +23,7 @@ import named from 'vinyl-named';
 import webpack from 'webpack';
 import webpackStream from 'webpack-stream';
 
-import TypeScript from 'typescript';
+import ts from 'typescript';
 
 import config from './config';
 
@@ -82,7 +82,7 @@ function buildJS(done) {
 	if (PRODUCTION) {
 		// just turn it into JS files
 		gulp.src(js).pipe(tap(function (file) {	 
-			const transpiledToJs = TypeScript.transpile(file.contents.toString('utf-8'),{
+			const transpiledToJs = ts.transpile(file.contents.toString('utf-8'),{
 				lib: ["esNext", "dom"],
 				target: "ESNext",
 				module: "ESNext",

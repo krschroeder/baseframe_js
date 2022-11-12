@@ -1,6 +1,6 @@
 import parseObjectFromString from './util/parse-object-from-string';
 import $visible from './util/visible';
-import { elemData } from '../js/util/store';
+import elemData from "./util/elemData";
 import { KEYS } from './util/constants';
 import $, { Cash } from 'cash-dom';
 
@@ -36,7 +36,7 @@ const DEFAULTS: IAccessibleMenuDefaults = {
 	keyDirections: ['horizontal', 'vertical', 'vertical'],
 	focusCss: 'focus',
 	focusInElems: 'a, [tabindex]',
-	focusLeaveElems: 'a, [tabindex], select'
+	focusLeaveElems: 'a, [tabindex], select, button'
 }
 
 const escapeKey = (e: KeyboardEvent, $ulParents: Cash, focusCss: string): void => {

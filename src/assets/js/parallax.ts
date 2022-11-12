@@ -2,7 +2,7 @@ import { Cash } from "cash-dom";
 import type { StringPluginArgChoices } from './types/shared';
 import $ from 'cash-dom';
 import parseObjectFromString from './util/parse-object-from-string';
-import { elemData } from './util/store';
+import elemData from "./util/elemData";
 
 type axis =  'x' | 'y';
 

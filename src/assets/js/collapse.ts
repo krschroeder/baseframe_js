@@ -5,7 +5,7 @@ import $ from 'cash-dom';
 import parseObjectFromString from './util/parse-object-from-string';
 import smoothScroll from './util/smooth-scroll';
 import { getHashParam } from './util/get-param';
-import { elemData } from './util/store';
+import elemData from "./util/elemData";
 import updateHistoryState from './util/plugin/update-history-state';
 import { noop, transitionElem } from './util/helpers';
 

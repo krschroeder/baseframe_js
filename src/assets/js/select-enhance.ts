@@ -2,7 +2,7 @@ import type { Cash } from "cash-dom";
 import type { StringPluginArgChoices } from './types/shared';
 
 import $ from 'cash-dom';
-import { elemData } from "./util/store";
+import elemData from "./util/elemData";
 import parseObjectFromString from './util/parse-object-from-string';
 import { KEYS } from "./util/constants";
 import { isMobileOS, noop } from "./util/helpers";
@@ -34,7 +34,7 @@ export interface ISelectEnhanceDefaults {
     afterChange($select: Cash);
 }
 
-const VERSION = "2.3.0";
+const VERSION = "2.3.1";
 const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 
@@ -338,34 +338,34 @@ export default class SelectEnhance {
     eventKeyboardSearch() {
         const _ = this;
 
-        let keyInputTo: ReturnType<typeof setTimeout>;
+        let keyInputTo: ReturnType<typeof setTimeout> | null = null;
+        let changedTo: ReturnType<typeof setTimeout> | null = null;
         let keyedFound = [];
 
-        _.$selectEnhance.on('keypress.' + EVENT_NAME, function (e) {
-
+        _.$selectEnhance.on('keypress.' + EVENT_NAME, function (e:KeyboardEvent) {
             if (_.select.disabled) { return }
             const keyCurr = (e.key.length === 1 ? e.key : '');
-
+            
             _.keyedInput += keyCurr;
 
-            if (keyInputTo) {
+            clearTimeout(keyInputTo);
+            keyInputTo = setTimeout(() => {
+                _.keyedInput = ""; 
+            }, _.params.typeAheadDuration);
 
-                clearTimeout(keyInputTo);
+            if (_.keyedInput.trim()) {
 
-                keyInputTo = setTimeout(() => {
-                    _.keyedInput = "";
-                }, _.params.typeAheadDuration);
+                const rgx = RegExp('^'+_.keyedInput.trim(), 'i'); 
 
-                if (_.keyedInput.trim()) {
+                keyedFound = [].slice.call(_.select.getElementsByTagName('option')).filter( (el) => rgx.test(el.text))
 
-                    const rgx = RegExp(_.keyedInput.trim(), 'i');
+                if (keyedFound.length) {
 
-                    keyedFound = [].slice.call(_.select.getElementsByTagName('option')).filter((i, el) => rgx.test(el.text))
-
-                    if (keyedFound.length) {
-
+                    clearTimeout(changedTo);
+                    changedTo = setTimeout(() => {
                         _.setSelectionState(_.optionSet.get(keyedFound[0]), false);
-                    }
+                         
+                    }, 100);
                 }
             }
         });

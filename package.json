@@ -1,6 +1,6 @@
 {
   "name": "baseframe-js",
-  "version": "4.5.3",
+  "version": "4.6.0",
   "description": "A suite of useful Javascript plugins and functions to help with Front-end Development on websites",
   "repository": {
     "type": "git",
@@ -61,6 +61,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^5.1.0",
     "gulp-sourcemaps": "^2.6.0",
+    "gulp-tap": "^2.0.0",
     "gulp-uglify": "^3.0.0",
     "handlebars-helpers": "^0.10.0",
     "path": "^0.12.7",
@@ -69,7 +70,6 @@
     "typescript": "^4.8.4",
     "vinyl-named": "^1.1.0",
     "webpack": "^5.74.0",
-    "webpack-emit-all-plugin": "^2.0.1",
     "webpack-stream": "^7.0.0",
     "yargs": "^8.0.2"
   },

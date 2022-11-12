@@ -13,6 +13,7 @@ import autoprefixer from 'gulp-autoprefixer';
 import cleanCss from 'gulp-clean-css';
 import clean from 'gulp-clean';
 import fileinclude from 'gulp-file-include';
+import tap from 'gulp-tap';
 import flatten from 'gulp-flatten';
 //es6 javascript
 //this version of babel is needed for the plugin generation
@@ -22,6 +23,7 @@ import named from 'vinyl-named';
 import webpack from 'webpack';
 import webpackStream from 'webpack-stream';
 
+import TypeScript from 'typescript';
 
 import config from './config';
 
@@ -75,23 +77,54 @@ function buildHTML(done) {
 	done();
 }
 
-function buildJS() {
-	return gulp.src(js)
-		.pipe(named())
-		.pipe(webpackStream(WEBPACK_CONFIG, webpack))
-		.pipe(gulp.dest(`${DEST}/assets/js`));
+function buildJS(done) {
+
+	if (PRODUCTION) {
+		// just turn it into JS files
+		gulp.src(js).pipe(tap(function (file) {	 
+			const transpiledToJs = TypeScript.transpile(file.contents.toString('utf-8'),{
+				lib: ["esNext", "dom"],
+				target: "ESNext",
+				module: "ESNext",
+				moduleResolution: "Node"
+			})
+			file.contents = Buffer.from(transpiledToJs);
+		}))
+		.pipe(rename({ extname: '.js'}))
+		.pipe(gulp.dest(`${DEST}/js`));
+
+	} else {
+		gulp.src(js)
+			.pipe(named())
+			.pipe(webpackStream(WEBPACK_CONFIG, webpack))
+			.pipe(gulp.dest(`${DEST}/assets/js`));
+	}
+	done()
 }
 
-// function copyDeclarationFiles() {
-// 	if (!PRODUCTION) {
-// 		return gulp.src(dts)
-// 			.pipe(flatten())
-// 			.pipe(gulp.dest(`${DEST}/assets/js`));
-// 	} else {
-// 		return gulp.src(dts)
-// 			.pipe(gulp.dest(`${DEST}/js`));
-// 	}
-// }
+function buildDeclarationFilesToTemp(done) {
+	if (PRODUCTION) {
+		// declarations
+		return gulp.src(js)
+			.pipe(named())
+			.pipe(webpackStream(WEBPACK_CONFIG, webpack))
+			.pipe(gulp.dest(`.tmp`));
+	} else {
+		done();
+	}
+	
+}
+function buildDeclarationFiles(done) {
+	if (PRODUCTION) {
+		// declarations
+		return gulp.src('.tmp/**/*.d.ts')
+		.pipe(gulp.dest(`${DEST}/js`))
+
+	} else {
+		done();
+	}
+	
+}
 
 function copyAssets(done) {
 	if (!PRODUCTION) {
@@ -102,7 +135,7 @@ function copyAssets(done) {
 }
 
 function cleanUp() {
-	return gulp.src(DEST, {
+	return gulp.src([DEST, '.tmp'], {
 		read: false,
 		allowEmpty: true
 	}).pipe(clean());
@@ -160,7 +193,8 @@ const BUILD = gulp.parallel(
 		cleanUp,
 		buildCSS,
 		buildJS,
-		// copyDeclarationFiles,
+		buildDeclarationFilesToTemp,
+		buildDeclarationFiles,
 		buildHTML,
 		copyAssets,
 		server,

@@ -42,7 +42,7 @@ export interface IModalOptions extends LocationHashTracking {
     useLocationHash?: boolean;
     loadLocationHash?: boolean;
     onOpenOnce?(modalObj: ModalObj): void;
-    onClose(modalObj: ModalObj): void;
+    onClose?(modalObj: ModalObj): void;
     onOpen?(modalObj: ModalObj): void;
     afterClose?(modalObj: ModalObj): void;
 }

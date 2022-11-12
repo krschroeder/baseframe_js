@@ -1,5 +1,6 @@
 import $ from 'cash-dom';
 import getType, { camelCase } from "./helpers";
+import type { Selector  } from 'cash-dom';
 
 type StoreElem = ArrayLike<HTMLElement> | HTMLElement;
 interface IStoreData {
@@ -12,6 +13,29 @@ declare global {
 	interface Window {
 	  	jQuery: any; // 👈️ turn off type checking
 	}
+}
+
+export interface IStore {
+    set(element: StoreElem, keyStore: string, data: any): void;
+    get(element: StoreElem, keyStore: string): any;
+    remove(element: StoreElem, keyStore: string): void;
+}
+
+export declare function store<T>(dataName: string, data?: T): void | T;
+export declare function removeStore<T>(dataName: string): void;
+export declare function staticRemoveStore<T>(elem: Selector, dataName: string): void;
+
+declare module 'cash-dom' {
+
+    interface Cash {
+        store: typeof store;
+        removeStore: typeof removeStore;
+    }
+
+    interface CashStatic {
+        store: IStore;
+        removeStore: typeof staticRemoveStore;
+    }
 }
 
 const mapData = (() => {

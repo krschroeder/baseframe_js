@@ -71,6 +71,7 @@ $('body').on('click', 'a.smooth-scroll', function(e){
 
 $('#main-nav')
     .navMobile({
+
         enableBtn: '#mobile-nav-btn',
         submenuBtnSkip(ul) {
             // console.log(ul.classList.contains('skip'),ul)

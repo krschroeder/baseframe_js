@@ -1,5 +1,5 @@
 import type { Cash } from "cash-dom";
-import type { StringPluginArgChoices } from '../types/shared';
+import type { StringPluginArgChoices } from './types/shared';
 
 import $ from 'cash-dom';
 import { elemData } from "./util/store";
@@ -11,7 +11,7 @@ import { isMobileOS, noop } from "./util/helpers";
 export interface ISelectEnhanceOptions {
     cssPrefix?: string;
     mobileNative?: boolean;
-    emptyValAsPlaceholder?: boolean; 
+    emptyValAsPlaceholder?: boolean;
     blurDuration?: number;
     typeAheadDuration?: number;
     observeSelectbox?: boolean;
@@ -24,7 +24,7 @@ export interface ISelectEnhanceOptions {
 export interface ISelectEnhanceDefaults {
     cssPrefix: string;
     mobileNative: boolean;
-    emptyValAsPlaceholder: boolean; 
+    emptyValAsPlaceholder: boolean;
     blurDuration: number;
     typeAheadDuration: number;
     observeSelectbox: boolean;
@@ -64,7 +64,7 @@ let to: ReturnType<typeof setTimeout>,
     listPosTop = true,
     registerEventScroll = false,
     currSelectInstance: SelectEnhance | null = null
-;
+    ;
 
 
 export default class SelectEnhance {
@@ -86,11 +86,11 @@ export default class SelectEnhance {
     public selectListBoxInFullView: boolean;
     public keyedInput: string;
 
-    static get version() {return VERSION }
-    static get pluginName() {return DATA_NAME }
+    static get version() { return VERSION }
+    static get pluginName() { return DATA_NAME }
     static Defaults = DEFAULTS;
 
-    constructor(element: HTMLSelectElement, options :ISelectEnhanceOptions, index: number) {
+    constructor(element: HTMLSelectElement, options: ISelectEnhanceOptions, index: number) {
         const _ = this;
 
         _.index = index;
@@ -176,7 +176,7 @@ export default class SelectEnhance {
         _.$selectEnhance.removeClass(_.params.cssPrefix + '--focused')
 
         _.$textInput.attr({ 'aria-expanded': 'false' });
-         
+
         setTimeout(() => {
             _.$selectEnhance.removeClass(_.params.cssPrefix + '--blurring');
 
@@ -189,7 +189,7 @@ export default class SelectEnhance {
 
     }
 
-    setSelectionState($btn, doBlur = true) {
+    setSelectionState($btn: Cash, doBlur = true) {
         const _ = this;
         const { cssPrefix } = _.params;
 
@@ -199,12 +199,12 @@ export default class SelectEnhance {
 
         selectedOpt.selected = true;
 
-        _.params.afterChange(_.$select);
+        _.params.afterChange(_.$select); console.log('yeahh', selectedOpt)
 
         // update the selected
         _.$selectEnhance.find('button[aria-selected]').attr({ 'aria-selected': 'false' });
 
-        $btn.attr({ 'aria-selected': true });
+        $btn.attr({ 'aria-selected': 'true' });
         _.$textInput.attr({ 'aria-activedescendant': $btn[0].id });
 
         // add a class whether there is an input value or not
@@ -221,7 +221,7 @@ export default class SelectEnhance {
         if (doBlur) {
 
             _.textInput.focus();
-           
+
             _.blurSelect();
 
         } else {
@@ -240,14 +240,13 @@ export default class SelectEnhance {
         })
     }
 
-    showOptions(_) {
-        
+    showOptions(_: SelectEnhance) {
 
         if (_.select.disabled) { return }
 
         _.optionsShown = true;
         _.$selectEnhance.toggleClass(_.params.cssPrefix + '--focused');
-        _.$textInput.attr({ 'aria-expanded': true });
+        _.$textInput.attr({ 'aria-expanded': 'true' });
 
         const $selectedBtn = _.$selectEnhance.find('button[aria-selected="true"]');
 
@@ -266,25 +265,26 @@ export default class SelectEnhance {
     eventShowOptions() {
         const _ = this;
 
-        _.$selectEnhance.on('click.' + EVENT_NAME, '.' + _.params.cssPrefix + '__enable-text', (e) => {
+        _.$selectEnhance.on('click.' + EVENT_NAME, '.' + _.params.cssPrefix + '__enable-text', (e: MouseEvent) => {
+            if (_.select.disabled) { return }
             _.showOptions(_)
         });
 
         // Only works on keydown event
-        _.$textInput.on('keydown.' + EVENT_NAME, function (e) {
+        _.$textInput.on('keydown.' + EVENT_NAME, function (e: KeyboardEvent) {
             if ((e.key === KEYS.DOWN || e.key === KEYS.UP) && !_.optionsShown) {
                 _.showOptions(_);
                 e.preventDefault();
             }
         });
 
-        _.$textInput.on('keypress.' + EVENT_NAME, function (e) {
+        _.$textInput.on('keypress.' + EVENT_NAME, function (e: KeyboardEvent) {
 
             if (e.key !== KEYS.TAB || e.shiftKey && e.key !== KEYS.TAB) {
                 e.preventDefault();
             }
 
-            if ( 
+            if (
                 e.key === KEYS.ENTER ||
                 e.keyCode === KEYS.SPACE && _.keyedInput.trim() === '' ||
                 e.ctrlKey && e.altKey && e.shiftKey && KEYS.SPACE === e.keyCode
@@ -297,11 +297,11 @@ export default class SelectEnhance {
 
     eventOptionClick() {
         const _ = this;
-
-        _.$selectEnhance.on('click.' + EVENT_NAME, '.' + _.params.cssPrefix + '__list-btn', function (e) {
+        
+        _.$selectEnhance.on('click.' + EVENT_NAME, '.' + _.params.cssPrefix + '__list-btn', function (e:MouseEvent) {
 
             e.preventDefault();
-
+             
             _.$selectEnhance.removeClass(_.params.cssPrefix + '--focused');
             _.$textInput.attr({ 'aria-expanded': 'false' });
 
@@ -313,7 +313,7 @@ export default class SelectEnhance {
     eventSelectToggle() {
         const _ = this;
         _.$selectEnhance.on('focusin.' + EVENT_NAME, function (e) {
-            
+
             const closeEvent = 'click.close_' + _.selectId + EVENT_NAME;
 
             $(document.body).off(closeEvent).on(
@@ -322,9 +322,9 @@ export default class SelectEnhance {
                         const ae = document.activeElement;
                         const aeIsInSelectEnhance = (ae && !_.$selectEnhance.has(ae).length);
 
-                        if ( aeIsInSelectEnhance || (_.$selectEnhance[0] as HTMLElement).isSameNode(ae)) {
+                        if (aeIsInSelectEnhance || (_.$selectEnhance[0] as HTMLElement).isSameNode(ae)) {
                             _.blurSelect();
-                             
+
                             $(document.body).off(closeEvent);
 
                         }
@@ -359,12 +359,6 @@ export default class SelectEnhance {
 
                     const rgx = RegExp(_.keyedInput.trim(), 'i');
 
-                    // keyedFound = [].slice.call(
-                    //     // _.$select.find('option').filter((i, el) => rgx.test(el.text) === true)
-                    //     // const options = _.select.getElementsByTagName('option')
-
-                    // );
-
                     keyedFound = [].slice.call(_.select.getElementsByTagName('option')).filter((i, el) => rgx.test(el.text))
 
                     if (keyedFound.length) {
@@ -381,26 +375,23 @@ export default class SelectEnhance {
         const _ = this;
 
         _.$selectEnhance.on('keydown.navigate_' + EVENT_NAME, function (e) {
-
+             
             if (_.select.disabled) { return }
-            
+
             if (e.key === KEYS.DOWN) {
                 if (!_.textInput.isSameNode(document.activeElement)) {
 
                     e.preventDefault();
                 }
                 _.nextOptionButton('next');
-
             }
 
             if (e.key === KEYS.UP) {
                 e.preventDefault();
-
                 _.nextOptionButton('prev');
             }
 
             if (e.key === KEYS.ESC && $currSelectEnhance) {
-
                 _.blurSelect();
                 _.textInput.focus();
             }
@@ -451,10 +442,9 @@ export default class SelectEnhance {
         SelectEnhance.buildOptionsList(_);
     }
 
-    static buildOptionsList(_) {
+    static buildOptionsList(_: SelectEnhance) {
 
         const { cssPrefix } = _.params;
-
         const optGroup = _.select.getElementsByTagName('optgroup');
         const hasOptGroup = !!optGroup.length;
         const $optGroupWm = new WeakMap();
@@ -476,7 +466,6 @@ export default class SelectEnhance {
 
         const options = _.select.getElementsByTagName('option');
 
-
         _.$selectList = $('<div>').attr({
             class: cssPrefix + '__list',
             role: 'listbox',
@@ -484,9 +473,7 @@ export default class SelectEnhance {
             'aria-label': _.$label.text() || ''
         });
 
-
         const optId = _.selectId || 'select_' + _.index;
-
 
         for (let i = 0, l = options.length; i < l; i++) {
             const opt = options[i];
@@ -495,13 +482,13 @@ export default class SelectEnhance {
             if (opt.hidden) continue;
 
             const valCssStatus = opt.value === '' ? ' ' + cssPrefix + '__list-btn--empty' : '';
-            
+
             const attrs = {
                 type: 'button',
                 role: 'option', id,
                 'data-value': opt.value,
                 'aria-selected': opt.selected + '',
-                disabled: opt.disabled ? 'disabled' : '',
+                disabled: opt.disabled ? 'disabled' : null,
                 class: cssPrefix + '__list-btn' + valCssStatus
             };
             const $btn: Cash = $('<button/>').attr(attrs).text(opt.textContent);
@@ -517,8 +504,8 @@ export default class SelectEnhance {
 
             if (opt.selected) {
                 _.$textInput.attr({ 'aria-activedescendant': id });
-                _.$selectEnhance.toggleClass(cssPrefix + '--empty-val' , !opt.value.trim());
-                
+                _.$selectEnhance.toggleClass(cssPrefix + '--empty-val', !opt.value.trim());
+
                 if (_.params.emptyValAsPlaceholder && opt.value.trim() === '') {
                     _.$textInput.val('');
                     _.$textInput.attr({ placeholder: opt.text });
@@ -539,7 +526,7 @@ export default class SelectEnhance {
 
     }
 
-    nextOptionButton(dir) {
+    nextOptionButton(dir: 'next' | 'prev') {
 
         const _ = this;
         const ae = document.activeElement;
@@ -547,15 +534,15 @@ export default class SelectEnhance {
         const btnLength = $btnList.length;
 
         if (btnLength && _.textInput.isSameNode(ae)) {
-            $btnList?.eq(dir === 'next' ? 0 : btnLength - 1)[0]?.focus();
+            $btnList.eq(dir === 'next' ? 0 : btnLength - 1)[0].focus();
             return;
         }
-
+         
         for (let i = 0; i < btnLength; i++) {
             const el: HTMLButtonElement = $btnList[i] as HTMLButtonElement;
             let prevNextIndex = 0;
 
-            if (ae && ae.isSameNode(el)) {
+            if (ae.isSameNode(el)) {
 
                 if (dir === 'next') {
                     const isLast = i === btnLength - 1;
@@ -564,7 +551,7 @@ export default class SelectEnhance {
                     const isFirst = i === 0;
                     prevNextIndex = isFirst ? i : i - 1;
                 }
-                $btnList?.eq(prevNextIndex)[0]?.focus();
+                $btnList.eq(prevNextIndex)[0].focus();
 
                 break;
             }
@@ -635,7 +622,7 @@ export default class SelectEnhance {
     static getListPosition() {
         if (currSelectInstance) {
             const _ = currSelectInstance;
-            
+
             const selWrapPosTop = (_.$selectEnhance as any).offset().top;
             const selListHeight = _.$selectList.height();
 

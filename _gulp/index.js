@@ -76,27 +76,22 @@ function buildHTML(done) {
 }
 
 function buildJS() {
-	if (!PRODUCTION) {
-		return gulp.src(js)
-			.pipe(named())
-			.pipe(webpackStream(WEBPACK_CONFIG, webpack))
-			.pipe(gulp.dest(`${DEST}/assets/js`));
-	} else {
-		// Production
-		return gulp.src(js).pipe(gulp.dest(`${DEST}/js`));
-	}
+	return gulp.src(js)
+		.pipe(named())
+		.pipe(webpackStream(WEBPACK_CONFIG, webpack))
+		.pipe(gulp.dest(`${DEST}/assets/js`));
 }
 
-function copyDeclarationFiles() {
-	if (!PRODUCTION) {
-		return gulp.src(dts)
-			.pipe(flatten())
-			.pipe(gulp.dest(`${DEST}/assets/js`));
-	} else {
-		return gulp.src(dts)
-			.pipe(gulp.dest(`${DEST}/js`));
-	}
-}
+// function copyDeclarationFiles() {
+// 	if (!PRODUCTION) {
+// 		return gulp.src(dts)
+// 			.pipe(flatten())
+// 			.pipe(gulp.dest(`${DEST}/assets/js`));
+// 	} else {
+// 		return gulp.src(dts)
+// 			.pipe(gulp.dest(`${DEST}/js`));
+// 	}
+// }
 
 function copyAssets(done) {
 	if (!PRODUCTION) {
@@ -161,12 +156,11 @@ function reload(done) {
 }
 
 const BUILD = gulp.parallel(
-
 	gulp.series(
 		cleanUp,
 		buildCSS,
 		buildJS,
-		copyDeclarationFiles,
+		// copyDeclarationFiles,
 		buildHTML,
 		copyAssets,
 		server,

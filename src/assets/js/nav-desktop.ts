@@ -1,8 +1,8 @@
 import type { Selector } from "cash-dom";
-import type { StringPluginArgChoices } from '../types/shared';
+import type { StringPluginArgChoices } from './types/shared';
 
 import $ from 'cash-dom';
-import validJSONFromString from './util/formatting-valid-json.js';
+import validJSONFromString from './util/formatting-valid-json';
 import { elemData } from './util/store';
 
 

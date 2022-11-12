@@ -822,8 +822,9 @@ menuOpenCss | string | 'menu-opened' | CSS class added to the elements saying it
 menuTogglingCss | string | 'menu-toggling' | CSS class added while the element is toggling.
 menuIsOpeningCss | string | 'menu-is-opening' | CSS class added to the body/outerElement when the menu is opening.
 menuIsClosingCss | string | 'menu-is-closing' | CSS class added to the body/outerElement when the menu is closing.
-arrowSubMenuItemCss | string | 'i i-arrow-b' | CSS class of the button added to the `<li>` element for toggling open/closed.
+subMenuItemCss | string | 'i i-arrow-b' | CSS class of the button added to the `<li>` element for toggling open/closed.
 submenuBtnSkip| () => : boolean \| false | (li) => { return true|false } | Function that takes the `li` as the parameter, which tests whether or not to skip adding a button adjacent to it's `<a/>` element. Ex. (in the mark-up) `<li class="skip-li">` and the config the following: `submenuBtnSkip(li) { return li.classList.contains('skip-li')}` in which it'd skip adding a button to that level in the nav.
+animateHeight | boolean | true | Animates the height of the list. Good if you want the `<ul>` to fade-in rather than scroll open (with corresponding CSS written of course).
 afterNavItemOpen | function | ($li) => {} | Function to run after an nav item is opened.
 afterNavItemClose | function | ($li) => {} | Function to run after a nav item is closed.
 afterOpen | function | ($element, outerElement, enableBtn) => {} | Function to run after the nav is open.

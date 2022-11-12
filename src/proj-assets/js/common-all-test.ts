@@ -6,7 +6,7 @@ import installStoreToLibrary, {
     libraryExtend,
     AccessibleMenu,
     Collapse,
-    EqualizeContent,
+    // EqualizeContent,
     LazyLoad,
     Modal,
     NavDesktop,
@@ -14,7 +14,7 @@ import installStoreToLibrary, {
     Parallax,
     SelectEnhance,
     Tabs,
-    installStoreAsDataToLibrary,
+    // installStoreAsDataToLibrary,
     formInputs,
     getHashParam,
     getUrlParam,
@@ -32,7 +32,7 @@ installStoreToLibrary(true);
 libraryExtend([
     AccessibleMenu,
     Collapse,
-    EqualizeContent,
+    // EqualizeContent,
     LazyLoad,
     Modal,
     NavDesktop,
@@ -62,16 +62,16 @@ const smoothScrollCallback = (arg,dos) => {
 
 $('body').on('click', 'a.smooth-scroll', function(e){
     const $topElem = $($(this).attr('href'));
-    const top = $topElem.position().top;
+    const top = (<any>$topElem).position().top;
 
-    smoothScroll(top, 30, smoothScrollCallback ,['yeah',' yeah']);
+    smoothScroll(top, 30);
    
     e.preventDefault();
 })
 
 $('#main-nav')
     .navMobile({
-        navToggleNestled:false,
+        enableBtn: '#mobile-nav-btn',
         submenuBtnSkip(ul) {
             // console.log(ul.classList.contains('skip'),ul)
             return ul.classList.contains('skip');

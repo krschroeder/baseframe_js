@@ -1,5 +1,5 @@
 import type { Cash } from "cash-dom";
-import type { LocationHashTrackingHistory, StringPluginArgChoices } from '../types/shared';
+import type { LocationHashTrackingHistory, StringPluginArgChoices } from './types/shared';
 
 import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json';

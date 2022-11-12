@@ -1,7 +1,7 @@
 import $ from 'cash-dom';
 import getType from './helpers';
 import { elemData } from './store';
-import type PluginBaseClass from '../../types/shared';
+import type PluginBaseClass from '../types/shared';
 
 const checkIfParamsExist = (setParams, params, notify = true) => {
     for (let k in params) {
@@ -33,12 +33,11 @@ const libraryExtend = <T>(Plugins: PluginBaseClass | PluginBaseClass[], notify =
             const _ = this;
 
             return _.each(function (index) {
-                const $this = $(this);
-
+                
                 const instance = elemData(this, `${DataName}_instance`);
                  
                 if (!instance) {
-                    const plugin = new Plugin($this, params, index);
+                    const plugin = new Plugin(this, params, index);
 
                     elemData(this, `${DataName}_instance`, plugin); 
                     
@@ -47,7 +46,7 @@ const libraryExtend = <T>(Plugins: PluginBaseClass | PluginBaseClass[], notify =
                     if (typeof params === 'string') {
                         
                         if (params === 'remove') {
-                            Plugin.remove($this);
+                            Plugin.remove(this);
                         }
                         return;
                     }

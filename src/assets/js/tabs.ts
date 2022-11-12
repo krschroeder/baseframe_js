@@ -1,14 +1,53 @@
+import type { Cash } from "cash-dom";
+import type { LocationHashTrackingHistory, StringPluginArgChoices } from './types/shared';
 
-import validJSONFromString from './util/formatting-valid-json.js';
+import $ from 'cash-dom';
+import validJSONFromString from './util/formatting-valid-json';
 import { getHashParam } from './util/get-param';
-import updateHistoryState from './util/plugin/update-history-state.js';
+import updateHistoryState from './util/plugin/update-history-state';
 import { elemData } from './util/store';
 import { KEYS } from './util/constants';
+
+type tabDirection = 'horizontal' | 'vertical';
+type tabDefaultContent = number | 'none';
+
+export interface ITabsOptions extends LocationHashTrackingHistory {
+	defaultContent?: tabDefaultContent;
+	tabsEvent?: string;
+	activeCss?: string;
+	tabsBodyCss?: string;
+	tabsBodyItemCss?: string;
+	tabsBodyItemShowCss?: string;
+	tabsHeadCss?: string;
+	tabbing?: boolean;
+	tabDirection?: tabDirection;
+	addIDtoPanel?: boolean;
+	beforeChange?(prevTabId: string, tabsList: Cash, tabsBody: Cash): void;
+	afterChange?(prevTabId: string, tabsList: Cash, tabsBody: Cash): void;
+	onInit?(tabsList: Cash, tabsBody: Cash): void
+}
+
+
+export interface ITabsDefaults extends LocationHashTrackingHistory {
+	defaultContent: tabDefaultContent;
+	tabsEvent: string;
+	activeCss: string;
+	tabsBodyCss: string;
+	tabsBodyItemCss: string;
+	tabsBodyItemShowCss: string;
+	tabsHeadCss: string;
+	tabbing: boolean;
+	tabDirection: tabDirection;
+	addIDtoPanel: boolean;
+	beforeChange(prevTabId: string, tabsList: Cash, tabsBody: Cash): void;
+	afterChange(prevTabId: string, tabsList: Cash, tabsBody: Cash): void;
+	onInit(tabsList: Cash, tabsBody: Cash): void
+}
 
 const VERSION = "1.4.0";
 const DATA_NAME = 'Tabs';
 const EVENT_NAME = 'tabs';
-const DEFAULTS = {
+const DEFAULTS: ITabsDefaults = {
 	defaultContent: 0,
 	tabsEvent: 'click',
 	activeCss: 'tab--active',
@@ -28,33 +67,34 @@ const DEFAULTS = {
 	onInit: () => { }
 };
 
-const getTabIDFromEl = (el) => $(el).attr(el.nodeName.toUpperCase() === 'BUTTON' ? 'data-href' : 'href').replace(/^\#/, '');
+const getTabIDFromEl = (el): string => {
+	return $(el).attr(el.nodeName.toUpperCase() === 'BUTTON' ? 'data-href' : 'href')?.replace(/^\#/, '') || '';
+}
 
 export default class Tabs {
 
-	static get version() {
-		return VERSION;
-	}
+	static get version() { return VERSION; }
+	static get pluginName() { return DATA_NAME; }
 
-	static get pluginName() {
-		return DATA_NAME;
-	}
+	public $element: Cash;
+	public params: ITabsDefaults;
+	public $tabsList: Cash;
+	public $tabsBody: Cash;
+	public prevTabId: string;
+	public initTabId: string;
+	public tabFocus: number;
+	public initDefaultContent: tabDefaultContent;
+	public static Defaults = DEFAULTS;
 
-	constructor(element, options) {
+	constructor(element: HTMLElement, options: ITabsDefaults | StringPluginArgChoices) {
 		const _ = this;
 
-		const dataOptions = validJSONFromString(
-			$(element).data(EVENT_NAME + '-options')
-		);
-
+		const dataOptions = validJSONFromString($(element).data(EVENT_NAME + '-options'));
+		const instanceOptions = $.extend({}, Tabs.Defaults, options, dataOptions);
 		//state
 		_.$element = $(element);
 
-		elemData(
-			element,
-			`${DATA_NAME}_params`,
-			$.extend({}, Tabs.defaults, options, dataOptions)
-		);
+		elemData(element,`${DATA_NAME}_params`, instanceOptions);
 
 		_.params = elemData(element, `${DATA_NAME}_params`);
 		_.$tabsList = _.$element.find(`.${_.params.tabsHeadCss}`).first();
@@ -62,7 +102,7 @@ export default class Tabs {
 
 		_.prevTabId = '#';
 		_.tabFocus = 0;
-		_.initDefaultContent = _.params.defaultContent;  
+		_.initDefaultContent = _.params.defaultContent;
 
 		//init
 		_.ADA_Attributes();
@@ -87,7 +127,7 @@ export default class Tabs {
 		const _ = this;
 		const { useHashFilter, tabsBodyItemCss, defaultContent } = _.params;
 
-		let defaultTab = '';
+		let defaultTab: string | null = '';
 
 		if (useHashFilter) {
 			defaultTab = getHashParam(useHashFilter);
@@ -116,8 +156,8 @@ export default class Tabs {
 			// lets check here
 			if (!tabbing) return;
 
-			let back = LEFT,
-				forward = RIGHT;
+			let back: string = LEFT,
+				forward: string = RIGHT;
 
 			if (tabDirection === 'horizontal') {
 				back = LEFT;
@@ -133,7 +173,7 @@ export default class Tabs {
 			const $tabs = _.$tabsList.find('a, button');
 
 			if (e.code === forward || e.code === back) {
-				$tabs[_.tabFocus].setAttribute('tabindex', -1);
+				$tabs[_.tabFocus]?.setAttribute('tabindex', '-1');
 
 				if (tabDirection === 'vertical') {
 					e.preventDefault();
@@ -154,8 +194,8 @@ export default class Tabs {
 					}
 				}
 
-				$tabs[_.tabFocus].setAttribute('tabindex', 0);
-				$tabs[_.tabFocus].focus();
+				$tabs[_.tabFocus]?.setAttribute('tabindex', '0');
+				$tabs[_.tabFocus]?.focus();
 			}
 		});
 	}
@@ -216,29 +256,28 @@ export default class Tabs {
 
 			_.params.beforeChange(_.prevTabId, _.$tabsList, _.$tabsBody);
 
-			const isInItsBody = $tabSelectedItem.closest(`.${tabsBodyCss}`)[0].isSameNode(_.$tabsBody[0]);
+			const isInItsBody = $tabSelectedItem.closest(`.${tabsBodyCss}`)[0]?.isSameNode(_.$tabsBody[0] || null);
 
 			if (!isInItsBody) return;
 
 			const $tabs = _.$tabsList.find("a, button");
 			let removeIdFormHash = false;
-			
-			$tabs.attr({ 'aria-selected': false, tabindex: -1 });
+
+			$tabs.attr({ 'aria-selected': 'false', tabindex: '-1' });
 			_.$tabsList.find('.' + activeCss).removeClass(activeCss);
 
 			$(`.${tabsBodyItemCss}`, _.$tabsBody).each(function () {
 
-				const isItsBodyItem = $(this).closest(`.${tabsBodyCss}`)[0].isSameNode(_.$tabsBody[0]);
+				const isItsBodyItem = $(this).closest(`.${tabsBodyCss}`)[0]?.isSameNode(_.$tabsBody[0] || null);
 
 				if (isItsBodyItem) {
-					$(this).removeClass(tabsBodyItemShowCss)
-						.attr({ 'aria-hidden': true });
+					$(this).removeClass(tabsBodyItemShowCss).attr({ 'aria-hidden': 'true' });
 				}
 			});
 
 			const $selected = _.$tabsList.find(`a[href="#${tabId}"], button[data-href="#${tabId}"]`);
 
-			$selected.attr({ 'aria-selected': true, tabindex: 0 })
+			$selected.attr({ 'aria-selected': 'true', tabindex: '0' })
 				.addClass(activeCss)
 				// if we have a list item
 				.closest('li').addClass(activeCss);
@@ -255,7 +294,7 @@ export default class Tabs {
 
 			_.$tabsBody.find(`.${tabsBodyItemCss}[data-tab-id="${tabId}"]`)
 				.addClass(tabsBodyItemShowCss)
-				.attr({ 'aria-hidden': false });
+				.attr({ 'aria-hidden': 'false' });
 
 			_.params.afterChange(tabId, _.$tabsList, _.$tabsBody);
 
@@ -286,4 +325,8 @@ export default class Tabs {
 	}
 }
 
-Tabs.defaults = DEFAULTS;
+declare module 'cash-dom' {
+    interface Cash {
+        tabs(options?: ITabsOptions | StringPluginArgChoices): Cash;
+    }
+}

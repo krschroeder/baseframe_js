@@ -4,7 +4,7 @@ import { elemData } from '../js/util/store';
 import { KEYS } from './util/constants';
 import $, { Cash } from 'cash-dom';
 
-import type { StringPluginArgChoices } from '../types/shared';
+import type { StringPluginArgChoices } from './types/shared';
 
 const VERSION = "1.2.1";
 const DATA_NAME = 'AccessibleMenu';

@@ -1,11 +1,11 @@
 import type { Cash, Selector } from "cash-dom";
-import type { LocationHashTracking, StringPluginArgChoices } from '../types/shared';
+import type { LocationHashTracking, StringPluginArgChoices } from './types/shared';
 
 import $ from 'cash-dom';
 import validJSONFromString from './util/formatting-valid-json';
 import { elemData } from './util/store';
 import trapFocus from './util/trap-focus';
-import generateGUID from './util/guid-generate.js';
+import generateGUID from './util/guid-generate';
 import getType, { camelCase, transitionElem } from './util/helpers';
 import { getHashParam } from './util/get-param'
 import updateHistoryEntry from './util/plugin/update-history-state';

@@ -1,7 +1,7 @@
-import type { StringPluginArgChoices } from '../types/shared';
+import type { StringPluginArgChoices } from './types/shared';
 
 import $ from 'cash-dom';
-import validJSONFromString from './util/formatting-valid-json.js';
+import validJSONFromString from './util/formatting-valid-json';
 import { isVisible } from './util/helpers';
 import { elemData } from './util/store';
 
@@ -158,7 +158,7 @@ export default class LazyLoad {
             console.warn(`It recommended to set an 'observerID', so the element group can leverage the same one.`, _.element);
         }
 
-        _.lazyElemObserver.observe(_.element[0]);
+        _.lazyElemObserver.observe(_.element);
     }
 }
 

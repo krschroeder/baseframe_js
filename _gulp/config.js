@@ -18,7 +18,7 @@ const config = {
     SRC: {
         css: PRODUCTION ? 'src/assets/scss/**/*.scss' : ['src/proj-assets/scss/**/*.scss','src/assets/scss/**/*.scss'],
         html: ['src/pages/**/*.{html,hbs}'],
-        js: PRODUCTION ? 'src/assets/js/**/*.js' : ['src/proj-assets/js/common-all-test.js', 'src/assets/js/**/*.js'],
+        js: PRODUCTION ? 'src/assets/js/**/*.{js,ts}' : ['src/proj-assets/js/common-all-test.ts', 'src/assets/js/**/*.{js,ts}'],
         dts: 'src/assets/js/**/*.d.ts'
     },
 
@@ -41,6 +41,9 @@ const config = {
     WEBPACK_CONFIG: {
         mode: (PROD_JS ? 'production': 'development'),
         target: ['web','es6'],
+        resolve: {
+            extensions: ['.js', '.tsx', '.ts']
+        },
         module: {
             rules: [
                 {
@@ -50,7 +53,7 @@ const config = {
                 },
                 // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
                 {
-                    test: /\.(tsx|ts|d\.ts)?$/,
+                    test: /\.tsx?$/,
                     exclude: excludeRgx,
                     loader: "ts-loader" 
                 }
@@ -65,12 +68,12 @@ const config = {
             minimize: false
         },
 
-        output: {
-            library: {
-                // name: 'MyLibrary',
-                type: 'umd'
-              },
-        }
+        // output: {
+        //     library: {
+        //         // name: 'MyLibrary',
+        //         type: 'umd'
+        //       },
+        // }
     }
 }
 

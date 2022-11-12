@@ -1,12 +1,12 @@
 import type { Cash, Selector } from "cash-dom";
-import type { StringPluginArgChoices } from '../types/shared';
+import type { StringPluginArgChoices } from './types/shared';
 
 import $ from 'cash-dom';
-import validJSONFromString from './util/formatting-valid-json.js';
+import validJSONFromString from './util/formatting-valid-json';
 import getType, { isVisible, transitionElem } from './util/helpers';
 import submenuBtn from './util/plugin/nav';
 import { elemData } from './util/store';
-import trapFocus, { ITrapFocusRemove } from './util/trap-focus.js';
+import trapFocus, { ITrapFocusRemove } from './util/trap-focus';
 import { KEYS } from "./util/constants";
 
 type submenuBtnSkipFn = (elem: HTMLElement) => boolean;
@@ -29,9 +29,9 @@ export interface INavMobileOptions {
 	trapFocusElem?: Selector | null;
 	stopPropagation?: boolean;
 	bkptEnable?: number | null;
-	animateHeight: boolean;
-	afterNavItemOpen?: ($li: Cash) => {};
-	afterNavItemClose?: ($li: Cash) => {};
+	animateHeight?: boolean;
+	afterNavItemOpen?: ($li: Cash) => void;
+	afterNavItemClose?: ($li: Cash) => void;
 	afterOpen?($element: Cash, outerElement: Cash | HTMLElement, enableBtn: string);
 	afterClose?($element: Cash, outerElement: Cash | HTMLElement, enableBtn: string);
 }
@@ -55,8 +55,8 @@ export interface INavMobileDefaults {
 	stopPropagation: boolean;
 	bkptEnable: number | null;
 	animateHeight: boolean;
-	afterNavItemOpen: ($li: Cash) => {};
-	afterNavItemClose: ($li: Cash) => {};
+	afterNavItemOpen: ($li: Cash) => void;
+	afterNavItemClose: ($li: Cash) => void;
 	afterOpen($element: Cash, outerElement: Cash, enableBtn: Cash);
 	afterClose($element: Cash, outerElement: Cash, enableBtn: Cash);
 }
@@ -91,7 +91,6 @@ const DEFAULTS = {
 	doTrapFocus: true,
 	trapFocusElem: null,
 	stopPropagation: true,
-	navToggleNestled: false,
 	bkptEnable: null
 };
 
@@ -106,7 +105,7 @@ export default class NavMobile {
 	static get pluginName() { return DATA_NAME; }
 	public static Defaults = DEFAULTS;
 
-	constructor(element, options) {
+	constructor(element: HTMLElement, options: INavMobileOptions | StringPluginArgChoices) {
 		const _ = this;
 
 		const dataOptions = validJSONFromString($(element).data(EVENT_NAME + '-options'));
@@ -127,7 +126,7 @@ export default class NavMobile {
 		_.outsideClickClose();
 
 
-		const elemID = element[0].id || element[0].className;
+		const elemID = element.id || element.className;
 
 		$(_.params.enableBtn).attr({
 			'aria-controls': elemID,
@@ -404,10 +403,11 @@ export default class NavMobile {
 
 			clearTimeout(resizeTimer);
 			resizeTimer = setTimeout(() => {
+				const $enableBtn: Cash = $(_.params.enableBtn);
 
 				_.allowClick = typeof _.params.bkptEnable === 'number' ?
 					$(window).width() <= _.params.bkptEnable :
-					isVisible($(_.params.enableBtn)[0])
+					($enableBtn.length ? isVisible(<any>$enableBtn[0]) : false)
 				;
 
 			}, e.type === EVENT_NAME ? 0 : 200);

@@ -133,13 +133,13 @@ function installStoreToLibrary(expose = false) {
 
 	$.extend({ store: Store });
 
-	$.fn.store = function (dataName, data) {
+	$.fn.extend({store: function (dataName, data) {
 		return elemData(this, dataName, data);
-	}
+	}});
 
-	$.fn.removeStore = function (dataName) {
+	$.fn.extend({removeStore: function (dataName) {
 		Store.remove(this, dataName);
-	}
+	}});
 }
 
 function installStoreAsDataToLibrary(expose = false) {

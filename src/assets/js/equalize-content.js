@@ -1,5 +1,5 @@
 
-import validJSONFromString from './util/formatting-valid-json.js';
+import validJSONFromString from './util/formatting-valid-json';
 import { elemData } from './util/store';
 
 const VERSION = "2.0.2";

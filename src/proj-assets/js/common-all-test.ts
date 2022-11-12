@@ -6,7 +6,7 @@ import installStoreToLibrary, {
     libraryExtend,
     AccessibleMenu,
     Collapse,
-    // EqualizeContent,
+    EqualizeContent,
     LazyLoad,
     Modal,
     NavDesktop,
@@ -20,7 +20,7 @@ import installStoreToLibrary, {
     getUrlParam,
     smoothScroll,
     cookies
-} from '../../assets/js/all';
+} from '../../assets/js/index';
  
  
 //necessary for all plugin's to operate
@@ -32,7 +32,7 @@ installStoreToLibrary(true);
 libraryExtend([
     AccessibleMenu,
     Collapse,
-    // EqualizeContent,
+    EqualizeContent,
     LazyLoad,
     Modal,
     NavDesktop,
@@ -64,7 +64,7 @@ $('body').on('click', 'a.smooth-scroll', function(e){
     const $topElem = $($(this).attr('href'));
     const top = (<any>$topElem).position().top;
 
-    smoothScroll(top, 30);
+    smoothScroll(top, 30, smoothScrollCallback);
    
     e.preventDefault();
 })

@@ -2,7 +2,7 @@ import type { Cash } from "cash-dom";
 import type { LocationHashTrackingHistory, StringPluginArgChoices } from './types/shared';
 
 import $ from 'cash-dom';
-import validJSONFromString from './util/formatting-valid-json';
+import parseObjectFromString from './util/parse-object-from-string';
 import smoothScroll from './util/smooth-scroll';
 import { getHashParam } from './util/get-param';
 import { elemData } from './util/store';
@@ -80,7 +80,7 @@ export default class Collapse {
 		_.onElem = element;
 		_.index = index;
 
-		const dataOptions = validJSONFromString($(element).data(EVENT_NAME + '-options'));
+		const dataOptions = parseObjectFromString($(element).data(EVENT_NAME + '-options'));
 		const instanceOptions = $.extend({}, Collapse.Defaults, options, dataOptions);
 
 		elemData(element, `${DATA_NAME}_params`, instanceOptions);

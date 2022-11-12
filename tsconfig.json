@@ -4,26 +4,12 @@
     "include": ["src/assets/js/**/*"],
     "exclude": ["src/proj-assets/js/common-all-test.ts"],
     "compilerOptions": {
-      // Tells TypeScript to read JS files, as
-      // normally they are ignored as source files
-      // "allowJs": true,
-      // Generate d.ts files
-      // "outDir": "types",
+      "lib": ["esNext", "dom"],
       "declaration": true,
-      // This compiler run should
-      // only output d.ts files
       "declarationDir": ".",
-      // "emitDeclarationOnly": true,
-      // "noEmit": false,
       "target": "ESNext",
       "module": "ESNext",
       "moduleResolution": "Node",
-      // Types should go into this directory.
-      // Removing this would place the .d.ts files
-      // next to the .js files
-      // "outDir": "dist",
-      // go to js file when using IDE functions like
-      // "Go to Definition" in VSCode
       "declarationMap": false
     }
 }

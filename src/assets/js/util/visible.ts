@@ -1,4 +1,4 @@
-
+import $ from 'cash-dom';
 
 import {isVisible} from './helpers';
  
@@ -13,9 +13,9 @@ const $visible = function ($el) {
 
 
 export const installVisible = () => {
-	$.fn.visible = function() {
+	$.fn.extend({visible: function() {
 		return $visible(this);
-	};
+	}});
 }
 
 export default $visible;

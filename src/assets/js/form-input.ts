@@ -1,5 +1,6 @@
+import $ from 'cash-dom';
 
-const VERSION = "1.0.0";
+const VERSION = "1.1.0";
 
 const formInputs = {
     version: VERSION, 
@@ -12,15 +13,14 @@ const formInputs = {
             var e = ev || window.event;
             var key = e.keyCode || e.which;
             var SPACE = 32;
-            var ACTIVE_ELEM = document.activeElement;
+            var ae = document.activeElement;
             
-            if (key === SPACE && 
-                    (
-                        ACTIVE_ELEM.nodeName.toUpperCase() === 'LABEL'
-                    ) 
-                ){
-                    
-                ACTIVE_ELEM.click();
+            if (
+                key === SPACE && 
+                ae.nodeName.toUpperCase() === 'LABEL' &&
+                ae instanceof HTMLElement
+            ){
+                ae.click();
     
                 e.preventDefault();
                 e.stopPropagation();

@@ -3,7 +3,7 @@ import type { StringPluginArgChoices } from './types/shared';
 
 import $ from 'cash-dom';
 import { elemData } from "./util/store";
-import validJSONFromString from './util/formatting-valid-json';
+import parseObjectFromString from './util/parse-object-from-string';
 import { KEYS } from "./util/constants";
 import { isMobileOS, noop } from "./util/helpers";
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/listbox_role
@@ -105,11 +105,15 @@ export default class SelectEnhance {
         _.selectListBoxInFullView = true;
         _.keyedInput = "";
 
+        if (_.select.multiple) {
+            console.warn(`The SelectEnhance plugin doesn't support multiple selections.`)
+        }
+
         if (_.$label.length) {
             _.$label.attr({ id: _.selectId + '_lbl' });
         }
 
-        const dataOptions = validJSONFromString(
+        const dataOptions = parseObjectFromString(
             $(element).data(EVENT_NAME + '-options')
         );
 
@@ -143,7 +147,6 @@ export default class SelectEnhance {
             _.eventSelectToggle();
             _.eventArrowKeys();
             _.observeSelectListBoxInFullView();
-            // _.eventTabBlur();
             SelectEnhance.eventScrollGetListPosition();
         }
 
@@ -194,22 +197,20 @@ export default class SelectEnhance {
         const { cssPrefix } = _.params;
 
         const selectedOpt = _.optionSet.get($btn[0]);
+        const newSelectedState = !selectedOpt.selected;
 
         _.params.beforeChange(_.$select);
 
         selectedOpt.selected = true;
 
-        _.params.afterChange(_.$select); console.log('yeahh', selectedOpt)
-
-        // update the selected
+        _.params.afterChange(_.$select); 
         _.$selectEnhance.find('button[aria-selected]').attr({ 'aria-selected': 'false' });
 
-        $btn.attr({ 'aria-selected': 'true' });
+        $btn.attr({ 'aria-selected': newSelectedState + '' });
         _.$textInput.attr({ 'aria-activedescendant': $btn[0].id });
 
         // add a class whether there is an input value or not
         _.$selectEnhance.toggleClass(cssPrefix + '--empty-val', !selectedOpt.value.trim());
-
         _.select.dispatchEvent(new Event('change'));
 
         if (_.params.emptyValAsPlaceholder && selectedOpt.value.trim() === '') {
@@ -219,11 +220,11 @@ export default class SelectEnhance {
         }
 
         if (doBlur) {
-
+            
             _.textInput.focus();
-
+                
             _.blurSelect();
-
+            
         } else {
             $btn[0].focus();
         }
@@ -272,7 +273,7 @@ export default class SelectEnhance {
 
         // Only works on keydown event
         _.$textInput.on('keydown.' + EVENT_NAME, function (e: KeyboardEvent) {
-            if ((e.key === KEYS.DOWN || e.key === KEYS.UP) && !_.optionsShown) {
+            if ((e.key === KEYS.down || e.key === KEYS.up) && !_.optionsShown) {
                 _.showOptions(_);
                 e.preventDefault();
             }
@@ -280,14 +281,14 @@ export default class SelectEnhance {
 
         _.$textInput.on('keypress.' + EVENT_NAME, function (e: KeyboardEvent) {
 
-            if (e.key !== KEYS.TAB || e.shiftKey && e.key !== KEYS.TAB) {
+            if (e.key !== KEYS.tab || e.shiftKey && e.key !== KEYS.tab) {
                 e.preventDefault();
             }
 
             if (
-                e.key === KEYS.ENTER ||
-                e.keyCode === KEYS.SPACE && _.keyedInput.trim() === '' ||
-                e.ctrlKey && e.altKey && e.shiftKey && KEYS.SPACE === e.keyCode
+                e.key === KEYS.enter ||
+                e.keyCode === KEYS.space && _.keyedInput.trim() === '' ||
+                e.ctrlKey && e.altKey && e.shiftKey && KEYS.space === e.keyCode
             ) {
 
                 _.showOptions(_);
@@ -378,7 +379,7 @@ export default class SelectEnhance {
              
             if (_.select.disabled) { return }
 
-            if (e.key === KEYS.DOWN) {
+            if (e.key === KEYS.down) {
                 if (!_.textInput.isSameNode(document.activeElement)) {
 
                     e.preventDefault();
@@ -386,12 +387,12 @@ export default class SelectEnhance {
                 _.nextOptionButton('next');
             }
 
-            if (e.key === KEYS.UP) {
+            if (e.key === KEYS.up) {
                 e.preventDefault();
                 _.nextOptionButton('prev');
             }
 
-            if (e.key === KEYS.ESC && $currSelectEnhance) {
+            if (e.key === KEYS.esc && $currSelectEnhance) {
                 _.blurSelect();
                 _.textInput.focus();
             }

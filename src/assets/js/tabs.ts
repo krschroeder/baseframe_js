@@ -2,7 +2,7 @@ import type { Cash } from "cash-dom";
 import type { LocationHashTrackingHistory, StringPluginArgChoices } from './types/shared';
 
 import $ from 'cash-dom';
-import validJSONFromString from './util/formatting-valid-json';
+import parseObjectFromString from './util/parse-object-from-string';
 import { getHashParam } from './util/get-param';
 import updateHistoryState from './util/plugin/update-history-state';
 import { elemData } from './util/store';
@@ -89,7 +89,7 @@ export default class Tabs {
 	constructor(element: HTMLElement, options: ITabsDefaults | StringPluginArgChoices) {
 		const _ = this;
 
-		const dataOptions = validJSONFromString($(element).data(EVENT_NAME + '-options'));
+		const dataOptions = parseObjectFromString($(element).data(EVENT_NAME + '-options'));
 		const instanceOptions = $.extend({}, Tabs.Defaults, options, dataOptions);
 		//state
 		_.$element = $(element);
@@ -148,7 +148,7 @@ export default class Tabs {
 		const _ = this;
 
 		const { tabbing, tabDirection } = _.params;
-		const { RIGHT, LEFT, UP, DOWN } = KEYS;
+		const { right, left, up, down } = KEYS;
 
 		_.$tabsList.on('keydown.' + EVENT_NAME, function (e) {
 
@@ -156,15 +156,15 @@ export default class Tabs {
 			// lets check here
 			if (!tabbing) return;
 
-			let back: string = LEFT,
-				forward: string = RIGHT;
+			let back: string = left,
+				forward: string = right;
 
 			if (tabDirection === 'horizontal') {
-				back = LEFT;
-				forward = RIGHT;
+				back = left;
+				forward = right;
 			} else if (tabDirection === 'vertical') {
-				back = UP;
-				forward = DOWN;
+				back = up;
+				forward = down;
 			} else {
 				console.warn(`Please specify 'horizontal' or 'vertical' for a tab direction`);
 			}

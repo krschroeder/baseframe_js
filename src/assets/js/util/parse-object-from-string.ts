@@ -1,5 +1,5 @@
 
-export default function validJSONFromString(options: string): Object | null {
+export default function parseObjectFromString(options: string): Object | null {
 	
 	let retObj = null;
 

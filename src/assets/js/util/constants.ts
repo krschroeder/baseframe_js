@@ -1,26 +1,26 @@
 
 export interface IUsedKeys {
-	ESC: 'Escape';
-	LEFT: 'ArrowLeft';
-	RIGHT: 'ArrowRight';
-	DOWN: 'ArrowDown';
-	UP: 'ArrowUp';
-	ENTER: 'Enter';
-	SHIFT: 'Shift';
-	SPACE: 32; //use keyCode
-	TAB: 'Tab';
+	esc: 'Escape';
+	left: 'ArrowLeft';
+	right: 'ArrowRight';
+	down: 'ArrowDown';
+	up: 'ArrowUp';
+	enter: 'Enter';
+	shift: 'Shift';
+	space: 32; //use keyCode
+	tab: 'Tab';
 }
 
 export const KEYS: IUsedKeys = {
-	ESC: 'Escape',
-	LEFT: 'ArrowLeft',
-	RIGHT: 'ArrowRight',
-	DOWN: 'ArrowDown',
-	UP: 'ArrowUp',
-	ENTER: 'Enter',
-	SHIFT: 'Shift',
-	SPACE: 32, //use keyCode
-	TAB: 'Tab'
+	esc: 'Escape',
+	left: 'ArrowLeft',
+	right: 'ArrowRight',
+	down: 'ArrowDown',
+	up: 'ArrowUp',
+	enter: 'Enter',
+	shift: 'Shift',
+	space: 32, //use keyCode
+	tab: 'Tab'
 }
 
 export const PHOTO_RGX = /\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg)((#|\?).*)?$|(\?|&|&amp;)(image|ext\=\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg))?$/i;

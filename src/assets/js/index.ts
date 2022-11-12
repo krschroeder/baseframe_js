@@ -7,6 +7,7 @@ import getUrlParam, { getHashParam } from './util/get-param';
 
 import AccessibleMenu from './accessible-menu';
 import Collapse from './collapse';
+import EqualizeContent from './equalize-content';
 import LazyLoad from './lazy-load';
 import Modal from './modal';
 import NavDesktop from './nav-desktop';
@@ -27,7 +28,7 @@ export {
     libraryExtend,
     AccessibleMenu,
     Collapse,
-    // EqualizeContent,
+    EqualizeContent,
     LazyLoad,
     Modal,
     NavDesktop,

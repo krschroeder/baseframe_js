@@ -1,5 +1,6 @@
 import path from 'path';
 import yargs from 'yargs';
+import EmitAllPlugin from 'webpack-emit-all-plugin';
 
 const VERSION = require('../package.json').version;
 
@@ -40,7 +41,7 @@ const config = {
 
     WEBPACK_CONFIG: {
         mode: (PROD_JS ? 'production': 'development'),
-        target: ['web','es6'],
+        target: PROD_JS ? ['node'] :['web','es6'],
         resolve: {
             extensions: ['.js', '.tsx', '.ts']
         },
@@ -55,10 +56,17 @@ const config = {
                 {
                     test: /\.tsx?$/,
                     exclude: excludeRgx,
-                    loader: "ts-loader" 
+                    loader: "ts-loader" ,
                 }
             ]
         },
+
+        plugins: [
+            new EmitAllPlugin({
+                ignorePattern: /node_modules/ // default,
+                // path: path.join(__dirname, 'unbundled-out') // defaults to `output.path`
+            })
+        ],
         
         externals: { 
             'cash-dom': '$'
@@ -70,7 +78,7 @@ const config = {
 
         // output: {
         //     library: {
-        //         // name: 'MyLibrary',
+        //         name: 'BaseFrame',
         //         type: 'umd'
         //       },
         // }

@@ -114,11 +114,14 @@ $main-nav-color-lvl-2: $main-nav-color !default;
 					left: -9999em;
 					z-index: #{$main-nav-z-index + 2};
 					min-width: $main-nav-ul-lvl-2-min-width;
+					visibility: hidden;
+
 					li {
 						text-align: $main-nav-text-align-lvl2;
 						background: $main-nav-li-lvl-2-bg;
 						a {
 							color: $main-nav-color-lvl-2;
+							
 						}
 					}
 				}
@@ -127,6 +130,8 @@ $main-nav-color-lvl-2: $main-nav-color !default;
 				&:focus,
 				&.focus {
 					> ul {
+						visibility: visible;
+						
 						@include level-1-dropdown-pos(); li {
 							&:hover,
 							&.hover,

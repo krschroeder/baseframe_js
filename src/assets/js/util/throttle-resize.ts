@@ -1,5 +1,11 @@
-const throttledResize = (callback, _namespace = 'throttledResize', manualTrigger = false, delay = 100) => {
+import $ from 'cash-dom';
 
+const throttledResize = (
+    callback: (...args) => void,
+    _namespace: string = 'throttledResize',
+    manualTrigger: boolean = false,
+    delay: number = 100
+): void => {
 
     let _throttledResize = null;
     const namespace = _namespace !== '' ? `.${_namespace}` : '';

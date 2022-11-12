@@ -1,7 +1,7 @@
 import type { StringPluginArgChoices } from './types/shared';
 
 import $ from 'cash-dom';
-import validJSONFromString from './util/formatting-valid-json';
+import parseObjectFromString from './util/parse-object-from-string';
 import { isVisible } from './util/helpers';
 import { elemData } from './util/store';
 
@@ -78,13 +78,16 @@ export default class LazyLoad {
     public element: HTMLElement;
     public params: ILazyLoadDefaults;
     public lazyElemObserver: IntersectionObserver;
+    
+    static get version() {return VERSION;}
+    static get pluginName() {return DATA_NAME;}
     public static Defaults = DEFAULTS;
 
     constructor(element: HTMLElement, options: ILazyLoadOptions | StringPluginArgChoices) {
 
         this.element = element;
 
-        const dataOptions = validJSONFromString($(element).data(EVENT_NAME + '-options'));
+        const dataOptions = parseObjectFromString($(element).data(EVENT_NAME + '-options'));
         const instanceOptions = $.extend({}, LazyLoad.Defaults, options, dataOptions);
 
         elemData(element, `${DATA_NAME}_params`, instanceOptions);
@@ -94,14 +97,6 @@ export default class LazyLoad {
         this.lazyLoad();
 
         return this;
-    }
-
-    static get version() {
-        return VERSION;
-    }
-
-    static get pluginName() {
-        return DATA_NAME;
     }
 
     static remove(element) {

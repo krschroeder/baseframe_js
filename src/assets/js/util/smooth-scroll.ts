@@ -1,8 +1,15 @@
+import $ from 'cash-dom';
+
 const docTop = () => document.documentElement.scrollTop || document.body.scrollTop || 0;
 
 let activeScroll = false;
 
-export default function smoothScroll(elemYPos, _speed = 100, afterScroll = () => { }, afterScrollArgs = []) {
+export default function smoothScroll(
+    elemYPos: number, 
+    _speed = 100, 
+    afterScroll?:(...args) => void, 
+    afterScrollArgs: any[] = []
+):void {
     
     // If an active scroll is going exit until it's done
     if (activeScroll) return;
@@ -19,7 +26,9 @@ export default function smoothScroll(elemYPos, _speed = 100, afterScroll = () =>
     $(window).on('wheel.smoothScroll',()=> {userBreakScroll = true})
    
     const scrollDone = () => {
-        afterScroll.apply(null, afterScrollArgs);
+        if (typeof afterScroll === 'function') {
+            afterScroll.apply(null, afterScrollArgs);
+        }
         window.cancelAnimationFrame(animation);
         activeScroll = false;
         $(window).off('wheel.smoothScroll');

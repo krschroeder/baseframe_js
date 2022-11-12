@@ -1,4 +1,4 @@
-import validJSONFromString from './util/formatting-valid-json';
+import parseObjectFromString from './util/parse-object-from-string';
 import $visible from './util/visible';
 import { elemData } from '../js/util/store';
 import { KEYS } from './util/constants';
@@ -12,13 +12,13 @@ const EVENT_NAME = 'accessibleMenu';
 
 
 type keyDirections = 'horizontal' | 'vertical';
-type prevNextArgs = [
+type prevNextArgs = {
 	e: KeyboardEvent,
 	$ulParents: Cash,
 	activeElem: Element | null,
 	focusCss: string,
 	keyDirections: keyDirections[]
-];
+};
 
 export interface IAccessibleMenuOptions {
 	keyDirections?: keyDirections[];
@@ -29,16 +29,18 @@ export interface IAccessibleMenuDefaults {
 	keyDirections: keyDirections[];
 	focusCss: string;
 	focusInElems: string;
+	focusLeaveElems: string;
 }
 
 const DEFAULTS: IAccessibleMenuDefaults = {
 	keyDirections: ['horizontal', 'vertical', 'vertical'],
 	focusCss: 'focus',
-	focusInElems: 'a, [tabindex]'
+	focusInElems: 'a, [tabindex]',
+	focusLeaveElems: 'a, [tabindex], select'
 }
 
 const escapeKey = (e: KeyboardEvent, $ulParents: Cash, focusCss: string): void => {
-	if (e.key == KEYS.ESC) {
+	if (e.key == KEYS.esc) {
 
 		if ($ulParents.length > 1) {
 			const $anchor = $visible($ulParents.eq(0).closest('li').find('a'));
@@ -83,19 +85,34 @@ const focusNestledListItem = (activeElem: Element | null, focusCss: string): voi
 	}
 }
 
-const prev = (
-	e: KeyboardEvent,
-	$ulParents: Cash,
-	activeElem: Element | null,
-	focusCss: string,
-	keyDirections: keyDirections[]
-): void => {
+const escapeFromUlAtRootNext = (focusLeaveElems: string, $ulParents: Cash, activeElem: Element):void => {
+	const $rootUl = $ulParents.eq(0);
+	const focusableElems = document.querySelectorAll(focusLeaveElems);
+	let atCurrElem = false;
+
+	for (let i = 0, l = focusableElems.length; i < l; i++) {
+		const elem = focusableElems[i];
+		if (!atCurrElem && activeElem.isSameNode(elem)) {
+			atCurrElem = true;
+		}
+		if (atCurrElem && !$rootUl.has(elem).length) {
+			 
+			if (elem instanceof HTMLElement) {
+				elem.focus();
+				break;
+			}
+		}
+	}
+}
+
+const prev = (_: AccessibleMenu, props: prevNextArgs): void => {
+	const { e, $ulParents, activeElem, focusCss, keyDirections } = props;
 	const l = $ulParents.length - 1;
 
 	if (
-		e.key === KEYS.LEFT && keyDirections[l] === "horizontal" ||
-		e.key === KEYS.UP && keyDirections[l] === "vertical" ||
-		e.key === KEYS.LEFT && keyDirections[l] === "vertical" &&
+		e.key === KEYS.left && keyDirections[l] === "horizontal" ||
+		e.key === KEYS.up && keyDirections[l] === "vertical" ||
+		e.key === KEYS.left && keyDirections[l] === "vertical" &&
 		(l > 1 && keyDirections[l - 1] === "vertical" && $(activeElem).parent('li').index() === 0)
 	) {
 		focusListItem(activeElem, $ulParents, focusCss, true);
@@ -103,29 +120,33 @@ const prev = (
 	}
 }
 
-const next = (
-	e: KeyboardEvent,
-	$ulParents: Cash,
-	activeElem: Element | null,
-	focusCss: string,
-	keyDirections: keyDirections[]
-): void => {
+const next = (_: AccessibleMenu, props: prevNextArgs): void => {
+	const { e, $ulParents, activeElem, focusCss, keyDirections } = props;
 	const l = $ulParents.length - 1;
+	const atRootUl = $ulParents.length === 1;
 
 	if (
 		//go to sibling <li>
-		e.key === KEYS.RIGHT && keyDirections[l] === "horizontal" ||
-		e.key === KEYS.DOWN && keyDirections[l] === "vertical"
+		e.key === KEYS.right && keyDirections[l] === "horizontal" ||
+		e.key === KEYS.down && keyDirections[l] === "vertical"
 	) {
+		const isLastAtRoolLevel = atRootUl && $(activeElem).closest('li').last();
+		const $currentLi = $(activeElem).closest('li');
+		const isLastListItem = !$currentLi.next('li').length;
 
-		focusListItem(activeElem, $ulParents, focusCss, false);
-		e.preventDefault();
+		if (isLastAtRoolLevel && isLastListItem) {
+			escapeFromUlAtRootNext(_.params.focusLeaveElems, $ulParents, activeElem);
+			 
+		} else {
+			focusListItem(activeElem, $ulParents, focusCss, false);
+			e.preventDefault();
+		}
 	}
 
 	if (
 		//go to the nestled <li>
-		e.key === KEYS.RIGHT && keyDirections[l] === "vertical" ||
-		e.key === KEYS.DOWN && keyDirections[l] === "horizontal"
+		e.key === KEYS.right && keyDirections[l] === "vertical" ||
+		e.key === KEYS.down && keyDirections[l] === "horizontal"
 	) {
 
 		focusNestledListItem(activeElem, focusCss);
@@ -134,13 +155,13 @@ const next = (
 }
 
 
-
-
 export default class AccessibleMenu {
 
 	public element: HTMLElement;
 	public params: IAccessibleMenuDefaults;
-	// public static Defaults: IAccessibleMenuOptions;
+
+	static get version() { return VERSION; }
+	static get pluginName() { return DATA_NAME; }
 	public static Defaults = DEFAULTS;
 
 	constructor(element, options) {
@@ -148,7 +169,7 @@ export default class AccessibleMenu {
 
 		_.element = element;
 
-		const dataOptions = validJSONFromString(
+		const dataOptions = parseObjectFromString(
 			$(element).data(EVENT_NAME + '-options')
 		);
 
@@ -162,14 +183,6 @@ export default class AccessibleMenu {
 		_.init();
 
 		return this;
-	}
-
-	static get version() {
-		return VERSION;
-	}
-
-	static get pluginName() {
-		return DATA_NAME;
 	}
 
 	static remove(element) {
@@ -210,15 +223,15 @@ export default class AccessibleMenu {
 		});
 
 		$(_.element).on('keydown.' + EVENT_NAME, function (e: KeyboardEvent) {
-			// e = e || window.event;
+
 			const { focusCss, keyDirections } = _.params;
 			const activeElem = document.activeElement;
 			const $ulParents: Cash = $(activeElem).parents('ul');
-			const props: prevNextArgs = [e, $ulParents, activeElem, focusCss, keyDirections];
+			const props: prevNextArgs = { e, $ulParents, activeElem, focusCss, keyDirections };
 
 			escapeKey(e, $ulParents, focusCss);
-			prev(...props);
-			next(...props);
+			prev(_, props);
+			next(_, props);
 		});
 	}
 }

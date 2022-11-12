@@ -1,3 +1,5 @@
+import $ from 'cash-dom';
+
 const submenuBtn = (params, menuText) => {
     const $btn = $('<button>').attr({
         class: params.submenuBtnCss,

@@ -1,7 +1,7 @@
 import { Cash } from "cash-dom";
 import type { StringPluginArgChoices } from './types/shared';
 import $ from 'cash-dom';
-import validJSONFromString from './util/formatting-valid-json';
+import parseObjectFromString from './util/parse-object-from-string';
 import { elemData } from './util/store';
 
 type axis =  'x' | 'y';
@@ -85,7 +85,7 @@ export default class Parallax {
 
 	constructor(element: HTMLElement, options: IParallaxOptions | StringPluginArgChoices, index: number) {
 		const _ = this;
-		const dataOptions = validJSONFromString($(element).data(EVENT_NAME + '-options'));
+		const dataOptions = parseObjectFromString($(element).data(EVENT_NAME + '-options'));
 		const instanceDefaults = {$heightElem: $(element)};
 
 		_.$window = $(window);

@@ -2,7 +2,7 @@ import type { Cash, Selector } from "cash-dom";
 import type { LocationHashTracking, StringPluginArgChoices } from './types/shared';
 
 import $ from 'cash-dom';
-import validJSONFromString from './util/formatting-valid-json';
+import parseObjectFromString from './util/parse-object-from-string';
 import { elemData } from './util/store';
 import trapFocus from './util/trap-focus';
 import generateGUID from './util/guid-generate';
@@ -117,7 +117,7 @@ export default class Modal {
 
         _.element = element;
 
-        const dataOptions = validJSONFromString($(element).data(EVENT_NAME + '-options'));
+        const dataOptions = parseObjectFromString($(element).data(EVENT_NAME + '-options'));
         const instanceOptions = $.extend({}, Modal.Defaults, options, dataOptions);
 
         elemData(element, `${DATA_NAME}_params`, instanceOptions);

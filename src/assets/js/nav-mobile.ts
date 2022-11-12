@@ -2,7 +2,7 @@ import type { Cash, Selector } from "cash-dom";
 import type { StringPluginArgChoices } from './types/shared';
 
 import $ from 'cash-dom';
-import validJSONFromString from './util/formatting-valid-json';
+import parseObjectFromString from './util/parse-object-from-string';
 import getType, { isVisible, transitionElem } from './util/helpers';
 import submenuBtn from './util/plugin/nav';
 import { elemData } from './util/store';
@@ -108,7 +108,7 @@ export default class NavMobile {
 	constructor(element: HTMLElement, options: INavMobileOptions | StringPluginArgChoices) {
 		const _ = this;
 
-		const dataOptions = validJSONFromString($(element).data(EVENT_NAME + '-options'));
+		const dataOptions = parseObjectFromString($(element).data(EVENT_NAME + '-options'));
 		const instanceOptions = $.extend({}, NavMobile.Defaults, options, dataOptions)
 		//props
 
@@ -265,7 +265,7 @@ export default class NavMobile {
 
 		$(document).on(`keydown.${EVENT_NAME}`, (e: KeyboardEvent) => {
 
-			if (e.code === KEYS.ESC && _.$element.hasClass(_.params.menuOpenCss) && _.allowClick) {
+			if (e.code === KEYS.esc && _.$element.hasClass(_.params.menuOpenCss) && _.allowClick) {
 				_.menuToggle();
 
 				if ($enableBtn.length) {

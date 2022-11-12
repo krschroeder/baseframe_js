@@ -1,6 +1,40 @@
+import type { Cash, Selector } from "cash-dom";
+import type { StringPluginArgChoices } from './types/shared';
 
-import validJSONFromString from './util/formatting-valid-json';
+import $ from 'cash-dom';
+import parseObjectFromString from './util/parse-object-from-string';
 import { elemData } from './util/store';
+
+
+export interface IEqualizeContentOptions {
+    equalizeItem: Selector;
+	startWidth?: number; 
+	stopWidth?: number;
+	timerDelay?: number;
+	useHeight?: boolean;
+	useMargin?: boolean;
+	aligningCss?: string;
+	resizeCss?: string;
+	fuzzy?: number;
+}
+
+export interface IEqualizeContentDefaults {
+    equalizeItem: Selector;
+	startWidth: number; 
+	stopWidth: number;
+	timerDelay: number;
+	useHeight: boolean;
+	useMargin: boolean;
+	aligningCss: string;
+	resizeCss: string;
+	fuzzy: number;
+}
+
+interface IMatchEqualizeEntry {
+	ypos: number;
+	elems: number[];
+	tallest: number;
+}
 
 const VERSION = "2.0.2";
 const DATA_NAME = 'EqualizeContent';
@@ -18,15 +52,46 @@ const DEFAULTS = {
 };
 
 export default class EqualizeContent {
-	static get version() {
-		return VERSION;
+
+	public element: HTMLElement;
+	public params: IEqualizeContentDefaults;
+	public elementHeight: 'height' | 'min-height';
+	public $equalizeItems: Cash;
+	public aligningCSS: boolean;
+	public winWidth: number;
+	public matches: IMatchEqualizeEntry[];
+	public matchesMade: number;
+	// public static Defaults: IAccessibleMenuOptions;
+	
+	static get version() { return VERSION; }
+	static get pluginName() { return DATA_NAME; }
+	public static Defaults = DEFAULTS;
+
+
+	constructor(element, options) {
+		 
+		const _ = this;
+		_.element = element;
+
+		const dataOptions = parseObjectFromString($(element).data(EVENT_NAME+'-options'));
+		const instanceOptions = $.extend({}, EqualizeContent.Defaults, options, dataOptions);
+	 	
+		elemData( element, `${DATA_NAME}_params`, instanceOptions);
+
+		_.params = elemData(element,`${DATA_NAME}_params`);
+		_.elementHeight = (_.params.useHeight) ? 'height' : 'min-height';
+		_.$equalizeItems = $(_.params.equalizeItem, _.element);
+		_.aligningCSS = $(_.element).hasClass(_.params.aligningCss);
+		_.winWidth = $(window).width();
+		_.matches = [];
+		_.matchesMade = 0;
+
+		_.init();
+
+		return _;
 	}
 
-	static get pluginName() {
-		return DATA_NAME;
-	}
-
-	static remove(element) {
+	static remove(element: Selector) {
 
 		$(element).each(function () {
 			const instance = elemData(this, `${DATA_NAME}_instance`);
@@ -39,36 +104,6 @@ export default class EqualizeContent {
 			elemData(this, `${DATA_NAME}_params`, null, true);
 			elemData(this, `${DATA_NAME}_instance`, null, true);
 		});
-	}
-
-	constructor(element, options) {
-		 
-		const _ = this;
-		_.element = element;
-
-		const dataOptions = validJSONFromString(
-			$(element).data(EVENT_NAME+'-options')
-		);
-
-	 
-
-		elemData(
-			element,
-			`${DATA_NAME}_params`,
-			$.extend({}, EqualizeContent.defaults, options, dataOptions) 
-		);
-		_.params = elemData(element,`${DATA_NAME}_params`);
-
-		_.elementHeight = (_.params.useHeight) ? 'height' : 'min-height';
-		_.$equalizeItems = $(_.params.equalizeItem, _.element);
-		_.aligningCSS = $(_.element).hasClass(_.params.aligningCss);
-		_.winWidth = $(window).width();
-		_.matches = [];
-		_.matchesMade = 0;
-
-		_.init(_.element, _.params);
-
-		return _;
 	}
 
 	init() {
@@ -200,4 +235,8 @@ export default class EqualizeContent {
 	}
 }
 
-EqualizeContent.defaults = DEFAULTS;
+declare module 'cash-dom' {
+    export interface Cash {
+        equalizeContent(options?: IEqualizeContentOptions | StringPluginArgChoices): Cash;
+    }
+}

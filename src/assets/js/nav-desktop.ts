@@ -2,7 +2,7 @@ import type { Selector } from "cash-dom";
 import type { StringPluginArgChoices } from './types/shared';
 
 import $ from 'cash-dom';
-import validJSONFromString from './util/formatting-valid-json';
+import parseObjectFromString from './util/parse-object-from-string';
 import { elemData } from './util/store';
 
 
@@ -66,7 +66,7 @@ export default class NavDesktop {
 		_.navLeaving;
 		_.element = element;
 
-		const dataOptions = validJSONFromString( $(element).data(EVENT_NAME + '-options'));
+		const dataOptions = parseObjectFromString( $(element).data(EVENT_NAME + '-options'));
 		const instanceOptions = $.extend({}, NavDesktop.Defaults, options, dataOptions);
 
 		elemData(element,`${DATA_NAME}_params`, instanceOptions);

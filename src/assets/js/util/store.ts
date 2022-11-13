@@ -1,5 +1,3 @@
-import type { Selector  } from 'cash-dom';
-
 import $ from 'cash-dom';
 import elemData from './elemData';
 

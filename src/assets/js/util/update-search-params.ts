@@ -16,7 +16,7 @@ const updateSearchParams = (
    pattern: QsPattern = 'normal'
 ): string => {
 
-   const hashObj = qsToObject(location['searchSrc'].substring(1));
+   const hashObj = qsToObject(location[searchSrc].substring(1));
 
    // remove if other params are set and are string
    if (removeOtherKeys && getType(removeOtherKeys) === 'string') {

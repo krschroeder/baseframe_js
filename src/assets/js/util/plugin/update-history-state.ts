@@ -1,6 +1,6 @@
 // import getHistoryEntry from "./get-history-entry";
 import type { LocationHashTrackingHistory } from '../../types/shared';
-import updateSearchParams from '../updateSearchParams';
+import updateSearchParams from '../update-search-params';
 
 const updateHistoryState = (params:LocationHashTrackingHistory, val: string, remove: boolean = false, prevVal?: string) => {
 

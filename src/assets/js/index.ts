@@ -4,7 +4,7 @@ import installStoreToLibrary from './util/store';
 import libraryExtend from './util/library-extend';
 import smoothScroll from './util/smooth-scroll';
 import getUrlParam, { getHashParam } from './util/get-param';
-import updateSearchParams from './util/updateSearchParams';
+import updateSearchParams from './util/update-search-params';
 
 import AccessibleMenu from './accessible-menu';
 import Collapse from './collapse';

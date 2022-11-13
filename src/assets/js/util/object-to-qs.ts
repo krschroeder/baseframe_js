@@ -7,7 +7,7 @@ const objectToQs = (paramsObj: object, pattern: QsPattern = 'normal'): string =>
    for (let key in paramsObj) {
       if (obj.hasOwnProperty.call(paramsObj, key)) {
 
-         if (pattern === 'repeat') {
+         if (pattern === 'normal') {
             let propVal: string | any[] | number | boolean = paramsObj[key];
 
             if (propVal) {
@@ -19,7 +19,7 @@ const objectToQs = (paramsObj: object, pattern: QsPattern = 'normal'): string =>
             } else {
                strArr.push(key);
             }
-         } else if (pattern === 'normal') {
+         } else if (pattern === 'repeat') {
             const keyVal = paramsObj[key];
 
             if (keyVal instanceof Array) {

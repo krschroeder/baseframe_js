@@ -4,6 +4,10 @@ import getType, { camelCase } from "./helpers";
 import { setStoreFnInstalled } from "./store";
 import { mapData, Store } from './store';
 
+
+export declare function store<T>(dataName: string, data?: T): void | T;
+export declare function removeStore<T>(dataName: string): void;
+
 function installStoreAsDataToLibrary(expose = false) {
 
 	if ('jQuery' in window) {
@@ -61,6 +65,16 @@ function asData(el: HTMLElement, dataName: string, data: any): any {
 	if (dataSet) {
 		return dataSet;
 	}
+}
+
+declare module 'cash-dom' {
+
+    interface Cash {
+        //data already exists
+        removeData: typeof removeStore;
+    }
+
+	// no static props ... yet :-( 
 }
 
 export default installStoreAsDataToLibrary;

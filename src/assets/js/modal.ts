@@ -303,7 +303,7 @@ export default class Modal {
             'padding-right': '0px'
         });
 
-        updateHistoryEntry(_, _.modalID);
+        updateHistoryEntry(_.params, _.modalID);
     }
 
     disableModal() {
@@ -326,8 +326,8 @@ export default class Modal {
         $(document)
             .off(`keydown.${_.modalEvent}Dismiss`)
             .off(`${_.modalEvent}Dismiss`);
-
-        updateHistoryEntry(_, _.modalID, true);
+        
+        updateHistoryEntry(_.params, _.modalID, true);
 
         transitionElem(() => {
             $modal.attr({

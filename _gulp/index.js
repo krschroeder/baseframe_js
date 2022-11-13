@@ -141,6 +141,13 @@ function cleanUp() {
 	}).pipe(clean());
 }
 
+function cleanUpTemp() {
+	return gulp.src('.tmp', {
+		read: false,
+		allowEmpty: true
+	}).pipe(clean());
+}
+
 function compileReadme() {
 	return gulp.src('src/readmes/_readme.md')
 		.pipe(fileinclude({
@@ -199,7 +206,8 @@ const BUILD = gulp.parallel(
 		copyAssets,
 		server,
 		compileReadme,
-		watch
+		watch,
+		cleanUpTemp
 	)
 );
 

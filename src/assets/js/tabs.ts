@@ -302,7 +302,7 @@ export default class Tabs {
 			if (init) {
 				_.initTabId = tabId;
 			} else {
-				updateHistoryState(_, tabId, removeIdFormHash, _.prevTabId);
+				updateHistoryState(_.params, tabId, removeIdFormHash, _.prevTabId);
 			}
 
 			_.prevTabId = tabId;

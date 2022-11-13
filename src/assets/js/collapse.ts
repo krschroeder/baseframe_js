@@ -199,7 +199,10 @@ export default class Collapse {
 			_.toggleOpenItems();
 			close ? _.closeItems(_.$btnElems, _.$collapsibleItem) : _.openItems();
 
-			history && updateHistoryState(_, collapseID.substring(1), close, _.prevID.substring(1));
+			if (history) {
+				 
+				updateHistoryState(_.params, collapseID.substring(1), close, _.prevID.substring(1));
+			}
 
 			_.prevID = collapseID;
 		}

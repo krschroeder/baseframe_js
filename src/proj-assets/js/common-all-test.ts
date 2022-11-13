@@ -21,8 +21,14 @@ import installStoreToLibrary, {
     smoothScroll,
     cookies
 } from '../../assets/js/index';
- 
- 
+
+// import objectToQs from '../../assets/js/util/object-to-qs';
+// import qsToObject from '../../assets/js/util/qs-to-object';
+
+// const ourQs = objectToQs({yeah: ['buddy','friendo'], foo: 'bar', baz: 'bar'},'repeat');
+// const qsToObj = qsToObject(ourQs);
+// console.log(ourQs, qsToObj);
+
 //necessary for all plugin's to operate
 //much like jQuery's $.data method, the $.store is similar
 installStoreToLibrary(true);

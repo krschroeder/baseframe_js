@@ -18,7 +18,6 @@ export interface IStore {
 
 export declare function store<T>(dataName: string, data?: T): void | T;
 export declare function removeStore<T>(dataName: string): void;
-export declare function staticRemoveStore<T>(elem: Selector, dataName: string): void;
 
 declare module 'cash-dom' {
 
@@ -29,7 +28,6 @@ declare module 'cash-dom' {
 
     interface CashStatic {
         store: IStore;
-        removeStore: typeof staticRemoveStore;
     }
 }
 

@@ -1,15 +1,17 @@
 // import getHistoryEntry from "./get-history-entry";
 import type { LocationHashTrackingHistory } from '../../types/shared';
-import {changeHashParam} from '../get-param';
+import updateHashParams from '../updateHashParams';
 
-const updateHistoryState = (_, val: string, remove: boolean = false, prevKeyOrVal?: string) => {
+const updateHistoryState = (params, val: string, remove: boolean = false, prevVal?: string) => {
 
-    const { useLocationHash, historyType, useHashFilter } = _.params as LocationHashTrackingHistory;
- 
-    if (useLocationHash && useHashFilter) {
-        const qsParams = changeHashParam(useHashFilter, val, remove, prevKeyOrVal);
+    const { useLocationHash, historyType, useHashFilter } = params as LocationHashTrackingHistory;
+    const paramKey = useHashFilter || val;
+    const value = remove ? null : (useHashFilter ? val : null);
+
+    if (useLocationHash) {
+        const qsParams = updateHashParams(paramKey, value, remove, prevVal);
         const updatedQs = qsParams ? '#' + qsParams : ' ';//space allows a change if there are no params
-
+      
         if (!historyType || historyType === 'replace') {
             // if we don't have this parameter then
             // we just replace the state

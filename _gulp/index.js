@@ -51,9 +51,7 @@ function buildCSS() {
 		return gulp.src(css)
 			.pipe(sourcemaps.init())
 			.pipe(sass().on('error', sass.logError))
-			.pipe(autoprefixer({
-				browsers: ["last 2 versions", "ie >= 11", "ios >= 11"]
-			}))
+			.pipe(autoprefixer())
 			.pipe(gulpIf(PRODUCTION, cleanCss({
 				compatibility: "ie11"
 			})))

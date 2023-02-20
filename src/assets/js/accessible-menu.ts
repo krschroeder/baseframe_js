@@ -17,12 +17,15 @@ type prevNextArgs = {
 	$ulParents: Cash,
 	activeElem: Element | null,
 	focusCss: string,
-	keyDirections: keyDirections[]
+	keyDirections: keyDirections[];
+	focusInElems: string;
 };
 
 export interface IAccessibleMenuOptions {
 	keyDirections?: keyDirections[];
 	focusCss?: string;
+	focusInElems?: string;
+	focusLeaveElems?: string;
 }
 
 export interface IAccessibleMenuDefaults {
@@ -39,11 +42,11 @@ const DEFAULTS: IAccessibleMenuDefaults = {
 	focusLeaveElems: 'a, [tabindex], select, button'
 }
 
-const escapeKey = (e: KeyboardEvent, $ulParents: Cash, focusCss: string): void => {
+const escapeKey = (e: KeyboardEvent, $ulParents: Cash, focusCss: string, focusInElems: string): void => {
 	if (e.key == KEYS.esc) {
 
 		if ($ulParents.length > 1) {
-			const $anchor = $visible($ulParents.eq(0).closest('li').find('a'));
+			const $anchor = $visible($ulParents.eq(0).closest('li').find(focusInElems));
 			$anchor[0].focus();
 			$anchor.parent('li').addClass(focusCss);
 		}
@@ -55,14 +58,15 @@ const focusListItem = (
 	activeElem: Element | null,
 	$ulParents: Cash,
 	focusCss: string,
-	prev: boolean
+	prev: boolean,
+	focusInElems: string
 ): void => {
 	const $aeLi = $(activeElem).parent('li');
 	const $el = prev ? $visible($aeLi.prev('li')) : $visible($aeLi.next('li'));
 
 	if ($el.length) {
 		$el.addClass(focusCss).siblings('li').removeClass(focusCss);
-		$el.find('a')[0].focus();
+		$el.find(focusInElems)[0].focus();
 	} else {
 		if ($ulParents.length > 1) {
 
@@ -76,12 +80,16 @@ const focusListItem = (
 	}
 }
 
-const focusNestledListItem = (activeElem: Element | null, focusCss: string): void => {
+const focusNestledListItem = (
+	activeElem: Element | null, 
+	focusCss: string,
+	focusInElems: string
+): void => {
 	const $el = $visible($(activeElem).parent('li').find('li'));
 
 	if ($el.length) {
 		$el.addClass(focusCss).siblings('li').removeClass(focusCss);
-		$visible($el.find('a'))[0].focus();
+		$visible($el.find(focusInElems))[0].focus();
 	}
 }
 
@@ -106,7 +114,7 @@ const escapeFromUlAtRootNext = (focusLeaveElems: string, $ulParents: Cash, activ
 }
 
 const prev = (_: AccessibleMenu, props: prevNextArgs): void => {
-	const { e, $ulParents, activeElem, focusCss, keyDirections } = props;
+	const { e, $ulParents, activeElem, focusCss, keyDirections, focusInElems } = props;
 	const l = $ulParents.length - 1;
 
 	if (
@@ -115,13 +123,13 @@ const prev = (_: AccessibleMenu, props: prevNextArgs): void => {
 		e.key === KEYS.left && keyDirections[l] === "vertical" &&
 		(l > 1 && keyDirections[l - 1] === "vertical" && $(activeElem).parent('li').index() === 0)
 	) {
-		focusListItem(activeElem, $ulParents, focusCss, true);
+		focusListItem(activeElem, $ulParents, focusCss, true, focusInElems);
 		e.preventDefault();
 	}
 }
 
 const next = (_: AccessibleMenu, props: prevNextArgs): void => {
-	const { e, $ulParents, activeElem, focusCss, keyDirections } = props;
+	const { e, $ulParents, activeElem, focusCss, keyDirections, focusInElems } = props;
 	const l = $ulParents.length - 1;
 	const atRootUl = $ulParents.length === 1;
 
@@ -138,7 +146,7 @@ const next = (_: AccessibleMenu, props: prevNextArgs): void => {
 			escapeFromUlAtRootNext(_.params.focusLeaveElems, $ulParents, activeElem);
 			 
 		} else {
-			focusListItem(activeElem, $ulParents, focusCss, false);
+			focusListItem(activeElem, $ulParents, focusCss, false, focusInElems);
 			e.preventDefault();
 		}
 	}
@@ -149,7 +157,7 @@ const next = (_: AccessibleMenu, props: prevNextArgs): void => {
 		e.key === KEYS.down && keyDirections[l] === "horizontal"
 	) {
 
-		focusNestledListItem(activeElem, focusCss);
+		focusNestledListItem(activeElem, focusCss, focusInElems);
 		e.preventDefault();
 	}
 }
@@ -224,12 +232,12 @@ export default class AccessibleMenu {
 
 		$(_.element).on('keydown.' + EVENT_NAME, function (e: KeyboardEvent) {
 
-			const { focusCss, keyDirections } = _.params;
+			const { focusCss, keyDirections, focusInElems } = _.params;
 			const activeElem = document.activeElement;
 			const $ulParents: Cash = $(activeElem).parents('ul');
-			const props: prevNextArgs = { e, $ulParents, activeElem, focusCss, keyDirections };
+			const props: prevNextArgs = { e, $ulParents, activeElem, focusCss, keyDirections, focusInElems };
 
-			escapeKey(e, $ulParents, focusCss);
+			escapeKey(e, $ulParents, focusCss, focusInElems);
 			prev(_, props);
 			next(_, props);
 		});

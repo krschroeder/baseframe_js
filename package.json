@@ -1,6 +1,6 @@
 {
   "name": "baseframe-js",
-  "version": "4.7.2",
+  "version": "4.7.3",
   "description": "A suite of useful Javascript plugins and functions to help with Front-end Development on websites",
   "repository": {
     "type": "git",
@@ -35,6 +35,7 @@
   "author": "Kevin Schroeder <kevin.r.schroeder@gmail.com>",
   "license": "MIT",
   "private": false,
+  "browsers": "> 0.25%, not dead",
   "main": "build/js/index.js",
   "scripts": {
     "start": "gulp",

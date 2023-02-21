@@ -45,7 +45,6 @@ import installStoreToLibrary, {
     LazyLoad,
     NavDesktop,
     NavMobile,
-    NavMobileNestled,
     Parallax,
     SelectEnhance,
     Tabs,
@@ -174,7 +173,9 @@ Each class just needs to have the following properties set on it
 First parameter can be one Plugin, or an array of them. Pass in the second param which will notify the user of updated parameters (good for development).
 
 ```javascript
-libraryExtend(plugins:Array<Plugin> | Plugin, notify?:boolean)
+// the third option 'Lib' allows a user to pass in either 
+// jQuery or Cash library to extend the plugin's to. 
+libraryExtend(plugins:Array<Plugin> | Plugin, notify?:boolean, Lib: $)
 ```
 
 

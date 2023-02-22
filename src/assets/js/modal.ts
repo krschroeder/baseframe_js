@@ -3,7 +3,7 @@ import type { LocationHashTracking, StringPluginArgChoices } from './types/share
 
 import $ from 'cash-dom';
 import parseObjectFromString from './util/parse-object-from-string';
-import elemData from "./util/elemData";
+import elemData from "./util/elem-data";
 import trapFocus from './util/trap-focus';
 import generateGUID from './util/guid-generate';
 import getType, { camelCase, transitionElem } from './util/helpers';

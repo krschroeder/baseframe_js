@@ -1,6 +1,6 @@
 //cash dom or jquery are a dependency
 //not importing them because it can be either or
-import installStoreToLibrary from './util/store';
+import installStoreToLibrary from './util/install-store-to-library';
 import libraryExtend from './util/library-extend';
 import smoothScroll from './util/smooth-scroll';
 import getUrlParam, { getHashParam } from './util/get-param';

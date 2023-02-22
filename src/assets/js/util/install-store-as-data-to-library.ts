@@ -1,9 +1,7 @@
 import $ from 'cash-dom';
-import elemData from './elemData';
+import elemData from './elem-data';
 import getType, { camelCase } from "./helpers";
-import { setStoreFnInstalled } from "./store";
-import { mapData, Store } from './store';
-
+import Store, { mapData, setStoreFnInstalled } from './store';
 
 export declare function store<T>(dataName: string, data?: T): void | T;
 export declare function removeStore<T>(dataName: string): void;

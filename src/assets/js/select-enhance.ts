@@ -2,7 +2,7 @@ import type { Cash } from "cash-dom";
 import type { StringPluginArgChoices } from './types/shared';
 
 import $ from 'cash-dom';
-import elemData from "./util/elemData";
+import elemData from "./util/elem-data";
 import parseObjectFromString from './util/parse-object-from-string';
 import { KEYS } from "./util/constants";
 import { isMobileOS, noop } from "./util/helpers";

@@ -1,5 +1,4 @@
-import { Store } from "./store";
-import { storeFnInstalled } from "./store";
+import Store, { storeFnInstalled } from "./store";
 
 declare global {
 	interface Window {

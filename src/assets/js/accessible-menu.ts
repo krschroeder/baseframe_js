@@ -1,6 +1,6 @@
 import parseObjectFromString from './util/parse-object-from-string';
 import $visible from './util/visible';
-import elemData from "./util/elemData";
+import elemData from "./util/elem-data";
 import { KEYS } from './util/constants';
 import $, { Cash } from 'cash-dom';
 

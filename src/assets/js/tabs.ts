@@ -5,7 +5,7 @@ import $ from 'cash-dom';
 import parseObjectFromString from './util/parse-object-from-string';
 import { getHashParam } from './util/get-param';
 import updateHistoryState from './util/plugin/update-history-state';
-import elemData from "./util/elemData";
+import elemData from "./util/elem-data";
 import { KEYS } from './util/constants';
 
 type tabDirection = 'horizontal' | 'vertical';

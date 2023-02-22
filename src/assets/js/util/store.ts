@@ -1,5 +1,5 @@
 import $ from 'cash-dom';
-import elemData from './elemData';
+// import elemData from './elem-data';
 
 type StoreElem = ArrayLike<HTMLElement> | HTMLElement;
 interface IStoreData {
@@ -14,22 +14,10 @@ export interface IStore {
     remove(element: StoreElem, keyStore: string): void;
 }
 
-export declare function store<T>(dataName: string, data?: T): void | T;
-export declare function removeStore<T>(dataName: string): void;
+export let storeFnInstalled = false;
+export const setStoreFnInstalled = () => storeFnInstalled = true;
 
-declare module 'cash-dom' {
-
-    interface Cash {
-        store: typeof store;
-        removeStore: typeof removeStore;
-    }
-
-    interface CashStatic {
-        store: IStore;
-    }
-}
-
-const mapData = (() => {
+export const mapData = (() => {
 
 	const storeData: WeakMap<object, any> = new WeakMap();
 	let id = 1;
@@ -134,32 +122,28 @@ const Store = {
 };
 
 // one state var to check if its installed the Store method
-export let storeFnInstalled = false;
-export const setStoreFnInstalled = () => storeFnInstalled = true;
+// export let storeFnInstalled = false;
+// export const setStoreFnInstalled = () => storeFnInstalled = true;
 
-function installStoreToLibrary(expose = false) {
+// function installStoreToLibrary(expose = false) {
 
-	storeFnInstalled = true;
+// 	storeFnInstalled = true;
 
-	if (expose) {
-		$.extend(Store, {
-			expose:(what: boolean | "ret"): void | WeakMap<object,any> => mapData.expose(what)
-		});
-	}
+// 	if (expose) {
+// 		$.extend(Store, {
+// 			expose:(what: boolean | "ret"): void | WeakMap<object,any> => mapData.expose(what)
+// 		});
+// 	}
 
-	$.extend({ store: Store });
+// 	$.extend({ store: Store });
 
-	$.fn.extend({store: function (dataName, data) {
-		return elemData(this, dataName, data);
-	}});
+// 	$.fn.extend({store: function (dataName, data) {
+// 		return elemData(this, dataName, data); 
+// 	}});
 
-	$.fn.extend({removeStore: function (dataName) {
-		Store.remove(this, dataName);
-	}});
-}
+// 	$.fn.extend({removeStore: function (dataName) {
+// 		Store.remove(this, dataName);
+// 	}});
+// }
 
-
-
-
-export default installStoreToLibrary;
-export { mapData, Store };
+export default Store;

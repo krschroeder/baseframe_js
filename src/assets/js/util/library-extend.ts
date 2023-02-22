@@ -1,6 +1,6 @@
 import $ from 'cash-dom';
 import getType from './helpers';
-import elemData from './elemData';
+import elemData from './elem-data';
 import type PluginBaseClass from '../types/shared';
 
 const checkIfParamsExist = (setParams, params, notify = true) => {

@@ -217,19 +217,19 @@ export default class Modal {
     getModalObj() {
 
         const _ = this,
-            { ariaLabel, ariaLabelledby, closeBtnIconCss, modalCss } = _.params,
+            { ariaLabel, ariaLabelledby, closeBtnIconCss, cssPrefix, modalCss } = _.params,
             modalID = _.modalID,
             modalAttr = {
-                class: 'modal' + (modalCss ? ' ' + modalCss : ''),
+                class: cssPrefix + (modalCss ? ' ' + modalCss : ''),
                 'aria-label': (ariaLabel || _.element.dataset.ariaLabel) || '',
                 'aria-labelledby': (ariaLabelledby || _.element.dataset.ariaLabelledby) || '',
                 id: modalID
             },
-            closeBtnAttrs = { class: 'modal__btn-dismiss', type: 'button', 'aria-label': 'Close' },
+            closeBtnAttrs = { class: cssPrefix + '__btn-dismiss', type: 'button', 'aria-label': 'Close' },
             $closeBtn = $('<button>').attr(closeBtnAttrs).append(`<i class="${closeBtnIconCss}"></i>`),
-            $dialogContent = $('<div/>').attr({ class: 'modal__dialog-content' }),
-            $dialog = $('<div/>').attr({ class: 'modal__dialog' }).append($closeBtn, $dialogContent),
-            $backdrop = $('<div/>').attr({ class: 'modal__backdrop' }),
+            $dialogContent = $('<div/>').attr({ class: cssPrefix + '__dialog-content' }),
+            $dialog = $('<div/>').attr({ class: cssPrefix + '__dialog' }).append($closeBtn, $dialogContent),
+            $backdrop = $('<div/>').attr({ class: cssPrefix + '__backdrop' }),
             $modal = $('<div/>').attr(modalAttr).append($backdrop, $dialog),
             $content = $(_.params.src || (<HTMLAnchorElement>_.element).hash || _.element.dataset.modalSrc)
         ;

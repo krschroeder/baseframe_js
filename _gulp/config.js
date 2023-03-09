@@ -56,12 +56,17 @@ const config = {
                     test: /\.tsx?$/,
                     exclude: excludeRgx,
                     loader: "ts-loader" 
+                },
+                {
+                    test: /src\/assets\/js\/index\.ts/i,
+                    sideEffects: false
                 }
             ]
         },
         
         externals: { 
-            'cash-dom': '$'
+            'cash-dom': '$',
+            'jquery': 'jQuery'
         },
         
         optimization: {

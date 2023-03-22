@@ -34,7 +34,7 @@ export interface ISelectEnhanceDefaults {
     afterChange($select: Cash);
 }
 
-const VERSION = "2.3.1";
+const VERSION = "2.4.0";
 const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 
@@ -204,7 +204,7 @@ export default class SelectEnhance {
         selectedOpt.selected = true;
 
         _.params.afterChange(_.$select); 
-        _.$selectEnhance.find('button[aria-selected]').attr({ 'aria-selected': 'false' });
+        _.$selectEnhance.find('.' + cssPrefix + '__list-btn[aria-selected]').attr({ 'aria-selected': 'false' });
 
         $btn.attr({ 'aria-selected': newSelectedState + '' });
         _.$textInput.attr({ 'aria-activedescendant': $btn[0].id });
@@ -244,12 +244,13 @@ export default class SelectEnhance {
     showOptions(_: SelectEnhance) {
 
         if (_.select.disabled) { return }
+        const {cssPrefix} = _.params;
 
         _.optionsShown = true;
-        _.$selectEnhance.toggleClass(_.params.cssPrefix + '--focused');
+        _.$selectEnhance.toggleClass(cssPrefix + '--focused');
         _.$textInput.attr({ 'aria-expanded': 'true' });
 
-        const $selectedBtn = _.$selectEnhance.find('button[aria-selected="true"]');
+        const $selectedBtn = _.$selectEnhance.find('.' + cssPrefix + '__list-btn[aria-selected="true"]');
 
         if ($selectedBtn.length) {
             $selectedBtn[0].focus();
@@ -265,8 +266,9 @@ export default class SelectEnhance {
 
     eventShowOptions() {
         const _ = this;
+        const { cssPrefix } = _.params;
 
-        _.$selectEnhance.on('click.' + EVENT_NAME, '.' + _.params.cssPrefix + '__enable-text', (e: MouseEvent) => {
+        _.$selectEnhance.on('click.' + EVENT_NAME, '.' + cssPrefix + '__enable-text', (e: MouseEvent) => {
             if (_.select.disabled) { return }
             _.showOptions(_)
         });
@@ -279,16 +281,29 @@ export default class SelectEnhance {
             }
         });
 
-        _.$textInput.on('keypress.' + EVENT_NAME, function (e: KeyboardEvent) {
+        _.$selectList.on('keypress.' + EVENT_NAME, '.' + cssPrefix + '__list-btn' , function(e: KeyboardEvent) {
+            if (
+                e.key === KEYS.enter ||
+                e.code === KEYS.space && _.keyedInput.trim() === ''
+            ) {
+                _.setSelectionState($(document.activeElement));
+                
+                _.blurSelect();
+                _.textInput.focus();
+                e.preventDefault();
+            }
+        });
 
+        _.$textInput.on('keypress.' + EVENT_NAME, function (e: KeyboardEvent) {
+            
             if (e.key !== KEYS.tab || e.shiftKey && e.key !== KEYS.tab) {
                 e.preventDefault();
             }
 
             if (
                 e.key === KEYS.enter ||
-                e.keyCode === KEYS.space && _.keyedInput.trim() === '' ||
-                e.ctrlKey && e.altKey && e.shiftKey && KEYS.space === e.keyCode
+                e.code === KEYS.space && _.keyedInput.trim() === '' ||
+                e.ctrlKey && e.altKey && e.shiftKey && KEYS.space === e.code
             ) {
 
                 _.showOptions(_);
@@ -485,14 +500,15 @@ export default class SelectEnhance {
             const valCssStatus = opt.value === '' ? ' ' + cssPrefix + '__list-btn--empty' : '';
 
             const attrs = {
-                type: 'button',
+                // type: 'button',
+                tabIndex: '0',
                 role: 'option', id,
                 'data-value': opt.value,
                 'aria-selected': opt.selected + '',
                 disabled: opt.disabled ? 'disabled' : null,
                 class: cssPrefix + '__list-btn' + valCssStatus
             };
-            const $btn: Cash = $('<button/>').attr(attrs).text(opt.textContent);
+            const $btn: Cash = $('<div/>').attr(attrs).text(opt.textContent);
 
             _.optionSet.set($btn[0], opt);
             _.optionSet.set(opt, $btn);
@@ -531,7 +547,7 @@ export default class SelectEnhance {
 
         const _ = this;
         const ae = document.activeElement;
-        const $btnList = _.$selectList.find('button');
+        const $btnList = _.$selectList.find('.' + _.params.cssPrefix + '__list-btn');
         const btnLength = $btnList.length;
 
         if (btnLength && _.textInput.isSameNode(ae)) {
@@ -540,7 +556,7 @@ export default class SelectEnhance {
         }
          
         for (let i = 0; i < btnLength; i++) {
-            const el: HTMLButtonElement = $btnList[i] as HTMLButtonElement;
+            const el: HTMLDivElement = $btnList[i] as HTMLDivElement;
             let prevNextIndex = 0;
 
             if (ae.isSameNode(el)) {

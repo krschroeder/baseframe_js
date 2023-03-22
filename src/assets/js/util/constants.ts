@@ -7,7 +7,7 @@ export interface IUsedKeys {
 	up: 'ArrowUp';
 	enter: 'Enter';
 	shift: 'Shift';
-	space: 32; //use keyCode
+	space: 'Space';  
 	tab: 'Tab';
 }
 
@@ -19,7 +19,7 @@ export const KEYS: IUsedKeys = {
 	up: 'ArrowUp',
 	enter: 'Enter',
 	shift: 'Shift',
-	space: 32, //use keyCode
+	space: 'Space',
 	tab: 'Tab'
 }
 

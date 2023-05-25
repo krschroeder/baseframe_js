@@ -66,7 +66,7 @@ export interface IModalDefaults extends LocationHashTracking {
     afterClose(modalObj: ModalObj): void;
 }
 
-const VERSION = '1.1.1';
+const VERSION = '1.1.2';
 const EVENT_NAME = 'modal';
 const DATA_NAME = 'Modal';
 
@@ -221,8 +221,8 @@ export default class Modal {
             modalID = _.modalID,
             modalAttr = {
                 class: cssPrefix + (modalCss ? ' ' + modalCss : ''),
-                'aria-label': (ariaLabel || _.element.dataset.ariaLabel) || '',
-                'aria-labelledby': (ariaLabelledby || _.element.dataset.ariaLabelledby) || '',
+                'aria-label': (ariaLabel || _.element.dataset.ariaLabel) || null,
+                'aria-labelledby': (ariaLabelledby || _.element.dataset.ariaLabelledby) || null,
                 id: modalID
             },
             closeBtnAttrs = { class: cssPrefix + '__btn-dismiss', type: 'button', 'aria-label': 'Close' },

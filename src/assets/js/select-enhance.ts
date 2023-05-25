@@ -34,7 +34,7 @@ export interface ISelectEnhanceDefaults {
     afterChange($select: Cash);
 }
 
-const VERSION = "2.4.0";
+const VERSION = "2.4.1";
 const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 
@@ -458,7 +458,7 @@ export default class SelectEnhance {
         SelectEnhance.buildOptionsList(_);
     }
 
-    static buildOptionsList(_: SelectEnhance) {
+    static buildOptionsList(_: SelectEnhance, $selectList?: Cash) {
 
         const { cssPrefix } = _.params;
         const optGroup = _.select.getElementsByTagName('optgroup');
@@ -481,8 +481,8 @@ export default class SelectEnhance {
         }
 
         const options = _.select.getElementsByTagName('option');
-
-        _.$selectList = $('<div>').attr({
+ 
+        _.$selectList = $selectList ? $selectList : $('<div>').attr({
             class: cssPrefix + '__list',
             role: 'listbox',
             id: _.selectId + '_listbox',
@@ -671,9 +671,9 @@ export default class SelectEnhance {
 
             if (_) {
 
-                _.$selectList.remove();
-                _.optionSet = new WeakMap();
-                SelectEnhance.buildOptionsList(_);
+                _.$selectList.empty();
+                _.optionSet = new WeakMap(); 
+                SelectEnhance.buildOptionsList(_, _.$selectList);
             } else {
                 console.warn(`No instance of a selectbox`, element);
             }

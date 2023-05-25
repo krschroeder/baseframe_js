@@ -107,6 +107,8 @@ $('select').selectEnhance({
     focusOut($el) {console.log('focus out select',$el)}
 });
 
+SelectEnhance.refreshOptions($('select'));
+
 $('select.nope').lazyLoad('remove')
 
 $('.background-area-bg').lazyLoad({observerID: 'background-area-bg', inEvt: (el)=>{console.log('el',el)}});

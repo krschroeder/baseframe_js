@@ -1,6 +1,6 @@
 //lets bring it all on in
 import $ from 'cash-dom';
-import type { Cash } from 'cash-dom';
+import type { Cash, CashStatic } from 'cash-dom';
 
 import installStoreToLibrary, {
     libraryExtend,
@@ -14,6 +14,7 @@ import installStoreToLibrary, {
     Parallax,
     SelectEnhance,
     Tabs,
+    Toastr,
     // installStoreAsDataToLibrary,
     formInputs,
     getHashParam,
@@ -45,13 +46,21 @@ libraryExtend([
     NavMobile,
     Parallax,
     SelectEnhance,
-    Tabs
+    Tabs,
+    Toastr
 ],false); 
 
 // console.log(Collapse)
 // Defaults overrides
 // Modal.defaults = $.extend(Modal.defaults, {backDropClose: false});
 
+
+declare module 'cash-dom' {
+
+    interface CashStatic {
+        toastr: typeof Toastr
+    }
+}
 $.extend({getHashParam: getHashParam});
 $.extend({getUrlParam: getUrlParam});
 $.extend({cookies: cookies});
@@ -60,6 +69,8 @@ $.extend({modal: Modal});
 $.extend({collapse: Collapse});
 $.extend({tabs: Tabs});
 $.extend({selectEnhance: SelectEnhance});
+$.extend({toastr: Toastr});
+
 
 
 const smoothScrollCallback = (arg,dos) => {
@@ -125,3 +136,57 @@ $('p').lazyLoad({
         setTimeout(()=> {el.style.opacity = '';},1000);
     }
 });
+
+
+{
+    // Example 1: standard way
+    $('#toastr-1').toastr({
+        content: 'Toast is good for breakfast',
+        duration: 7000
+    });
+
+    // Example 2: extend perhaps in Cash then call on click
+    const toastr1 = new $.toastr($('#toastr-2')[0] as HTMLElement, {
+        content: 'Toast is good for breakfast',
+        duration: 5000
+    });
+    const toastRandomMsgs = [
+        'I boast about my toast.',
+        'The hostess with the toastess',
+        'toast is best, when its not burnt',
+        'The fire is quite toasty',
+        'Lets toast, to toast!'
+    ]
+    const randomToastMsg = () => {
+        return toastRandomMsgs[Math.floor(Math.random() * toastRandomMsgs.length)]
+    }
+
+    $('#toastr-2').on('click',function(){
+        setTimeout(() => {
+            toastr1.setContent(randomToastMsg(),true)
+        },2500)
+    });
+
+    // Example 3,4: somewhere else on the page
+    $('#toastr-3').toastr({
+        content: randomToastMsg(),
+        duration: 5000,
+        cssGroupKey: 'bottom'
+    });
+
+    $('#toastr-4').toastr({
+        content: randomToastMsg(),
+        duration: 5000,
+        cssGroupKey: 'bottom'
+    });
+}
+
+setTimeout(function(){
+
+    Toastr.setContent($('#toastr-1'), $('<div>').append(
+        
+        $('<p>').text('Is the 4 slot really better than the 2 slotted toaster?')
+        ), false);
+}, 10000)
+
+ 

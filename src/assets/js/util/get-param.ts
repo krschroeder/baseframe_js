@@ -1,9 +1,9 @@
 
-const _getParam = (name: string,
-   searchStr:string = window.location.search,
-   start:string = '?&',
-   end:string = '([^&#]*)|&|#|$'
-): string | null => {
+const _getParam = (name ,
+   searchStr = window.location.search,
+   start = '?&',
+   end = '([^&#]*)|&|#|$'
+)  => {
 
    name = name.replace(/[\[\]]/g, '\\$&');
 
@@ -15,7 +15,7 @@ const _getParam = (name: string,
    return decodeURIComponent(results[2]);
 }
 
-const getUrlParam = (name: string, searchStr = window.location.search): string | null => {
+const getUrlParam = (name , searchStr = window.location.search)  => {
    return _getParam(name, searchStr);
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "baseframe-js",
-  "version": "4.8.2",
+  "version": "4.9.0",
   "description": "A suite of useful Javascript plugins and functions to help with Front-end Development on websites",
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
     "navigation",
     "responsive",
     "tabs",
+    "toastr",
     "trap focus",
     "dropdowns",
     "lazy load",

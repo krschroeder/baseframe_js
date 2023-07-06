@@ -16,6 +16,7 @@ import NavMobile from './nav-mobile';
 import Parallax from './parallax';
 import SelectEnhance from './select-enhance';
 import Tabs from './tabs';
+import Toastr from './toastr';
 
 import cookies from './cookies';
 import formInputs from './form-input';
@@ -37,6 +38,7 @@ export {
     Parallax,
     SelectEnhance,
     Tabs,
+    Toastr,
     cookies,
     formInputs,
     getHashParam,

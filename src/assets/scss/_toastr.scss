@@ -1,0 +1,72 @@
+$toastrBg: #333;
+$toastrColor: #fff;
+$startPositionStd: translateY(-8rem);
+$startPositionBottom: translateY(8rem);
+$endPosition: translateY(0);
+
+.toastr {
+    position: relative;
+    width: 100%;
+    max-width: 25rem;
+    padding: 1rem;
+    padding-right: 2.5rem;
+    background: $toastrBg;
+    color: $toastrColor;
+    box-shadow: 0 0 .5rem rgba(#000, 0.25);
+    opacity: 0;
+    margin-top: 1rem;
+    transform: $startPositionStd;
+
+    transition: 
+        transform 250ms ease-in-out, 
+        opacity 250ms ease-out
+    ;
+
+    &--enabled {
+        transform: $endPosition;
+        opacity: 1;
+    }
+
+    &--dismiss {
+        transform: $startPositionStd;
+        opacity: 0;
+    }
+
+    &__btn-dismiss {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        color: $toastrColor;
+        cursor: pointer;
+        font-size: 0.875rem;
+    }
+}
+
+.toastr-wrap {
+    position: fixed;
+    z-index: 5200;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    width: 100%;
+
+    &--std {
+        inset: 0 0 auto 0;
+    }
+
+    // Should we ever have this on the bottom or 
+    // placed elsewhere
+    &--bottom {
+        inset: auto 0 0 0;
+        flex-flow: column-reverse;
+
+        .toastr {
+            transform: $startPositionBottom;
+            &--enabled {
+                transform: $endPosition;
+            }
+        }
+    }
+}

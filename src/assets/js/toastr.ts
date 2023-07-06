@@ -8,6 +8,7 @@ import { CSS_TRANSISTION_DELAY } from "./util/constants";
 
 export interface IToasterDefaults {
     duration?: number;
+    ariaLive?: 'off' | 'polite' | 'assertive';
     animationDuration?: number;
     appendTo?: Selector;
     content: Selector;
@@ -35,6 +36,7 @@ const DEFAULTS: IToasterDefaults = {
     dismissCss: 'toastr--dismiss',
     btnDismissCss: 'toastr__btn-dismiss',
     closeIconCss: 'ico i-close',
+    ariaLive: 'polite',
     closeTextCopy: 'Dismiss',
     cssGroupKey: 'std',
     oneOnly: false
@@ -158,10 +160,10 @@ export default class Toastr {
 
     private buildElems() {
         const _ = this;
-        const { btnDismissCss, closeIconCss, closeTextCopy, outerCss } = _.params;
+        const { ariaLive, btnDismissCss, closeIconCss, closeTextCopy, outerCss } = _.params;
 
         _.$toastrBody = $('<div>').attr({ class: _.params.outerCss + '__body' });
-        _.$toastrWrap = $('<div>').attr({ class: outerCss, role: 'alert' }).append(
+        _.$toastrWrap = $('<div>').attr({ class: outerCss, role: 'alert', 'aria-live': ariaLive }).append(
             _.$toastrBody,
             $('<button>').attr({ type: 'button', class: btnDismissCss }).append(
                 $('<i>').attr({ class: closeIconCss }).append(

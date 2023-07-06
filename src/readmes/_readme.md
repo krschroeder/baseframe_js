@@ -48,6 +48,7 @@ import installStoreToLibrary, {
     Parallax,
     SelectEnhance,
     Tabs,
+    Toastr,
     cookies,
     formInputs,
     smoothScroll,
@@ -78,7 +79,8 @@ libraryExtend([
     Modal,
     Parallax,
     SelectEnhance,
-    Tabs
+    Tabs,
+    Toastr
 ]); 
 ```
 
@@ -128,6 +130,10 @@ __[View Select Enhance](#select-enhance-plugin)__
 Tabs in tabs, change onhashchange this does it for tabs!
 __[View Tabs](#tabs-plugin)__
 
+
+### Toastr
+Toastr for little dissmisable message to notify a user!
+__[View Tabs](#toastr-plugin)__
 #### Removing the plugin ####
 
 Each plugin can be removed by calling `$('.plugin-selector').plugin('remove')`, and it'll call the static method to remove it and all its components. Or if you want it can be stored as a method `$.plugin.remove($('.plugin-selector').eq(1))` or `$.plugin.remove('.plugin-selector')` and done that way.
@@ -336,3 +342,7 @@ trappedFocus.remove();
 <br>
 <br>
 @@include('./tabs.md')
+<br>
+<br>
+<br>
+@@include('./toastr.md')

@@ -112,6 +112,7 @@ function buildDeclarationFilesToTemp(done) {
 	}
 	
 }
+
 function buildDeclarationFiles(done) {
 	if (PRODUCTION) {
 		// declarations

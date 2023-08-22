@@ -133,7 +133,7 @@ __[View Tabs](#tabs-plugin)__
 
 ### Toastr
 Toastr for little dissmisable message to notify a user!
-__[View Tabs](#tabs-plugin)__
+__[View Tabs](#toastr-plugin)__
 #### Removing the plugin ####
 
 Each plugin can be removed by calling `$('.plugin-selector').plugin('remove')`, and it'll call the static method to remove it and all its components. Or if you want it can be stored as a method `$.plugin.remove($('.plugin-selector').eq(1))` or `$.plugin.remove('.plugin-selector')` and done that way.
@@ -838,8 +838,8 @@ afterOpen | function | ($element, outerElement, enableBtn) => {} | Function to r
 afterClose | function | ($element, outerElement, enableBtn) => {} | Function to run after the nav is closed.
 doTrapFocus | boolean | true | Traps the focus to just the visible anchors and buttons within the navigation.
 trapFocusElem | string | null | selector string (or can be dom element) if we need to extend the trap focus slightly outside the main nav element.
-stopPropagation | boolean | true, | Stops the click from propagating up in the DOM from the nav element.
-bkptEnable | number | null | Optinally specify when to enable the mobile navigation with screen width (in pixels). This will override whether or not the `enableBtn` is visible, which is the conditional that enables this menu to function.
+stopPropagation | boolean | true | Stops the click from propagating up in the DOM from the nav element.
+bkptEnable | number | null | Optionally specify when to enable the mobile navigation with screen width (in pixels). This will override whether or not the `enableBtn` is visible, which is the conditional that enables this menu to function.
 
 ### Example
 
@@ -1025,7 +1025,7 @@ tabsHeadCss | string | 'tabs__nav' | The CSS class for the tabs navigation, adde
 useHashFilter | string | null | If there is a number of elements where the `location.hash` value is used, it may be necessary to filter it to get the intended data. Pass in a string value, i.e.: 'tabs' and it'll load and filter through as needed while maintaining the remaining location hash values. Example value of this could be `#tabs=tabid&tabs2=another-tabids&foo=bar&baz=foo`. This only gets used if 'useLocationHash' option is selected. 
 useLocationHash | boolean | true | Use window location hash and history push state so the browser back button can be used (or forward as well) to toggle through tabs.
 loadLocationHash | boolean | true | Add in location hash parameters to load default tabs. `#files=files-inner` loading multiple is possible if many diffrent tabs. Also load tabs within tabs and such as well.
-historyType | string | 'push' | If using using `useLocationHash` or a history of events, 'push' pushes a new state, and 'replace' replaces the current.
+historyType | 'push'\|'replace' | 'push' | If using using `useLocationHash` or a history of events, 'push' pushes a new state, and 'replace' replaces the current.
 tabbing | boolean | true | Enables tabbing with keyboard arrows. A tab list should only be focusable one at a time with the 'tab' key.
 tabDirection| string | 'horizontal' | Typically tabs are 'horizontal' but may also go 'vertical'. They take either or as an option, otherwise it'll throw a `console.warn` to correct.
 addIDtoPanel | boolean | true | Adds an ID attribute to the panel for ADA compliance, but isn't necessary for its functionality.
@@ -1105,7 +1105,7 @@ $(".tabs__container").tabs({
 Little toastr messages for everyone, side of marmalade optional.
 
 ### Features
-Can set groups of toastr's with the `cssGroupKey` if there ever needs to be multiple toastr's at once.
+Can set groups of toastr's with the `cssGroupKey` if there ever needs to be multiple toastr's at once in various positions.
 
 ### Settings
 

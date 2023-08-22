@@ -2,7 +2,7 @@
 Little toastr messages for everyone, side of marmalade optional.
 
 ### Features
-Can set groups of toastr's with the `cssGroupKey` if there ever needs to be multiple toastr's at once.
+Can set groups of toastr's with the `cssGroupKey` if there ever needs to be multiple toastr's at once in various positions.
 
 ### Settings
 

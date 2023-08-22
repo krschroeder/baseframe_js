@@ -25,6 +25,9 @@ select {
     width: auto;
     display: inline-block; 
 	 
+	select {
+		border: 0;
+	}
 
 	&:after {
 		content: " ";
@@ -55,7 +58,8 @@ select {
 		z-index: 100;
 		overflow: hidden;
 		text-indent: -999rem !important;
-		font-size: 0rem;
+		color: transparent !important;
+		font-size: 1rem;
 
 		&:focus {
 			outline: 1px dashed;

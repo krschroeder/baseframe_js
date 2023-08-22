@@ -139,17 +139,6 @@ $('p').lazyLoad({
 
 
 {
-    // Example 1: standard way
-    $('#toastr-1').toastr({
-        content: 'Toast is good for breakfast',
-        duration: 7000
-    });
-
-    // Example 2: extend perhaps in Cash then call on click
-    const toastr1 = new $.toastr($('#toastr-2')[0] as HTMLElement, {
-        content: 'Toast is good for breakfast',
-        duration: 5000
-    });
     const toastRandomMsgs = [
         'I boast about my toast.',
         'The hostess with the toastess',
@@ -157,15 +146,31 @@ $('p').lazyLoad({
         'The fire is quite toasty',
         'Lets toast, to toast!'
     ]
+
     const randomToastMsg = () => {
         return toastRandomMsgs[Math.floor(Math.random() * toastRandomMsgs.length)]
     }
-
-    $('#toastr-2').on('click',function(){
-        setTimeout(() => {
-            toastr1.setContent(randomToastMsg(),true)
-        },2500)
+    // Example 1: standard way
+    $('#toastr-1').toastr({
+        content: 'Toast is good for breakfast',
+        duration: 7000
     });
+
+    const $toastr2 = $('#toastr-2');
+
+    if ($toastr2.length) {
+        // Example 2: extend perhaps in Cash then call on click
+        const toastr2 = new $.toastr($toastr2[0] as HTMLElement, {
+            content: 'Toast is good for breakfast',
+            duration: 5000
+        });
+
+        $toastr2.on('click',function(){
+            setTimeout(() => {
+                toastr2.setContent(randomToastMsg(),true)
+            },2500)
+        });
+    }
 
     // Example 3,4: somewhere else on the page
     $('#toastr-3').toastr({
@@ -182,11 +187,14 @@ $('p').lazyLoad({
 }
 
 setTimeout(function(){
+    const $toaster1 = $('#toastr-1');
+    if ($toaster1.length) {
 
-    Toastr.setContent($('#toastr-1'), $('<div>').append(
-        
-        $('<p>').text('Is the 4 slot really better than the 2 slotted toaster?')
+        Toastr.setContent($('#toastr-1'), $('<div>').append(
+            
+            $('<p>').text('Is the 4 slot really better than the 2 slotted toaster?')
         ), false);
+    }
 }, 10000)
 
  

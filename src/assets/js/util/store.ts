@@ -120,30 +120,6 @@ const Store = {
 		mapData.delete(element, keyStore)
 	}
 };
-
-// one state var to check if its installed the Store method
-// export let storeFnInstalled = false;
-// export const setStoreFnInstalled = () => storeFnInstalled = true;
-
-// function installStoreToLibrary(expose = false) {
-
-// 	storeFnInstalled = true;
-
-// 	if (expose) {
-// 		$.extend(Store, {
-// 			expose:(what: boolean | "ret"): void | WeakMap<object,any> => mapData.expose(what)
-// 		});
-// 	}
-
-// 	$.extend({ store: Store });
-
-// 	$.fn.extend({store: function (dataName, data) {
-// 		return elemData(this, dataName, data); 
-// 	}});
-
-// 	$.fn.extend({removeStore: function (dataName) {
-// 		Store.remove(this, dataName);
-// 	}});
-// }
+ 
 
 export default Store;

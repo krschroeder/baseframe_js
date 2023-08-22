@@ -75,6 +75,7 @@ export default class SelectEnhance {
     public index: number;
     public id: string;
     public selectId: string;
+    public isReadOnly: boolean;
     public $label: Cash;
     public $selectEnhance: Cash;
     public $textInput: Cash;
@@ -105,6 +106,8 @@ export default class SelectEnhance {
         _.selectListBoxInFullView = true;
         _.keyedInput = "";
 
+        _.isReadOnly = typeof _.$select.attr('readonly') === "string";
+
         if (_.select.multiple) {
             console.warn(`The SelectEnhance plugin doesn't support multiple selections.`)
         }
@@ -127,7 +130,7 @@ export default class SelectEnhance {
 
         _.setUpSelectHtml();
 
-        if (mobileOS && _.params.mobileNative) {
+        if (mobileOS && _.params.mobileNative || _.isReadOnly) {
 
             _.mobileOnlyIfNavite();
 
@@ -442,8 +445,8 @@ export default class SelectEnhance {
         // jQuery, elements need to be bound to the DOM before they
         // can have events attached to them. So this is the solution
         _.$selectEnhance = _.$select.parent();
-
-        if (mobileOS && _.params.mobileNative) {
+       
+        if (mobileOS && _.params.mobileNative || _.isReadOnly) {
             // exit if its a mobile device after wrapping for styling
             return;
         }

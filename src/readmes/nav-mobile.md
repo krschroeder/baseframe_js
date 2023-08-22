@@ -28,8 +28,8 @@ afterOpen | function | ($element, outerElement, enableBtn) => {} | Function to r
 afterClose | function | ($element, outerElement, enableBtn) => {} | Function to run after the nav is closed.
 doTrapFocus | boolean | true | Traps the focus to just the visible anchors and buttons within the navigation.
 trapFocusElem | string | null | selector string (or can be dom element) if we need to extend the trap focus slightly outside the main nav element.
-stopPropagation | boolean | true, | Stops the click from propagating up in the DOM from the nav element.
-bkptEnable | number | null | Optinally specify when to enable the mobile navigation with screen width (in pixels). This will override whether or not the `enableBtn` is visible, which is the conditional that enables this menu to function.
+stopPropagation | boolean | true | Stops the click from propagating up in the DOM from the nav element.
+bkptEnable | number | null | Optionally specify when to enable the mobile navigation with screen width (in pixels). This will override whether or not the `enableBtn` is visible, which is the conditional that enables this menu to function.
 
 ### Example
 

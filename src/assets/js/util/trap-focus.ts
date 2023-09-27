@@ -20,7 +20,17 @@ export interface ITrapFocusRemove {
     remove(): void
 };
 
-const canFocusEls = (i, el) => isVisible(el, true) && el.tabIndex !== -1;
+const canFocusEls = (i, el:HTMLElement) => {
+    
+    const baseFocusableRules = isVisible(el, true) && el.tabIndex !== -1;
+    const nodeName = el.nodeName.toUpperCase();
+    
+    if ((nodeName === 'BUTTON' || nodeName === 'INPUT')) {
+        return baseFocusableRules && !(el as HTMLButtonElement).disabled;
+    }
+    
+    return baseFocusableRules && el.style.pointerEvents !== 'none';
+}
 
 const trapFocus = (modalEl: Selector, props?: ITrapFocusProps): ITrapFocusRemove => {
 
@@ -39,11 +49,11 @@ const trapFocus = (modalEl: Selector, props?: ITrapFocusProps): ITrapFocusRemove
     $(document.body).on(`keydown.${nameSpace}`, function (e:KeyboardEvent) {
          
         const $focusable = $trapElem.find(focusableJoined).filter(canFocusEls);
-      
+        
         if (!$focusable.length) return;
-
+        const activeEl = document.activeElement;
         const lastFocusable = $focusable[$focusable.length - 1];
-        const isTabPressed = e.key === 'Tab' || e.keyCode === 9;
+        const isTabPressed = e.key === 'Tab';
 
         firstFocusable = $focusable[0]; 
         
@@ -51,9 +61,17 @@ const trapFocus = (modalEl: Selector, props?: ITrapFocusProps): ITrapFocusRemove
             return;
         }
 
+        if (activeEl.nodeName.toUpperCase() === 'BODY') {
+            // somehow we lost focus
+            // this can happen if the last element is disabled if it was focused
+            // so re-assign to the first element
+            firstFocusable && firstFocusable.focus(); 
+            e.preventDefault();
+        }
+
         if (e.shiftKey) { 
             // if shift key pressed for shift + tab combination
-            if (document.activeElement && 
+            if (activeEl && 
                 firstFocusable && 
                 document.activeElement.isSameNode(firstFocusable)
             ) {
@@ -62,9 +80,9 @@ const trapFocus = (modalEl: Selector, props?: ITrapFocusProps): ITrapFocusRemove
             }
         } else { 
             // if tab key is pressed
-            if (document.activeElement && 
+            if (activeEl && 
                 lastFocusable && 
-                document.activeElement.isSameNode(lastFocusable)
+                activeEl.isSameNode(lastFocusable)
             ) { 
                 firstFocusable && firstFocusable.focus(); 
                 e.preventDefault();

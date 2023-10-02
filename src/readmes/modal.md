@@ -19,7 +19,7 @@ backDropClose | boolean|  true | Toggle whether a user can click the backdrop to
 fromDOM | boolean |  true | If the modal content is grabbed from the DOM. Set to false if grabbed via an AJAX call or otherwise generated.
 modalCss | string |  null | Additional modal css for styling or other scripting purposes
 modalID | string |  null | The ID of the modal.
-src | string |  null | CSS selector for DOM elements, or can be custom created element from data either from an AJAX call or computed otherwise.
+src | string |  '' | CSS selector for DOM elements, or can be custom created element from data either from an AJAX call or computed otherwise. Optional if modal content is dynamic/generated.
 useHashFilter | string |  null | If there is a number of elements where the `location.hash` value is used, it may be necessary to filter it to get the intended data. Pass in a string value, i.e.: 'modal' and it'll load and filter through as needed while maintaining the remaining location hash values. this only gets used if 'useLocationHash' option is selected. 
 useLocationHash | boolean |  true |  Use the `window.location.hash` to open and close the items.
 loadLocationHash | boolean |  true | Loads with a location hash in the browser address bar, must of course be the ID of the item.
@@ -33,7 +33,7 @@ This is an object with the following props/elements that is the first (and only)
 ```javascript
 {
     $backdrop,
-    $content,
+    $content,// in the params this would be the src. If not specifying a source and using generated content use $dialogContent instead
     contentAppended: false, //state
     $dialog, //modal dialog
     $dialogContent, // modal dialog content
@@ -66,7 +66,7 @@ __HTML__
 <button type="button" id="btn-gen-content">Generated Content</button>
 
 <!-- Quick Image Carousel Example -->
-<div class="md-col-4 pic-group-holder">
+<div class="col pic-group-holder">
     <button type="button" 
         data-img-src="https://placekitten.com/1200/800"
         alt="Kittens (1)" class="pic-group"
@@ -151,6 +151,8 @@ __HTML__
                     </footer>
                 `);
 
+                // NOTE: Keyboard events with arrow keys and escape should be added for accessibility 
+                // in addition to click... but this is a quick example!
                 modalObj.$dialogContent.on('click', 'button', function(e){
                     if (this.classList.contains('prev-btn')) {
 

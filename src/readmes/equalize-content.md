@@ -26,13 +26,13 @@ __The following is an example html structure for this plugin:__
 __HTML__
 ```html
 <div class="equalize-container">
-	<div class="sm-col-6 md-col-4 lg-col-3" >
+	<div class="col" >
 		<div class="equalize or-your-equalize-class box">
 			<h3>Demand Generation</h3>
 			<p> Hileman Group provides holistic demand generation services for our clients, from top-of-the-funnel tactics to nurturing tactics that drive the closing sale.</p>
 		</div>
 	</div>
-	<div class="sm-col-6 md-col-4 lg-col-3" >
+	<div class="col" >
 		<div class="equalize or-your-equalize-class box">
 			&hellip;
 		</div>

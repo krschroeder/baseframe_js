@@ -26,32 +26,32 @@ __The following structure should be used with this plugin:__
 __HTML__
 ```html
 <div class="container v-space">
-	<div class="relative md-wide-4">
+	<div class="relative col">
 		<div class="parallax-bg" data-parallax-options="{speed:-10, initOffset:true, bgFill: false, scrollMaxPxStop: 120}">
 			<img src="https://placehold.it/768x768/565656" alt="Placeholder" />
 		</div>
 	</div>
-	<div class="relative md-wide-4">
+	<div class="relative col">
 		<div class="parallax-bg" data-parallax-options="{speed:10, initOffset:true, bgFill: false, scrollMaxPxStop: 120}">
 			<img src="https://placehold.it/768x768/444" alt="Placeholder" />
 		</div>
 	</div>
-	<div class="relative md-wide-4">
+	<div class="relative col">
 		<div class="parallax-bg" data-parallax-options="{speed:30, initOffset:true, bgFill: false, scrollMaxPxStop: 220, axis: 'x'}">
 			<img src="https://placehold.it/768x768/222" alt="Placeholder" />
 		</div>
 	</div>
-	<div class="relative md-wide-4">
+	<div class="relative col">
 		<div class="parallax-bg" data-parallax-options="{speed:-10, initOffset:true, bgFill: false, scrollMaxPxStop: 120}">
 			<img src="https://placehold.it/768x768" alt="Placeholder" />
 		</div>
 	</div>
-	<div class="relative md-wide-4">
+	<div class="relative col">
 		<div class="parallax-bg" data-parallax-options="{speed: -20, initOffset:true, bgFill: false, scrollMaxPxStop: 180}">
 			<img src="https://placehold.it/768x768/777" alt="Placeholder" />
 		</div>
 	</div>
-	<div class="relative md-wide-4">
+	<div class="relative col">
 		<div class="parallax-bg" data-parallax-options="{speed:-20, initOffset:true, bgFill: false, axis: 'x'}">
 			<img src="https://placehold.it/768x768/999" alt="Placeholder" />
 		</div>

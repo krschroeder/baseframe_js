@@ -22,6 +22,7 @@ import cookies from './cookies';
 import formInputs from './form-input';
 import throttledResize from './util/throttle-resize';
 
+
 // this is needed for all to operate
 // so I would say this makes sense
 export default installStoreToLibrary;

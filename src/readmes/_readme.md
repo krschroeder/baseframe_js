@@ -8,7 +8,7 @@ These are made to work with [Cash](https://github.com/fabiospampinato/cash) (wit
 
 ## Features
 ### It's small!
-Combined all together its ~ 60k. Add that with Cash and its less than jQuery alone!
+Combined all together its ~ 65k. Add that with Cash and its less than jQuery alone!
 
 ### Pass in parameter options with a `data-` attribute
 The data attribute is always the `data-` (of course) and then the plugin name `pluginName` followed by `-options`.
@@ -34,8 +34,12 @@ Most of these scripts all work back to IE11. There should be some polyfilling ne
 
 
 ## Example Script of Importing Everything In
+
+### Barrel File
+
+This project is set-up with a __barrel file__ or a single reference to everything in the project. This is the neater syntax, but the drawback to this is that it will not tree-shake the unused imports.
+
 ```javascript
-//lets bring it all on in
 import installStoreToLibrary, {
     installStoreAsDataToLibrary,
     libraryExtend,
@@ -55,21 +59,50 @@ import installStoreToLibrary, {
     throttledResize,
     trapFocus
 } from 'baseframe-js';
+```
 
-// or individually (best for TS type support)
+### Individual Imports (Recommended)
+
+This is the recommended way to bring everything in. Not a 'neat' as the use of the barrel file, but this will reliably tree-shake anything unused in the project. 
+
+```javascript
+// necessary functions
+import installStoreToLibrary from 'baseframe-js/build/js/util/install-store-to-library';
+// or to extend as $.data to mimick jQuery's
+import installStoreAsDataToLibrary from 'baseframe-js/build/js/util/install-store-as-data-to-library';
+
+import libraryExtend from 'baseframe-js/build/js/util/library-extend';
+
+// Plugins individually (best for TS type support)
 import AccessibleMenu from 'baseframe-js/build/js/accessible-menu';
 import Collapse from 'baseframe-js/build/js/collapse';
 
-//necessary for all plugin's to operate
-//much like jQuery's $.data method, the $.store is similar
-//NOTE: this can be ignored if using jQuery, and it'll fallback to its 
+// some of the utility functions in the project...
+import throttledResize from 'baseframe-js/build/js/util/throttle-resize';
+import smoothScroll from 'baseframe-js/build/js/util/smooth-scroll';
+import trapFocus from 'baseframe-js/build/js/util/trap-focus';
+```
+
+### Plugins and the \$.store (or \$.data) method.
+
+If the `libraryExtend` function is used to extend the plugins in __Cash Dom__, when initialized the plugin instance is stored to the element. In __Cash Dom__ the data method doesn't work the same as it does (by design) with jQuery's, so a `$.store` method was made to essentially mimick that. If using jQuery, this function call can be ignored.
+
+```javascript
+// necessary for all plugin's to operate
+// much like jQuery's $.data method, the $.store is similar
+// NOTE: this can be ignored if using jQuery, and it'll fallback to its 
 // $.fn.data method to store instances and their params.
 installStoreToLibrary(true);
 // or the following function to mimick jQuery's data fn
-// installStoreAsDataToLibrary(true)
+installStoreAsDataToLibrary(true);
+```
+### Extending into the Library
 
-//perhaps for some reason you don't want to install
-//but here we obviously are
+By default the plugin's don't extend into the __Cash Dom__ library, rather they need to be explicitly extended. This applies the same if using jQuery of course as well.
+
+```javascript
+// not necessary for the plugin's to work,
+// but it's recommended that we do extend to the library
 libraryExtend([
     Collapse,
     EqualizeContent,
@@ -91,48 +124,48 @@ Styles are located in the `src/assets/scss/` directory and all can be grabbed th
 ## Plugin Names and What They Do.
 
 ### Accessible Menu
-Adds tabbing, allows the use of arrows for toggling around the navigation, which is configurable depending on the menu design. The use of the escape key to go up a level.
-__[View](#accessible-menu-plugin)__
+Adds tabbing, allows the use of arrows for toggling around the navigation, which is configurable depending on the menu design. The use of the escape key to go up a level.<br>
+__[View Accessible Menu](#accessible-menu-plugin)__
 
 ### Collapse 
-It's is for toggling collapsible sections. Can be used like an accordion and etc. 
-__[View](#collapse-plugin)__
+It's is for toggling collapsible sections. Can be used like an accordion and etc.<br>
+__[View Collapse](#collapse-plugin)__
 
 ### Equalize Content
-When Flexbox, or other options won&rsquo;t work, use this to equalize content 
+When Flexbox, or other options won&rsquo;t work, use this to equalize content. With current CSS will very seldom, if ever really need to be used <br>
 __[View Equalize Content](#equalize-plugin)__
 
 ### Lazy Load
-Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` API. 
+Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` API.<br>
 __[View Lazy Load](#plugin-lazy-load)__
 
 ### Modal
-This is a more minimalistic version of the 'popup' plugin. Nice bit of flexibility do things like image carousels, confirm prompts and such with just a little peppering of custom code.
+This is a more minimalistic version of the 'popup' plugin. Nice bit of flexibility do things like image carousels, confirm prompts and such with just a little peppering of custom code.<br>
 __[View Modal](#modal-plugin)__
 
 ### Navigation Desktop
-This plugin just adds a delay to the desktop navigation for the nestled levels of a `<ul>`. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page. 
+This plugin just adds a delay to the desktop navigation for the nestled levels of a `<ul>`. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page.<br>
 __[View Navigation Desktop](#nav-desktop-plugin)__
 
 ### Navigation Mobile
-Neat little mobile navigation plugin 
+Neat little mobile navigation plugin.<br> 
 __[View Navigation Mobile](#nav-mobile-plugin)__
 
 ### Parallax Elements
-For making a parallaxing elements on the page. Lots of configurable options.
+For making a parallaxing elements on the page. Lots of configurable options.<br>
 __[View Parallax Elements](#parallax-plugin)__
 
 ### Select Enhance
-Enhance a selectbox
+Enhance a selectbox.<br>
 __[View Select Enhance](#select-enhance-plugin)__
 
 ### Tabs
-Tabs in tabs, change onhashchange this does it for tabs!
+Tabs in tabs, change onhashchange this does it for tabs!<br>
 __[View Tabs](#tabs-plugin)__
 
 
 ### Toastr
-Toastr for little dissmisable message to notify a user!
+Toastr for little dissmisable message to notify a user!<br>
 __[View Tabs](#toastr-plugin)__
 #### Removing the plugin ####
 
@@ -146,7 +179,7 @@ Each plugin can be removed by calling `$('.plugin-selector').plugin('remove')`, 
 
 ### Class Set-up for using `LibraryExtend` ###
 
-Each class just needs to have the following properties set on it
+Each Plugin class has the following properties set on it.
 
 ```javascript
     class YourClass {

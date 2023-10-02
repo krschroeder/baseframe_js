@@ -26,7 +26,7 @@ type ModalObj = {
 }
 
 export interface IModalOptions extends LocationHashTracking {
-    src: Selector;
+    src?: Selector;
     modalID: string;
     enableEvent?: string;
     appendTo?: Selector;
@@ -82,7 +82,7 @@ const DEFAULTS: IModalDefaults = {
     fromDOM: true,
     modalCss: null,
     modalID: null,
-    src: null,
+    src: '',
     useHashFilter: null,
     loadLocationHash: true,
     useLocationHash: true,

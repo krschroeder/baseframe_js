@@ -30,7 +30,7 @@ __The following is an example html structure for this plugin:__
 
 __HTML__
 ```html
-<div class="md-col-6 center collapse collapse-group" >
+<div class="collapse collapse-group" >
 <div class="collapse__item">
 	<div class="collapse__header">
 		<h2><a href="#item-1" class="collapse__btn" role="button" aria-expanded="false" aria-controls="item-1"

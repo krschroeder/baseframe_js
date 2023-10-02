@@ -80,14 +80,14 @@
 
 			$('#btn-gen-content').modal({
 				useHashFilter: 'modal',
-				src: $('<div>').attr({ class: 'gen-content' }),
+				src: $('<div>').attr({ class: 'gen-content' }), 
 				fromDOM: false,
 				modalID: 'gen-content',
 				onOpenOnce(modalObj) {
-					console.log(modalObj.$content)
-					modalObj.$content.on('click', '.dismiss', modalObj.disableModal);
+				 
+					modalObj.$dialogContent.on('click', '.dismiss', modalObj.disableModal);
 
-					modalObj.$content.append(`
+					modalObj.$dialogContent.append(`
 					<h2>Some generated Content</h2>
 					<p>Ullamco <a href="#">link</a> laboris nisi ut aliquid ex ea commodi consequat. Sed haec quis possit intrepidus aestimare tellus. Quam diu etiam furor <a href="#">iste tuus</a> nos eludet? Curabitur est gravida et libero vitae dictum.</p>
 					<button type="button" class="button dismiss">Dimiss</button>

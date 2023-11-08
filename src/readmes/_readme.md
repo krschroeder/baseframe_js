@@ -329,7 +329,7 @@ focusFirst | boolean | true | Focus's the first element
 nameSpace | string | 'trapFocus' | Unique namespace for the tabbing keydown event.
 focusableElements | string or array | ['button', 'a', 'input', 'select', 'textarea', '[tabindex]'] | A listing of focusable elements.
 ```javascript
-const trappedFocus = trapFocus(element:JQuery<HTMLElement> | HTMLElement, params?: PlainObject);
+const trappedFocus = trapFocus(element:JQuery<HTMLElement> | Cash | HTMLElement, params?: PlainObject);
 // to remove later on
 trappedFocus.remove();
 

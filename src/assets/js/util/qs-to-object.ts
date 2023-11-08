@@ -1,6 +1,6 @@
 const qsArrayFormat = /(^\[)((?:(?!\]$)(.|\n|))*)(\]$)/;//begins with '[' and ends with ']';
 
-const qsToObject = (qs: string = location.search.substring(1)): object => {
+const qsToObject = (qs: string = location.search.substring(1)): Record<string,any> => {
 
    if (qs) {
       const jsonStr: string = '{' +
@@ -11,21 +11,28 @@ const qsToObject = (qs: string = location.search.substring(1)): object => {
             }).join(',')
          + '}';
 
-      const jsonObj: object = JSON.parse(jsonStr, (key, value) => {
+      try {
+         const jsonObj: Record<string,any> = JSON.parse(jsonStr, (key, value) => {
 
-         if (value === 'true') return true;
-         if (value === 'false') return false;
-         // set as number, +'' evalutes to 0... we don't want that
-         if (value !== "" && typeof +value === 'number' && !isNaN(+value)) return +value;
-         // returns an array
-         if (qsArrayFormat.test(value) && typeof value === 'string') {
-            return value.replace(qsArrayFormat, '$2').split('%2C');
+            if (value === 'true') return true;
+            if (value === 'false') return false;
+            // set as number, +'' evalutes to 0... we don't want that
+            if (value !== "" && typeof +value === 'number' && !isNaN(+value)) return +value;
+            // returns an array
+            if (qsArrayFormat.test(value) && typeof value === 'string') {
+               return value.replace(qsArrayFormat, '$2').split('%2C');
+            }
+            return value;
          }
-         return value;
-      }
-      );
+         );
+   
+         return jsonObj;
 
-      return jsonObj;
+      } catch(e){
+         // log the error silently
+         console.warn('Malformed data when parsing', e);
+         return {}
+      }
 
    } else {
       return {};

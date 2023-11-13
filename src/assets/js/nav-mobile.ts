@@ -175,7 +175,9 @@ export default class NavMobile {
 
 		if (_.menuOpened) {
 			// closing
-			_.$element.parent()
+			_.$element
+				.addClass(menuIsClosingCss)
+				.parent()
 				.find(`.${menuOpenCss}`)
 				.removeClass(menuOpenCss)
 				.find("[style]").css('display', '');
@@ -183,6 +185,7 @@ export default class NavMobile {
 			$(outerElement).removeClass(menuOuterOpenCss).addClass(menuIsClosingCss);
 
 			transitionElem(() => {
+				_.$element.removeClass(menuIsClosingCss)
 				$(outerElement).removeClass(menuIsClosingCss);
 			}, slideDuration);
 

@@ -3,10 +3,9 @@ import $ from 'cash-dom';
 const submenuBtn = (params, menuText) => {
     const $btn = $('<button>').attr({
         class: params.submenuBtnCss,
-        type: 'button'
+        type: 'button',
+        'aria-label': menuText
     });
-
-    $btn.html(`<span class="sr-only">toggle submenu for "${menuText}"</span>`);
 
     return $btn;
 }

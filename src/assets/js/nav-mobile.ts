@@ -4,7 +4,6 @@ import type { StringPluginArgChoices } from './types/shared';
 import $ from 'cash-dom';
 import parseObjectFromString from './util/parse-object-from-string';
 import getType, { isVisible, transitionElem } from './util/helpers';
-import submenuBtn from './util/plugin/nav';
 import elemData from "./util/elem-data";
 import trapFocus, { ITrapFocusRemove } from './util/trap-focus';
 import { KEYS } from "./util/constants";
@@ -14,7 +13,9 @@ type submenuBtnSkipFn = (elem: HTMLElement) => boolean;
 export interface INavMobileOptions {
 	enableBtn: Selector;
 	ariaLabel?: string;
+	subMenuText?: string;
 	slideDuration?: number;
+	insertToggleBtnAfter?: string;
 	outerElement?: Selector;
 	outsideClickClose?: boolean;
 	hasUlCls?: string;
@@ -39,6 +40,8 @@ export interface INavMobileOptions {
 export interface INavMobileDefaults {
 	enableBtn: Selector;
 	ariaLabel: string;
+	subMenuText: string;
+	insertToggleBtnAfter: string;
 	slideDuration: number;
 	outerElement: string;
 	outsideClickClose: boolean;
@@ -72,6 +75,8 @@ const EVENT_NAME = 'navMobile';
 const DEFAULTS = {
 	enableBtn: '#mobile-nav-btn',
 	ariaLabel: 'Toggle site navigation',
+	subMenuText: 'toggle menu for',
+	insertToggleBtnAfter: 'a',
 	slideDuration: 400,
 	outerElement: document.body,
 	outsideClickClose: true,
@@ -220,7 +225,7 @@ export default class NavMobile {
 
 	addChildNavClass() {
 		const _ = this;
-		const { submenuBtnSkip } = _.params;
+		const { submenuBtnSkip, submenuBtnCss, subMenuText, insertToggleBtnAfter } = _.params;
 
 		$('li', _.$element).has('ul').each(function () {
 			const $this = $(this);
@@ -236,14 +241,20 @@ export default class NavMobile {
 
 
 			if (!$this.next('button').length && !skipUl) {
-				const $a = $this.find('a').first();
+				const $el = $this.find(insertToggleBtnAfter).first();
 
-				$a.addClass(_.params.hasUlCls);
+				$el.addClass(_.params.hasUlCls);
 
-				if ($a.length) {
-					if (($a as any)[0].parentNode.isSameNode(this)) {
-						// make sure the <a> is a direct child of <li>
-						$a.after(submenuBtn(_.params, $a.text()))
+				if ($el.length) {
+					if (($el as any)[0].parentNode.isSameNode(this)) {
+						// make sure the <el> is a direct child of <li>
+						$el.after(
+							$('<button>').attr({
+								class: submenuBtnCss,
+								type: 'button',
+								'aria-label': subMenuText + ' ' + $el.text().trim()
+							})
+						);
 					}
 				}
 			}

@@ -10,6 +10,8 @@ Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 enableBtn | string | '#mobile-nav-btn' | The selector to the mobile nav button to turn show the navigation.
 ariaLabel | string | 'Toggle site navigation' | The arial label for the `enable` button.
+subMenuText | string | 'toggle menu for' | Copy to prefix the button that toggles the sub-menu of a list item.
+insertToggleBtnAfter | string | 'a' | the element selector name for inserting the toggle button after.
 slideDuration | number | 400 | Duration for showing a sub menu item, CSS transistion should correspond.
 outerElement | string or HTMLElement | document.body | Element to attach `menuOpenCss` class to.
 outsideClickClose | boolean | true | Can close if clicked outside of the menu.

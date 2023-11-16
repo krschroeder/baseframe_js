@@ -2,7 +2,7 @@
 
 
 ### Features
-This plugin is for parallaxing page elements (and yes background images). Use the `bgFill` option and it'll magically expand to the height of its container if using a background image. It uses the `translate3d` property as its more efficient than using a `top` or `left` as well as `requestAnimationFrame`. Can be used to move elements either with a Y or X axis. 
+This plugin is for parallaxing page elements (and yes background images). Use the `bgFill` option and it'll magically expand to the height of its container if using a background image. It uses the `translate3d` property as its more efficient than using a `top` or `left` as well as `requestAnimationFrame`. Can be used to move elements either with a Y or X axis, also a Z axis for zooming (use `perspective` CSS prop on parent to work).
 
 ### Settings
 
@@ -18,6 +18,9 @@ outStop | number | 1 | 1 = 100% of the height of the element. 0.5 = 50%, etc. If
 minWidth | number | null | The minimum width for the parallax effect to run.
 maxWidth | number | null | The maximum width for the parallax effect to run.
 scrollMaxPxStop | number | 5000 | max an item can scroll. Make this less should you want it to stop prior to exiting the screen. Good for when you have content that it shouldn't overlap.
+zAxis | boolean | false  | Turns on a potential Z axis for zooming in (or out) of the element.
+zSpeed | number | 5 | Zoom speed of the element.
+zScrollMaxPxStop| number | 2000 | The maximum amount of pixels the Z axis can move.
 
 ### Example
 
@@ -26,8 +29,8 @@ __The following structure should be used with this plugin:__
 __HTML__
 ```html
 <div class="container v-space">
-	<div class="relative col">
-		<div class="parallax-bg" data-parallax-options="{speed:-10, initOffset:true, bgFill: false, scrollMaxPxStop: 120}">
+	<div class="relative col" style="perspective: 800px;">
+		<div class="parallax-bg" data-parallax-options="{speed:-10, initOffset:true, bgFill: false, scrollMaxPxStop: 120, zAxis: true}">
 			<img src="https://placehold.it/768x768/565656" alt="Placeholder" />
 		</div>
 	</div>

@@ -8,7 +8,9 @@ type axis =  'x' | 'y';
 
 export interface IParallaxOptions {
     speed?: number;
+	zSpeed?: number;
     axis?: axis;
+	zAxis?: boolean;
     relativeElem?: false | Cash;
     $heightElem?: Cash | null;
     initOffset?: boolean;
@@ -17,11 +19,14 @@ export interface IParallaxOptions {
     minWidth?: number | null;
     maxWidth?: number | null;
     scrollMaxPxStop?: number;
+    zScrollMaxPxStop?: number;
 }
 
 export interface IParallaxDefaults {
     speed: number;
+    zSpeed: number;
     axis: axis;
+	zAxis: boolean;
     relativeElem: false | Cash;
     $heightElem: Cash | null;
     initOffset: boolean;
@@ -30,20 +35,24 @@ export interface IParallaxDefaults {
     minWidth: number | null;
     maxWidth: number | null;
     scrollMaxPxStop: number;
+    zScrollMaxPxStop: number;
 }
 
-const VERSION = "1.1.0";
+const VERSION = "1.2.0";
 const DATA_NAME = 'Parallax';
 const EVENT_NAME = 'parallax';
 const DEFAULTS: IParallaxDefaults = {
 	speed: 7,
+	zSpeed: 5,
 	axis: 'y',
+	zAxis: false,
 	relativeElem: false,
 	$heightElem: null,
 	initOffset: false,
 	bgFill: false,
 	outStop: 1,
 	scrollMaxPxStop: 5000,
+	zScrollMaxPxStop: 2000,
 	minWidth: null,
 	maxWidth: null
 };
@@ -70,11 +79,15 @@ export default class Parallax {
 	public initiallyInView: boolean;
 	public elemHeight: number;
 	public speed: number;
+	public zSpeed: number;
 	public bgFillRatio: number;
 	public bgFill: boolean;
 	public axis: axis;
+	public zAxis: boolean;
 	public outStop: number;
 	public scrollMaxPxStop: number;
+	public zScrollMaxPxStop: number;
+	public lastZSpeed: number;
 	public minWidthIfSet: boolean;
 	public maxWidthIfSet: boolean;
 	public effectCleared: boolean;
@@ -145,12 +158,16 @@ export default class Parallax {
 		_.winWidth = _.$window.width();
 		_.elemHeight = _.params.$heightElem ? _.params.$heightElem.height() : -1;
 		_.speed = _._speed;
+		_.zSpeed = _._zSpeed;
 		_.bgFillRatio = _._bgFillRatio;
 		_.bgFill = _.params.bgFill;
 		_.axis = _.params.axis;
+		_.zAxis = _.params.zAxis;
 		_.$relElem = _._relElem;
 		_.outStop = _.params.outStop;
 		_.scrollMaxPxStop = _.params.scrollMaxPxStop;
+		_.zScrollMaxPxStop = _.params.zScrollMaxPxStop;
+		_.lastZSpeed = 0;
 		_.initOffsetSet = false;
 		_.minWidthIfSet = _.params.minWidth ? _.winWidth > _.params.minWidth : true;
 		_.maxWidthIfSet = _.params.maxWidth ? _.winWidth < _.params.maxWidth : true;
@@ -179,13 +196,14 @@ export default class Parallax {
 	parallax(_) {
 
 		const elemTop = _.$relElem.offset().top;
-		const scrollTop = window.pageYOffset;
+		const scrollTop = window.scrollY || window.pageYOffset;
 		const withinMinAndMaxIfSet = (_.minWidthIfSet && _.maxWidthIfSet);
 
 		if (_._isScrolledIntoView(elemTop, scrollTop) && withinMinAndMaxIfSet) {
 
 			const speedInZeroInView = (scrollTop + _.winHeight) - elemTop;
 			const speed = (speedInZeroInView * _.speed);
+			const zSpeed = (speedInZeroInView * _.zSpeed);
 			const bgFillRatio = _.bgFillRatio;
 
 
@@ -199,26 +217,16 @@ export default class Parallax {
 
 			if (Math.abs(speed) > _.scrollMaxPxStop) return;
 
-			const cssParams = (_.axis === 'y') ?
-				!_.bgFill ?
-					{	//don't fill it
-						'transform': `translate3d(0,${speed - _.initOffset}px,0)`
-					}
-					: { //fill the background
-						'transform': `translate3d(0,${(speed - _.initOffset) - bgFillRatio}px,0)`,
-						'height': `calc(100% + ${bgFillRatio}px)`
-					} :
-				!_.bgFill ? 
-					{	//scroll sideways
-						'transform': `translate3d(${speed - _.initOffset}px,0,0)`
-					} : 
-					{
-						'transform': `translate3d(${(speed - _.initOffset) - bgFillRatio}px,0,0)`,
-						'width' : `calc(100% + ${bgFillRatio}px)`,
-					}
-				;
+			const speedPx = speed - _.initOffset;
+			const zSpeedPx = _.params.zAxis ? ((Math.abs(_.lastZSpeed) < _.zScrollMaxPxStop) ? zSpeed - _.initOffset : _.lastZSpeed) : 0;
+			const translateParams = _.axis === 'y' ? `0,${speedPx}px,${zSpeedPx}px` : `${speedPx}px,0,${zSpeedPx}px`;
+			 
+			_.lastZSpeed = zSpeedPx;
 
-			_.$element.css(cssParams);
+			_.$element.css({
+				transform: `translate3d(${translateParams})`,
+				height: _.bgFill ? `calc(100% + ${bgFillRatio}px)` : null
+			});
 
 			_.effectCleared = true;
 		} else {
@@ -265,6 +273,11 @@ export default class Parallax {
 	get _speed() {
 		const _ = this;
 		return _.params.speed / 100;
+	}
+
+	get _zSpeed() {
+		const _ = this;
+		return _.params.zSpeed / 100;
 	}
 
 	get _relElem() {

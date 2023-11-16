@@ -28,7 +28,6 @@ export interface INavDesktopDefaults {
 	ulNotCss: string;
 	navHoveredCss: string;
 	navLeavingCss: string;
-	submenuBtnCss: string;
 	navLeavingDelay: number;
 	hoverCss: string;
 }
@@ -46,8 +45,7 @@ const DEFAULTS: INavDesktopDefaults = {
 	navHoveredCss: 'desktop-nav-hovered',
 	navLeavingCss: 'desktop-nav-leaving',
 	navLeavingDelay: 800,
-	hoverCss: 'hover',
-	submenuBtnCss: 'btn-nav--mb-submenu i i-arrow-b'
+	hoverCss: 'hover' 
 };
 
 export default class NavDesktop {

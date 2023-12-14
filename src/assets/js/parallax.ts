@@ -38,7 +38,7 @@ export interface IParallaxDefaults {
     zScrollMaxPxStop: number;
 }
 
-const VERSION = "1.2.0";
+const VERSION = "1.2.1";
 const DATA_NAME = 'Parallax';
 const EVENT_NAME = 'parallax';
 const DEFAULTS: IParallaxDefaults = {
@@ -69,6 +69,7 @@ export default class Parallax {
 	public params: IParallaxDefaults;
 	public initOffsetSet: boolean;
 	public initOffset: number;
+	public zInitOffset: number;
 	public index: number;
 	public instanceEvent: string;
 	public $window: Cash;
@@ -111,6 +112,7 @@ export default class Parallax {
 		_.params = elemData(element, `${DATA_NAME}_params`);
 		_.initOffsetSet = false;
 		_.initOffset = 0;
+		_.zInitOffset = 0;
 		_.index = index;
 		_.instanceEvent = EVENT_NAME + index;
 		//props to get updated on resize
@@ -211,6 +213,7 @@ export default class Parallax {
 				if (_.params.initOffset) {
 
 					_.initOffset = speed - (scrollTop * _.speed);
+					_.zInitOffset = zSpeed - (scrollTop * _.zSpeed);
 					_.initOffsetSet = true;
 				}
 			}
@@ -218,7 +221,7 @@ export default class Parallax {
 			if (Math.abs(speed) > _.scrollMaxPxStop) return;
 
 			const speedPx = speed - _.initOffset;
-			const zSpeedPx = _.params.zAxis ? ((Math.abs(_.lastZSpeed) < _.zScrollMaxPxStop) ? zSpeed - _.initOffset : _.lastZSpeed) : 0;
+			const zSpeedPx = _.params.zAxis ? ((Math.abs(_.lastZSpeed) < _.zScrollMaxPxStop) ? zSpeed - _.zInitOffset : _.lastZSpeed) : 0;
 			const translateParams = _.axis === 'y' ? `0,${speedPx}px,${zSpeedPx}px` : `${speedPx}px,0,${zSpeedPx}px`;
 			 
 			_.lastZSpeed = zSpeedPx;

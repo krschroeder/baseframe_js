@@ -945,32 +945,32 @@ __HTML__
 <div class="container v-space">
 	<div class="relative col" style="perspective: 800px;">
 		<div class="parallax-bg" data-parallax-options="{speed:-10, initOffset:true, bgFill: false, scrollMaxPxStop: 120, zAxis: true}">
-			<img src="https://placehold.it/768x768/565656" alt="Placeholder" />
+			<img src="https://via.placeholder.com/768x768/565656" alt="Placeholder" />
 		</div>
 	</div>
 	<div class="relative col">
 		<div class="parallax-bg" data-parallax-options="{speed:10, initOffset:true, bgFill: false, scrollMaxPxStop: 120}">
-			<img src="https://placehold.it/768x768/444" alt="Placeholder" />
+			<img src="https://via.placeholder.com/768x768/444" alt="Placeholder" />
 		</div>
 	</div>
 	<div class="relative col">
 		<div class="parallax-bg" data-parallax-options="{speed:30, initOffset:true, bgFill: false, scrollMaxPxStop: 220, axis: 'x'}">
-			<img src="https://placehold.it/768x768/222" alt="Placeholder" />
+			<img src="https://via.placeholder.com/768x768/222" alt="Placeholder" />
 		</div>
 	</div>
 	<div class="relative col">
 		<div class="parallax-bg" data-parallax-options="{speed:-10, initOffset:true, bgFill: false, scrollMaxPxStop: 120}">
-			<img src="https://placehold.it/768x768" alt="Placeholder" />
+			<img src="https://via.placeholder.com/768x768" alt="Placeholder" />
 		</div>
 	</div>
 	<div class="relative col">
 		<div class="parallax-bg" data-parallax-options="{speed: -20, initOffset:true, bgFill: false, scrollMaxPxStop: 180}">
-			<img src="https://placehold.it/768x768/777" alt="Placeholder" />
+			<img src="https://via.placeholder.com/768x768/777" alt="Placeholder" />
 		</div>
 	</div>
 	<div class="relative col">
 		<div class="parallax-bg" data-parallax-options="{speed:-20, initOffset:true, bgFill: false, axis: 'x'}">
-			<img src="https://placehold.it/768x768/999" alt="Placeholder" />
+			<img src="https://via.placeholder.com/768x768/999" alt="Placeholder" />
 		</div>
 	</div>
 </div>
@@ -1069,6 +1069,7 @@ historyType | 'push'\|'replace' | 'push' | If using using `useLocationHash` or a
 tabbing | boolean | true | Enables tabbing with keyboard arrows. A tab list should only be focusable one at a time with the 'tab' key.
 tabDirection| string | 'horizontal' | Typically tabs are 'horizontal' but may also go 'vertical'. They take either or as an option, otherwise it'll throw a `console.warn` to correct.
 addIDtoPanel | boolean | true | Adds an ID attribute to the panel for ADA compliance, but isn't necessary for its functionality.
+ariaLabel | boolean | true | Adds an 'aria-label' attribute to the panel for ADA compliance. Set to false if an equivalent exists in the mark-up.
 beforeChange | (prevTabId: string, tabsList: Cash, tabsBody: Cash): void | () => {} | Function to run before the tab change, passed variables are the 'previous tab ID', 'tabs list', 'tabs body' elements.
 afterChange | (prevTabId: string, tabsList: Cash, tabsBody: Cash): void | () => {}  | Function to run after the tab change, passed variables are the 'previous tab ID', 'tabs list', 'tabs body' elements.
 onInit | (tabsList: Cash, tabsBody: Cash): void | () => {} | Function to run after the the plugin intializes, passed variables are the  'tabs list', 'tabs body' elements.
@@ -1082,12 +1083,12 @@ __The following is an example html structure for this plugin:__
 __HTML__
 ```html
 <div class="tab__container">
-	<div class="inline-ul tabs__nav" role="menubar">
-		<ul>
-			<li><a href="#description"><span>Description</span></a></li>
-			<li><a href="#files"><span>Files</span></a></li>
-			<li><a href="#requirements"><span>Requirements</span></a></li>
-			<li><a href="#instructions"><span>Instructions</span></a></li>
+	<div class="inline-ul tabs__nav" role="tablist">
+		<ul role="presentation">
+			<li><a role="tab" href="#description"><span>Description</span></a></li>
+			<li><a role="tab" href="#files"><span>Files</span></a></li>
+			<li><a role="tab" href="#requirements"><span>Requirements</span></a></li>
+			<li><a role="tab" href="#instructions"><span>Instructions</span></a></li>
 		</ul>
 	</div>
 	<div class="tabs__body">

@@ -31,32 +31,32 @@ __HTML__
 <div class="container v-space">
 	<div class="relative col" style="perspective: 800px;">
 		<div class="parallax-bg" data-parallax-options="{speed:-10, initOffset:true, bgFill: false, scrollMaxPxStop: 120, zAxis: true}">
-			<img src="https://placehold.it/768x768/565656" alt="Placeholder" />
+			<img src="https://via.placeholder.com/768x768/565656" alt="Placeholder" />
 		</div>
 	</div>
 	<div class="relative col">
 		<div class="parallax-bg" data-parallax-options="{speed:10, initOffset:true, bgFill: false, scrollMaxPxStop: 120}">
-			<img src="https://placehold.it/768x768/444" alt="Placeholder" />
+			<img src="https://via.placeholder.com/768x768/444" alt="Placeholder" />
 		</div>
 	</div>
 	<div class="relative col">
 		<div class="parallax-bg" data-parallax-options="{speed:30, initOffset:true, bgFill: false, scrollMaxPxStop: 220, axis: 'x'}">
-			<img src="https://placehold.it/768x768/222" alt="Placeholder" />
+			<img src="https://via.placeholder.com/768x768/222" alt="Placeholder" />
 		</div>
 	</div>
 	<div class="relative col">
 		<div class="parallax-bg" data-parallax-options="{speed:-10, initOffset:true, bgFill: false, scrollMaxPxStop: 120}">
-			<img src="https://placehold.it/768x768" alt="Placeholder" />
+			<img src="https://via.placeholder.com/768x768" alt="Placeholder" />
 		</div>
 	</div>
 	<div class="relative col">
 		<div class="parallax-bg" data-parallax-options="{speed: -20, initOffset:true, bgFill: false, scrollMaxPxStop: 180}">
-			<img src="https://placehold.it/768x768/777" alt="Placeholder" />
+			<img src="https://via.placeholder.com/768x768/777" alt="Placeholder" />
 		</div>
 	</div>
 	<div class="relative col">
 		<div class="parallax-bg" data-parallax-options="{speed:-20, initOffset:true, bgFill: false, axis: 'x'}">
-			<img src="https://placehold.it/768x768/999" alt="Placeholder" />
+			<img src="https://via.placeholder.com/768x768/999" alt="Placeholder" />
 		</div>
 	</div>
 </div>

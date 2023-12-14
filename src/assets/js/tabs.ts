@@ -22,6 +22,7 @@ export interface ITabsOptions extends LocationHashTrackingHistory {
 	tabbing?: boolean;
 	tabDirection?: tabDirection;
 	addIDtoPanel?: boolean;
+	ariaLabel?: boolean;
 	beforeChange?(prevTabId: string, tabsList: Cash, tabsBody: Cash): void;
 	afterChange?(prevTabId: string, tabsList: Cash, tabsBody: Cash): void;
 	onInit?(tabsList: Cash, tabsBody: Cash): void
@@ -39,6 +40,7 @@ export interface ITabsDefaults extends LocationHashTrackingHistory {
 	tabbing: boolean;
 	tabDirection: tabDirection;
 	addIDtoPanel: boolean;
+	ariaLabel: boolean;
 	beforeChange(prevTabId: string, tabsList: Cash, tabsBody: Cash): void;
 	afterChange(prevTabId: string, tabsList: Cash, tabsBody: Cash): void;
 	onInit(tabsList: Cash, tabsBody: Cash): void
@@ -60,6 +62,7 @@ const DEFAULTS: ITabsDefaults = {
 	historyType: 'push',
 	loadLocationHash: true,
 	addIDtoPanel: true,
+	ariaLabel: true,
 	tabbing: true,
 	tabDirection: 'horizontal',
 	beforeChange: () => { },
@@ -202,7 +205,7 @@ export default class Tabs {
 
 	ADA_Attributes() {
 		const _ = this;
-		const { tabsBodyItemCss, addIDtoPanel } = _.params;
+		const { tabsBodyItemCss, addIDtoPanel, ariaLabel } = _.params;
 
 		_.$tabsList.find("a, button").each(function () {
 
@@ -216,7 +219,7 @@ export default class Tabs {
 			});
 
 			$tabBodyItem.attr({
-				'aria-labelledby': tabHref,
+				'aria-label':  ariaLabel ? this.textContent : null,
 				'role': 'tabpanel'
 			});
 

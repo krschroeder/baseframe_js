@@ -46,7 +46,7 @@ export interface ITabsDefaults extends LocationHashTrackingHistory {
 	onInit(tabsList: Cash, tabsBody: Cash): void
 }
 
-const VERSION = "1.4.0";
+const VERSION = "1.4.1";
 const DATA_NAME = 'Tabs';
 const EVENT_NAME = 'tabs';
 const DEFAULTS: ITabsDefaults = {
@@ -220,7 +220,8 @@ export default class Tabs {
 
 			$tabBodyItem.attr({
 				'aria-label':  ariaLabel ? this.textContent : null,
-				'role': 'tabpanel'
+				'role': 'tabpanel',
+				tabindex: '-1'
 			});
 
 			if (addIDtoPanel) {
@@ -274,7 +275,7 @@ export default class Tabs {
 				const isItsBodyItem = $(this).closest(`.${tabsBodyCss}`)[0]?.isSameNode(_.$tabsBody[0] || null);
 
 				if (isItsBodyItem) {
-					$(this).removeClass(tabsBodyItemShowCss).attr({ 'aria-hidden': 'true' });
+					$(this).removeClass(tabsBodyItemShowCss).attr({ 'aria-hidden': 'true', tabindex: '-1' });
 				}
 			});
 
@@ -297,7 +298,7 @@ export default class Tabs {
 
 			_.$tabsBody.find(`.${tabsBodyItemCss}[data-tab-id="${tabId}"]`)
 				.addClass(tabsBodyItemShowCss)
-				.attr({ 'aria-hidden': 'false' });
+				.attr({ 'aria-hidden': 'false', tabindex: '0' });
 
 			_.params.afterChange(tabId, _.$tabsList, _.$tabsBody);
 

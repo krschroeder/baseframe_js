@@ -1,270 +1,7 @@
-/*
- * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
- * This devtool is neither made for production nor for readable output files.
- * It uses "eval()" calls to create a separate source file in the browser devtools.
- * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
- * or disable the default devtool with "devtool: false".
- * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
- */
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ({
-
-/***/ "./src/assets/js/AccessibleMenu.ts":
-/*!*****************************************!*\
-  !*** ./src/assets/js/AccessibleMenu.ts ***!
-  \*****************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ AccessibleMenu)\n/* harmony export */ });\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cash-dom */ \"cash-dom\");\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cash_dom__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/helpers */ \"./src/assets/js/util/helpers.ts\");\n/* harmony import */ var _core_Store__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./core/Store */ \"./src/assets/js/core/Store.ts\");\n\n\n\n\nconst KEYS = {\n    esc: 'Escape',\n    left: 'ArrowLeft',\n    right: 'ArrowRight',\n    down: 'ArrowDown',\n    up: 'ArrowUp',\n    enter: 'Enter',\n    shift: 'Shift',\n    space: 'Space',\n    tab: 'Tab'\n};\nconst VERSION = \"1.3.0\";\nconst DATA_NAME = 'AccessibleMenu';\nconst EVENT_NAME = 'accessibleMenu';\nconst DEFAULTS = {\n    keyDirections: ['horizontal', 'vertical', 'vertical'],\n    focusCss: 'focus',\n    focusInElems: 'a, [tabindex]',\n    focusLeaveElems: 'a, [tabindex], select, button'\n};\nconst visible = (i, el) => (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.isVisible)(el);\nclass AccessibleMenu {\n    element;\n    $element;\n    params;\n    static get version() { return VERSION; }\n    static defaults = DEFAULTS;\n    constructor(element, options) {\n        const s = this;\n        const dataOptions = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getDataOptions)(element, EVENT_NAME);\n        s.element = element;\n        s.$element = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element);\n        s.params = cash_dom__WEBPACK_IMPORTED_MODULE_0___default().extend({}, AccessibleMenu.defaults, options, dataOptions);\n        s.handleEvents();\n        return s;\n    }\n    static remove(element, plugin) {\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element).each(function () {\n            const s = plugin || (0,_core_Store__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(this, DATA_NAME);\n            s.$element.off('focusin.' + EVENT_NAME);\n            s.$element.off('mouseleave.' + EVENT_NAME);\n            s.$element.off('blur.' + EVENT_NAME);\n            s.$element.off('keydown.' + EVENT_NAME);\n            (0,_core_Store__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(this, DATA_NAME, null);\n        });\n    }\n    prev(props) {\n        const s = this;\n        const p = props;\n        const l = p.$ulParents.length - 1;\n        const key = p.e.key;\n        if (key === KEYS.left && p.keyDirections[l] === \"horizontal\" ||\n            key === KEYS.up && p.keyDirections[l] === \"vertical\" ||\n            key === KEYS.left && p.keyDirections[l] === \"vertical\" &&\n                (l > 1 && p.keyDirections[l - 1] === \"vertical\" && cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(p.activeElem).parent('li').index() === 0)) {\n            s.#focusListItem(p.activeElem, p.$ulParents, p.focusCss, true, p.focusInElems);\n            p.e.preventDefault();\n        }\n    }\n    next(props) {\n        const s = this;\n        const p = props;\n        const l = p.$ulParents.length - 1;\n        const atRootUl = p.$ulParents.length === 1;\n        const key = p.e.key;\n        if (\n        //go to sibling <li>\n        key === KEYS.right && p.keyDirections[l] === \"horizontal\" ||\n            key === KEYS.down && p.keyDirections[l] === \"vertical\") {\n            const isLastAtRoolLevel = atRootUl && cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(p.activeElem).closest('li').last();\n            const $currentLi = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(p.activeElem).closest('li');\n            const isLastListItem = !$currentLi.next('li').length;\n            if (isLastAtRoolLevel && isLastListItem) {\n                s.#escapeFromUlAtRootNext(s.params.focusLeaveElems, p.$ulParents, p.activeElem);\n            }\n            else {\n                s.#focusListItem(p.activeElem, p.$ulParents, p.focusCss, false, p.focusInElems);\n                p.e.preventDefault();\n            }\n        }\n        if (\n        //go to the nestled <li>\n        key === KEYS.right && p.keyDirections[l] === \"vertical\" ||\n            key === KEYS.down && p.keyDirections[l] === \"horizontal\") {\n            s.#focusNestledListItem(p.activeElem, p.focusCss, p.focusInElems);\n            p.e.preventDefault();\n        }\n    }\n    handleEvents() {\n        const s = this;\n        let to = null;\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(s.element).on('focusin.' + EVENT_NAME, this.params.focusInElems, function (e) {\n            to && clearTimeout(to);\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(this).parent('li').addClass('focus')\n                .siblings('li').removeClass('focus');\n        }).on('mouseleave.' + EVENT_NAME, function () {\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(this).find('li.focus').removeClass('focus');\n        }).on('focusout.' + EVENT_NAME, function () {\n            to = setTimeout(() => {\n                cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(this).find('li.focus').removeClass('focus');\n            }, 200);\n        });\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(s.element).on('keydown.' + EVENT_NAME, function (e) {\n            const { focusCss, keyDirections, focusInElems } = s.params;\n            const activeElem = document.activeElement;\n            const $ulParents = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(activeElem).parents('ul');\n            const props = { e, $ulParents, activeElem, focusCss, keyDirections, focusInElems };\n            s.#escapeKey(e, $ulParents, focusCss, focusInElems);\n            s.prev(props);\n            s.next(props);\n        });\n    }\n    #escapeKey(e, $ulParents, focusCss, focusInElems) {\n        if (e.key == KEYS.esc) {\n            if ($ulParents.length > 1) {\n                const $anchor = $ulParents.eq(0).closest('li').find(focusInElems).filter(visible);\n                $anchor[0].focus();\n                $anchor.parent('li').addClass(focusCss);\n            }\n            e.preventDefault();\n        }\n    }\n    #focusListItem(activeElem, $ulParents, focusCss, prev, focusInElems) {\n        const $aeLi = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(activeElem).parent('li');\n        const $el = $aeLi[prev ? 'prev' : 'next']('li').filter(visible);\n        if ($el.length) {\n            $el.addClass(focusCss).siblings('li').removeClass(focusCss);\n            $el.find(focusInElems)[0].focus();\n        }\n        else {\n            if ($ulParents.length > 1) {\n                const $anchor = $ulParents.eq(0).parent('li').find('a').filter(visible);\n                if ($anchor.length) {\n                    $anchor[0].focus();\n                    $anchor.parent('li').eq(0).addClass(focusCss);\n                }\n            }\n        }\n    }\n    #focusNestledListItem(activeElem, focusCss, focusInElems) {\n        const $el = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(activeElem).parent('li').find('li').filter(visible);\n        if ($el.length) {\n            $el.addClass(focusCss).siblings('li').removeClass(focusCss);\n            $el.find(focusInElems).filter(visible)[0].focus();\n        }\n    }\n    #escapeFromUlAtRootNext(focusLeaveElems, $ulParents, activeElem) {\n        const $rootUl = $ulParents.eq(0);\n        const focusableElems = document.querySelectorAll(focusLeaveElems);\n        let atCurrElem = false;\n        for (let i = 0, l = focusableElems.length; i < l; i++) {\n            const elem = focusableElems[i];\n            if (!atCurrElem && activeElem.isSameNode(elem)) {\n                atCurrElem = true;\n            }\n            if (atCurrElem && !$rootUl.has(elem).length) {\n                if (elem instanceof HTMLElement) {\n                    elem.focus();\n                    break;\n                }\n            }\n        }\n    }\n}\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/AccessibleMenu.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/Collapse.ts":
-/*!***********************************!*\
-  !*** ./src/assets/js/Collapse.ts ***!
-  \***********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ Collapse)\n/* harmony export */ });\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cash-dom */ \"cash-dom\");\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cash_dom__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/helpers */ \"./src/assets/js/util/helpers.ts\");\n/* harmony import */ var _fn_smoothScroll__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./fn/smoothScroll */ \"./src/assets/js/fn/smoothScroll.ts\");\n/* harmony import */ var _fn_transition__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./fn/transition */ \"./src/assets/js/fn/transition.ts\");\n/* harmony import */ var _core_UrlState__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./core/UrlState */ \"./src/assets/js/core/UrlState.ts\");\n/* harmony import */ var _core_Store__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./core/Store */ \"./src/assets/js/core/Store.ts\");\n\n\n\n\n\n\n;\nconst VERSION = \"4.0.0\";\nconst DATA_NAME = 'Collapse';\nconst EVENT_NAME = 'collapse';\nconst DEFAULTS = {\n    cssPrefix: 'collapse',\n    toggleDuration: 500,\n    toggleGroup: false,\n    moveToTopOnOpen: false,\n    moveToTopOffset: 0,\n    scrollSpeed: 100,\n    urlFilterType: 'hash',\n    historyType: 'replace',\n    locationFilter: null,\n    loadLocation: true,\n    afterOpen: _util_helpers__WEBPACK_IMPORTED_MODULE_1__.noop,\n    afterClose: _util_helpers__WEBPACK_IMPORTED_MODULE_1__.noop,\n    afterInit: _util_helpers__WEBPACK_IMPORTED_MODULE_1__.noop\n};\nclass Collapse {\n    $element;\n    params;\n    toggling;\n    $btnElems;\n    $activeItem;\n    initLoaded;\n    static defaults = DEFAULTS;\n    #transition = (0,_fn_transition__WEBPACK_IMPORTED_MODULE_3__[\"default\"])();\n    constructor(element, options, index) {\n        const s = this;\n        s.$element = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element);\n        const dataOptions = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getDataOptions)(element, EVENT_NAME);\n        s.params = cash_dom__WEBPACK_IMPORTED_MODULE_0___default().extend({}, Collapse.defaults, options, dataOptions);\n        s.toggling = false;\n        s.$btnElems = s.$element.find(`.${s.params.cssPrefix}__btn`).attr({ 'aria-expanded': 'false' });\n        s.$activeItem = null;\n        s.initLoaded = false;\n        // init\n        s.loadFromUrl();\n        s.handleEvents();\n        s.params.afterInit(s.$element);\n        (0,_core_Store__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(element, DATA_NAME, s);\n        return s;\n    }\n    static get version() {\n        return VERSION;\n    }\n    static remove(element, plugin) {\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element).each(function () {\n            const s = plugin || (0,_core_Store__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(this, DATA_NAME);\n            s.$element.off(`click.${EVENT_NAME} ${EVENT_NAME}`);\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).off(`popstate.${EVENT_NAME}`);\n            // delete the Store item\n            (0,_core_Store__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(this, DATA_NAME, null);\n        });\n    }\n    handleEvents() {\n        const s = this;\n        const { cssPrefix } = s.params;\n        s.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, `.${cssPrefix}__btn`, function (e) {\n            const elemId = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(this).attr('aria-controls') || this.hash.substring(1);\n            s.toggleAction(elemId);\n            e.preventDefault();\n        });\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).on(`popstate.${EVENT_NAME}`, (e) => {\n            if (s.params.historyType === 'push') {\n                s.loadFromUrl();\n                s.initLoaded = true;\n                e.preventDefault();\n            }\n        });\n    }\n    loadFromUrl() {\n        const s = this;\n        const p = s.params;\n        const loadElem = (filterEl) => {\n            const cssOpen = `${p.cssPrefix}--open`;\n            const $tryElem = s.$element.find('#' + filterEl);\n            if ($tryElem.length) {\n                s.$activeItem = $tryElem;\n                s.$activeItem.addClass(cssOpen);\n                s.$btnElems\n                    .filter((i, el) => cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(el).attr('aria-controls') === filterEl)\n                    .attr({ 'aria-expanded': 'true' });\n            }\n        };\n        if (p.locationFilter !== null || p.loadLocation) {\n            const filterEl = _core_UrlState__WEBPACK_IMPORTED_MODULE_4__[\"default\"].get(p.urlFilterType, p.locationFilter);\n            const cssOpen = `${p.cssPrefix}--open`;\n            s.$element.find(`.${p.cssPrefix}__body.${cssOpen}`).removeClass(cssOpen);\n            s.$btnElems.attr({ 'aria-expanded': 'false' });\n            if (filterEl) {\n                if (Array.isArray(filterEl)) {\n                    filterEl.forEach(loadElem);\n                }\n                else {\n                    loadElem(filterEl);\n                }\n            }\n        }\n    }\n    toggleAction(currElemID) {\n        const s = this;\n        if (s.toggling || currElemID === null)\n            return;\n        const { cssPrefix } = s.params;\n        const p = s.params;\n        s.$activeItem = s.$element.find('#' + currElemID);\n        if (s.$activeItem.length) {\n            const cssOpen = `${cssPrefix}--open`, cssToggling = `${cssPrefix}--toggling`, cssOpening = `${cssPrefix}--opening`, cssClosing = `${cssPrefix}--closing`, cssBodyOpen = `.${cssPrefix}__body.${cssOpen}`;\n            const $currOpenItems = s.$element.find(cssBodyOpen);\n            const $itemsToClose = $currOpenItems.filter((i, el) => p.toggleGroup || el.id === currElemID);\n            const activeAlreadyOpen = s.$activeItem.hasClass(cssOpen);\n            s.#transition(() => {\n                s.toggling = true;\n                s.$btnElems.each(function () {\n                    const $btn = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(this);\n                    const isCurrent = $btn.attr('aria-controls') === currElemID;\n                    const expanded = isCurrent && $btn.attr('aria-expanded') === 'false';\n                    if (p.toggleGroup) {\n                        $btn.attr({ 'aria-expanded': expanded + '' });\n                    }\n                    else {\n                        if (isCurrent) {\n                            $btn.attr({ 'aria-expanded': expanded + '' });\n                        }\n                    }\n                });\n                $itemsToClose.each(function () {\n                    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(this).css({ height: this.scrollHeight });\n                });\n                setTimeout(() => {\n                    $itemsToClose\n                        .removeClass(cssOpen)\n                        .addClass(`${cssToggling} ${cssClosing}`)\n                        .css({ height: 0 });\n                }, 0);\n                if (!activeAlreadyOpen) {\n                    s.$activeItem\n                        .addClass(`${cssToggling} ${cssOpening}`)\n                        .css({ height: s.$activeItem[0].scrollHeight });\n                }\n            }, () => {\n                s.toggling = false;\n                $itemsToClose\n                    .removeClass(`${cssToggling} ${cssClosing}`)\n                    .css({ height: null });\n                s.params.afterClose(s.$btnElems, $itemsToClose);\n                if (!activeAlreadyOpen) {\n                    s.$activeItem\n                        .addClass(cssOpen)\n                        .removeClass(`${cssToggling} ${cssOpening}`)\n                        .css({ height: null });\n                }\n                // Update History in URL\n                const paramList = [...s.$element.find(cssBodyOpen)].map((el) => el.id);\n                const paramVal = paramList.length === 1 ? paramList[0] : paramList.length > 0 ? paramList : null;\n                _core_UrlState__WEBPACK_IMPORTED_MODULE_4__[\"default\"].set(p.urlFilterType, p.locationFilter, paramVal, p.historyType);\n                s.params.afterOpen(s.$btnElems, s.$activeItem);\n                s.moveToTopOnOpen();\n            });\n        }\n    }\n    moveToTopOnOpen() {\n        const s = this;\n        const { cssPrefix, moveToTopOffset, moveToTopOnOpen, scrollSpeed } = s.params;\n        if (s.$activeItem) {\n            const $item = s.$activeItem.parent(`.${cssPrefix}__item`) || s.$activeItem;\n            if ($item.length && moveToTopOnOpen) {\n                // get the compiler to stop from throwing \n                // an error it'll never throw by setting to 'any'\n                const elemOffsetTop = $item.offset().top;\n                const top = elemOffsetTop - moveToTopOffset;\n                (0,_fn_smoothScroll__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(top, scrollSpeed);\n            }\n        }\n    }\n}\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/Collapse.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/LazyLoad.ts":
-/*!***********************************!*\
-  !*** ./src/assets/js/LazyLoad.ts ***!
-  \***********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ LazyLoad)\n/* harmony export */ });\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cash-dom */ \"cash-dom\");\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cash_dom__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/helpers */ \"./src/assets/js/util/helpers.ts\");\n/* harmony import */ var _core_Store__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./core/Store */ \"./src/assets/js/core/Store.ts\");\n\n\n\nconst VERSION = '2.0.1';\nconst DATA_NAME = 'LazyLoad';\nconst EVENT_NAME = 'lazyLoad';\nconst DEFAULTS = {\n    imgSrcName: 'src',\n    bgSrcName: 'bgSrc',\n    loadImgs: true,\n    inEvt: null,\n    outEvt: null,\n    force: false,\n    observerID: null,\n    unobserve: true,\n    observerOpts: { rootMargin: '48px' }\n};\nconst lazyElemObservers = new Map();\nconst lazyElemObserver = (s) => {\n    const { observerOpts } = s.params;\n    return new IntersectionObserver(function (entries) {\n        entries.forEach(function (entry) {\n            const { inEvt, outEvt, force, unobserve, loadImgs } = s.params;\n            const lazyElem = entry.target;\n            if (lazyElem instanceof HTMLElement) {\n                if (entry.isIntersecting && (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.isVisible)(lazyElem) || force) {\n                    loadImgs && s.imgAndBg(s, lazyElem);\n                    typeof inEvt === 'function' && inEvt(lazyElem, entry);\n                    unobserve && s.lazyElemObserver.unobserve(lazyElem);\n                }\n                else {\n                    typeof outEvt === 'function' && outEvt(lazyElem, entry);\n                }\n            }\n        });\n    }, observerOpts);\n};\nclass LazyLoad {\n    element;\n    params;\n    lazyElemObserver;\n    static get version() { return VERSION; }\n    static get pluginName() { return DATA_NAME; }\n    static defaults = DEFAULTS;\n    constructor(element, options) {\n        const s = this;\n        const dataOptions = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getDataOptions)(element, EVENT_NAME);\n        s.element = element;\n        s.lazyElemObserver;\n        s.params = cash_dom__WEBPACK_IMPORTED_MODULE_0___default().extend({}, LazyLoad.defaults, options, dataOptions);\n        s.handleEvents();\n        return s;\n    }\n    static remove(element, plugin) {\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element).each(function () {\n            const s = plugin || (0,_core_Store__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(this, DATA_NAME);\n            lazyElemObservers.delete(s.params.observerID);\n            s.lazyElemObserver.unobserve(this);\n            (0,_core_Store__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(this, DATA_NAME, null);\n        });\n    }\n    imgAndBg(s, lazyElem) {\n        const { imgSrcName, bgSrcName } = s.params;\n        const src = lazyElem.dataset[imgSrcName];\n        const bgImg = lazyElem.dataset[bgSrcName];\n        if (lazyElem.loading === 'lazy') {\n            lazyElem.loading = 'eager';\n        }\n        if (src) {\n            lazyElem.src = src;\n        }\n        if (bgImg) {\n            lazyElem.style.backgroundImage = `url(\"${bgImg}\")`;\n            lazyElem.removeAttribute('data-bg-src');\n        }\n    }\n    handleEvents() {\n        const s = this;\n        const { observerID } = s.params;\n        if (observerID && !lazyElemObservers.has(observerID)) {\n            lazyElemObservers.set(observerID, lazyElemObserver(s));\n            s.lazyElemObserver = lazyElemObservers.get(observerID);\n        }\n        else {\n            s.lazyElemObserver = lazyElemObserver(s);\n        }\n        if (!observerID) {\n            console.warn(`It recommended to set an 'observerID', so the element group can leverage the same one.`, s.element);\n        }\n        s.lazyElemObserver.observe(s.element);\n    }\n}\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/LazyLoad.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/Modal.ts":
-/*!********************************!*\
-  !*** ./src/assets/js/Modal.ts ***!
-  \********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ Modal)\n/* harmony export */ });\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cash-dom */ \"cash-dom\");\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cash_dom__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _core_Store__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./core/Store */ \"./src/assets/js/core/Store.ts\");\n/* harmony import */ var _core_UrlState__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./core/UrlState */ \"./src/assets/js/core/UrlState.ts\");\n/* harmony import */ var _fn_trapFocus__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./fn/trapFocus */ \"./src/assets/js/fn/trapFocus.ts\");\n/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./util/helpers */ \"./src/assets/js/util/helpers.ts\");\n/* harmony import */ var _fn_hyperScript__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./fn/hyperScript */ \"./src/assets/js/fn/hyperScript.ts\");\n\n\n\n\n\n\n\nconst VERSION = '1.2.0';\nconst EVENT_NAME = 'modal';\nconst DATA_NAME = 'Modal';\nconst DEFAULTS = {\n    enableEvent: 'click',\n    appendTo: document.body,\n    ariaLabelledby: null,\n    ariaLabel: null,\n    cssPrefix: 'modal',\n    closeBtnIconCss: 'ico i-close',\n    closeBtnLabel: 'Close',\n    closeOutDelay: 250,\n    backDropClose: true,\n    fromDOM: false,\n    modalCss: null,\n    modalID: null,\n    src: '',\n    urlFilterType: 'hash',\n    historyType: 'replace',\n    locationFilter: 'modal',\n    loadLocation: true,\n    onOpenOnce: _util_helpers__WEBPACK_IMPORTED_MODULE_4__.noop,\n    onOpen: _util_helpers__WEBPACK_IMPORTED_MODULE_4__.noop,\n    onClose: _util_helpers__WEBPACK_IMPORTED_MODULE_4__.noop,\n    afterClose: _util_helpers__WEBPACK_IMPORTED_MODULE_4__.noop\n};\nconst hasCb = (cb, modalObj) => {\n    if (cb && typeof cb === 'function') {\n        cb(modalObj);\n    }\n};\nclass Modal {\n    element;\n    params;\n    modalID;\n    modalObj;\n    modalEvent;\n    trappedFocus;\n    enabledElem;\n    openedOnce;\n    static defaults = DEFAULTS;\n    constructor(element, options) {\n        const s = this;\n        s.element = element;\n        const dataOptions = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getDataOptions)(element, EVENT_NAME);\n        s.params = cash_dom__WEBPACK_IMPORTED_MODULE_0___default().extend({}, Modal.defaults, options, dataOptions);\n        s.modalID = s.params.modalID;\n        s.modalObj = s.getModalObj();\n        s.modalEvent = EVENT_NAME + '_' + s.modalID;\n        s.trappedFocus;\n        s.enabledElem;\n        s.openedOnce = false;\n        s.handleEvents();\n        s.loadFromUrl();\n        (0,_core_Store__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(element, DATA_NAME, s);\n        return s;\n    }\n    static get version() {\n        return VERSION;\n    }\n    static remove(element, plugin) {\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element).each(function () {\n            const s = plugin || (0,_core_Store__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(this, DATA_NAME);\n            const params = s.params;\n            const { $backdrop, $closeBtn } = s.modalObj;\n            s.modalObj.show && s.modalObj.close();\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(s.element).off(`${s.params.enableEvent}.${s.modalEvent}`);\n            $closeBtn.off(`click.${s.modalEvent}Dismiss`);\n            if (params.backDropClose)\n                $backdrop.off(`click.${s.modalEvent}Dismiss`);\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(document)\n                .off(`keydown.${s.modalEvent}Dismiss`)\n                .off(`${s.modalEvent}Dismiss`);\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).off(`popstate.${s.modalEvent} ${s.modalEvent}`);\n            (0,_core_Store__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(this, DATA_NAME, null);\n        });\n    }\n    handleEvents() {\n        const s = this;\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(s.element).on(`${s.params.enableEvent}.${s.modalEvent}`, function (e) {\n            s.setDisplayAndEvents();\n            e.preventDefault();\n        });\n    }\n    setDisplayAndEvents() {\n        const s = this;\n        s.enableModal();\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(document).on(`keydown.${s.modalEvent}Dismiss`, function (e) {\n            const ekey = e.code || e.originalEvent.key; //cash-dom || jquery\n            if (ekey === 'Escape') {\n                s.close();\n                e.preventDefault();\n            }\n        });\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(document).on(`${s.modalEvent}Dismiss`, s.close);\n    }\n    getModalObj() {\n        const s = this, p = s.params, $closeBtn = (0,_fn_hyperScript__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(`button.${p.cssPrefix}__btn-dismiss`, {\n            type: 'button',\n            'aria-label': p.closeBtnLabel\n        }).append((0,_fn_hyperScript__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(`i.${p.closeBtnIconCss}`)), $dialogContent = (0,_fn_hyperScript__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(`div.${p.cssPrefix}__dialog-content`), $dialog = (0,_fn_hyperScript__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(`div.${p.cssPrefix}__dialog`).append($closeBtn, $dialogContent), $backdrop = (0,_fn_hyperScript__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(`div.${p.cssPrefix}__backdrop`), $modal = (0,_fn_hyperScript__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(`div`, {\n            class: p.cssPrefix + (p.modalCss ? ' ' + p.modalCss : ''),\n            'aria-label': (p.ariaLabel || s.element.dataset.ariaLabel) || null,\n            'aria-labelledby': (p.ariaLabelledby || s.element.dataset.ariaLabelledby) || null,\n            id: s.modalID\n        }).append($backdrop, $dialog), $content = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(s.params.src || s.element.hash || s.element.dataset.modalSrc);\n        return {\n            $backdrop,\n            $content,\n            contentAppended: false,\n            $dialog,\n            $dialogContent,\n            $closeBtn,\n            id: s.modalID,\n            $modal,\n            close: () => s.close(),\n            show: false\n        };\n    }\n    enableModal() {\n        const s = this;\n        const { $backdrop, $closeBtn, $content, $modal } = s.modalObj;\n        const p = s.params;\n        s.enabledElem = document.activeElement;\n        if (p.fromDOM) {\n            $content.after((0,_fn_hyperScript__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(`span.${p.cssPrefix}-content-placemarker#${s.modalObj.id}_marker`));\n        }\n        if (!s.modalObj.contentAppended) {\n            s.modalObj.$dialogContent.append($content);\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default().extend(s.modalObj, { contentAppended: true });\n        }\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(p.appendTo).append($modal);\n        // attach events after appended to DOM\n        $closeBtn.on(`click.${s.modalEvent}Dismiss`, () => s.close());\n        if (p.backDropClose)\n            $backdrop.on(`click.${s.modalEvent}Dismiss`, () => s.close());\n        hasCb(p.onOpen, s.modalObj);\n        if (!s.openedOnce) {\n            hasCb(p.onOpenOnce, s.modalObj);\n            s.openedOnce = true;\n        }\n        $modal.attr({\n            role: 'dialog',\n            'aria-modal': 'true'\n        });\n        setTimeout(() => {\n            $modal.addClass(p.cssPrefix + '--show');\n            s.trappedFocus = (0,_fn_trapFocus__WEBPACK_IMPORTED_MODULE_3__[\"default\"])($modal, { nameSpace: (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.camelCase)(s.modalID) });\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default().extend(s.modalObj, { show: true });\n        }, 0);\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(document.body).addClass(p.cssPrefix + '-open').css({\n            overflow: 'hidden',\n            'padding-right': '0px'\n        });\n        _core_UrlState__WEBPACK_IMPORTED_MODULE_2__[\"default\"].set(p.urlFilterType, p.locationFilter, s.modalID, p.historyType);\n    }\n    close() {\n        const s = this;\n        const { $backdrop, $closeBtn, $content, $modal } = s.modalObj;\n        const p = s.params;\n        hasCb(p.onClose, s.modalObj);\n        $modal.addClass(p.cssPrefix + '--dismissing');\n        $modal.removeClass(p.cssPrefix + '--show');\n        // detach events\n        $closeBtn.off(`click.${s.modalEvent}Dismiss`);\n        if (p.backDropClose)\n            $backdrop.off(`click.${s.modalEvent}Dismiss`);\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(document)\n            .off(`keydown.${s.modalEvent}Dismiss`)\n            .off(`${s.modalEvent}Dismiss`);\n        _core_UrlState__WEBPACK_IMPORTED_MODULE_2__[\"default\"].set(p.urlFilterType, p.locationFilter, null, p.historyType);\n        setTimeout(() => {\n            $modal.attr({\n                role: 'dialog',\n                'aria-modal': ''\n            }).removeClass(p.cssPrefix + '--dismissing').css({\n                display: ''\n            });\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(document.body).removeClass(p.cssPrefix + '-open').css({\n                overflow: '',\n                'padding-right': ''\n            });\n            s.trappedFocus.remove();\n            if (s.enabledElem && s.enabledElem instanceof HTMLElement) {\n                s.enabledElem.focus();\n            }\n            if (p.fromDOM) {\n                cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('#' + s.modalObj.id + '_marker').after($content).remove();\n                cash_dom__WEBPACK_IMPORTED_MODULE_0___default().extend(s.modalObj, { contentAppended: false });\n            }\n            hasCb(p.afterClose, s.modalObj);\n            $modal.remove();\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default().extend(s.modalObj, { show: false });\n        }, p.closeOutDelay);\n    }\n    loadFromUrl() {\n        const s = this;\n        const p = s.params;\n        if (p.locationFilter !== null || p.loadLocation) {\n            const filterEl = _core_UrlState__WEBPACK_IMPORTED_MODULE_2__[\"default\"].get(p.urlFilterType, p.locationFilter);\n            if (filterEl === s.modalID) {\n                s.modalObj.show ? s.close() : s.setDisplayAndEvents();\n            }\n        }\n    }\n}\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/Modal.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/NavDesktop.ts":
-/*!*************************************!*\
-  !*** ./src/assets/js/NavDesktop.ts ***!
-  \*************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ NavDesktop)\n/* harmony export */ });\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cash-dom */ \"cash-dom\");\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cash_dom__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/helpers */ \"./src/assets/js/util/helpers.ts\");\n/* harmony import */ var _core_Store__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./core/Store */ \"./src/assets/js/core/Store.ts\");\n\n\n\nconst VERSION = \"2.0.0\";\nconst DATA_NAME = 'NavDesktop';\nconst EVENT_NAME = 'navDesktop';\nconst DEFAULTS = {\n    stopWidth: 768,\n    delay: 800,\n    navLeavingDelay: 800,\n    outerElem: document.body,\n    cssPrefix: 'menu',\n    hoverCss: 'hover'\n};\nclass NavDesktop {\n    element;\n    params;\n    cssList;\n    stayHover;\n    navLeaving;\n    static defaults = DEFAULTS;\n    static get version() {\n        return VERSION;\n    }\n    constructor(element, options) {\n        const s = this;\n        s.stayHover;\n        s.navLeaving;\n        s.element = element;\n        const dataOptions = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getDataOptions)(element, EVENT_NAME);\n        s.params = cash_dom__WEBPACK_IMPORTED_MODULE_0___default().extend({}, NavDesktop.defaults, options, dataOptions);\n        const { cssPrefix } = s.params;\n        s.cssList = {\n            // menuOuterOpen: `${cssPrefix}--outer-open`,\n            menuHasUL: `${cssPrefix}__has-ul`,\n            menuNoUl: `${cssPrefix}__no-ul`,\n            menuElemEdge: `${cssPrefix}__elem-on-edge`,\n            menuHovered: `${cssPrefix}--hover`,\n            menuLeaving: `${cssPrefix}--leaving`,\n        };\n        s.addCssToElems();\n        s.handleEvents();\n        return s;\n    }\n    static remove(element, plugin) {\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element).each(function () {\n            const s = plugin || (0,_core_Store__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(this, DATA_NAME);\n            const $el = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(s.element);\n            $el.find('ul').off(`mouseover.${EVENT_NAME} focusin.${EVENT_NAME} focusout.${EVENT_NAME}`);\n            $el.off(`mouseout.${EVENT_NAME}`);\n            (0,_core_Store__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(this, DATA_NAME, null);\n        });\n    }\n    addCssToElems() {\n        const s = this;\n        const css = s.cssList;\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('li', s.element)\n            .addClass(css.menuNoUl)\n            .has('ul').each(function () {\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(this).removeClass(css.menuNoUl);\n            if (!cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(this).hasClass(css.menuHasUL)) {\n                cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(this).addClass(css.menuHasUL);\n            }\n        });\n    }\n    handleEvents() {\n        const s = this;\n        let prevEvent = null;\n        const evtTracker = (elem, e, cb) => {\n            const currEvent = e.type;\n            const containsOrISElem = elem.isSameNode(e.target) ? true : !!cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(e.target).parents(elem).length;\n            if (!prevEvent || (prevEvent !== currEvent && containsOrISElem)) {\n                prevEvent = currEvent;\n                cb();\n            }\n        };\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(s.element).find('ul').on(`mouseover.${EVENT_NAME} focusin.${EVENT_NAME}`, 'li, ul', function (e) {\n            const li = this;\n            const css = s.cssList;\n            const p = s.params;\n            evtTracker(li, e, () => {\n                s.edgeDetector(li);\n                const $liLiParents = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(li).parents('li');\n                li.classList.add(p.hoverCss);\n                $liLiParents.addClass(p.hoverCss);\n                cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(li).find(`.${p.hoverCss}`).removeClass(p.hoverCss);\n                cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(li).siblings('li').removeClass(p.hoverCss);\n                $liLiParents.length === 0 &&\n                    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(s.element).find(`.${p.hoverCss}`).removeClass(p.hoverCss);\n                s.navLeaving && clearTimeout(s.navLeaving);\n                s.stayHover && clearTimeout(s.stayHover);\n                cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(p.outerElem).addClass(css.menuHovered).removeClass(css.menuLeaving);\n            });\n        }).on(`mouseout.${EVENT_NAME} focusout.${EVENT_NAME}`, 'li, ul', function (e) {\n            const liOrUl = this;\n            const p = s.params;\n            const css = s.cssList;\n            evtTracker(liOrUl, e, () => {\n                s.stayHover = setTimeout(() => {\n                    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(s.element).find(`.${p.hoverCss}`).removeClass(`${p.hoverCss} ${css.menuElemEdge}`);\n                    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(s.element).find(`.${css.menuElemEdge}`).removeClass(css.menuElemEdge);\n                    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(p.outerElem)\n                        .removeClass(css.menuHovered)\n                        .addClass(css.menuLeaving);\n                    s.navLeaving = setTimeout(() => {\n                        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(p.outerElem).removeClass(css.menuLeaving);\n                    }, p.navLeavingDelay);\n                }, p.delay);\n            });\n        });\n    }\n    edgeDetector(liOrUl) {\n        const s = this;\n        const { stopWidth } = s.params;\n        const css = s.cssList;\n        const dw = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).width();\n        if (stopWidth < dw) {\n            const $uls = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(liOrUl).find('ul');\n            if ($uls.length) {\n                const ul = $uls[0], l = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(ul).offset().left, uw = ul.scrollWidth, fullyVisible = (l + uw <= dw);\n                if (!fullyVisible) {\n                    liOrUl.classList.add(css.menuElemEdge);\n                }\n            }\n        }\n    }\n}\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/NavDesktop.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/NavMobile.ts":
-/*!************************************!*\
-  !*** ./src/assets/js/NavMobile.ts ***!
-  \************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ NavMobile)\n/* harmony export */ });\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cash-dom */ \"cash-dom\");\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cash_dom__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/helpers */ \"./src/assets/js/util/helpers.ts\");\n/* harmony import */ var _fn_trapFocus__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./fn/trapFocus */ \"./src/assets/js/fn/trapFocus.ts\");\n/* harmony import */ var _fn_transition__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./fn/transition */ \"./src/assets/js/fn/transition.ts\");\n/* harmony import */ var _core_constants__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./core/constants */ \"./src/assets/js/core/constants.ts\");\n/* harmony import */ var _core_Store__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./core/Store */ \"./src/assets/js/core/Store.ts\");\n\n\n\n\n\n\nconst VERSION = \"3.0.0\";\nconst DATA_NAME = 'NavMobile';\nconst EVENT_NAME = 'navMobile';\nconst DEFAULTS = {\n    enableBtn: '#mobile-nav-btn',\n    ariaLabel: 'Toggle site navigation',\n    subMenuText: 'toggle menu for',\n    insertToggleBtnAfter: 'a',\n    slideDuration: 400,\n    outerElement: document.body,\n    outsideClickClose: true,\n    animateHeight: true,\n    cssPrefix: 'menu',\n    menuBtnCss: 'i i-arrow-b',\n    menuBtnSkip: false,\n    afterNavItemOpen: _util_helpers__WEBPACK_IMPORTED_MODULE_1__.noop,\n    afterNavItemClose: _util_helpers__WEBPACK_IMPORTED_MODULE_1__.noop,\n    afterOpen: _util_helpers__WEBPACK_IMPORTED_MODULE_1__.noop,\n    afterClose: _util_helpers__WEBPACK_IMPORTED_MODULE_1__.noop,\n    doTrapFocus: true,\n    trapFocusElem: null,\n    stopPropagation: true,\n    bkptEnable: null\n};\nclass NavMobile {\n    $element;\n    params;\n    menuOpened;\n    allowClick;\n    cssList;\n    static get version() { return VERSION; }\n    static defaults = DEFAULTS;\n    #transition = (0,_fn_transition__WEBPACK_IMPORTED_MODULE_3__[\"default\"])();\n    constructor(element, options) {\n        const s = this;\n        const dataOptions = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getDataOptions)(element, EVENT_NAME);\n        s.$element = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element);\n        s.params = cash_dom__WEBPACK_IMPORTED_MODULE_0___default().extend({}, NavMobile.defaults, options, dataOptions);\n        const { cssPrefix, menuBtnCss } = s.params;\n        s.cssList = {\n            menuOuterOpen: `${cssPrefix}--outer-open`,\n            menuHasUL: `${cssPrefix}__has-ul`,\n            menuOpen: `${cssPrefix}--open`,\n            menuOpening: `${cssPrefix}--is-opening`,\n            menuClosing: `${cssPrefix}--is-closing`,\n            menuToggling: `${cssPrefix}--toggling`,\n            menuBtnCss: `${cssPrefix}__btn-nav ${menuBtnCss}`\n        };\n        //run the methods\n        s.addChildNavCss();\n        s.handleEvents();\n        s.checkIfEnabled();\n        const elemID = element.id || element.className;\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(s.params.enableBtn).attr({\n            'aria-controls': elemID,\n            'aria-label': s.params.ariaLabel\n        });\n        return s;\n    }\n    handleEvents() {\n        const s = this;\n        const css = s.cssList;\n        const $enableBtn = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(s.params.enableBtn);\n        $enableBtn\n            .attr({ 'aria-expanded': 'false' })\n            .on(`click.${EVENT_NAME} ${EVENT_NAME}`, function (e) {\n            if (!s.allowClick)\n                return;\n            s.#menuToggle();\n            e.stopPropagation();\n            e.preventDefault();\n        });\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(document).on(`keydown.${EVENT_NAME}`, (e) => {\n            if (e.code === _core_constants__WEBPACK_IMPORTED_MODULE_4__.KEYS.esc && s.$element.hasClass(css.menuOpen) && s.allowClick) {\n                s.#menuToggle();\n                if ($enableBtn.length) {\n                    $enableBtn[0].focus();\n                }\n            }\n        });\n        s.#navToggle();\n        s.#outsideClickClose();\n    }\n    #menuToggle() {\n        const s = this;\n        const p = s.params;\n        const css = s.cssList;\n        let trappedFocus = null;\n        const $enableBtn = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(p.enableBtn);\n        const $elemParent = s.$element.parent();\n        const doClose = s.menuOpened;\n        const cssMenuState = `${doClose ? css.menuClosing : css.menuOpening} ${css.menuToggling}`;\n        s.#transition(() => {\n            s.menuOpened = !doClose;\n            s.$element.addClass(cssMenuState);\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(p.enableBtn).attr({ 'aria-expanded': !doClose + '' });\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(p.outerElement)\n                .toggleClass(css.menuOuterOpen, !doClose)\n                .addClass(cssMenuState);\n            if (doClose) {\n                $elemParent\n                    .find(`.${css.menuOpen}`)\n                    .removeClass(css.menuOpen)\n                    .find(\"[style]\").css({ 'display': null });\n                trappedFocus && trappedFocus.remove();\n            }\n            else {\n                if (p.doTrapFocus) {\n                    trappedFocus = (0,_fn_trapFocus__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(p.trapFocusElem || s.$element, { nameSpace: EVENT_NAME });\n                }\n            }\n        }, () => {\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(p.outerElement).removeClass(cssMenuState);\n            s.$element.removeClass(cssMenuState);\n            if (!doClose) {\n                s.$element.addClass(css.menuOpen);\n            }\n            s.params[doClose ? 'afterClose' : 'afterOpen'](s.$element, cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(p.outerElement), $enableBtn);\n        }, p.slideDuration);\n    }\n    #navToggle() {\n        const s = this;\n        const css = s.cssList;\n        s.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, `.${css.menuBtnCss.replace(/\\s/g, '.')}`, function (e) {\n            const p = s.params;\n            const css = s.cssList;\n            const $li = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(this).closest(`.${css.menuHasUL}`);\n            const doClose = $li.hasClass(css.menuOpen);\n            const $ul = $li.find('ul').first();\n            //exit because were in desktop view\n            if (!s.allowClick) {\n                return;\n            }\n            const cssMenuState = `${css.menuToggling} ${doClose ? css.menuClosing : css.menuOpening}`;\n            s.allowClick = doClose;\n            s.#transition(() => {\n                $li.addClass(cssMenuState).toggleClass(css.menuOpen, !doClose);\n                $ul.addClass(cssMenuState).toggleClass(css.menuOpen, !doClose);\n                if (p.animateHeight) {\n                    const openHeight = ($ul.length ? $ul[0].scrollHeight : 0);\n                    const height = doClose ? 0 : openHeight;\n                    $ul.css({ height: doClose ? openHeight : 0 });\n                    setTimeout(() => {\n                        $ul.css({ height });\n                    }, 0);\n                }\n            }, () => {\n                $li.removeClass(cssMenuState).toggleClass(css.menuOpen, !doClose);\n                $ul.removeClass(cssMenuState).toggleClass(css.menuOpen, !doClose);\n                $ul.css({ height: null });\n                if (doClose) {\n                    s.params.afterNavItemClose($li);\n                }\n                else {\n                    s.params.afterNavItemOpen($li);\n                }\n                s.allowClick = true;\n            }, p.slideDuration);\n            e.stopPropagation();\n        });\n        s.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, 'a', function (e) {\n            //prohibit closing if an anchor is clicked\n            if (s.params.stopPropagation) {\n                e.stopPropagation();\n            }\n        });\n    }\n    #outsideClickClose() {\n        const s = this;\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(document.body).on(`click.${EVENT_NAME}`, function (e) {\n            if (s.params.outsideClickClose) {\n                if (!s.menuOpened) {\n                    return;\n                } //lets just exit then..\n                const menuClicked = e.target ? s.$element.has(e.target).length > 0 : false;\n                //if the menu item is not clicked and its opened\n                //the menu button shouldn't register because propogation is prevented to the body\n                if (!menuClicked && s.menuOpened) {\n                    s.#menuToggle();\n                }\n            }\n        });\n    }\n    addChildNavCss() {\n        const s = this;\n        const p = s.params;\n        const css = s.cssList;\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('li', s.$element).has('ul').each(function () {\n            const $this = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(this);\n            let skipUl = false;\n            if (typeof p.menuBtnSkip === 'function' &&\n                // condition in function must return false\n                p.menuBtnSkip(this)) {\n                skipUl = true;\n            }\n            if (!$this.next('button').length && !skipUl) {\n                const $el = $this.find(p.insertToggleBtnAfter).first();\n                $el.addClass(css.menuHasUL);\n                if ($el.length) {\n                    if ($el[0].parentNode.isSameNode(this)) {\n                        // make sure the <el> is a direct child of <li>\n                        $el.after(cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('<button>').attr({\n                            class: css.menuBtnCss,\n                            type: 'button',\n                            'aria-label': p.subMenuText + ' ' + $el.text().trim()\n                        }));\n                    }\n                }\n            }\n        });\n    }\n    checkIfEnabled() {\n        const s = this;\n        let resizeTimer;\n        //basically if the navigational button is visible then\n        //we can allow the click to open the navigation\n        //this is so it doesn't clash with any other plugins\n        //and allows for the control of this click via CSS\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).on(`resize.${EVENT_NAME} ${EVENT_NAME}`, function (e) {\n            clearTimeout(resizeTimer);\n            resizeTimer = setTimeout(() => {\n                const $enableBtn = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(s.params.enableBtn);\n                s.allowClick = typeof s.params.bkptEnable === 'number' ?\n                    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).width() <= s.params.bkptEnable :\n                    ($enableBtn.length ? (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.isVisible)($enableBtn[0]) : false);\n            }, e.type === EVENT_NAME ? 0 : 200);\n        }).trigger(EVENT_NAME);\n    }\n    static remove(element, plugin) {\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element).each(function () {\n            const s = plugin || (0,_core_Store__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(this, DATA_NAME);\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(s.params.enableBtn).off(`click.${EVENT_NAME} ${EVENT_NAME}`);\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(document).off(`keydown.${EVENT_NAME}`);\n            s.$element\n                .off(`click.${EVENT_NAME} ${EVENT_NAME}`)\n                .off(`click.${EVENT_NAME} ${EVENT_NAME}`);\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(document.body).off(`click.${EVENT_NAME}`);\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).off(`resize.${EVENT_NAME} ${EVENT_NAME}`);\n            (0,_core_Store__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(this, DATA_NAME, null);\n        });\n    }\n}\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/NavMobile.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/Parallax.ts":
-/*!***********************************!*\
-  !*** ./src/assets/js/Parallax.ts ***!
-  \***********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ Parallax)\n/* harmony export */ });\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cash-dom */ \"cash-dom\");\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cash_dom__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _core_Store__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./core/Store */ \"./src/assets/js/core/Store.ts\");\n/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util/helpers */ \"./src/assets/js/util/helpers.ts\");\n/* harmony import */ var _fn_throttleResize__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./fn/throttleResize */ \"./src/assets/js/fn/throttleResize.ts\");\n\n\n\n\nconst VERSION = \"2.0.0\";\nconst DATA_NAME = 'Parallax';\nconst EVENT_NAME = 'parallax';\nconst DEFAULTS = {\n    speed: 7,\n    zSpeed: 5,\n    cssPrefix: 'parallax',\n    axis: 'y',\n    scrollAxis: 'y',\n    zAxis: false,\n    relativeElem: false,\n    bgFill: false,\n    rootMargin: 0,\n    scrollMaxPxStop: 5000,\n    zScrollMaxPxStop: 2000,\n    minWidth: null,\n    maxWidth: null\n};\nclass Parallax {\n    params;\n    zInitOffset;\n    index;\n    instanceEvent;\n    $window;\n    $element;\n    element;\n    elementOffset;\n    $relElem;\n    winHeight;\n    winWidth;\n    elemHeight;\n    elemWidth;\n    speed;\n    zSpeed;\n    fillAmount;\n    bgFill;\n    bgFillProp;\n    axis;\n    zAxis;\n    scrollMaxPxStop;\n    zScrollMaxPxStop;\n    rootMargin;\n    lastZSpeed;\n    lastCssInProps;\n    minWidthIfSet;\n    maxWidthIfSet;\n    effectCleared;\n    cssPrevDir;\n    static get version() { return VERSION; }\n    static defaults = DEFAULTS;\n    constructor(element, options, index) {\n        const s = this;\n        const dataOptions = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_2__.getDataOptions)(element, EVENT_NAME);\n        s.$window = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window);\n        s.$element = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element);\n        s.element = element;\n        s.params = cash_dom__WEBPACK_IMPORTED_MODULE_0___default().extend({}, Parallax.defaults, options, dataOptions);\n        s.zInitOffset = 0;\n        s.index = index;\n        s.instanceEvent = EVENT_NAME + index;\n        s.$relElem = s.#relElem;\n        s.cssPrevDir = '';\n        //props to get updated on resize\n        s.updatableProps();\n        s.handleEvents();\n        return s;\n    }\n    handleEvents() {\n        const s = this;\n        (0,_fn_throttleResize__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(() => {\n            s.updatableProps();\n            // $(window).trigger(s.instanceEvent);\n            s.parallax(s);\n        }, `${s.instanceEvent}_resize`, true);\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).on(`scroll.${s.instanceEvent} ${s.instanceEvent}`, () => {\n            window.requestAnimationFrame(() => {\n                s.parallax(s);\n            });\n        }).trigger(s.instanceEvent);\n    }\n    handleUpdate() {\n        const s = this;\n        s.updatableProps();\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).trigger(s.instanceEvent);\n    }\n    updatableProps() {\n        const s = this;\n        const speed = s.#speed, zSpeed = s.#zSpeed, { cssPrefix } = s.params, speedCss = `${cssPrefix}--${s.params.axis}-${zSpeed > 0 ? 'pos' : 'neg'}`, zSpeedCss = s.params.zAxis ? ` ${cssPrefix}--z-${zSpeed > 0 ? 'pos' : 'neg'}` : '', newCssDir = `${speedCss}${zSpeedCss}`, rm = s.params.rootMargin;\n        //reset to get new measurements\n        s.$element.css({\n            'transform': null,\n            height: null,\n            width: null\n        })\n            .removeClass(s.cssPrevDir)\n            .addClass(newCssDir);\n        s.cssPrevDir = newCssDir;\n        s.winHeight = s.$window.height();\n        s.winWidth = s.$window.width();\n        s.elemHeight = s.$relElem[0].scrollHeight;\n        s.elemWidth = s.$relElem[0].scrollWidth;\n        s.speed = speed;\n        s.zSpeed = zSpeed;\n        s.fillAmount = s.#fillAmount;\n        s.bgFill = s.params.bgFill;\n        s.axis = s.params.axis;\n        s.bgFillProp = s.axis === 'y' ? 'height' : 'width';\n        s.zAxis = s.params.zAxis;\n        s.$relElem = s.#relElem;\n        s.scrollMaxPxStop = s.params.scrollMaxPxStop;\n        s.zScrollMaxPxStop = s.params.zScrollMaxPxStop;\n        s.lastZSpeed = 0;\n        s.rootMargin = typeof s.params.rootMargin === 'number' ? [rm, rm] : rm;\n        s.minWidthIfSet = s.params.minWidth ? s.winWidth > s.params.minWidth : true;\n        s.maxWidthIfSet = s.params.maxWidth ? s.winWidth < s.params.maxWidth : true;\n        s.elementOffset = s.getElementRects();\n        s.$element.css(s.lastCssInProps);\n    }\n    getElementRects() {\n        const s = this;\n        const elPos = s.$element.offset(), top = elPos.top, left = elPos.left, bottom = top + s.elemHeight, right = left + s.elemWidth;\n        return {\n            top,\n            left,\n            bottom,\n            right\n        };\n    }\n    parallax(s) {\n        const { scrollAxis } = s.params, [rootMStart, rootMEnd] = s.rootMargin, withinMinAndMaxIfSet = (s.minWidthIfSet && s.maxWidthIfSet), scrollVertical = scrollAxis === 'y', offset = (scrollVertical ? s.elementOffset.top : s.elementOffset.left), winSide = (scrollVertical ? s.winHeight : s.winWidth) - rootMStart, scrollDir = (scrollVertical ? window.scrollY : window.scrollX), pixelStart = (offset > winSide ? (winSide - offset) + scrollDir : offset + (scrollDir - offset));\n        if (s.isInView(scrollVertical, pixelStart, scrollDir, rootMEnd) && withinMinAndMaxIfSet) {\n            const speed = (pixelStart * s.speed), zSpeed = (pixelStart * s.zSpeed), speedPx = (speed < s.zScrollMaxPxStop) ? speed : s.zScrollMaxPxStop, zSpeedPx = s.params.zAxis ? ((s.lastZSpeed < s.zScrollMaxPxStop) ? zSpeed : s.lastZSpeed) : 0, translateParams = s.axis === 'y' ? `0, ${speedPx}px, ${zSpeedPx}px` : `${speedPx}px, 0, ${zSpeedPx}px`;\n            const cssProps = {\n                transform: `translate3d(${translateParams})`,\n                [s.bgFillProp]: s.bgFill ? `calc(100% + ${s.fillAmount}px)` : null\n            };\n            s.lastZSpeed = zSpeedPx;\n            s.lastCssInProps = cssProps;\n            s.$element.css(cssProps);\n        }\n    }\n    isInView(scrollVertical, pixelStart, scrollDir, rootMargin) {\n        const s = this;\n        const elemOffsetEnd = scrollVertical ? s.elementOffset.bottom : s.elementOffset.right;\n        return scrollDir + rootMargin <= elemOffsetEnd && pixelStart >= 0;\n    }\n    //getters\n    get #fillAmount() {\n        const s = this;\n        const saY = s.params.scrollAxis === 'y';\n        const winSide = s.params.axis === 'y' ? s.winHeight : (s.winWidth + (saY ? 0 : s.elemWidth));\n        return (winSide * Math.abs(s.speed));\n    }\n    get #speed() {\n        const s = this;\n        return s.params.speed / 100;\n    }\n    get #zSpeed() {\n        const s = this;\n        return s.params.zSpeed / 100;\n    }\n    get #relElem() {\n        const s = this;\n        return s.params.relativeElem ?\n            s.$element.closest(s.params.relativeElem) :\n            s.$element;\n    }\n    static remove(element, plugin) {\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element).each(function () {\n            const s = plugin || (0,_core_Store__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(this, DATA_NAME);\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).off(`scroll.${s.instanceEvent} resize.${s.instanceEvent} ${s.instanceEvent}_resize ${s.instanceEvent}`);\n            s.$element.css({\n                'transform': null,\n                height: null,\n                width: null\n            }).removeClass(s.cssPrevDir);\n            (0,_core_Store__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(this, DATA_NAME, null);\n        });\n    }\n}\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/Parallax.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/SelectEnhance.ts":
-/*!****************************************!*\
-  !*** ./src/assets/js/SelectEnhance.ts ***!
-  \****************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ SelectEnhance)\n/* harmony export */ });\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cash-dom */ \"cash-dom\");\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cash_dom__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _core_Store__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./core/Store */ \"./src/assets/js/core/Store.ts\");\n/* harmony import */ var _core_constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./core/constants */ \"./src/assets/js/core/constants.ts\");\n/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./util/helpers */ \"./src/assets/js/util/helpers.ts\");\n\n\n\n\nconst VERSION = \"2.4.1\";\nconst EVENT_NAME = 'selectEnhance';\nconst DATA_NAME = 'SelectEnhance';\nconst DEFAULTS = {\n    cssPrefix: 'select-enhance',\n    mobileNative: true,\n    emptyValAsPlaceholder: true,\n    focusIn: _util_helpers__WEBPACK_IMPORTED_MODULE_3__.noop,\n    focusOut: _util_helpers__WEBPACK_IMPORTED_MODULE_3__.noop,\n    beforeChange: _util_helpers__WEBPACK_IMPORTED_MODULE_3__.noop,\n    afterChange: _util_helpers__WEBPACK_IMPORTED_MODULE_3__.noop,\n    blurDuration: 250,\n    typeAheadDuration: 500,\n    observeSelectbox: true\n};\n// wrap the select first\nconst mobileOS = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.isMobileOS)();\n// helper\nconst getSelectedOptNode = ($el) => $el.find('option').filter(function () { return this.selected; })[0];\n// global private state props\nlet to, $currSelectEnhance = null, listPosTop = true, registerEventScroll = false, currSelectInstance = null;\nclass SelectEnhance {\n    $select;\n    select;\n    params;\n    index;\n    id;\n    selectId;\n    isReadOnly;\n    $label;\n    $selectEnhance;\n    $textInput;\n    textInput;\n    $selectList;\n    optionSet;\n    optionsShown;\n    selectboxObserver;\n    selectListBoxInFullView;\n    keyedInput;\n    static defaults = DEFAULTS;\n    static get version() {\n        return VERSION;\n    }\n    constructor(element, options, index) {\n        const s = this;\n        s.index = index;\n        s.$select = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element);\n        s.select = element;\n        s.id = s.$select.attr('id') || s.$select.attr('name') || 'select_enhance_' + index;\n        s.selectId = s.id + '_enhance';\n        s.$label = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(`label[for=\"${s.id}\"]`);\n        s.optionSet = new WeakMap();\n        s.optionsShown = false;\n        s.selectboxObserver;\n        s.selectListBoxInFullView = true;\n        s.keyedInput = \"\";\n        s.isReadOnly = typeof s.$select.attr('readonly') === \"string\";\n        if (s.select.multiple) {\n            console.warn(`The SelectEnhance plugin doesn't support multiple selections.`);\n        }\n        if (s.$label.length) {\n            s.$label.attr({ id: s.selectId + '_lbl' });\n        }\n        const dataOptions = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getDataOptions)(element, EVENT_NAME);\n        s.params = cash_dom__WEBPACK_IMPORTED_MODULE_0___default().extend({}, SelectEnhance.defaults, options, dataOptions);\n        s.setUpSelectHtml();\n        if (mobileOS && s.params.mobileNative || s.isReadOnly) {\n            s.mobileOnlyIfNavite();\n        }\n        else {\n            // \n            // attach events\n            // \n            if (s.params.observeSelectbox) {\n                s.selectInputMutationObserver();\n            }\n            s.eventLabelClick();\n            s.eventKeyboardSearch();\n            s.eventShowOptions();\n            s.eventOptionClick();\n            s.eventSelectToggle();\n            s.eventArrowKeys();\n            s.observeSelectListBoxInFullView();\n            SelectEnhance.eventScrollGetListPosition();\n        }\n        return s;\n    }\n    mobileOnlyIfNavite() {\n        const s = this;\n        let prevElSelectedVal = getSelectedOptNode(s.$select);\n        s.$select.on('mouseup.' + EVENT_NAME, 'option', function (e) {\n            if (!this.isSameNode(prevElSelectedVal)) {\n                s.params.beforeChange(s.$select);\n            }\n        }).on('change.' + EVENT_NAME, function (e) {\n            s.params.afterChange(s.$select);\n            prevElSelectedVal = getSelectedOptNode(s.$select);\n        });\n    }\n    // Events \n    blurSelect() {\n        const s = this;\n        s.$selectEnhance.addClass(s.params.cssPrefix + '--blurring');\n        s.$selectEnhance.removeClass(s.params.cssPrefix + '--focused');\n        s.$textInput.attr({ 'aria-expanded': 'false' });\n        setTimeout(() => {\n            s.$selectEnhance.removeClass(s.params.cssPrefix + '--blurring');\n            $currSelectEnhance = null;\n            currSelectInstance = null;\n            s.optionsShown = false;\n            s.params.focusOut(s.$select);\n        }, s.params.blurDuration);\n    }\n    setSelectionState($btn, doBlur = true) {\n        const s = this;\n        const { cssPrefix } = s.params;\n        const selectedOpt = s.optionSet.get($btn[0]);\n        const newSelectedState = !selectedOpt.selected;\n        s.params.beforeChange(s.$select);\n        selectedOpt.selected = true;\n        s.params.afterChange(s.$select);\n        s.$selectEnhance.find('.' + cssPrefix + '__list-btn[aria-selected]').attr({ 'aria-selected': 'false' });\n        $btn.attr({ 'aria-selected': newSelectedState + '' });\n        s.$textInput.attr({ 'aria-activedescendant': $btn[0].id });\n        // add a class whether there is an input value or not\n        s.$selectEnhance.toggleClass(cssPrefix + '--empty-val', !selectedOpt.value.trim());\n        s.select.dispatchEvent(new Event('change'));\n        if (s.params.emptyValAsPlaceholder && selectedOpt.value.trim() === '') {\n            s.$textInput.val('').attr({ placeholder: selectedOpt.text });\n        }\n        else {\n            s.$textInput.val(selectedOpt.text);\n        }\n        if (doBlur) {\n            s.textInput.focus();\n            s.blurSelect();\n        }\n        else {\n            $btn[0].focus();\n        }\n    }\n    eventLabelClick() {\n        const s = this;\n        s.$label.on('click.' + EVENT_NAME, function (e) {\n            e.preventDefault();\n            if (!s.select.disabled) {\n                s.textInput.focus();\n            }\n        });\n    }\n    showOptions(s) {\n        if (s.select.disabled) {\n            return;\n        }\n        const { cssPrefix } = s.params;\n        s.optionsShown = true;\n        s.$selectEnhance.toggleClass(cssPrefix + '--focused');\n        s.$textInput.attr({ 'aria-expanded': 'true' });\n        const $selectedBtn = s.$selectEnhance.find('.' + cssPrefix + '__list-btn[aria-selected=\"true\"]');\n        if ($selectedBtn.length) {\n            $selectedBtn[0].focus();\n        }\n        $currSelectEnhance = s.$selectEnhance;\n        currSelectInstance = s;\n        SelectEnhance.getListPosition();\n        s.params.focusIn(s.$select);\n    }\n    eventShowOptions() {\n        const s = this;\n        const { cssPrefix } = s.params;\n        s.$selectEnhance.on('click.' + EVENT_NAME, '.' + cssPrefix + '__enable-text', (e) => {\n            if (s.select.disabled) {\n                return;\n            }\n            s.showOptions(s);\n        });\n        // Only works on keydown event\n        s.$textInput.on('keydown.' + EVENT_NAME, function (e) {\n            if ((e.key === _core_constants__WEBPACK_IMPORTED_MODULE_2__.KEYS.down || e.key === _core_constants__WEBPACK_IMPORTED_MODULE_2__.KEYS.up) && !s.optionsShown) {\n                s.showOptions(s);\n                e.preventDefault();\n            }\n        });\n        s.$selectList.on('keypress.' + EVENT_NAME, '.' + cssPrefix + '__list-btn', function (e) {\n            if (e.key === _core_constants__WEBPACK_IMPORTED_MODULE_2__.KEYS.enter ||\n                e.code === _core_constants__WEBPACK_IMPORTED_MODULE_2__.KEYS.space && s.keyedInput.trim() === '') {\n                s.setSelectionState(cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(document.activeElement));\n                s.blurSelect();\n                s.textInput.focus();\n                e.preventDefault();\n            }\n        });\n        s.$textInput.on('keypress.' + EVENT_NAME, function (e) {\n            if (e.key !== _core_constants__WEBPACK_IMPORTED_MODULE_2__.KEYS.tab || e.shiftKey && e.key !== _core_constants__WEBPACK_IMPORTED_MODULE_2__.KEYS.tab) {\n                e.preventDefault();\n            }\n            if (e.key === _core_constants__WEBPACK_IMPORTED_MODULE_2__.KEYS.enter ||\n                e.code === _core_constants__WEBPACK_IMPORTED_MODULE_2__.KEYS.space && s.keyedInput.trim() === '' ||\n                e.ctrlKey && e.altKey && e.shiftKey && _core_constants__WEBPACK_IMPORTED_MODULE_2__.KEYS.space === e.code) {\n                s.showOptions(s);\n            }\n        });\n    }\n    eventOptionClick() {\n        const s = this;\n        s.$selectEnhance.on('click.' + EVENT_NAME, '.' + s.params.cssPrefix + '__list-btn', function (e) {\n            e.preventDefault();\n            s.$selectEnhance.removeClass(s.params.cssPrefix + '--focused');\n            s.$textInput.attr({ 'aria-expanded': 'false' });\n            s.setSelectionState(cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(this));\n        });\n    }\n    eventSelectToggle() {\n        const s = this;\n        s.$selectEnhance.on('focusin.' + EVENT_NAME, function (e) {\n            const closeEvent = 'click.close_' + s.selectId + EVENT_NAME;\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(document.body).off(closeEvent).on(closeEvent, function (e) {\n                setTimeout(() => {\n                    const ae = document.activeElement;\n                    const aeIsInSelectEnhance = (ae && !s.$selectEnhance.has(ae).length);\n                    if (aeIsInSelectEnhance || s.$selectEnhance[0].isSameNode(ae)) {\n                        s.blurSelect();\n                        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(document.body).off(closeEvent);\n                    }\n                }, 100);\n            });\n        });\n    }\n    eventKeyboardSearch() {\n        const s = this;\n        let keyInputTo = null;\n        let changedTo = null;\n        let keyedFound = [];\n        s.$selectEnhance.on('keypress.' + EVENT_NAME, function (e) {\n            if (s.select.disabled) {\n                return;\n            }\n            const keyCurr = (e.key.length === 1 ? e.key : '');\n            s.keyedInput += keyCurr;\n            clearTimeout(keyInputTo);\n            keyInputTo = setTimeout(() => {\n                s.keyedInput = \"\";\n            }, s.params.typeAheadDuration);\n            if (s.keyedInput.trim()) {\n                const rgx = RegExp('^' + s.keyedInput.trim(), 'i');\n                keyedFound = [].slice.call(s.select.getElementsByTagName('option')).filter((el) => rgx.test(el.text));\n                if (keyedFound.length) {\n                    clearTimeout(changedTo);\n                    changedTo = setTimeout(() => {\n                        s.setSelectionState(s.optionSet.get(keyedFound[0]), false);\n                    }, 100);\n                }\n            }\n        });\n    }\n    eventArrowKeys() {\n        const s = this;\n        s.$selectEnhance.on('keydown.navigate_' + EVENT_NAME, function (e) {\n            if (s.select.disabled) {\n                return;\n            }\n            if (e.key === _core_constants__WEBPACK_IMPORTED_MODULE_2__.KEYS.down) {\n                if (!s.textInput.isSameNode(document.activeElement)) {\n                    e.preventDefault();\n                }\n                s.nextOptionButton('next');\n            }\n            if (e.key === _core_constants__WEBPACK_IMPORTED_MODULE_2__.KEYS.up) {\n                e.preventDefault();\n                s.nextOptionButton('prev');\n            }\n            if (e.key === _core_constants__WEBPACK_IMPORTED_MODULE_2__.KEYS.esc && $currSelectEnhance) {\n                s.blurSelect();\n                s.textInput.focus();\n            }\n        });\n    }\n    //  build the HTML for it\n    setUpSelectHtml() {\n        const s = this;\n        const $selectEnhance = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('<div />').attr({\n            class: s.params.cssPrefix,\n            id: s.selectId + '_wrap'\n        });\n        const $textInput = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('<input>').attr({\n            type: 'text',\n            class: s.params.cssPrefix + '__enable-text',\n            role: \"combobox\",\n            'aria-controls': s.selectId + '_listbox',\n            'aria-labelledby': s.selectId + '_lbl',\n            'aria-autocomplete': 'list',\n            'aria-expanded': 'false',\n            id: s.selectId + '_input'\n        });\n        s.$select.wrap($selectEnhance);\n        // jQuery, elements need to be bound to the DOM before they\n        // can have events attached to them. So this is the solution\n        s.$selectEnhance = s.$select.parent();\n        if (mobileOS && s.params.mobileNative || s.isReadOnly) {\n            // exit if its a mobile device after wrapping for styling\n            return;\n        }\n        $textInput.insertAfter(s.$select);\n        s.$select.attr({ tabindex: '-1', 'aria-hidden': 'true' });\n        // jQuery, elements need to be bound to the DOM before they\n        // can have events attached to them. So this is the solution\n        s.$textInput = s.$select.parent().find('#' + s.selectId + '_input');\n        s.textInput = s.$textInput[0];\n        SelectEnhance.buildOptionsList(s);\n    }\n    static buildOptionsList(s, $selectList) {\n        const { cssPrefix } = s.params;\n        const optGroup = s.select.getElementsByTagName('optgroup');\n        const hasOptGroup = !!optGroup.length;\n        const $optGroupWm = new WeakMap();\n        if (hasOptGroup) {\n            for (let i = 0, l = optGroup.length; i < l; i++) {\n                const group = optGroup[i];\n                $optGroupWm.set(group, cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('<div/>').attr({\n                    class: cssPrefix + '__optgroup',\n                    role: 'group',\n                    label: group.label || \"\"\n                }).append(cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('<span>').attr({\n                    class: cssPrefix + '__optgroup-label',\n                    'aria-hidden': 'true'\n                }).text(group.label || \"\")));\n            }\n        }\n        const options = s.select.getElementsByTagName('option');\n        s.$selectList = $selectList ? $selectList : cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({\n            class: cssPrefix + '__list',\n            role: 'listbox',\n            id: s.selectId + '_listbox',\n            'aria-label': s.$label.text() || ''\n        });\n        const optId = s.selectId || 'select_' + s.index;\n        for (let i = 0, l = options.length; i < l; i++) {\n            const opt = options[i];\n            const id = optId + i;\n            if (opt.hidden)\n                continue;\n            const valCssStatus = opt.value === '' ? ' ' + cssPrefix + '__list-btn--empty' : '';\n            const attrs = {\n                // type: 'button',\n                tabIndex: '0',\n                role: 'option', id,\n                'data-value': opt.value,\n                'aria-selected': opt.selected + '',\n                disabled: opt.disabled ? 'disabled' : null,\n                class: cssPrefix + '__list-btn' + valCssStatus\n            };\n            const $btn = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('<div/>').attr(attrs).text(opt.textContent);\n            s.optionSet.set($btn[0], opt);\n            s.optionSet.set(opt, $btn);\n            // append to list or optgroup\n            hasOptGroup && opt.parentElement.nodeName.toUpperCase() === 'OPTGROUP' ?\n                $optGroupWm.get(opt.parentElement).append($btn) :\n                s.$selectList.append($btn);\n            if (opt.selected) {\n                s.$textInput.attr({ 'aria-activedescendant': id });\n                s.$selectEnhance.toggleClass(cssPrefix + '--empty-val', !opt.value.trim());\n                if (s.params.emptyValAsPlaceholder && opt.value.trim() === '') {\n                    s.$textInput.val('');\n                    s.$textInput.attr({ placeholder: opt.text });\n                }\n                else {\n                    s.$textInput.val(opt.text);\n                }\n            }\n        }\n        if (hasOptGroup) {\n            for (let i = 0, l = optGroup.length; i < l; i++) {\n                const group = optGroup[i];\n                s.$selectList.append($optGroupWm.get(group));\n            }\n        }\n        s.$selectList.insertAfter(s.$textInput);\n    }\n    nextOptionButton(dir) {\n        const s = this;\n        const ae = document.activeElement;\n        const $btnList = s.$selectList.find('.' + s.params.cssPrefix + '__list-btn');\n        const btnLength = $btnList.length;\n        if (btnLength && s.textInput.isSameNode(ae)) {\n            $btnList.eq(dir === 'next' ? 0 : btnLength - 1)[0].focus();\n            return;\n        }\n        for (let i = 0; i < btnLength; i++) {\n            const el = $btnList[i];\n            let prevNextIndex = 0;\n            if (ae.isSameNode(el)) {\n                if (dir === 'next') {\n                    const isLast = i === btnLength - 1;\n                    prevNextIndex = isLast ? i : i + 1;\n                }\n                else {\n                    const isFirst = i === 0;\n                    prevNextIndex = isFirst ? i : i - 1;\n                }\n                $btnList.eq(prevNextIndex)[0].focus();\n                break;\n            }\n        }\n    }\n    selectInputMutationObserver() {\n        const s = this;\n        const selectNode = s.select;\n        const config = { attributes: true, childList: true, subtree: true };\n        // Callback function to execute when mutations are observed\n        const callback = function (mutationsList, observer) {\n            // Use traditional 'for loops' for IE 11\n            for (let i = 0, l = mutationsList.length; i < l; i++) {\n                const mutation = mutationsList[i];\n                if (mutation.type === 'childList') {\n                    SelectEnhance.refreshOptions(s.select);\n                }\n                else if (mutation.type === 'attributes') {\n                    s.$selectEnhance.toggleClass(s.params.cssPrefix + '--disabled', s.select.disabled);\n                }\n            }\n        };\n        // Create an observer instance linked to the callback function\n        s.selectboxObserver = new MutationObserver(callback);\n        // Start observing the target node for configured mutations\n        s.selectboxObserver.observe(selectNode, config);\n        // Later, you can stop observing\n        // s.selectboxObserver.disconnect();\n    }\n    static eventScrollGetListPosition() {\n        if (!registerEventScroll) {\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).on('scroll.' + EVENT_NAME, () => {\n                to && clearTimeout(to);\n                to = setTimeout(SelectEnhance.getListPosition, 100);\n            });\n            registerEventScroll = true;\n        }\n    }\n    observeSelectListBoxInFullView() {\n        const s = this;\n        if (window.IntersectionObserver) {\n            const selectIntersectionObserver = new IntersectionObserver(function (selects) {\n                s.selectListBoxInFullView = selects[0].intersectionRatio === 1;\n            }, { threshold: [0, 1] });\n            s.$selectList[0] && selectIntersectionObserver.observe(s.$selectList[0]);\n        }\n    }\n    static getListPosition() {\n        if (currSelectInstance) {\n            const s = currSelectInstance;\n            const selWrapPosTop = s.$selectEnhance.offset().top;\n            const selListHeight = s.$selectList.height();\n            const listPosAndHeight = s.$selectEnhance.offset().top +\n                s.$selectEnhance.height() +\n                selListHeight;\n            const winPosAndHeight = window.scrollY + cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).height();\n            if (listPosAndHeight > winPosAndHeight &&\n                selWrapPosTop > selListHeight &&\n                !s.selectListBoxInFullView) {\n                s.$selectEnhance.addClass(s.params.cssPrefix + '--pos-bottom');\n                listPosTop = false;\n            }\n            else {\n                s.$selectEnhance.removeClass(s.params.cssPrefix + '--pos-bottom');\n                listPosTop = true;\n            }\n        }\n    }\n    static refreshOptions(element) {\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element).each(function () {\n            const s = (0,_core_Store__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(this, `${DATA_NAME}_instance`);\n            if (s) {\n                s.$selectList.empty();\n                s.optionSet = new WeakMap();\n                SelectEnhance.buildOptionsList(s, s.$selectList);\n            }\n            else {\n                console.warn(`No instance of a selectbox`, element);\n            }\n        });\n    }\n    static remove(element, plugin) {\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element).each(function () {\n            const s = plugin || (0,_core_Store__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(this, DATA_NAME);\n            s.$selectEnhance.off('keydown.' + EVENT_NAME);\n            s.$selectEnhance.off('keydown.navigate_' + EVENT_NAME);\n            s.$selectEnhance.off('click.' + EVENT_NAME);\n            s.$selectEnhance.off('focusout.' + EVENT_NAME);\n            s.$selectEnhance.off('blur.' + EVENT_NAME);\n            s.$label.off('click.' + EVENT_NAME);\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(document.body).off('click.close_' + s.selectId + EVENT_NAME);\n            // the window event will just stay\n            s.$select.insertAfter(s.$selectEnhance);\n            s.$select.attr({ tabindex: null, 'aria-hidden': null });\n            s.$select.off('mouseup.' + EVENT_NAME);\n            s.$select.off('change.' + EVENT_NAME);\n            if (s.selectboxObserver) {\n                s.selectboxObserver.disconnect();\n            }\n            s.$selectEnhance.remove();\n            (0,_core_Store__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(this, DATA_NAME, null);\n        });\n    }\n}\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/SelectEnhance.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/Tabs.ts":
-/*!*******************************!*\
-  !*** ./src/assets/js/Tabs.ts ***!
-  \*******************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ Tabs)\n/* harmony export */ });\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cash-dom */ \"cash-dom\");\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cash_dom__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/helpers */ \"./src/assets/js/util/helpers.ts\");\n/* harmony import */ var _core_Store__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./core/Store */ \"./src/assets/js/core/Store.ts\");\n/* harmony import */ var _core_UrlState__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./core/UrlState */ \"./src/assets/js/core/UrlState.ts\");\n/* harmony import */ var _fn_transition__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./fn/transition */ \"./src/assets/js/fn/transition.ts\");\n\n\n\n\n\nconst VERSION = \"1.5.0\";\nconst DATA_NAME = 'Tabs';\nconst EVENT_NAME = 'tabs';\nconst DEFAULTS = {\n    tabsEvent: 'click',\n    cssPrefix: 'tabs',\n    locationFilter: null,\n    urlFilterType: 'hash',\n    historyType: 'push',\n    loadLocation: true,\n    addIDtoPanel: true,\n    ariaLabel: true,\n    tabChange: () => { },\n    onInit: () => { }\n};\nconst getTabIDFromEl = (el) => {\n    return (el instanceof HTMLButtonElement ? el.dataset.href : el.hash)?.replace(/^\\#/, '') || '';\n};\nclass Tabs {\n    static get version() {\n        return VERSION;\n    }\n    $element;\n    params;\n    $tabsNav;\n    $tabsNavClickElems;\n    tabsNavClickElems;\n    $tabsBody;\n    $tabsBodyPanels;\n    prevTabId;\n    initTabId;\n    initDefaultContent;\n    static defaults = DEFAULTS;\n    #transition = (0,_fn_transition__WEBPACK_IMPORTED_MODULE_4__[\"default\"])();\n    constructor(element, options) {\n        const s = this;\n        const dataOptions = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getDataOptions)(element, EVENT_NAME);\n        s.$element = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element);\n        s.params = cash_dom__WEBPACK_IMPORTED_MODULE_0___default().extend({}, Tabs.defaults, options, dataOptions);\n        const p = s.params;\n        s.$tabsNav = s.$element.find(`.${p.cssPrefix}__nav`).first();\n        s.$tabsBody = s.$element.find(`.${p.cssPrefix}__body`).first();\n        const tabsBody = s.$tabsBody[0];\n        s.$tabsBodyPanels = s.$tabsBody.find(`.${p.cssPrefix}__panel`)\n            // ensure they're the children of the body\n            // must be direct child\n            .filter((i, el) => el.parentElement.isSameNode(tabsBody));\n        s.$tabsNavClickElems = s.$tabsNav.find('a, button');\n        s.tabsNavClickElems = [...s.$tabsNavClickElems];\n        s.prevTabId = null;\n        s.initDefaultContent = s.$tabsBodyPanels.eq(0).data('tab-id');\n        //init\n        s.setAriaAttrs();\n        s.handleEvents();\n        s.loadDefaultContent();\n        s.loadFromUrl();\n        s.params.onInit(s.$tabsNav, s.$tabsBody);\n        return s;\n    }\n    loadDefaultContent() {\n        const s = this;\n        const tabId = s.initDefaultContent;\n        const clickElem = s.getClickElemFromTabId(tabId);\n        s.changeTabElements(clickElem, tabId, false);\n    }\n    loadFromUrl() {\n        const s = this;\n        const p = s.params;\n        if (p.locationFilter !== null || p.loadLocation) {\n            const tabId = _core_UrlState__WEBPACK_IMPORTED_MODULE_3__[\"default\"].get(p.urlFilterType, p.locationFilter);\n            if (tabId) {\n                const clickElem = s.getClickElemFromTabId(tabId);\n                clickElem && s.changeTabElements(clickElem, tabId, false);\n            }\n        }\n    }\n    getClickElemFromTabId(tabId) {\n        const $clickElem = this.$tabsNavClickElems.filter((i, el) => getTabIDFromEl(el) === tabId);\n        if ($clickElem.length) {\n            return $clickElem[0];\n        }\n        return null;\n    }\n    setAriaAttrs() {\n        const s = this;\n        const p = s.params;\n        s.$tabsNavClickElems.each(function () {\n            const tabId = getTabIDFromEl(this);\n            const $tabBodyItem = s.$tabsBodyPanels.filter((i, el) => el.dataset.tabId === tabId);\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(this).attr({\n                'aria-selected': 'false',\n                'role': 'tab',\n                'aria-controls': tabId\n            });\n            $tabBodyItem.attr({\n                'aria-label': p.ariaLabel ? this.textContent : null,\n                'role': 'tabpanel',\n                tabindex: '-1'\n            });\n            if (p.addIDtoPanel) {\n                $tabBodyItem.attr({ 'id': tabId });\n            }\n        });\n    }\n    handleEvents() {\n        const s = this;\n        s.$tabsNav.on(`${s.params.tabsEvent}.${EVENT_NAME} ${EVENT_NAME}`, \"a, button\", function (e) {\n            const clickElem = this;\n            const tabId = getTabIDFromEl(clickElem);\n            s.changeTabElements(clickElem, tabId);\n            e.preventDefault();\n        });\n        s.$tabsNav.on('keydown.' + EVENT_NAME, function (e) {\n            const target = e.target;\n            const index = s.tabsNavClickElems.findIndex(el => el.isSameNode(target));\n            const next = e.key === 'ArrowRight' || e.key === 'ArrowDown';\n            const prev = e.key === 'ArrowLeft' || e.key === 'ArrowUp';\n            if (index !== -1 && (next || prev)) {\n                const changeIndex = next ? index + 1 : index - 1;\n                const nextBtn = s.tabsNavClickElems[changeIndex];\n                if (nextBtn) {\n                    // $(target).attr({'tabindex': '-1'});\n                    const tabId = getTabIDFromEl(nextBtn);\n                    s.changeTabElements(nextBtn, tabId);\n                    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(nextBtn)[0].focus();\n                }\n                e.preventDefault();\n            }\n        });\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).on(`popstate.${EVENT_NAME} ${EVENT_NAME}`, (e) => {\n            if (s.params.historyType === 'push') {\n                s.loadFromUrl();\n                e.preventDefault();\n            }\n        });\n    }\n    changeTabElements(clickElem, tabId, updateUrl = true) {\n        const s = this;\n        const p = s.params;\n        let hasTab = false;\n        const cssOpen = `${p.cssPrefix}__panel--open`, cssToggling = `${p.cssPrefix}__panel--toggling`, cssOpening = `${p.cssPrefix}__panel--opening`, cssClosing = `${p.cssPrefix}__panel--closing`;\n        s.#transition(() => {\n            s.$tabsBodyPanels.each(function () {\n                const thisTabId = this.dataset.tabId;\n                if (thisTabId === tabId) {\n                    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(this)\n                        .addClass(`${cssToggling} ${cssOpening}`)\n                        .attr({ 'aria-hidden': null, tabindex: '0' });\n                    hasTab = true;\n                }\n                if (s.prevTabId && s.prevTabId === thisTabId) {\n                    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(this)\n                        .addClass(`${cssToggling} ${cssClosing}`)\n                        .attr({ 'aria-hidden': 'true', tabindex: '-1' });\n                }\n            });\n            if (hasTab) {\n                s.params.tabChange(tabId, s.prevTabId, s.$tabsNav, s.$tabsBody);\n                s.prevTabId = tabId;\n                s.$tabsNavClickElems\n                    .attr({ 'aria-selected': 'false', tabindex: '-1' })\n                    .parent('li').removeClass(`${p.cssPrefix}__nav-li--active`);\n                cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(clickElem)\n                    .attr({ 'aria-selected': 'true', tabindex: '0' })\n                    .parent('li').addClass(`${p.cssPrefix}__nav-li--active`);\n                if (updateUrl) {\n                    const paramVal = s.initDefaultContent === tabId ? null : tabId;\n                    if (p.urlFilterType === 'hashVal') {\n                        _core_UrlState__WEBPACK_IMPORTED_MODULE_3__[\"default\"].setHashVal(paramVal, p.historyType);\n                    }\n                    else {\n                        _core_UrlState__WEBPACK_IMPORTED_MODULE_3__[\"default\"].set(p.urlFilterType, p.locationFilter, paramVal, p.historyType);\n                    }\n                }\n            }\n        }, () => {\n            s.$tabsBodyPanels.each(function () {\n                const isTab = this.dataset.tabId === tabId;\n                cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(this)\n                    .toggleClass(cssOpen, isTab)\n                    .removeClass(`${cssToggling} ${cssOpening} ${cssClosing}`);\n            });\n        });\n    }\n    static remove(element, plugin) {\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element).each(function () {\n            const s = plugin || (0,_core_Store__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(this, DATA_NAME);\n            const params = s.params;\n            s.$tabsNav.off(`${params.tabsEvent}.${EVENT_NAME} ${EVENT_NAME}`);\n            s.$tabsNav.off('keydown.' + EVENT_NAME);\n            s.$tabsNav.find('a, button').attr({ tabndex: null });\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).off(`popstate.${EVENT_NAME} ${EVENT_NAME}`);\n            (0,_core_Store__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(this, DATA_NAME, null);\n        });\n    }\n}\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/Tabs.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/Toastr.ts":
-/*!*********************************!*\
-  !*** ./src/assets/js/Toastr.ts ***!
-  \*********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ Toastr)\n/* harmony export */ });\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cash-dom */ \"cash-dom\");\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cash_dom__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/helpers */ \"./src/assets/js/util/helpers.ts\");\n/* harmony import */ var _core_Store__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./core/Store */ \"./src/assets/js/core/Store.ts\");\n\n\n\nconst VERSION = \"1.0.0\";\nconst DATA_NAME = 'Toastr';\nconst EVENT_NAME = 'toastr';\nconst DEFAULTS = {\n    duration: 3000,\n    appendTo: document.body,\n    animationDuration: 500,\n    content: '',\n    outerCss: 'toastr',\n    enabledCss: 'toastr--enabled',\n    dismissCss: 'toastr--dismiss',\n    btnDismissCss: 'toastr__btn-dismiss',\n    closeIconCss: 'ico i-close',\n    ariaLive: 'polite',\n    closeTextCopy: 'Dismiss',\n    cssGroupKey: 'std',\n    oneOnly: false\n};\nconst toastContainers = new Map();\nlet currentlyToastingGlobal = false;\nclass Toastr {\n    static get version() { return VERSION; }\n    static Defaults = DEFAULTS;\n    static DismissedEventName = 'toastDismissed';\n    toastrFinallyTimer;\n    currentlyToasting;\n    toasterBodyBuilt;\n    $element;\n    $toastrBody;\n    $toastrWrap;\n    params;\n    constructor(element, options) {\n        const s = this;\n        const dataOptions = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getDataOptions)(element, EVENT_NAME);\n        //state\n        s.$element = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element);\n        s.toastrFinallyTimer = null;\n        s.$toastrBody = null;\n        s.$toastrWrap = null;\n        s.currentlyToasting = false;\n        s.params = cash_dom__WEBPACK_IMPORTED_MODULE_0___default().extend({}, Toastr.Defaults, options, dataOptions);\n        s.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, () => s.launch());\n        return s;\n    }\n    dismiss() {\n        const s = this;\n        const { animationDuration, dismissCss } = s.params;\n        s.toastrFinallyTimer && clearTimeout(s.toastrFinallyTimer);\n        s.$toastrWrap.addClass(dismissCss);\n        setTimeout(() => {\n            const $toatrContainer = s.getToasterContainer();\n            s.$toastrWrap.removeClass(dismissCss).detach();\n            if (!$toatrContainer.children('div').length) {\n                s.getToasterContainer().detach();\n            }\n            s.currentlyToasting = false;\n            currentlyToastingGlobal = false;\n        }, animationDuration);\n    }\n    setContent(content, updateNow = false) {\n        const s = this;\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default().extend(s.params, { content });\n        if (updateNow) {\n            s.updateContent(s.params.content);\n        }\n    }\n    launch() {\n        const s = this;\n        const { content, dismissCss, duration, enabledCss, oneOnly } = s.params;\n        if (!s.currentlyToasting) {\n            if (currentlyToastingGlobal && oneOnly) {\n                return;\n            }\n            if (!s.toasterBodyBuilt) {\n                s.buildElems();\n            }\n            s.$toastrWrap.removeClass(`${dismissCss} ${enabledCss}`);\n            s.updateContent(content);\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(document.body).append(s.getToasterContainer().append(s.$toastrWrap));\n            setTimeout(() => s.$toastrWrap.addClass(enabledCss), 0);\n            // Auto remove if not dismissed\n            s.toastrFinallyTimer = setTimeout(() => s.dismiss(), duration);\n            s.currentlyToasting = true;\n            currentlyToastingGlobal = true;\n        }\n    }\n    getToasterContainer() {\n        const { cssGroupKey, outerCss } = this.params;\n        const toasterWrapCss = `${outerCss}-wrap ${outerCss}-wrap--${cssGroupKey}`;\n        if (!toastContainers.has(toasterWrapCss)) {\n            toastContainers.set(toasterWrapCss, cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('<div/>').attr({\n                class: toasterWrapCss\n            }));\n        }\n        return toastContainers.get(toasterWrapCss);\n    }\n    buildElems() {\n        const s = this;\n        const { ariaLive, btnDismissCss, closeIconCss, closeTextCopy, outerCss } = s.params;\n        s.$toastrBody = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({ class: s.params.outerCss + '__body' });\n        s.$toastrWrap = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({ class: outerCss, role: 'alert', 'aria-live': ariaLive }).append(s.$toastrBody, cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('<button>').attr({ type: 'button', class: btnDismissCss }).append(cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('<i>').attr({ class: closeIconCss }).append(cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('<span>').attr({ class: 'sr-only' }).text(closeTextCopy))));\n        s.toasterBodyBuilt = true;\n        // click event to dismiss\n        s.$toastrWrap.on('click', 'button', () => s.dismiss());\n    }\n    updateContent(content) {\n        const s = this;\n        if (s.$toastrBody) {\n            s.$toastrBody.empty();\n            if ('string' === typeof content) {\n                s.$toastrBody.html(content);\n            }\n            else {\n                s.$toastrBody.append(content);\n            }\n        }\n    }\n    static setContent(element, content, updateNow = false) {\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element).each(function () {\n            const s = (0,_core_Store__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(this, DATA_NAME);\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default().extend(s.params, { content });\n            if (updateNow) {\n                s.updateContent(s.params.content);\n            }\n        });\n    }\n    static remove(element, plugin) {\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(element).each(function () {\n            const s = plugin || (0,_core_Store__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(this, DATA_NAME);\n            s.$element.off(`click.${EVENT_NAME} ${EVENT_NAME}`);\n            (0,_core_Store__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(this, DATA_NAME, null);\n        });\n    }\n}\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/Toastr.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/core/Store.ts":
-/*!*************************************!*\
-  !*** ./src/assets/js/core/Store.ts ***!
-  \*************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\nconst storeMap = new WeakMap();\nconst Store = (storeElem, key, value) => {\n    const storeRecord = storeMap.get(storeElem) || storeMap.set(storeElem, {});\n    const keyExists = Reflect.has(storeRecord, key);\n    if (keyExists) {\n        const valueIsNull = value === null;\n        if (valueIsNull) {\n            delete storeRecord[key];\n            return null;\n        }\n        if (value) {\n            storeRecord[key] = value;\n        }\n    }\n    else {\n        if (value && value !== null) {\n            storeRecord[key] = value;\n        }\n    }\n    return storeRecord[key];\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Store);\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/core/Store.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/core/UrlState.ts":
-/*!****************************************!*\
-  !*** ./src/assets/js/core/UrlState.ts ***!
-  \****************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__),\n/* harmony export */   get: () => (/* binding */ get),\n/* harmony export */   print: () => (/* binding */ print),\n/* harmony export */   refresh: () => (/* binding */ refresh),\n/* harmony export */   set: () => (/* binding */ set),\n/* harmony export */   setHashVal: () => (/* binding */ setHashVal),\n/* harmony export */   toUrl: () => (/* binding */ toUrl)\n/* harmony export */ });\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cash-dom */ \"cash-dom\");\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cash_dom__WEBPACK_IMPORTED_MODULE_0__);\n\nconst EVENT_NAME = 'UrlState';\nconst urlStateMap = new Map([\n    ['search', new URLSearchParams(location.search.replace('?', ''))],\n    ['hash', new URLSearchParams(location.hash.replace('#', ''))]\n]);\nconst toUrl = (state = 'replace') => {\n    let vals = '';\n    const hash = urlStateMap.get('hash').toString();\n    const search = urlStateMap.get('search').toString();\n    (search !== '') ? vals += '?' + search : vals += location.href.split(/(\\?|\\#)/)[0];\n    if (hash !== '')\n        vals += '#' + hash;\n    // clean-up\n    vals = vals.replace(/(\\=\\&)+/g, '&').replace(/\\=$/, '');\n    state === \"replace\" ? history.replaceState(null, '', vals) : history.pushState(null, '', vals);\n};\nconst setHashVal = (value, state) => {\n    const params = urlStateMap.get('hash');\n    for (const key of params.keys()) {\n        params.delete(key);\n    }\n    if (value !== null)\n        params.set(value, '');\n    if (state) {\n        toUrl(state);\n    }\n};\nconst set = (type, paramName, value, state) => {\n    if (type === 'hashVal') {\n        console.warn(`use 'setHashVal' method for setting only the hash val`);\n        return;\n    }\n    const params = urlStateMap.get(type);\n    if (value === null) {\n        params.has(paramName) && params.delete(paramName);\n    }\n    else {\n        const isArray = Array.isArray(value);\n        const adjustedVal = isArray ? `[${value.join(',')}]` : value;\n        params.set(paramName, adjustedVal);\n    }\n    if (state) {\n        toUrl(state);\n    }\n};\nconst get = (type, paramName) => {\n    const params = urlStateMap.get(type);\n    if (type === 'hashVal') {\n        return location.hash.replace('#', '');\n    }\n    if (params.has(paramName)) {\n        const rawVal = params.get(paramName).trim();\n        if (rawVal.slice(0, 1) === '[' && rawVal.slice(-1) === ']') {\n            const valSplits = rawVal.slice(1, -1).split(',');\n            return valSplits.map(el => !(/\\D/).test(el) ? +el : el);\n        }\n        else {\n            return rawVal;\n        }\n    }\n    return null;\n};\nconst refresh = (on = true) => {\n    if (on) {\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).off(`popstate.${EVENT_NAME}`).on(`popstate.${EVENT_NAME}`, () => {\n            urlStateMap.set('search', new URLSearchParams(location.search.replace('?', '')));\n            urlStateMap.set('hash', new URLSearchParams(location.hash.replace('#', '')));\n        });\n    }\n    else {\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).off(`popstate.${EVENT_NAME}`);\n    }\n};\n// print URL params\nconst print = (type, options) => {\n    const params = urlStateMap.get(type), defaultOptions = { pattern: 'normal', brackets: true }, { pattern, brackets } = Object.assign(defaultOptions, options), bkts = brackets ? '[]' : '';\n    if (pattern === 'repeat') {\n        return [...params.keys()].map((key) => {\n            const val = get(type, key);\n            if (Array.isArray(val)) {\n                return val.map(el => `${key}${bkts}=${encodeURIComponent(el)}`).join('&');\n            }\n            return `${key}=${val}`;\n        }).join('&');\n    }\n    return params.toString();\n};\n// run refresh initially\nrefresh();\nconst UrlState = {\n    refresh,\n    print,\n    toUrl,\n    set,\n    setHashVal,\n    get\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (UrlState);\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/core/UrlState.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/core/constants.ts":
-/*!*****************************************!*\
-  !*** ./src/assets/js/core/constants.ts ***!
-  \*****************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   KEYS: () => (/* binding */ KEYS),\n/* harmony export */   PHOTO_RGX: () => (/* binding */ PHOTO_RGX)\n/* harmony export */ });\nconst KEYS = {\n    esc: 'Escape',\n    left: 'ArrowLeft',\n    right: 'ArrowRight',\n    down: 'ArrowDown',\n    up: 'ArrowUp',\n    enter: 'Enter',\n    shift: 'Shift',\n    space: 'Space',\n    tab: 'Tab'\n};\nconst PHOTO_RGX = /\\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg)((#|\\?).*)?$|(\\?|&|&amp;)(image|ext\\=\\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg))?$/i;\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/core/constants.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/core/libraryExtend.ts":
-/*!*********************************************!*\
-  !*** ./src/assets/js/core/libraryExtend.ts ***!
-  \*********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cash-dom */ \"cash-dom\");\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cash_dom__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/helpers */ \"./src/assets/js/util/helpers.ts\");\n/* harmony import */ var _Store__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Store */ \"./src/assets/js/core/Store.ts\");\n\n\n\nconst checkIfParamsExist = (setParams, params, notify = true) => {\n    for (let k in params) {\n        if (!({}).hasOwnProperty.call(setParams, k)) {\n            notify && console.log(k, 'is not a property that can be used');\n            delete params[k];\n        }\n    }\n    return params;\n};\nconst extendPlugin = (Plugin, notify, Lib) => {\n    const DataName = Plugin.name;\n    const pluginName = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.capitalize)(DataName);\n    Plugin.Constructor = Plugin;\n    Lib.fn.extend({\n        [pluginName]: function (params) {\n            const s = this;\n            return s.each(function (index) {\n                const instance = (0,_Store__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(this, DataName);\n                if (!instance) {\n                    const plugin = new Plugin(this, params, index);\n                    (0,_Store__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(this, DataName, plugin);\n                }\n                else {\n                    const canUpdate = instance.handleUpdate && typeof instance.handleUpdate === 'function';\n                    if (typeof params === 'string') {\n                        if (params === 'remove') {\n                            Plugin.remove(this);\n                        }\n                        if (params === 'update' && canUpdate) {\n                            instance.handleUpdate();\n                        }\n                        return;\n                    }\n                    checkIfParamsExist(instance.params, params, notify);\n                    Lib.extend(instance.params, params);\n                    if (canUpdate) {\n                        instance.handleUpdate();\n                    }\n                    notify && console.log(`Params updated`, instance.params);\n                }\n            });\n        }\n    });\n};\nconst libraryExtend = (Plugins, notify = false, Lib = (cash_dom__WEBPACK_IMPORTED_MODULE_0___default())) => {\n    if (Plugins instanceof Array) {\n        for (let i = 0, l = Plugins.length; i < l; i++) {\n            extendPlugin(Plugins[i], notify, Lib);\n        }\n    }\n    else {\n        extendPlugin(Plugins, notify, Lib);\n    }\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (libraryExtend);\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/core/libraryExtend.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/fn/hyperScript.ts":
-/*!*****************************************!*\
-  !*** ./src/assets/js/fn/hyperScript.ts ***!
-  \*****************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cash-dom */ \"cash-dom\");\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cash_dom__WEBPACK_IMPORTED_MODULE_0__);\n\nconst getCssAttr = (styleStr, find, rm) => {\n    const styleProp = styleStr.indexOf(find) !== -1 ? styleStr.split(find)[1] : null;\n    if (!styleProp)\n        return null;\n    const rmIndex = styleProp.indexOf(rm);\n    return rmIndex !== -1 ? styleProp.substring(0, rmIndex) : styleProp;\n};\nconst hyperScript = (selector, props = {}) => {\n    const tagName = selector.split(/(\\#|\\.)/)[0], className = getCssAttr(selector, '.', '#'), idName = getCssAttr(selector, '#', '.'), baseObj = { class: className, id: idName };\n    let text = '';\n    if (props.text) {\n        text = props.text;\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default().extend(props, { text: null });\n    }\n    const $elem = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(`<${tagName}>`).attr(Object.assign(baseObj, props));\n    text && $elem.text(text);\n    return $elem;\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (hyperScript);\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/fn/hyperScript.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/fn/smoothScroll.ts":
-/*!******************************************!*\
-  !*** ./src/assets/js/fn/smoothScroll.ts ***!
-  \******************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ smoothScroll)\n/* harmony export */ });\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cash-dom */ \"cash-dom\");\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cash_dom__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/helpers */ \"./src/assets/js/util/helpers.ts\");\n\n\n// We need to throttle the checking of the previous scroll for a bug in IOS\n// that says the previous pixel is the same as the current pixel.\n// Q: Why do we need to check if the current pixel is the same as the previous?\n// A: Because it could indicate that the element cannot be completely scrolled to\n//    and as a result we need to break this JS scroll \nconst checkIterationAmt = 3;\nlet activeScroll = false;\nfunction smoothScroll(elemYPos, _speed = 100, afterScroll, afterScrollArgs = []) {\n    // If an active scroll is going exit until it's done\n    if (activeScroll)\n        return;\n    const speed = _speed / 1000;\n    activeScroll = true;\n    let prevScroll = null, animation = null, userBreakScroll = false, pxToCheckIteration = 0;\n    const targetIsAbove = elemYPos < (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.docTop)();\n    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).on('wheel.smoothScroll', () => { userBreakScroll = true; });\n    document.body.style.scrollBehavior = 'auto';\n    const scrollDone = () => {\n        if (typeof afterScroll === 'function') {\n            afterScroll.apply(null, afterScrollArgs);\n        }\n        window.cancelAnimationFrame(animation);\n        activeScroll = false;\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).off('wheel.smoothScroll');\n        document.body.style.scrollBehavior = null;\n    };\n    (function smoothScrollInner() {\n        const currentScroll = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.docTop)();\n        if (prevScroll === currentScroll || userBreakScroll) {\n            scrollDone();\n            return;\n        }\n        if (pxToCheckIteration === checkIterationAmt) {\n            prevScroll = currentScroll;\n            pxToCheckIteration = 0;\n        }\n        else {\n            pxToCheckIteration++;\n        }\n        const isAtTarget = Math.floor(currentScroll - elemYPos) === 0;\n        const isPastTarget = targetIsAbove ? prevScroll < currentScroll : prevScroll > currentScroll;\n        if (!isAtTarget || !isPastTarget) {\n            animation = window.requestAnimationFrame(smoothScrollInner);\n            window.scroll(0, currentScroll + ((elemYPos - currentScroll) * speed));\n        }\n        else {\n            scrollDone();\n            return;\n        }\n    })();\n}\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/fn/smoothScroll.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/fn/throttleResize.ts":
-/*!********************************************!*\
-  !*** ./src/assets/js/fn/throttleResize.ts ***!
-  \********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cash-dom */ \"cash-dom\");\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cash_dom__WEBPACK_IMPORTED_MODULE_0__);\n\nconst throttledResize = (callback, _namespace = 'throttledResize', manualTrigger = false, delay = 100) => {\n    let _throttledResize = null;\n    const namespace = _namespace !== '' ? `.${_namespace}` : '';\n    //must pass in a function for the first argument else exit the script\n    if (typeof callback !== 'function') {\n        console.error('first parameter should be a function');\n        return;\n    }\n    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).on(`resize${namespace}${manualTrigger && ' ' + _namespace}`, (e) => {\n        clearTimeout(_throttledResize);\n        _throttledResize = setTimeout(callback, delay, e);\n    });\n    if (manualTrigger) {\n        setTimeout(callback, 0);\n    }\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (throttledResize);\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/fn/throttleResize.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/fn/transition.ts":
-/*!****************************************!*\
-  !*** ./src/assets/js/fn/transition.ts ***!
-  \****************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\nconst transition = () => {\n    let inTransition = false;\n    let tto = null;\n    let currEndTransitionFn = () => { };\n    return (startFn, endFn, duration = 300) => {\n        if (inTransition) {\n            currEndTransitionFn();\n            clearTimeout(tto);\n        }\n        startFn();\n        currEndTransitionFn = endFn;\n        inTransition = true;\n        tto = setTimeout(() => {\n            currEndTransitionFn();\n            inTransition = false;\n        }, duration);\n    };\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (transition);\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/fn/transition.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/fn/trapFocus.ts":
-/*!***************************************!*\
-  !*** ./src/assets/js/fn/trapFocus.ts ***!
-  \***************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cash-dom */ \"cash-dom\");\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cash_dom__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/helpers */ \"./src/assets/js/util/helpers.ts\");\n\n\n;\nconst defaultProps = {\n    focusFirst: true,\n    nameSpace: 'trapFocus',\n    focusable: ['button', 'a', 'input', 'select', 'textarea', '[tabindex]']\n};\n;\nconst canFocusEls = (i, el) => {\n    const baseFocusableRules = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.isVisible)(el, true) && el.tabIndex !== -1;\n    const nodeName = el.nodeName.toUpperCase();\n    if ((nodeName === 'BUTTON' || nodeName === 'INPUT')) {\n        return baseFocusableRules && !el.disabled;\n    }\n    return baseFocusableRules && el.style.pointerEvents !== 'none';\n};\nconst trapFocus = (modalEl, props) => {\n    const { focusFirst, focusable, nameSpace } = cash_dom__WEBPACK_IMPORTED_MODULE_0___default().extend({}, defaultProps, props);\n    const $trapElem = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(modalEl);\n    const focusableJoined = typeof focusable === 'string' ? focusable : focusable.join(',');\n    const $firstFocusable = $trapElem.find(focusableJoined).filter(canFocusEls);\n    let firstFocusable = $firstFocusable.length ? $firstFocusable[0] : null;\n    if (focusFirst && firstFocusable) {\n        firstFocusable.focus();\n    }\n    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(document.body).on(`keydown.${nameSpace}`, function (e) {\n        const $focusable = $trapElem.find(focusableJoined).filter(canFocusEls);\n        if (!$focusable.length)\n            return;\n        const activeEl = document.activeElement;\n        const lastFocusable = $focusable[$focusable.length - 1];\n        const isTabPressed = e.key === 'Tab';\n        firstFocusable = $focusable[0];\n        if (!isTabPressed) {\n            return;\n        }\n        if (activeEl.nodeName.toUpperCase() === 'BODY') {\n            // somehow we lost focus\n            // this can happen if the last element is disabled if it was focused\n            // so re-assign to the first element\n            firstFocusable && firstFocusable.focus();\n            e.preventDefault();\n        }\n        if (e.shiftKey) {\n            // if shift key pressed for shift + tab combination\n            if (activeEl &&\n                firstFocusable &&\n                document.activeElement.isSameNode(firstFocusable)) {\n                lastFocusable && lastFocusable.focus();\n                e.preventDefault();\n            }\n        }\n        else {\n            // if tab key is pressed\n            if (activeEl &&\n                lastFocusable &&\n                activeEl.isSameNode(lastFocusable)) {\n                firstFocusable && firstFocusable.focus();\n                e.preventDefault();\n            }\n        }\n    });\n    return {\n        remove: () => {\n            cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(document.body).off(`keydown.${nameSpace}`);\n        }\n    };\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (trapFocus);\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/fn/trapFocus.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/util/helpers.ts":
-/*!***************************************!*\
-  !*** ./src/assets/js/util/helpers.ts ***!
-  \***************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   camelCase: () => (/* binding */ camelCase),\n/* harmony export */   capitalize: () => (/* binding */ capitalize),\n/* harmony export */   \"default\": () => (/* binding */ getType),\n/* harmony export */   docTop: () => (/* binding */ docTop),\n/* harmony export */   getDataOptions: () => (/* binding */ getDataOptions),\n/* harmony export */   isHidden: () => (/* binding */ isHidden),\n/* harmony export */   isMobileOS: () => (/* binding */ isMobileOS),\n/* harmony export */   isVisible: () => (/* binding */ isVisible),\n/* harmony export */   kebabCase: () => (/* binding */ kebabCase),\n/* harmony export */   noop: () => (/* binding */ noop)\n/* harmony export */ });\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cash-dom */ \"cash-dom\");\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cash_dom__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _parseObjectFromString__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./parseObjectFromString */ \"./src/assets/js/util/parseObjectFromString.ts\");\n// \n// General purposed helpers\n// \n\n\nfunction getType(val) {\n    if (typeof val === 'undefined')\n        return 'undefined';\n    if (typeof val === 'object' && !val)\n        return 'null';\n    return ({}).toString.call(val).match(/\\s([a-zA-Z]+)/)[1].toLowerCase();\n}\n// visibilty\nconst isVisible = (el, visibility = false) => {\n    const vis = el.offsetParent !== null ||\n        !!(el.offsetWidth ||\n            el.offsetHeight ||\n            el.getClientRects().length);\n    if (visibility) {\n        return cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(el).css('visibility') !== 'hidden' && vis;\n    }\n    else {\n        return vis;\n    }\n};\nconst getDataOptions = (el, evtName) => (0,_parseObjectFromString__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(el.dataset[evtName + 'Options']);\nconst docTop = () => document.documentElement.scrollTop || document.body.scrollTop || 0;\nconst noop = () => { };\nconst isHidden = (el) => !isVisible(el);\n// string manipulation\nconst kebabCase = (str) => str.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/\\s+/g, '-').toLowerCase();\nconst camelCase = (str) => str.replace(/-./g, x => x.toUpperCase()[1]);\nconst capitalize = (str) => str.charAt(0).toLowerCase() + str.substring(1);\n// device\nconst isMobileOS = () => /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/util/helpers.ts?");
-
-/***/ }),
-
-/***/ "./src/assets/js/util/parseObjectFromString.ts":
-/*!*****************************************************!*\
-  !*** ./src/assets/js/util/parseObjectFromString.ts ***!
-  \*****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\nconst parseObjectFromString = (options) => {\n    let retObj = null;\n    if (typeof options === 'string') {\n        retObj = JSON.parse(options.replace(/:\\s*\"([^\"]*)\"/g, function (match, p1) {\n            return ': \"' + p1.replace(/:/g, '@colon@') + '\"';\n        }).replace(/:\\s*'([^']*)'/g, function (match, p1) {\n            return ': \"' + p1.replace(/:/g, '@colon@') + '\"';\n        }).replace(/(['\"])?([a-z0-9A-Z_]+)(['\"])?\\s*:/g, '\"$2\": ')\n            .replace(/@colon@/g, ':'));\n    }\n    return retObj;\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (parseObjectFromString);\n\n\n//# sourceURL=webpack://baseframe-js/./src/assets/js/util/parseObjectFromString.ts?");
-
-/***/ }),
-
-/***/ "./src/demo/assets/js/demo.ts":
-/*!************************************!*\
-  !*** ./src/demo/assets/js/demo.ts ***!
-  \************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cash-dom */ \"cash-dom\");\n/* harmony import */ var cash_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(cash_dom__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _assets_js_core_libraryExtend__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../assets/js/core/libraryExtend */ \"./src/assets/js/core/libraryExtend.ts\");\n/* harmony import */ var _assets_js_Collapse__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../assets/js/Collapse */ \"./src/assets/js/Collapse.ts\");\n/* harmony import */ var _assets_js_LazyLoad__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../assets/js/LazyLoad */ \"./src/assets/js/LazyLoad.ts\");\n/* harmony import */ var _assets_js_Modal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../assets/js/Modal */ \"./src/assets/js/Modal.ts\");\n/* harmony import */ var _assets_js_Tabs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../assets/js/Tabs */ \"./src/assets/js/Tabs.ts\");\n/* harmony import */ var _assets_js_Toastr__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../assets/js/Toastr */ \"./src/assets/js/Toastr.ts\");\n/* harmony import */ var _assets_js_AccessibleMenu__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../assets/js/AccessibleMenu */ \"./src/assets/js/AccessibleMenu.ts\");\n/* harmony import */ var _assets_js_NavDesktop__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../assets/js/NavDesktop */ \"./src/assets/js/NavDesktop.ts\");\n/* harmony import */ var _assets_js_NavMobile__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../assets/js/NavMobile */ \"./src/assets/js/NavMobile.ts\");\n/* harmony import */ var _assets_js_Parallax__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../assets/js/Parallax */ \"./src/assets/js/Parallax.ts\");\n/* harmony import */ var _assets_js_SelectEnhance__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../assets/js/SelectEnhance */ \"./src/assets/js/SelectEnhance.ts\");\n\n\n\n\n\n\n\n\n\n\n\n\n(0,_assets_js_core_libraryExtend__WEBPACK_IMPORTED_MODULE_1__[\"default\"])([\n    _assets_js_AccessibleMenu__WEBPACK_IMPORTED_MODULE_7__[\"default\"],\n    _assets_js_Collapse__WEBPACK_IMPORTED_MODULE_2__[\"default\"],\n    _assets_js_LazyLoad__WEBPACK_IMPORTED_MODULE_3__[\"default\"],\n    _assets_js_Modal__WEBPACK_IMPORTED_MODULE_4__[\"default\"],\n    _assets_js_NavDesktop__WEBPACK_IMPORTED_MODULE_8__[\"default\"],\n    _assets_js_NavMobile__WEBPACK_IMPORTED_MODULE_9__[\"default\"],\n    _assets_js_Parallax__WEBPACK_IMPORTED_MODULE_10__[\"default\"],\n    _assets_js_SelectEnhance__WEBPACK_IMPORTED_MODULE_11__[\"default\"],\n    _assets_js_Tabs__WEBPACK_IMPORTED_MODULE_5__[\"default\"],\n    _assets_js_Toastr__WEBPACK_IMPORTED_MODULE_6__[\"default\"]\n], true);\ncash_dom__WEBPACK_IMPORTED_MODULE_0___default()('select').selectEnhance();\ncash_dom__WEBPACK_IMPORTED_MODULE_0___default()('.collapse-group-1').collapse({\n    moveToTopOnOpen: true,\n    toggleGroup: true,\n    locationFilter: 'collapse'\n});\ncash_dom__WEBPACK_IMPORTED_MODULE_0___default()('#main-nav')\n    .navMobile({ enableBtn: '#mobile-nav-btn' })\n    .navDesktop()\n    .accessibleMenu();\ncash_dom__WEBPACK_IMPORTED_MODULE_0___default()('#example-nav')\n    .navMobile({ enableBtn: '#mobile-nav-btn-example' })\n    .navDesktop()\n    .accessibleMenu({\n    keyDirections: ['horizontal', 'vertical', 'vertical']\n});\n// Parallax\ncash_dom__WEBPACK_IMPORTED_MODULE_0___default()('#jsBtnSCrollHorizontal').on('click', function () {\n    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('main').toggleClass('body-content--scroll-x');\n    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('.do-parallax--hz').parallax('update');\n});\ncash_dom__WEBPACK_IMPORTED_MODULE_0___default()('.do-parallax').parallax({ speed: 25, bgFill: true });\n// Tabs\ncash_dom__WEBPACK_IMPORTED_MODULE_0___default()(\".tabs-outer\").tabs({ locationFilter: 'tabs' });\ncash_dom__WEBPACK_IMPORTED_MODULE_0___default()(\".tabs-inner\").tabs({ locationFilter: 'tabs-inner' });\n// Lazy Load\ncash_dom__WEBPACK_IMPORTED_MODULE_0___default()('img[loading=\"lazy\"]').lazyLoad({\n    observerID: 'imgLazy',\n    observerOpts: { rootMargin: '100px' }\n});\n//a bunch of paragraphs to style right!\ncash_dom__WEBPACK_IMPORTED_MODULE_0___default()('.lazy-highlight').lazyLoad({\n    observerID: 'p',\n    loadImgs: false,\n    unobserve: false,\n    inEvt: (el) => {\n        setTimeout(() => { el.style.background = '#ccc'; }, 1000);\n    },\n    outEvt: (el) => {\n        setTimeout(() => { el.style.background = ''; }, 1000);\n    }\n});\n// TOASTR\n{\n    const toastRandomMsgs = [\n        'I boast about my toast.',\n        'The hostess with the toastess',\n        'toast is best, when its not burnt',\n        'The fire is quite toasty',\n        'Lets toast, to toast!'\n    ];\n    const randomToastMsg = () => {\n        return toastRandomMsgs[Math.floor(Math.random() * toastRandomMsgs.length)];\n    };\n    // Example 1: standard way\n    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('#toastr-1').toastr({\n        content: 'Toast is good for breakfast',\n        duration: 7000\n    });\n    const $toastr2 = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('#toastr-2');\n    if ($toastr2.length) {\n        // Example 2: extend perhaps in Cash then call on click\n        const toastr2 = new _assets_js_Toastr__WEBPACK_IMPORTED_MODULE_6__[\"default\"]($toastr2[0], {\n            content: 'Toast is good for breakfast',\n            duration: 5000\n        });\n        $toastr2.on('click', function () {\n            setTimeout(() => {\n                toastr2.setContent(randomToastMsg(), true);\n            }, 2500);\n        });\n    }\n    // Example 3,4: somewhere else on the page\n    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('#toastr-3').toastr({\n        content: randomToastMsg(),\n        duration: 5000,\n        cssGroupKey: 'bottom'\n    });\n    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('#toastr-4').toastr({\n        content: randomToastMsg(),\n        duration: 5000,\n        cssGroupKey: 'bottom'\n    });\n}\n//  Modal\n{\n    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('.btn-modal').modal({\n        modalID: 'from-dom'\n    });\n    cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('#btn-gen-content').modal({\n        locationFilter: 'modal',\n        src: cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('<div>').attr({ class: 'gen-content' }),\n        fromDOM: false,\n        modalID: 'gen-content',\n        onOpenOnce(modalObj) {\n            modalObj.$dialogContent.on('click', '.dismiss', modalObj.close);\n            modalObj.$dialogContent.append(`\n            <h2>Some generated Content</h2>\n            <p>Ullamco <a href=\"#\">link</a> laboris nisi ut aliquid ex ea commodi consequat. Sed haec quis possit intrepidus aestimare tellus. Quam diu etiam furor <a href=\"#\">iste tuus</a> nos eludet? Curabitur est gravida et libero vitae dictum.</p>\n            <button type=\"button\" class=\"button dismiss\">Dimiss</button>\n        `);\n        }\n    });\n    // quick and dirty image carousel\n    const $picGroup = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('.pic-group');\n    $picGroup.each(function (index) {\n        const src = cash_dom__WEBPACK_IMPORTED_MODULE_0___default()('<img>').attr({ src: this.dataset.imgSrc || '', loading: 'lazy' });\n        const modalID = 'pic-group_' + index;\n        let imgIndex = index;\n        cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(this).modal({\n            src,\n            modalID,\n            modalCss: 'modal--gallery',\n            locationFilter: 'gallery',\n            fromDOM: false,\n            onOpenOnce(modalObj) {\n                const $img = modalObj.$dialogContent.find('img');\n                modalObj.$dialogContent.append(`\n                    <footer class=\"pic-group-nav\">\n                        <button type=\"button\" class=\"prev-btn\">Previous</button>\n                        <button type=\"button\" class=\"next-btn\">Next</button>\n                    </footer>\n                `);\n                modalObj.$dialogContent.on('click', 'button', function (e) {\n                    if (this.classList.contains('prev-btn')) {\n                        imgIndex = imgIndex === 0 ? $picGroup.length - 1 : imgIndex - 1;\n                    }\n                    else {\n                        imgIndex = imgIndex === $picGroup.length - 1 ? 0 : imgIndex + 1;\n                    }\n                    if (imgIndex > 0 && $picGroup.length) {\n                        $img.attr({ src: $picGroup[imgIndex].dataset.imgSrc || '' });\n                    }\n                });\n            },\n            onOpen(modalObj) {\n                const $img = modalObj.$dialogContent.find('img');\n                cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).on('keyup.gallery', function (e) {\n                    const arrowRight = e.key === 'ArrowRight';\n                    const arrowLeft = e.key === 'ArrowLeft';\n                    if (e.key === 'Escape') {\n                        modalObj.close();\n                    }\n                    if (arrowLeft) {\n                        imgIndex = imgIndex === 0 ? $picGroup.length - 1 : imgIndex - 1;\n                    }\n                    if (arrowRight) {\n                        imgIndex = imgIndex === $picGroup.length - 1 ? 0 : imgIndex + 1;\n                    }\n                    if (arrowLeft || arrowRight) {\n                        if (imgIndex > 0 && $picGroup.length) {\n                            $img.attr({ src: $picGroup[imgIndex].dataset.imgSrc || '' });\n                        }\n                    }\n                });\n            },\n            onClose() {\n                cash_dom__WEBPACK_IMPORTED_MODULE_0___default()(window).off('keyup.gallery');\n            }\n        });\n    });\n}\n\n\n//# sourceURL=webpack://baseframe-js/./src/demo/assets/js/demo.ts?");
-
-/***/ }),
-
-/***/ "cash-dom":
-/*!********************!*\
-  !*** external "$" ***!
-  \********************/
-/***/ ((module) => {
-
-module.exports = $;
-
-/***/ })
-
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
+/******/ 	// The require scope
+/******/ 	var __webpack_require__ = {};
 /******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/compat get default export */
@@ -296,23 +33,2721 @@ module.exports = $;
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
 /******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module can't be inlined because the eval devtool is used.
-/******/ 	var __webpack_exports__ = __webpack_require__("./src/demo/assets/js/demo.ts");
-/******/ 	
+var __webpack_exports__ = {};
+
+;// CONCATENATED MODULE: external "$"
+const external_$_namespaceObject = $;
+var external_$_default = /*#__PURE__*/__webpack_require__.n(external_$_namespaceObject);
+;// CONCATENATED MODULE: ./src/assets/js/util/parseObjectFromString.ts
+const parseObjectFromString = (options) => {
+    let retObj = null;
+    if (typeof options === 'string') {
+        retObj = JSON.parse(options.replace(/:\s*"([^"]*)"/g, function (match, p1) {
+            return ': "' + p1.replace(/:/g, '@colon@') + '"';
+        }).replace(/:\s*'([^']*)'/g, function (match, p1) {
+            return ': "' + p1.replace(/:/g, '@colon@') + '"';
+        }).replace(/(['"])?([a-z0-9A-Z_]+)(['"])?\s*:/g, '"$2": ')
+            .replace(/@colon@/g, ':'));
+    }
+    return retObj;
+};
+/* harmony default export */ const util_parseObjectFromString = (parseObjectFromString);
+
+;// CONCATENATED MODULE: ./src/assets/js/util/helpers.ts
+// 
+// General purposed helpers
+// 
+
+
+function getType(val) {
+    if (typeof val === 'undefined')
+        return 'undefined';
+    if (typeof val === 'object' && !val)
+        return 'null';
+    return ({}).toString.call(val).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+}
+// visibilty
+const isVisible = (el, visibility = false) => {
+    const vis = el.offsetParent !== null ||
+        !!(el.offsetWidth ||
+            el.offsetHeight ||
+            el.getClientRects().length);
+    if (visibility) {
+        return external_$_default()(el).css('visibility') !== 'hidden' && vis;
+    }
+    else {
+        return vis;
+    }
+};
+const getDataOptions = (el, evtName) => util_parseObjectFromString(el.dataset[evtName + 'Options']);
+const docTop = () => document.documentElement.scrollTop || document.body.scrollTop || 0;
+const noop = () => { };
+const isHidden = (el) => !isVisible(el);
+// string manipulation
+const kebabCase = (str) => str.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/\s+/g, '-').toLowerCase();
+const camelCase = (str) => str.replace(/-./g, x => x.toUpperCase()[1]);
+const capitalize = (str) => str.charAt(0).toLowerCase() + str.substring(1);
+// device
+const isMobileOS = () => /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
+
+;// CONCATENATED MODULE: ./src/assets/js/core/Store.ts
+const storeMap = new WeakMap();
+const Store = (storeElem, key, value) => {
+    const storeRecord = storeMap.get(storeElem) || storeMap.set(storeElem, {});
+    const keyExists = Reflect.has(storeRecord, key);
+    if (keyExists) {
+        const valueIsNull = value === null;
+        if (valueIsNull) {
+            delete storeRecord[key];
+            return null;
+        }
+        if (value) {
+            storeRecord[key] = value;
+        }
+    }
+    else {
+        if (value && value !== null) {
+            storeRecord[key] = value;
+        }
+    }
+    return storeRecord[key];
+};
+/* harmony default export */ const core_Store = (Store);
+
+;// CONCATENATED MODULE: ./src/assets/js/core/libraryExtend.ts
+
+
+
+const checkIfParamsExist = (setParams, params, notify = true) => {
+    for (let k in params) {
+        if (!({}).hasOwnProperty.call(setParams, k)) {
+            notify && console.log(k, 'is not a property that can be used');
+            delete params[k];
+        }
+    }
+    return params;
+};
+const extendPlugin = (Plugin, notify, Lib) => {
+    const DataName = Plugin.name;
+    const pluginName = capitalize(DataName);
+    Plugin.Constructor = Plugin;
+    Lib.fn.extend({
+        [pluginName]: function (params) {
+            const s = this;
+            return s.each(function (index) {
+                const instance = core_Store(this, DataName);
+                if (!instance) {
+                    const plugin = new Plugin(this, params, index);
+                    core_Store(this, DataName, plugin);
+                }
+                else {
+                    const canUpdate = instance.handleUpdate && typeof instance.handleUpdate === 'function';
+                    if (typeof params === 'string') {
+                        if (params === 'remove') {
+                            Plugin.remove(this);
+                        }
+                        if (params === 'update' && canUpdate) {
+                            instance.handleUpdate();
+                        }
+                        return;
+                    }
+                    checkIfParamsExist(instance.params, params, notify);
+                    Lib.extend(instance.params, params);
+                    if (canUpdate) {
+                        instance.handleUpdate();
+                    }
+                    notify && console.log(`Params updated`, instance.params);
+                }
+            });
+        }
+    });
+};
+const libraryExtend = (Plugins, notify = false, Lib = (external_$_default())) => {
+    if (Plugins instanceof Array) {
+        for (let i = 0, l = Plugins.length; i < l; i++) {
+            extendPlugin(Plugins[i], notify, Lib);
+        }
+    }
+    else {
+        extendPlugin(Plugins, notify, Lib);
+    }
+};
+/* harmony default export */ const core_libraryExtend = (libraryExtend);
+
+;// CONCATENATED MODULE: ./src/assets/js/fn/smoothScroll.ts
+
+
+// We need to throttle the checking of the previous scroll for a bug in IOS
+// that says the previous pixel is the same as the current pixel.
+// Q: Why do we need to check if the current pixel is the same as the previous?
+// A: Because it could indicate that the element cannot be completely scrolled to
+//    and as a result we need to break this JS scroll 
+const checkIterationAmt = 3;
+let activeScroll = false;
+function smoothScroll(elemYPos, _speed = 100, afterScroll, afterScrollArgs = []) {
+    // If an active scroll is going exit until it's done
+    if (activeScroll)
+        return;
+    const speed = _speed / 1000;
+    activeScroll = true;
+    let prevScroll = null, animation = null, userBreakScroll = false, pxToCheckIteration = 0;
+    const targetIsAbove = elemYPos < docTop();
+    external_$_default()(window).on('wheel.smoothScroll', () => { userBreakScroll = true; });
+    document.body.style.scrollBehavior = 'auto';
+    const scrollDone = () => {
+        if (typeof afterScroll === 'function') {
+            afterScroll.apply(null, afterScrollArgs);
+        }
+        window.cancelAnimationFrame(animation);
+        activeScroll = false;
+        external_$_default()(window).off('wheel.smoothScroll');
+        document.body.style.scrollBehavior = null;
+    };
+    (function smoothScrollInner() {
+        const currentScroll = docTop();
+        if (prevScroll === currentScroll || userBreakScroll) {
+            scrollDone();
+            return;
+        }
+        if (pxToCheckIteration === checkIterationAmt) {
+            prevScroll = currentScroll;
+            pxToCheckIteration = 0;
+        }
+        else {
+            pxToCheckIteration++;
+        }
+        const isAtTarget = Math.floor(currentScroll - elemYPos) === 0;
+        const isPastTarget = targetIsAbove ? prevScroll < currentScroll : prevScroll > currentScroll;
+        if (!isAtTarget || !isPastTarget) {
+            animation = window.requestAnimationFrame(smoothScrollInner);
+            window.scroll(0, currentScroll + ((elemYPos - currentScroll) * speed));
+        }
+        else {
+            scrollDone();
+            return;
+        }
+    })();
+}
+
+;// CONCATENATED MODULE: ./src/assets/js/fn/transition.ts
+const transition = () => {
+    let inTransition = false;
+    let tto = null;
+    let currEndTransitionFn = () => { };
+    return (startFn, endFn, duration = 300) => {
+        if (inTransition) {
+            currEndTransitionFn();
+            clearTimeout(tto);
+        }
+        startFn();
+        currEndTransitionFn = endFn;
+        inTransition = true;
+        tto = setTimeout(() => {
+            currEndTransitionFn();
+            inTransition = false;
+        }, duration);
+    };
+};
+/* harmony default export */ const fn_transition = (transition);
+
+;// CONCATENATED MODULE: ./src/assets/js/core/UrlState.ts
+
+const EVENT_NAME = 'UrlState';
+const urlStateMap = new Map([
+    ['search', new URLSearchParams(location.search.replace('?', ''))],
+    ['hash', new URLSearchParams(location.hash.replace('#', ''))]
+]);
+const toUrl = (state = 'replace') => {
+    let vals = '';
+    const hash = urlStateMap.get('hash').toString();
+    const search = urlStateMap.get('search').toString();
+    (search !== '') ? vals += '?' + search : vals += location.href.split(/(\?|\#)/)[0];
+    if (hash !== '')
+        vals += '#' + hash;
+    // clean-up
+    vals = vals.replace(/(\=\&)+/g, '&').replace(/\=$/, '');
+    state === "replace" ? history.replaceState(null, '', vals) : history.pushState(null, '', vals);
+};
+const setHashVal = (value, state) => {
+    const params = urlStateMap.get('hash');
+    for (const key of params.keys()) {
+        params.delete(key);
+    }
+    if (value !== null)
+        params.set(value, '');
+    if (state) {
+        toUrl(state);
+    }
+};
+const set = (type, paramName, value, state) => {
+    if (type === 'hashVal') {
+        console.warn(`use 'setHashVal' method for setting only the hash val`);
+        return;
+    }
+    const params = urlStateMap.get(type);
+    if (value === null) {
+        params.has(paramName) && params.delete(paramName);
+    }
+    else {
+        const isArray = Array.isArray(value);
+        const adjustedVal = isArray ? `[${value.join(',')}]` : value;
+        params.set(paramName, adjustedVal);
+    }
+    if (state) {
+        toUrl(state);
+    }
+};
+const get = (type, paramName) => {
+    const params = urlStateMap.get(type);
+    if (type === 'hashVal') {
+        return location.hash.replace('#', '');
+    }
+    if (params.has(paramName)) {
+        const rawVal = params.get(paramName).trim();
+        if (rawVal.slice(0, 1) === '[' && rawVal.slice(-1) === ']') {
+            const valSplits = rawVal.slice(1, -1).split(',');
+            return valSplits.map(el => !(/\D/).test(el) ? +el : el);
+        }
+        else {
+            return rawVal;
+        }
+    }
+    return null;
+};
+const refresh = (on = true) => {
+    if (on) {
+        external_$_default()(window).off(`popstate.${EVENT_NAME}`).on(`popstate.${EVENT_NAME}`, () => {
+            urlStateMap.set('search', new URLSearchParams(location.search.replace('?', '')));
+            urlStateMap.set('hash', new URLSearchParams(location.hash.replace('#', '')));
+        });
+    }
+    else {
+        external_$_default()(window).off(`popstate.${EVENT_NAME}`);
+    }
+};
+// print URL params
+const print = (type, options) => {
+    const params = urlStateMap.get(type), defaultOptions = { pattern: 'normal', brackets: true }, { pattern, brackets } = Object.assign(defaultOptions, options), bkts = brackets ? '[]' : '';
+    if (pattern === 'repeat') {
+        return [...params.keys()].map((key) => {
+            const val = get(type, key);
+            if (Array.isArray(val)) {
+                return val.map(el => `${key}${bkts}=${encodeURIComponent(el)}`).join('&');
+            }
+            return `${key}=${val}`;
+        }).join('&');
+    }
+    return params.toString();
+};
+// run refresh initially
+refresh();
+const UrlState = {
+    refresh,
+    print,
+    toUrl,
+    set,
+    setHashVal,
+    get
+};
+/* harmony default export */ const core_UrlState = (UrlState);
+
+;// CONCATENATED MODULE: ./src/assets/js/Collapse.ts
+
+
+
+
+
+
+;
+const VERSION = "4.0.0";
+const DATA_NAME = 'Collapse';
+const Collapse_EVENT_NAME = 'collapse';
+const DEFAULTS = {
+    cssPrefix: 'collapse',
+    toggleDuration: 500,
+    toggleGroup: false,
+    moveToTopOnOpen: false,
+    moveToTopOffset: 0,
+    scrollSpeed: 100,
+    urlFilterType: 'hash',
+    historyType: 'replace',
+    locationFilter: null,
+    loadLocation: true,
+    afterOpen: noop,
+    afterClose: noop,
+    afterInit: noop
+};
+class Collapse {
+    $element;
+    params;
+    toggling;
+    $btnElems;
+    $activeItem;
+    initLoaded;
+    static defaults = DEFAULTS;
+    #transition = fn_transition();
+    constructor(element, options, index) {
+        const s = this;
+        s.$element = external_$_default()(element);
+        const dataOptions = getDataOptions(element, Collapse_EVENT_NAME);
+        s.params = external_$_default().extend({}, Collapse.defaults, options, dataOptions);
+        s.toggling = false;
+        s.$btnElems = s.$element.find(`.${s.params.cssPrefix}__btn`).attr({ 'aria-expanded': 'false' });
+        s.$activeItem = null;
+        s.initLoaded = false;
+        // init
+        s.loadFromUrl();
+        s.handleEvents();
+        s.params.afterInit(s.$element);
+        core_Store(element, DATA_NAME, s);
+        return s;
+    }
+    static get version() {
+        return VERSION;
+    }
+    static remove(element, plugin) {
+        external_$_default()(element).each(function () {
+            const s = plugin || core_Store(this, DATA_NAME);
+            s.$element.off(`click.${Collapse_EVENT_NAME} ${Collapse_EVENT_NAME}`);
+            external_$_default()(window).off(`popstate.${Collapse_EVENT_NAME}`);
+            // delete the Store item
+            core_Store(this, DATA_NAME, null);
+        });
+    }
+    handleEvents() {
+        const s = this;
+        const { cssPrefix } = s.params;
+        s.$element.on(`click.${Collapse_EVENT_NAME} ${Collapse_EVENT_NAME}`, `.${cssPrefix}__btn`, function (e) {
+            const elemId = external_$_default()(this).attr('aria-controls') || this.hash.substring(1);
+            s.toggleAction(elemId);
+            e.preventDefault();
+        });
+        external_$_default()(window).on(`popstate.${Collapse_EVENT_NAME}`, (e) => {
+            if (s.params.historyType === 'push') {
+                s.loadFromUrl();
+                s.initLoaded = true;
+                e.preventDefault();
+            }
+        });
+    }
+    loadFromUrl() {
+        const s = this;
+        const p = s.params;
+        const loadElem = (filterEl) => {
+            const cssOpen = `${p.cssPrefix}--open`;
+            const $tryElem = s.$element.find('#' + filterEl);
+            if ($tryElem.length) {
+                s.$activeItem = $tryElem;
+                s.$activeItem.addClass(cssOpen);
+                s.$btnElems
+                    .filter((i, el) => external_$_default()(el).attr('aria-controls') === filterEl)
+                    .attr({ 'aria-expanded': 'true' });
+            }
+        };
+        if (p.locationFilter !== null || p.loadLocation) {
+            const filterEl = core_UrlState.get(p.urlFilterType, p.locationFilter);
+            const cssOpen = `${p.cssPrefix}--open`;
+            s.$element.find(`.${p.cssPrefix}__body.${cssOpen}`).removeClass(cssOpen);
+            s.$btnElems.attr({ 'aria-expanded': 'false' });
+            if (filterEl) {
+                if (Array.isArray(filterEl)) {
+                    filterEl.forEach(loadElem);
+                }
+                else {
+                    loadElem(filterEl);
+                }
+            }
+        }
+    }
+    toggleAction(currElemID) {
+        const s = this;
+        if (s.toggling || currElemID === null)
+            return;
+        const { cssPrefix } = s.params;
+        const p = s.params;
+        s.$activeItem = s.$element.find('#' + currElemID);
+        if (s.$activeItem.length) {
+            const cssOpen = `${cssPrefix}--open`, cssToggling = `${cssPrefix}--toggling`, cssOpening = `${cssPrefix}--opening`, cssClosing = `${cssPrefix}--closing`, cssBodyOpen = `.${cssPrefix}__body.${cssOpen}`;
+            const $currOpenItems = s.$element.find(cssBodyOpen);
+            const $itemsToClose = $currOpenItems.filter((i, el) => p.toggleGroup || el.id === currElemID);
+            const activeAlreadyOpen = s.$activeItem.hasClass(cssOpen);
+            s.#transition(() => {
+                s.toggling = true;
+                s.$btnElems.each(function () {
+                    const $btn = external_$_default()(this);
+                    const isCurrent = $btn.attr('aria-controls') === currElemID;
+                    const expanded = isCurrent && $btn.attr('aria-expanded') === 'false';
+                    if (p.toggleGroup) {
+                        $btn.attr({ 'aria-expanded': expanded + '' });
+                    }
+                    else {
+                        if (isCurrent) {
+                            $btn.attr({ 'aria-expanded': expanded + '' });
+                        }
+                    }
+                });
+                $itemsToClose.each(function () {
+                    external_$_default()(this).css({ height: this.scrollHeight });
+                });
+                setTimeout(() => {
+                    $itemsToClose
+                        .removeClass(cssOpen)
+                        .addClass(`${cssToggling} ${cssClosing}`)
+                        .css({ height: 0 });
+                }, 0);
+                if (!activeAlreadyOpen) {
+                    s.$activeItem
+                        .addClass(`${cssToggling} ${cssOpening}`)
+                        .css({ height: s.$activeItem[0].scrollHeight });
+                }
+            }, () => {
+                s.toggling = false;
+                $itemsToClose
+                    .removeClass(`${cssToggling} ${cssClosing}`)
+                    .css({ height: null });
+                s.params.afterClose(s.$btnElems, $itemsToClose);
+                if (!activeAlreadyOpen) {
+                    s.$activeItem
+                        .addClass(cssOpen)
+                        .removeClass(`${cssToggling} ${cssOpening}`)
+                        .css({ height: null });
+                }
+                // Update History in URL
+                const paramList = [...s.$element.find(cssBodyOpen)].map((el) => el.id);
+                const paramVal = paramList.length === 1 ? paramList[0] : paramList.length > 0 ? paramList : null;
+                core_UrlState.set(p.urlFilterType, p.locationFilter, paramVal, p.historyType);
+                s.params.afterOpen(s.$btnElems, s.$activeItem);
+                s.moveToTopOnOpen();
+            });
+        }
+    }
+    moveToTopOnOpen() {
+        const s = this;
+        const { cssPrefix, moveToTopOffset, moveToTopOnOpen, scrollSpeed } = s.params;
+        if (s.$activeItem) {
+            const $item = s.$activeItem.parent(`.${cssPrefix}__item`) || s.$activeItem;
+            if ($item.length && moveToTopOnOpen) {
+                // get the compiler to stop from throwing 
+                // an error it'll never throw by setting to 'any'
+                const elemOffsetTop = $item.offset().top;
+                const top = elemOffsetTop - moveToTopOffset;
+                smoothScroll(top, scrollSpeed);
+            }
+        }
+    }
+}
+
+;// CONCATENATED MODULE: ./src/assets/js/LazyLoad.ts
+
+
+
+const LazyLoad_VERSION = '2.0.1';
+const LazyLoad_DATA_NAME = 'LazyLoad';
+const LazyLoad_EVENT_NAME = 'lazyLoad';
+const LazyLoad_DEFAULTS = {
+    imgSrcName: 'src',
+    bgSrcName: 'bgSrc',
+    loadImgs: true,
+    inEvt: null,
+    outEvt: null,
+    force: false,
+    observerID: null,
+    unobserve: true,
+    observerOpts: { rootMargin: '48px' }
+};
+const lazyElemObservers = new Map();
+const lazyElemObserver = (s) => {
+    const { observerOpts } = s.params;
+    return new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            const { inEvt, outEvt, force, unobserve, loadImgs } = s.params;
+            const lazyElem = entry.target;
+            if (lazyElem instanceof HTMLElement) {
+                if (entry.isIntersecting && isVisible(lazyElem) || force) {
+                    loadImgs && s.imgAndBg(s, lazyElem);
+                    typeof inEvt === 'function' && inEvt(lazyElem, entry);
+                    unobserve && s.lazyElemObserver.unobserve(lazyElem);
+                }
+                else {
+                    typeof outEvt === 'function' && outEvt(lazyElem, entry);
+                }
+            }
+        });
+    }, observerOpts);
+};
+class LazyLoad {
+    element;
+    params;
+    lazyElemObserver;
+    static get version() { return LazyLoad_VERSION; }
+    static get pluginName() { return LazyLoad_DATA_NAME; }
+    static defaults = LazyLoad_DEFAULTS;
+    constructor(element, options) {
+        const s = this;
+        const dataOptions = getDataOptions(element, LazyLoad_EVENT_NAME);
+        s.element = element;
+        s.lazyElemObserver;
+        s.params = external_$_default().extend({}, LazyLoad.defaults, options, dataOptions);
+        s.handleEvents();
+        return s;
+    }
+    static remove(element, plugin) {
+        external_$_default()(element).each(function () {
+            const s = plugin || core_Store(this, LazyLoad_DATA_NAME);
+            lazyElemObservers.delete(s.params.observerID);
+            s.lazyElemObserver.unobserve(this);
+            core_Store(this, LazyLoad_DATA_NAME, null);
+        });
+    }
+    imgAndBg(s, lazyElem) {
+        const { imgSrcName, bgSrcName } = s.params;
+        const src = lazyElem.dataset[imgSrcName];
+        const bgImg = lazyElem.dataset[bgSrcName];
+        if (lazyElem.loading === 'lazy') {
+            lazyElem.loading = 'eager';
+        }
+        if (src) {
+            lazyElem.src = src;
+        }
+        if (bgImg) {
+            lazyElem.style.backgroundImage = `url("${bgImg}")`;
+            lazyElem.removeAttribute('data-bg-src');
+        }
+    }
+    handleEvents() {
+        const s = this;
+        const { observerID } = s.params;
+        if (observerID && !lazyElemObservers.has(observerID)) {
+            lazyElemObservers.set(observerID, lazyElemObserver(s));
+            s.lazyElemObserver = lazyElemObservers.get(observerID);
+        }
+        else {
+            s.lazyElemObserver = lazyElemObserver(s);
+        }
+        if (!observerID) {
+            console.warn(`It recommended to set an 'observerID', so the element group can leverage the same one.`, s.element);
+        }
+        s.lazyElemObserver.observe(s.element);
+    }
+}
+
+;// CONCATENATED MODULE: ./src/assets/js/fn/trapFocus.ts
+
+
+;
+const defaultProps = {
+    focusFirst: true,
+    nameSpace: 'trapFocus',
+    focusable: ['button', 'a', 'input', 'select', 'textarea', '[tabindex]']
+};
+;
+const canFocusEls = (i, el) => {
+    const baseFocusableRules = isVisible(el, true) && el.tabIndex !== -1;
+    const nodeName = el.nodeName.toUpperCase();
+    if ((nodeName === 'BUTTON' || nodeName === 'INPUT')) {
+        return baseFocusableRules && !el.disabled;
+    }
+    return baseFocusableRules && el.style.pointerEvents !== 'none';
+};
+const trapFocus = (modalEl, props) => {
+    const { focusFirst, focusable, nameSpace } = external_$_default().extend({}, defaultProps, props);
+    const $trapElem = external_$_default()(modalEl);
+    const focusableJoined = typeof focusable === 'string' ? focusable : focusable.join(',');
+    const $firstFocusable = $trapElem.find(focusableJoined).filter(canFocusEls);
+    let firstFocusable = $firstFocusable.length ? $firstFocusable[0] : null;
+    if (focusFirst && firstFocusable) {
+        firstFocusable.focus();
+    }
+    external_$_default()(document.body).on(`keydown.${nameSpace}`, function (e) {
+        const $focusable = $trapElem.find(focusableJoined).filter(canFocusEls);
+        if (!$focusable.length)
+            return;
+        const activeEl = document.activeElement;
+        const lastFocusable = $focusable[$focusable.length - 1];
+        const isTabPressed = e.key === 'Tab';
+        firstFocusable = $focusable[0];
+        if (!isTabPressed) {
+            return;
+        }
+        if (activeEl.nodeName.toUpperCase() === 'BODY') {
+            // somehow we lost focus
+            // this can happen if the last element is disabled if it was focused
+            // so re-assign to the first element
+            firstFocusable && firstFocusable.focus();
+            e.preventDefault();
+        }
+        if (e.shiftKey) {
+            // if shift key pressed for shift + tab combination
+            if (activeEl &&
+                firstFocusable &&
+                document.activeElement.isSameNode(firstFocusable)) {
+                lastFocusable && lastFocusable.focus();
+                e.preventDefault();
+            }
+        }
+        else {
+            // if tab key is pressed
+            if (activeEl &&
+                lastFocusable &&
+                activeEl.isSameNode(lastFocusable)) {
+                firstFocusable && firstFocusable.focus();
+                e.preventDefault();
+            }
+        }
+    });
+    return {
+        remove: () => {
+            external_$_default()(document.body).off(`keydown.${nameSpace}`);
+        }
+    };
+};
+/* harmony default export */ const fn_trapFocus = (trapFocus);
+
+;// CONCATENATED MODULE: ./src/assets/js/fn/hyperScript.ts
+
+const getCssAttr = (styleStr, find, rm) => {
+    const styleProp = styleStr.indexOf(find) !== -1 ? styleStr.split(find)[1] : null;
+    if (!styleProp)
+        return null;
+    const rmIndex = styleProp.indexOf(rm);
+    return rmIndex !== -1 ? styleProp.substring(0, rmIndex) : styleProp;
+};
+const hyperScript = (selector, props = {}) => {
+    const tagName = selector.split(/(\#|\.)/)[0], className = getCssAttr(selector, '.', '#'), idName = getCssAttr(selector, '#', '.'), baseObj = { class: className, id: idName };
+    let text = '';
+    if (props.text) {
+        text = props.text;
+        external_$_default().extend(props, { text: null });
+    }
+    const $elem = external_$_default()(`<${tagName}>`).attr(Object.assign(baseObj, props));
+    text && $elem.text(text);
+    return $elem;
+};
+/* harmony default export */ const fn_hyperScript = (hyperScript);
+
+;// CONCATENATED MODULE: ./src/assets/js/Modal.ts
+
+
+
+
+
+
+
+const Modal_VERSION = '1.2.0';
+const Modal_EVENT_NAME = 'modal';
+const Modal_DATA_NAME = 'Modal';
+const Modal_DEFAULTS = {
+    enableEvent: 'click',
+    appendTo: document.body,
+    ariaLabelledby: null,
+    ariaLabel: null,
+    cssPrefix: 'modal',
+    closeBtnIconCss: 'ico i-close',
+    closeBtnLabel: 'Close',
+    closeOutDelay: 250,
+    backDropClose: true,
+    fromDOM: false,
+    modalCss: null,
+    modalID: null,
+    src: '',
+    urlFilterType: 'hash',
+    historyType: 'replace',
+    locationFilter: 'modal',
+    loadLocation: true,
+    onOpenOnce: noop,
+    onOpen: noop,
+    onClose: noop,
+    afterClose: noop
+};
+const hasCb = (cb, modalObj) => {
+    if (cb && typeof cb === 'function') {
+        cb(modalObj);
+    }
+};
+class Modal {
+    element;
+    params;
+    modalID;
+    modalObj;
+    modalEvent;
+    trappedFocus;
+    enabledElem;
+    openedOnce;
+    static defaults = Modal_DEFAULTS;
+    constructor(element, options) {
+        const s = this;
+        s.element = element;
+        const dataOptions = getDataOptions(element, Modal_EVENT_NAME);
+        s.params = external_$_default().extend({}, Modal.defaults, options, dataOptions);
+        s.modalID = s.params.modalID;
+        s.modalObj = s.getModalObj();
+        s.modalEvent = Modal_EVENT_NAME + '_' + s.modalID;
+        s.trappedFocus;
+        s.enabledElem;
+        s.openedOnce = false;
+        s.handleEvents();
+        s.loadFromUrl();
+        core_Store(element, Modal_DATA_NAME, s);
+        return s;
+    }
+    static get version() {
+        return Modal_VERSION;
+    }
+    static remove(element, plugin) {
+        external_$_default()(element).each(function () {
+            const s = plugin || core_Store(this, Modal_DATA_NAME);
+            const params = s.params;
+            const { $backdrop, $closeBtn } = s.modalObj;
+            s.modalObj.show && s.modalObj.close();
+            external_$_default()(s.element).off(`${s.params.enableEvent}.${s.modalEvent}`);
+            $closeBtn.off(`click.${s.modalEvent}Dismiss`);
+            if (params.backDropClose)
+                $backdrop.off(`click.${s.modalEvent}Dismiss`);
+            external_$_default()(document)
+                .off(`keydown.${s.modalEvent}Dismiss`)
+                .off(`${s.modalEvent}Dismiss`);
+            external_$_default()(window).off(`popstate.${s.modalEvent} ${s.modalEvent}`);
+            core_Store(this, Modal_DATA_NAME, null);
+        });
+    }
+    handleEvents() {
+        const s = this;
+        external_$_default()(s.element).on(`${s.params.enableEvent}.${s.modalEvent}`, function (e) {
+            s.setDisplayAndEvents();
+            e.preventDefault();
+        });
+    }
+    setDisplayAndEvents() {
+        const s = this;
+        s.enableModal();
+        external_$_default()(document).on(`keydown.${s.modalEvent}Dismiss`, function (e) {
+            const ekey = e.code || e.originalEvent.key; //cash-dom || jquery
+            if (ekey === 'Escape') {
+                s.close();
+                e.preventDefault();
+            }
+        });
+        external_$_default()(document).on(`${s.modalEvent}Dismiss`, s.close);
+    }
+    getModalObj() {
+        const s = this, p = s.params, $closeBtn = fn_hyperScript(`button.${p.cssPrefix}__btn-dismiss`, {
+            type: 'button',
+            'aria-label': p.closeBtnLabel
+        }).append(fn_hyperScript(`i.${p.closeBtnIconCss}`)), $dialogContent = fn_hyperScript(`div.${p.cssPrefix}__dialog-content`), $dialog = fn_hyperScript(`div.${p.cssPrefix}__dialog`).append($closeBtn, $dialogContent), $backdrop = fn_hyperScript(`div.${p.cssPrefix}__backdrop`), $modal = fn_hyperScript(`div`, {
+            class: p.cssPrefix + (p.modalCss ? ' ' + p.modalCss : ''),
+            'aria-label': (p.ariaLabel || s.element.dataset.ariaLabel) || null,
+            'aria-labelledby': (p.ariaLabelledby || s.element.dataset.ariaLabelledby) || null,
+            id: s.modalID
+        }).append($backdrop, $dialog), $content = external_$_default()(s.params.src || s.element.hash || s.element.dataset.modalSrc);
+        return {
+            $backdrop,
+            $content,
+            contentAppended: false,
+            $dialog,
+            $dialogContent,
+            $closeBtn,
+            id: s.modalID,
+            $modal,
+            close: () => s.close(),
+            show: false
+        };
+    }
+    enableModal() {
+        const s = this;
+        const { $backdrop, $closeBtn, $content, $modal } = s.modalObj;
+        const p = s.params;
+        s.enabledElem = document.activeElement;
+        if (p.fromDOM) {
+            $content.after(fn_hyperScript(`span.${p.cssPrefix}-content-placemarker#${s.modalObj.id}_marker`));
+        }
+        if (!s.modalObj.contentAppended) {
+            s.modalObj.$dialogContent.append($content);
+            external_$_default().extend(s.modalObj, { contentAppended: true });
+        }
+        external_$_default()(p.appendTo).append($modal);
+        // attach events after appended to DOM
+        $closeBtn.on(`click.${s.modalEvent}Dismiss`, () => s.close());
+        if (p.backDropClose)
+            $backdrop.on(`click.${s.modalEvent}Dismiss`, () => s.close());
+        hasCb(p.onOpen, s.modalObj);
+        if (!s.openedOnce) {
+            hasCb(p.onOpenOnce, s.modalObj);
+            s.openedOnce = true;
+        }
+        $modal.attr({
+            role: 'dialog',
+            'aria-modal': 'true'
+        });
+        setTimeout(() => {
+            $modal.addClass(p.cssPrefix + '--show');
+            s.trappedFocus = fn_trapFocus($modal, { nameSpace: camelCase(s.modalID) });
+            external_$_default().extend(s.modalObj, { show: true });
+        }, 0);
+        external_$_default()(document.body).addClass(p.cssPrefix + '-open').css({
+            overflow: 'hidden',
+            'padding-right': '0px'
+        });
+        core_UrlState.set(p.urlFilterType, p.locationFilter, s.modalID, p.historyType);
+    }
+    close() {
+        const s = this;
+        const { $backdrop, $closeBtn, $content, $modal } = s.modalObj;
+        const p = s.params;
+        hasCb(p.onClose, s.modalObj);
+        $modal.addClass(p.cssPrefix + '--dismissing');
+        $modal.removeClass(p.cssPrefix + '--show');
+        // detach events
+        $closeBtn.off(`click.${s.modalEvent}Dismiss`);
+        if (p.backDropClose)
+            $backdrop.off(`click.${s.modalEvent}Dismiss`);
+        external_$_default()(document)
+            .off(`keydown.${s.modalEvent}Dismiss`)
+            .off(`${s.modalEvent}Dismiss`);
+        core_UrlState.set(p.urlFilterType, p.locationFilter, null, p.historyType);
+        setTimeout(() => {
+            $modal.attr({
+                role: 'dialog',
+                'aria-modal': ''
+            }).removeClass(p.cssPrefix + '--dismissing').css({
+                display: ''
+            });
+            external_$_default()(document.body).removeClass(p.cssPrefix + '-open').css({
+                overflow: '',
+                'padding-right': ''
+            });
+            s.trappedFocus.remove();
+            if (s.enabledElem && s.enabledElem instanceof HTMLElement) {
+                s.enabledElem.focus();
+            }
+            if (p.fromDOM) {
+                external_$_default()('#' + s.modalObj.id + '_marker').after($content).remove();
+                external_$_default().extend(s.modalObj, { contentAppended: false });
+            }
+            hasCb(p.afterClose, s.modalObj);
+            $modal.remove();
+            external_$_default().extend(s.modalObj, { show: false });
+        }, p.closeOutDelay);
+    }
+    loadFromUrl() {
+        const s = this;
+        const p = s.params;
+        if (p.locationFilter !== null || p.loadLocation) {
+            const filterEl = core_UrlState.get(p.urlFilterType, p.locationFilter);
+            if (filterEl === s.modalID) {
+                s.modalObj.show ? s.close() : s.setDisplayAndEvents();
+            }
+        }
+    }
+}
+
+;// CONCATENATED MODULE: ./src/assets/js/Tabs.ts
+
+
+
+
+
+const Tabs_VERSION = "1.5.0";
+const Tabs_DATA_NAME = 'Tabs';
+const Tabs_EVENT_NAME = 'tabs';
+const Tabs_DEFAULTS = {
+    tabsEvent: 'click',
+    cssPrefix: 'tabs',
+    locationFilter: null,
+    urlFilterType: 'hash',
+    historyType: 'push',
+    loadLocation: true,
+    addIDtoPanel: true,
+    ariaLabel: true,
+    tabChange: () => { },
+    onInit: () => { }
+};
+const getTabIDFromEl = (el) => {
+    return (el instanceof HTMLButtonElement ? el.dataset.href : el.hash)?.replace(/^\#/, '') || '';
+};
+class Tabs {
+    static get version() {
+        return Tabs_VERSION;
+    }
+    $element;
+    params;
+    $tabsNav;
+    $tabsNavClickElems;
+    tabsNavClickElems;
+    $tabsBody;
+    $tabsBodyPanels;
+    prevTabId;
+    initTabId;
+    initDefaultContent;
+    static defaults = Tabs_DEFAULTS;
+    #transition = fn_transition();
+    constructor(element, options) {
+        const s = this;
+        const dataOptions = getDataOptions(element, Tabs_EVENT_NAME);
+        s.$element = external_$_default()(element);
+        s.params = external_$_default().extend({}, Tabs.defaults, options, dataOptions);
+        const p = s.params;
+        s.$tabsNav = s.$element.find(`.${p.cssPrefix}__nav`).first();
+        s.$tabsBody = s.$element.find(`.${p.cssPrefix}__body`).first();
+        const tabsBody = s.$tabsBody[0];
+        s.$tabsBodyPanels = s.$tabsBody.find(`.${p.cssPrefix}__panel`)
+            // ensure they're the children of the body
+            // must be direct child
+            .filter((i, el) => el.parentElement.isSameNode(tabsBody));
+        s.$tabsNavClickElems = s.$tabsNav.find('a, button');
+        s.tabsNavClickElems = [...s.$tabsNavClickElems];
+        s.prevTabId = null;
+        s.initDefaultContent = s.$tabsBodyPanels.eq(0).data('tab-id');
+        //init
+        s.setAriaAttrs();
+        s.handleEvents();
+        s.loadDefaultContent();
+        s.loadFromUrl();
+        s.params.onInit(s.$tabsNav, s.$tabsBody);
+        return s;
+    }
+    loadDefaultContent() {
+        const s = this;
+        const tabId = s.initDefaultContent;
+        const clickElem = s.getClickElemFromTabId(tabId);
+        s.changeTabElements(clickElem, tabId, false);
+    }
+    loadFromUrl() {
+        const s = this;
+        const p = s.params;
+        if (p.locationFilter !== null || p.loadLocation) {
+            const tabId = core_UrlState.get(p.urlFilterType, p.locationFilter);
+            if (tabId) {
+                const clickElem = s.getClickElemFromTabId(tabId);
+                clickElem && s.changeTabElements(clickElem, tabId, false);
+            }
+        }
+    }
+    getClickElemFromTabId(tabId) {
+        const $clickElem = this.$tabsNavClickElems.filter((i, el) => getTabIDFromEl(el) === tabId);
+        if ($clickElem.length) {
+            return $clickElem[0];
+        }
+        return null;
+    }
+    setAriaAttrs() {
+        const s = this;
+        const p = s.params;
+        s.$tabsNavClickElems.each(function () {
+            const tabId = getTabIDFromEl(this);
+            const $tabBodyItem = s.$tabsBodyPanels.filter((i, el) => el.dataset.tabId === tabId);
+            external_$_default()(this).attr({
+                'aria-selected': 'false',
+                'role': 'tab',
+                'aria-controls': tabId
+            });
+            $tabBodyItem.attr({
+                'aria-label': p.ariaLabel ? this.textContent : null,
+                'role': 'tabpanel',
+                tabindex: '-1'
+            });
+            if (p.addIDtoPanel) {
+                $tabBodyItem.attr({ 'id': tabId });
+            }
+        });
+    }
+    handleEvents() {
+        const s = this;
+        s.$tabsNav.on(`${s.params.tabsEvent}.${Tabs_EVENT_NAME} ${Tabs_EVENT_NAME}`, "a, button", function (e) {
+            const clickElem = this;
+            const tabId = getTabIDFromEl(clickElem);
+            s.changeTabElements(clickElem, tabId);
+            e.preventDefault();
+        });
+        s.$tabsNav.on('keydown.' + Tabs_EVENT_NAME, function (e) {
+            const target = e.target;
+            const index = s.tabsNavClickElems.findIndex(el => el.isSameNode(target));
+            const next = e.key === 'ArrowRight' || e.key === 'ArrowDown';
+            const prev = e.key === 'ArrowLeft' || e.key === 'ArrowUp';
+            if (index !== -1 && (next || prev)) {
+                const changeIndex = next ? index + 1 : index - 1;
+                const nextBtn = s.tabsNavClickElems[changeIndex];
+                if (nextBtn) {
+                    // $(target).attr({'tabindex': '-1'});
+                    const tabId = getTabIDFromEl(nextBtn);
+                    s.changeTabElements(nextBtn, tabId);
+                    external_$_default()(nextBtn)[0].focus();
+                }
+                e.preventDefault();
+            }
+        });
+        external_$_default()(window).on(`popstate.${Tabs_EVENT_NAME} ${Tabs_EVENT_NAME}`, (e) => {
+            if (s.params.historyType === 'push') {
+                s.loadFromUrl();
+                e.preventDefault();
+            }
+        });
+    }
+    changeTabElements(clickElem, tabId, updateUrl = true) {
+        const s = this;
+        const p = s.params;
+        let hasTab = false;
+        const cssOpen = `${p.cssPrefix}__panel--open`, cssToggling = `${p.cssPrefix}__panel--toggling`, cssOpening = `${p.cssPrefix}__panel--opening`, cssClosing = `${p.cssPrefix}__panel--closing`;
+        s.#transition(() => {
+            s.$tabsBodyPanels.each(function () {
+                const thisTabId = this.dataset.tabId;
+                if (thisTabId === tabId) {
+                    external_$_default()(this)
+                        .addClass(`${cssToggling} ${cssOpening}`)
+                        .attr({ 'aria-hidden': null, tabindex: '0' });
+                    hasTab = true;
+                }
+                if (s.prevTabId && s.prevTabId === thisTabId) {
+                    external_$_default()(this)
+                        .addClass(`${cssToggling} ${cssClosing}`)
+                        .attr({ 'aria-hidden': 'true', tabindex: '-1' });
+                }
+            });
+            if (hasTab) {
+                s.params.tabChange(tabId, s.prevTabId, s.$tabsNav, s.$tabsBody);
+                s.prevTabId = tabId;
+                s.$tabsNavClickElems
+                    .attr({ 'aria-selected': 'false', tabindex: '-1' })
+                    .parent('li').removeClass(`${p.cssPrefix}__nav-li--active`);
+                external_$_default()(clickElem)
+                    .attr({ 'aria-selected': 'true', tabindex: '0' })
+                    .parent('li').addClass(`${p.cssPrefix}__nav-li--active`);
+                if (updateUrl) {
+                    const paramVal = s.initDefaultContent === tabId ? null : tabId;
+                    if (p.urlFilterType === 'hashVal') {
+                        core_UrlState.setHashVal(paramVal, p.historyType);
+                    }
+                    else {
+                        core_UrlState.set(p.urlFilterType, p.locationFilter, paramVal, p.historyType);
+                    }
+                }
+            }
+        }, () => {
+            s.$tabsBodyPanels.each(function () {
+                const isTab = this.dataset.tabId === tabId;
+                external_$_default()(this)
+                    .toggleClass(cssOpen, isTab)
+                    .removeClass(`${cssToggling} ${cssOpening} ${cssClosing}`);
+            });
+        });
+    }
+    static remove(element, plugin) {
+        external_$_default()(element).each(function () {
+            const s = plugin || core_Store(this, Tabs_DATA_NAME);
+            const params = s.params;
+            s.$tabsNav.off(`${params.tabsEvent}.${Tabs_EVENT_NAME} ${Tabs_EVENT_NAME}`);
+            s.$tabsNav.off('keydown.' + Tabs_EVENT_NAME);
+            s.$tabsNav.find('a, button').attr({ tabndex: null });
+            external_$_default()(window).off(`popstate.${Tabs_EVENT_NAME} ${Tabs_EVENT_NAME}`);
+            core_Store(this, Tabs_DATA_NAME, null);
+        });
+    }
+}
+
+;// CONCATENATED MODULE: ./src/assets/js/Toastr.ts
+
+
+
+const Toastr_VERSION = "1.0.0";
+const Toastr_DATA_NAME = 'Toastr';
+const Toastr_EVENT_NAME = 'toastr';
+const Toastr_DEFAULTS = {
+    duration: 3000,
+    appendTo: document.body,
+    animationDuration: 500,
+    content: '',
+    outerCss: 'toastr',
+    enabledCss: 'toastr--enabled',
+    dismissCss: 'toastr--dismiss',
+    btnDismissCss: 'toastr__btn-dismiss',
+    closeIconCss: 'ico i-close',
+    ariaLive: 'polite',
+    closeTextCopy: 'Dismiss',
+    cssGroupKey: 'std',
+    oneOnly: false
+};
+const toastContainers = new Map();
+let currentlyToastingGlobal = false;
+class Toastr {
+    static get version() { return Toastr_VERSION; }
+    static Defaults = Toastr_DEFAULTS;
+    static DismissedEventName = 'toastDismissed';
+    toastrFinallyTimer;
+    currentlyToasting;
+    toasterBodyBuilt;
+    $element;
+    $toastrBody;
+    $toastrWrap;
+    params;
+    constructor(element, options) {
+        const s = this;
+        const dataOptions = getDataOptions(element, Toastr_EVENT_NAME);
+        //state
+        s.$element = external_$_default()(element);
+        s.toastrFinallyTimer = null;
+        s.$toastrBody = null;
+        s.$toastrWrap = null;
+        s.currentlyToasting = false;
+        s.params = external_$_default().extend({}, Toastr.Defaults, options, dataOptions);
+        s.$element.on(`click.${Toastr_EVENT_NAME} ${Toastr_EVENT_NAME}`, () => s.launch());
+        return s;
+    }
+    dismiss() {
+        const s = this;
+        const { animationDuration, dismissCss } = s.params;
+        s.toastrFinallyTimer && clearTimeout(s.toastrFinallyTimer);
+        s.$toastrWrap.addClass(dismissCss);
+        setTimeout(() => {
+            const $toatrContainer = s.getToasterContainer();
+            s.$toastrWrap.removeClass(dismissCss).detach();
+            if (!$toatrContainer.children('div').length) {
+                s.getToasterContainer().detach();
+            }
+            s.currentlyToasting = false;
+            currentlyToastingGlobal = false;
+        }, animationDuration);
+    }
+    setContent(content, updateNow = false) {
+        const s = this;
+        external_$_default().extend(s.params, { content });
+        if (updateNow) {
+            s.updateContent(s.params.content);
+        }
+    }
+    launch() {
+        const s = this;
+        const { content, dismissCss, duration, enabledCss, oneOnly } = s.params;
+        if (!s.currentlyToasting) {
+            if (currentlyToastingGlobal && oneOnly) {
+                return;
+            }
+            if (!s.toasterBodyBuilt) {
+                s.buildElems();
+            }
+            s.$toastrWrap.removeClass(`${dismissCss} ${enabledCss}`);
+            s.updateContent(content);
+            external_$_default()(document.body).append(s.getToasterContainer().append(s.$toastrWrap));
+            setTimeout(() => s.$toastrWrap.addClass(enabledCss), 0);
+            // Auto remove if not dismissed
+            s.toastrFinallyTimer = setTimeout(() => s.dismiss(), duration);
+            s.currentlyToasting = true;
+            currentlyToastingGlobal = true;
+        }
+    }
+    getToasterContainer() {
+        const { cssGroupKey, outerCss } = this.params;
+        const toasterWrapCss = `${outerCss}-wrap ${outerCss}-wrap--${cssGroupKey}`;
+        if (!toastContainers.has(toasterWrapCss)) {
+            toastContainers.set(toasterWrapCss, external_$_default()('<div/>').attr({
+                class: toasterWrapCss
+            }));
+        }
+        return toastContainers.get(toasterWrapCss);
+    }
+    buildElems() {
+        const s = this;
+        const { ariaLive, btnDismissCss, closeIconCss, closeTextCopy, outerCss } = s.params;
+        s.$toastrBody = external_$_default()('<div>').attr({ class: s.params.outerCss + '__body' });
+        s.$toastrWrap = external_$_default()('<div>').attr({ class: outerCss, role: 'alert', 'aria-live': ariaLive }).append(s.$toastrBody, external_$_default()('<button>').attr({ type: 'button', class: btnDismissCss }).append(external_$_default()('<i>').attr({ class: closeIconCss }).append(external_$_default()('<span>').attr({ class: 'sr-only' }).text(closeTextCopy))));
+        s.toasterBodyBuilt = true;
+        // click event to dismiss
+        s.$toastrWrap.on('click', 'button', () => s.dismiss());
+    }
+    updateContent(content) {
+        const s = this;
+        if (s.$toastrBody) {
+            s.$toastrBody.empty();
+            if ('string' === typeof content) {
+                s.$toastrBody.html(content);
+            }
+            else {
+                s.$toastrBody.append(content);
+            }
+        }
+    }
+    static setContent(element, content, updateNow = false) {
+        external_$_default()(element).each(function () {
+            const s = core_Store(this, Toastr_DATA_NAME);
+            external_$_default().extend(s.params, { content });
+            if (updateNow) {
+                s.updateContent(s.params.content);
+            }
+        });
+    }
+    static remove(element, plugin) {
+        external_$_default()(element).each(function () {
+            const s = plugin || core_Store(this, Toastr_DATA_NAME);
+            s.$element.off(`click.${Toastr_EVENT_NAME} ${Toastr_EVENT_NAME}`);
+            core_Store(this, Toastr_DATA_NAME, null);
+        });
+    }
+}
+
+;// CONCATENATED MODULE: ./src/assets/js/AccessibleMenu.ts
+
+
+
+
+const KEYS = {
+    esc: 'Escape',
+    left: 'ArrowLeft',
+    right: 'ArrowRight',
+    down: 'ArrowDown',
+    up: 'ArrowUp',
+    enter: 'Enter',
+    shift: 'Shift',
+    space: 'Space',
+    tab: 'Tab'
+};
+const AccessibleMenu_VERSION = "1.3.0";
+const AccessibleMenu_DATA_NAME = 'AccessibleMenu';
+const AccessibleMenu_EVENT_NAME = 'accessibleMenu';
+const AccessibleMenu_DEFAULTS = {
+    keyDirections: ['horizontal', 'vertical', 'vertical'],
+    focusCss: 'focus',
+    focusInElems: 'a, [tabindex]',
+    focusLeaveElems: 'a, [tabindex], select, button'
+};
+const visible = (i, el) => isVisible(el);
+class AccessibleMenu {
+    element;
+    $element;
+    params;
+    static get version() { return AccessibleMenu_VERSION; }
+    static defaults = AccessibleMenu_DEFAULTS;
+    constructor(element, options) {
+        const s = this;
+        const dataOptions = getDataOptions(element, AccessibleMenu_EVENT_NAME);
+        s.element = element;
+        s.$element = external_$_default()(element);
+        s.params = external_$_default().extend({}, AccessibleMenu.defaults, options, dataOptions);
+        s.handleEvents();
+        return s;
+    }
+    static remove(element, plugin) {
+        external_$_default()(element).each(function () {
+            const s = plugin || core_Store(this, AccessibleMenu_DATA_NAME);
+            s.$element.off('focusin.' + AccessibleMenu_EVENT_NAME);
+            s.$element.off('mouseleave.' + AccessibleMenu_EVENT_NAME);
+            s.$element.off('blur.' + AccessibleMenu_EVENT_NAME);
+            s.$element.off('keydown.' + AccessibleMenu_EVENT_NAME);
+            core_Store(this, AccessibleMenu_DATA_NAME, null);
+        });
+    }
+    prev(props) {
+        const s = this;
+        const p = props;
+        const l = p.$ulParents.length - 1;
+        const key = p.e.key;
+        if (key === KEYS.left && p.keyDirections[l] === "horizontal" ||
+            key === KEYS.up && p.keyDirections[l] === "vertical" ||
+            key === KEYS.left && p.keyDirections[l] === "vertical" &&
+                (l > 1 && p.keyDirections[l - 1] === "vertical" && external_$_default()(p.activeElem).parent('li').index() === 0)) {
+            s.#focusListItem(p.activeElem, p.$ulParents, p.focusCss, true, p.focusInElems);
+            p.e.preventDefault();
+        }
+    }
+    next(props) {
+        const s = this;
+        const p = props;
+        const l = p.$ulParents.length - 1;
+        const atRootUl = p.$ulParents.length === 1;
+        const key = p.e.key;
+        if (
+        //go to sibling <li>
+        key === KEYS.right && p.keyDirections[l] === "horizontal" ||
+            key === KEYS.down && p.keyDirections[l] === "vertical") {
+            const isLastAtRoolLevel = atRootUl && external_$_default()(p.activeElem).closest('li').last();
+            const $currentLi = external_$_default()(p.activeElem).closest('li');
+            const isLastListItem = !$currentLi.next('li').length;
+            if (isLastAtRoolLevel && isLastListItem) {
+                s.#escapeFromUlAtRootNext(s.params.focusLeaveElems, p.$ulParents, p.activeElem);
+            }
+            else {
+                s.#focusListItem(p.activeElem, p.$ulParents, p.focusCss, false, p.focusInElems);
+                p.e.preventDefault();
+            }
+        }
+        if (
+        //go to the nestled <li>
+        key === KEYS.right && p.keyDirections[l] === "vertical" ||
+            key === KEYS.down && p.keyDirections[l] === "horizontal") {
+            s.#focusNestledListItem(p.activeElem, p.focusCss, p.focusInElems);
+            p.e.preventDefault();
+        }
+    }
+    handleEvents() {
+        const s = this;
+        let to = null;
+        external_$_default()(s.element).on('focusin.' + AccessibleMenu_EVENT_NAME, this.params.focusInElems, function (e) {
+            to && clearTimeout(to);
+            external_$_default()(this).parent('li').addClass('focus')
+                .siblings('li').removeClass('focus');
+        }).on('mouseleave.' + AccessibleMenu_EVENT_NAME, function () {
+            external_$_default()(this).find('li.focus').removeClass('focus');
+        }).on('focusout.' + AccessibleMenu_EVENT_NAME, function () {
+            to = setTimeout(() => {
+                external_$_default()(this).find('li.focus').removeClass('focus');
+            }, 200);
+        });
+        external_$_default()(s.element).on('keydown.' + AccessibleMenu_EVENT_NAME, function (e) {
+            const { focusCss, keyDirections, focusInElems } = s.params;
+            const activeElem = document.activeElement;
+            const $ulParents = external_$_default()(activeElem).parents('ul');
+            const props = { e, $ulParents, activeElem, focusCss, keyDirections, focusInElems };
+            s.#escapeKey(e, $ulParents, focusCss, focusInElems);
+            s.prev(props);
+            s.next(props);
+        });
+    }
+    #escapeKey(e, $ulParents, focusCss, focusInElems) {
+        if (e.key == KEYS.esc) {
+            if ($ulParents.length > 1) {
+                const $anchor = $ulParents.eq(0).closest('li').find(focusInElems).filter(visible);
+                $anchor[0].focus();
+                $anchor.parent('li').addClass(focusCss);
+            }
+            e.preventDefault();
+        }
+    }
+    #focusListItem(activeElem, $ulParents, focusCss, prev, focusInElems) {
+        const $aeLi = external_$_default()(activeElem).parent('li');
+        const $el = $aeLi[prev ? 'prev' : 'next']('li').filter(visible);
+        if ($el.length) {
+            $el.addClass(focusCss).siblings('li').removeClass(focusCss);
+            $el.find(focusInElems)[0].focus();
+        }
+        else {
+            if ($ulParents.length > 1) {
+                const $anchor = $ulParents.eq(0).parent('li').find('a').filter(visible);
+                if ($anchor.length) {
+                    $anchor[0].focus();
+                    $anchor.parent('li').eq(0).addClass(focusCss);
+                }
+            }
+        }
+    }
+    #focusNestledListItem(activeElem, focusCss, focusInElems) {
+        const $el = external_$_default()(activeElem).parent('li').find('li').filter(visible);
+        if ($el.length) {
+            $el.addClass(focusCss).siblings('li').removeClass(focusCss);
+            $el.find(focusInElems).filter(visible)[0].focus();
+        }
+    }
+    #escapeFromUlAtRootNext(focusLeaveElems, $ulParents, activeElem) {
+        const $rootUl = $ulParents.eq(0);
+        const focusableElems = document.querySelectorAll(focusLeaveElems);
+        let atCurrElem = false;
+        for (let i = 0, l = focusableElems.length; i < l; i++) {
+            const elem = focusableElems[i];
+            if (!atCurrElem && activeElem.isSameNode(elem)) {
+                atCurrElem = true;
+            }
+            if (atCurrElem && !$rootUl.has(elem).length) {
+                if (elem instanceof HTMLElement) {
+                    elem.focus();
+                    break;
+                }
+            }
+        }
+    }
+}
+
+;// CONCATENATED MODULE: ./src/assets/js/NavDesktop.ts
+
+
+
+const NavDesktop_VERSION = "2.0.0";
+const NavDesktop_DATA_NAME = 'NavDesktop';
+const NavDesktop_EVENT_NAME = 'navDesktop';
+const NavDesktop_DEFAULTS = {
+    stopWidth: 768,
+    delay: 800,
+    navLeavingDelay: 800,
+    outerElem: document.body,
+    cssPrefix: 'menu',
+    hoverCss: 'hover'
+};
+class NavDesktop {
+    element;
+    params;
+    cssList;
+    stayHover;
+    navLeaving;
+    static defaults = NavDesktop_DEFAULTS;
+    static get version() {
+        return NavDesktop_VERSION;
+    }
+    constructor(element, options) {
+        const s = this;
+        s.stayHover;
+        s.navLeaving;
+        s.element = element;
+        const dataOptions = getDataOptions(element, NavDesktop_EVENT_NAME);
+        s.params = external_$_default().extend({}, NavDesktop.defaults, options, dataOptions);
+        const { cssPrefix } = s.params;
+        s.cssList = {
+            // menuOuterOpen: `${cssPrefix}--outer-open`,
+            menuHasUL: `${cssPrefix}__has-ul`,
+            menuNoUl: `${cssPrefix}__no-ul`,
+            menuElemEdge: `${cssPrefix}__elem-on-edge`,
+            menuHovered: `${cssPrefix}--hover`,
+            menuLeaving: `${cssPrefix}--leaving`,
+        };
+        s.addCssToElems();
+        s.handleEvents();
+        return s;
+    }
+    static remove(element, plugin) {
+        external_$_default()(element).each(function () {
+            const s = plugin || core_Store(this, NavDesktop_DATA_NAME);
+            const $el = external_$_default()(s.element);
+            $el.find('ul').off(`mouseover.${NavDesktop_EVENT_NAME} focusin.${NavDesktop_EVENT_NAME} focusout.${NavDesktop_EVENT_NAME}`);
+            $el.off(`mouseout.${NavDesktop_EVENT_NAME}`);
+            core_Store(this, NavDesktop_DATA_NAME, null);
+        });
+    }
+    addCssToElems() {
+        const s = this;
+        const css = s.cssList;
+        external_$_default()('li', s.element)
+            .addClass(css.menuNoUl)
+            .has('ul').each(function () {
+            external_$_default()(this).removeClass(css.menuNoUl);
+            if (!external_$_default()(this).hasClass(css.menuHasUL)) {
+                external_$_default()(this).addClass(css.menuHasUL);
+            }
+        });
+    }
+    handleEvents() {
+        const s = this;
+        let prevEvent = null;
+        const evtTracker = (elem, e, cb) => {
+            const currEvent = e.type;
+            const containsOrISElem = elem.isSameNode(e.target) ? true : !!external_$_default()(e.target).parents(elem).length;
+            if (!prevEvent || (prevEvent !== currEvent && containsOrISElem)) {
+                prevEvent = currEvent;
+                cb();
+            }
+        };
+        external_$_default()(s.element).find('ul').on(`mouseover.${NavDesktop_EVENT_NAME} focusin.${NavDesktop_EVENT_NAME}`, 'li, ul', function (e) {
+            const li = this;
+            const css = s.cssList;
+            const p = s.params;
+            evtTracker(li, e, () => {
+                s.edgeDetector(li);
+                const $liLiParents = external_$_default()(li).parents('li');
+                li.classList.add(p.hoverCss);
+                $liLiParents.addClass(p.hoverCss);
+                external_$_default()(li).find(`.${p.hoverCss}`).removeClass(p.hoverCss);
+                external_$_default()(li).siblings('li').removeClass(p.hoverCss);
+                $liLiParents.length === 0 &&
+                    external_$_default()(s.element).find(`.${p.hoverCss}`).removeClass(p.hoverCss);
+                s.navLeaving && clearTimeout(s.navLeaving);
+                s.stayHover && clearTimeout(s.stayHover);
+                external_$_default()(p.outerElem).addClass(css.menuHovered).removeClass(css.menuLeaving);
+            });
+        }).on(`mouseout.${NavDesktop_EVENT_NAME} focusout.${NavDesktop_EVENT_NAME}`, 'li, ul', function (e) {
+            const liOrUl = this;
+            const p = s.params;
+            const css = s.cssList;
+            evtTracker(liOrUl, e, () => {
+                s.stayHover = setTimeout(() => {
+                    external_$_default()(s.element).find(`.${p.hoverCss}`).removeClass(`${p.hoverCss} ${css.menuElemEdge}`);
+                    external_$_default()(s.element).find(`.${css.menuElemEdge}`).removeClass(css.menuElemEdge);
+                    external_$_default()(p.outerElem)
+                        .removeClass(css.menuHovered)
+                        .addClass(css.menuLeaving);
+                    s.navLeaving = setTimeout(() => {
+                        external_$_default()(p.outerElem).removeClass(css.menuLeaving);
+                    }, p.navLeavingDelay);
+                }, p.delay);
+            });
+        });
+    }
+    edgeDetector(liOrUl) {
+        const s = this;
+        const { stopWidth } = s.params;
+        const css = s.cssList;
+        const dw = external_$_default()(window).width();
+        if (stopWidth < dw) {
+            const $uls = external_$_default()(liOrUl).find('ul');
+            if ($uls.length) {
+                const ul = $uls[0], l = external_$_default()(ul).offset().left, uw = ul.scrollWidth, fullyVisible = (l + uw <= dw);
+                if (!fullyVisible) {
+                    liOrUl.classList.add(css.menuElemEdge);
+                }
+            }
+        }
+    }
+}
+
+;// CONCATENATED MODULE: ./src/assets/js/core/constants.ts
+const constants_KEYS = {
+    esc: 'Escape',
+    left: 'ArrowLeft',
+    right: 'ArrowRight',
+    down: 'ArrowDown',
+    up: 'ArrowUp',
+    enter: 'Enter',
+    shift: 'Shift',
+    space: 'Space',
+    tab: 'Tab'
+};
+const PHOTO_RGX = /\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg)((#|\?).*)?$|(\?|&|&amp;)(image|ext\=\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg))?$/i;
+
+;// CONCATENATED MODULE: ./src/assets/js/NavMobile.ts
+
+
+
+
+
+
+const NavMobile_VERSION = "3.0.0";
+const NavMobile_DATA_NAME = 'NavMobile';
+const NavMobile_EVENT_NAME = 'navMobile';
+const NavMobile_DEFAULTS = {
+    enableBtn: '#mobile-nav-btn',
+    ariaLabel: 'Toggle site navigation',
+    subMenuText: 'toggle menu for',
+    insertToggleBtnAfter: 'a',
+    slideDuration: 400,
+    outerElement: document.body,
+    outsideClickClose: true,
+    animateHeight: true,
+    cssPrefix: 'menu',
+    menuBtnCss: 'i i-arrow-b',
+    menuBtnSkip: false,
+    afterNavItemOpen: noop,
+    afterNavItemClose: noop,
+    afterOpen: noop,
+    afterClose: noop,
+    doTrapFocus: true,
+    trapFocusElem: null,
+    stopPropagation: true,
+    bkptEnable: null
+};
+class NavMobile {
+    $element;
+    params;
+    menuOpened;
+    allowClick;
+    cssList;
+    static get version() { return NavMobile_VERSION; }
+    static defaults = NavMobile_DEFAULTS;
+    #transition = fn_transition();
+    constructor(element, options) {
+        const s = this;
+        const dataOptions = getDataOptions(element, NavMobile_EVENT_NAME);
+        s.$element = external_$_default()(element);
+        s.params = external_$_default().extend({}, NavMobile.defaults, options, dataOptions);
+        const { cssPrefix, menuBtnCss } = s.params;
+        s.cssList = {
+            menuOuterOpen: `${cssPrefix}--outer-open`,
+            menuHasUL: `${cssPrefix}__has-ul`,
+            menuOpen: `${cssPrefix}--open`,
+            menuOpening: `${cssPrefix}--is-opening`,
+            menuClosing: `${cssPrefix}--is-closing`,
+            menuToggling: `${cssPrefix}--toggling`,
+            menuBtnCss: `${cssPrefix}__btn-nav ${menuBtnCss}`
+        };
+        //run the methods
+        s.addChildNavCss();
+        s.handleEvents();
+        s.checkIfEnabled();
+        const elemID = element.id || element.className;
+        external_$_default()(s.params.enableBtn).attr({
+            'aria-controls': elemID,
+            'aria-label': s.params.ariaLabel
+        });
+        return s;
+    }
+    handleEvents() {
+        const s = this;
+        const css = s.cssList;
+        const $enableBtn = external_$_default()(s.params.enableBtn);
+        $enableBtn
+            .attr({ 'aria-expanded': 'false' })
+            .on(`click.${NavMobile_EVENT_NAME} ${NavMobile_EVENT_NAME}`, function (e) {
+            if (!s.allowClick)
+                return;
+            s.#menuToggle();
+            e.stopPropagation();
+            e.preventDefault();
+        });
+        external_$_default()(document).on(`keydown.${NavMobile_EVENT_NAME}`, (e) => {
+            if (e.code === constants_KEYS.esc && s.$element.hasClass(css.menuOpen) && s.allowClick) {
+                s.#menuToggle();
+                if ($enableBtn.length) {
+                    $enableBtn[0].focus();
+                }
+            }
+        });
+        s.#navToggle();
+        s.#outsideClickClose();
+    }
+    #menuToggle() {
+        const s = this;
+        const p = s.params;
+        const css = s.cssList;
+        let trappedFocus = null;
+        const $enableBtn = external_$_default()(p.enableBtn);
+        const $elemParent = s.$element.parent();
+        const doClose = s.menuOpened;
+        const cssMenuState = `${doClose ? css.menuClosing : css.menuOpening} ${css.menuToggling}`;
+        s.#transition(() => {
+            s.menuOpened = !doClose;
+            s.$element.addClass(cssMenuState);
+            external_$_default()(p.enableBtn).attr({ 'aria-expanded': !doClose + '' });
+            external_$_default()(p.outerElement)
+                .toggleClass(css.menuOuterOpen, !doClose)
+                .addClass(cssMenuState);
+            if (doClose) {
+                $elemParent
+                    .find(`.${css.menuOpen}`)
+                    .removeClass(css.menuOpen)
+                    .find("[style]").css({ 'display': null });
+                trappedFocus && trappedFocus.remove();
+            }
+            else {
+                if (p.doTrapFocus) {
+                    trappedFocus = fn_trapFocus(p.trapFocusElem || s.$element, { nameSpace: NavMobile_EVENT_NAME });
+                }
+            }
+        }, () => {
+            external_$_default()(p.outerElement).removeClass(cssMenuState);
+            s.$element.removeClass(cssMenuState);
+            if (!doClose) {
+                s.$element.addClass(css.menuOpen);
+            }
+            s.params[doClose ? 'afterClose' : 'afterOpen'](s.$element, external_$_default()(p.outerElement), $enableBtn);
+        }, p.slideDuration);
+    }
+    #navToggle() {
+        const s = this;
+        const css = s.cssList;
+        s.$element.on(`click.${NavMobile_EVENT_NAME} ${NavMobile_EVENT_NAME}`, `.${css.menuBtnCss.replace(/\s/g, '.')}`, function (e) {
+            const p = s.params;
+            const css = s.cssList;
+            const $li = external_$_default()(this).closest(`.${css.menuHasUL}`);
+            const doClose = $li.hasClass(css.menuOpen);
+            const $ul = $li.find('ul').first();
+            //exit because were in desktop view
+            if (!s.allowClick) {
+                return;
+            }
+            const cssMenuState = `${css.menuToggling} ${doClose ? css.menuClosing : css.menuOpening}`;
+            s.allowClick = doClose;
+            s.#transition(() => {
+                $li.addClass(cssMenuState).toggleClass(css.menuOpen, !doClose);
+                $ul.addClass(cssMenuState).toggleClass(css.menuOpen, !doClose);
+                if (p.animateHeight) {
+                    const openHeight = ($ul.length ? $ul[0].scrollHeight : 0);
+                    const height = doClose ? 0 : openHeight;
+                    $ul.css({ height: doClose ? openHeight : 0 });
+                    setTimeout(() => {
+                        $ul.css({ height });
+                    }, 0);
+                }
+            }, () => {
+                $li.removeClass(cssMenuState).toggleClass(css.menuOpen, !doClose);
+                $ul.removeClass(cssMenuState).toggleClass(css.menuOpen, !doClose);
+                $ul.css({ height: null });
+                if (doClose) {
+                    s.params.afterNavItemClose($li);
+                }
+                else {
+                    s.params.afterNavItemOpen($li);
+                }
+                s.allowClick = true;
+            }, p.slideDuration);
+            e.stopPropagation();
+        });
+        s.$element.on(`click.${NavMobile_EVENT_NAME} ${NavMobile_EVENT_NAME}`, 'a', function (e) {
+            //prohibit closing if an anchor is clicked
+            if (s.params.stopPropagation) {
+                e.stopPropagation();
+            }
+        });
+    }
+    #outsideClickClose() {
+        const s = this;
+        external_$_default()(document.body).on(`click.${NavMobile_EVENT_NAME}`, function (e) {
+            if (s.params.outsideClickClose) {
+                if (!s.menuOpened) {
+                    return;
+                } //lets just exit then..
+                const menuClicked = e.target ? s.$element.has(e.target).length > 0 : false;
+                //if the menu item is not clicked and its opened
+                //the menu button shouldn't register because propogation is prevented to the body
+                if (!menuClicked && s.menuOpened) {
+                    s.#menuToggle();
+                }
+            }
+        });
+    }
+    addChildNavCss() {
+        const s = this;
+        const p = s.params;
+        const css = s.cssList;
+        external_$_default()('li', s.$element).has('ul').each(function () {
+            const $this = external_$_default()(this);
+            let skipUl = false;
+            if (typeof p.menuBtnSkip === 'function' &&
+                // condition in function must return false
+                p.menuBtnSkip(this)) {
+                skipUl = true;
+            }
+            if (!$this.next('button').length && !skipUl) {
+                const $el = $this.find(p.insertToggleBtnAfter).first();
+                $el.addClass(css.menuHasUL);
+                if ($el.length) {
+                    if ($el[0].parentNode.isSameNode(this)) {
+                        // make sure the <el> is a direct child of <li>
+                        $el.after(external_$_default()('<button>').attr({
+                            class: css.menuBtnCss,
+                            type: 'button',
+                            'aria-label': p.subMenuText + ' ' + $el.text().trim()
+                        }));
+                    }
+                }
+            }
+        });
+    }
+    checkIfEnabled() {
+        const s = this;
+        let resizeTimer;
+        //basically if the navigational button is visible then
+        //we can allow the click to open the navigation
+        //this is so it doesn't clash with any other plugins
+        //and allows for the control of this click via CSS
+        external_$_default()(window).on(`resize.${NavMobile_EVENT_NAME} ${NavMobile_EVENT_NAME}`, function (e) {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                const $enableBtn = external_$_default()(s.params.enableBtn);
+                s.allowClick = typeof s.params.bkptEnable === 'number' ?
+                    external_$_default()(window).width() <= s.params.bkptEnable :
+                    ($enableBtn.length ? isVisible($enableBtn[0]) : false);
+            }, e.type === NavMobile_EVENT_NAME ? 0 : 200);
+        }).trigger(NavMobile_EVENT_NAME);
+    }
+    static remove(element, plugin) {
+        external_$_default()(element).each(function () {
+            const s = plugin || core_Store(this, NavMobile_DATA_NAME);
+            external_$_default()(s.params.enableBtn).off(`click.${NavMobile_EVENT_NAME} ${NavMobile_EVENT_NAME}`);
+            external_$_default()(document).off(`keydown.${NavMobile_EVENT_NAME}`);
+            s.$element
+                .off(`click.${NavMobile_EVENT_NAME} ${NavMobile_EVENT_NAME}`)
+                .off(`click.${NavMobile_EVENT_NAME} ${NavMobile_EVENT_NAME}`);
+            external_$_default()(document.body).off(`click.${NavMobile_EVENT_NAME}`);
+            external_$_default()(window).off(`resize.${NavMobile_EVENT_NAME} ${NavMobile_EVENT_NAME}`);
+            core_Store(this, NavMobile_DATA_NAME, null);
+        });
+    }
+}
+
+;// CONCATENATED MODULE: ./src/assets/js/fn/throttleResize.ts
+
+const throttledResize = (callback, _namespace = 'throttledResize', manualTrigger = false, delay = 100) => {
+    let _throttledResize = null;
+    const namespace = _namespace !== '' ? `.${_namespace}` : '';
+    //must pass in a function for the first argument else exit the script
+    if (typeof callback !== 'function') {
+        console.error('first parameter should be a function');
+        return;
+    }
+    external_$_default()(window).on(`resize${namespace}${manualTrigger && ' ' + _namespace}`, (e) => {
+        clearTimeout(_throttledResize);
+        _throttledResize = setTimeout(callback, delay, e);
+    });
+    if (manualTrigger) {
+        setTimeout(callback, 0);
+    }
+};
+/* harmony default export */ const throttleResize = (throttledResize);
+
+;// CONCATENATED MODULE: ./src/assets/js/Parallax.ts
+
+
+
+
+const Parallax_VERSION = "2.0.0";
+const Parallax_DATA_NAME = 'Parallax';
+const Parallax_EVENT_NAME = 'parallax';
+const Parallax_DEFAULTS = {
+    speed: 7,
+    zSpeed: 5,
+    cssPrefix: 'parallax',
+    axis: 'y',
+    scrollAxis: 'y',
+    zAxis: false,
+    relativeElem: false,
+    bgFill: false,
+    rootMargin: 0,
+    scrollMaxPxStop: 5000,
+    zScrollMaxPxStop: 2000,
+    minWidth: null,
+    maxWidth: null
+};
+class Parallax {
+    params;
+    zInitOffset;
+    index;
+    instanceEvent;
+    $window;
+    $element;
+    element;
+    elementOffset;
+    $relElem;
+    winHeight;
+    winWidth;
+    elemHeight;
+    elemWidth;
+    speed;
+    zSpeed;
+    fillAmount;
+    bgFill;
+    bgFillProp;
+    axis;
+    zAxis;
+    scrollMaxPxStop;
+    zScrollMaxPxStop;
+    rootMargin;
+    lastZSpeed;
+    lastCssInProps;
+    minWidthIfSet;
+    maxWidthIfSet;
+    effectCleared;
+    cssPrevDir;
+    static get version() { return Parallax_VERSION; }
+    static defaults = Parallax_DEFAULTS;
+    constructor(element, options, index) {
+        const s = this;
+        const dataOptions = getDataOptions(element, Parallax_EVENT_NAME);
+        s.$window = external_$_default()(window);
+        s.$element = external_$_default()(element);
+        s.element = element;
+        s.params = external_$_default().extend({}, Parallax.defaults, options, dataOptions);
+        s.zInitOffset = 0;
+        s.index = index;
+        s.instanceEvent = Parallax_EVENT_NAME + index;
+        s.$relElem = s.#relElem;
+        s.cssPrevDir = '';
+        //props to get updated on resize
+        s.updatableProps();
+        s.handleEvents();
+        return s;
+    }
+    handleEvents() {
+        const s = this;
+        throttleResize(() => {
+            s.updatableProps();
+            // $(window).trigger(s.instanceEvent);
+            s.parallax(s);
+        }, `${s.instanceEvent}_resize`, true);
+        external_$_default()(window).on(`scroll.${s.instanceEvent} ${s.instanceEvent}`, () => {
+            window.requestAnimationFrame(() => {
+                s.parallax(s);
+            });
+        }).trigger(s.instanceEvent);
+    }
+    handleUpdate() {
+        const s = this;
+        s.updatableProps();
+        external_$_default()(window).trigger(s.instanceEvent);
+    }
+    updatableProps() {
+        const s = this;
+        const speed = s.#speed, zSpeed = s.#zSpeed, { cssPrefix } = s.params, speedCss = `${cssPrefix}--${s.params.axis}-${zSpeed > 0 ? 'pos' : 'neg'}`, zSpeedCss = s.params.zAxis ? ` ${cssPrefix}--z-${zSpeed > 0 ? 'pos' : 'neg'}` : '', newCssDir = `${speedCss}${zSpeedCss}`, rm = s.params.rootMargin;
+        //reset to get new measurements
+        s.$element.css({
+            'transform': null,
+            height: null,
+            width: null
+        })
+            .removeClass(s.cssPrevDir)
+            .addClass(newCssDir);
+        s.cssPrevDir = newCssDir;
+        s.winHeight = s.$window.height();
+        s.winWidth = s.$window.width();
+        s.elemHeight = s.$relElem[0].scrollHeight;
+        s.elemWidth = s.$relElem[0].scrollWidth;
+        s.speed = speed;
+        s.zSpeed = zSpeed;
+        s.fillAmount = s.#fillAmount;
+        s.bgFill = s.params.bgFill;
+        s.axis = s.params.axis;
+        s.bgFillProp = s.axis === 'y' ? 'height' : 'width';
+        s.zAxis = s.params.zAxis;
+        s.$relElem = s.#relElem;
+        s.scrollMaxPxStop = s.params.scrollMaxPxStop;
+        s.zScrollMaxPxStop = s.params.zScrollMaxPxStop;
+        s.lastZSpeed = 0;
+        s.rootMargin = typeof s.params.rootMargin === 'number' ? [rm, rm] : rm;
+        s.minWidthIfSet = s.params.minWidth ? s.winWidth > s.params.minWidth : true;
+        s.maxWidthIfSet = s.params.maxWidth ? s.winWidth < s.params.maxWidth : true;
+        s.elementOffset = s.getElementRects();
+        s.$element.css(s.lastCssInProps);
+    }
+    getElementRects() {
+        const s = this;
+        const elPos = s.$element.offset(), top = elPos.top, left = elPos.left, bottom = top + s.elemHeight, right = left + s.elemWidth;
+        return {
+            top,
+            left,
+            bottom,
+            right
+        };
+    }
+    parallax(s) {
+        const { scrollAxis } = s.params, [rootMStart, rootMEnd] = s.rootMargin, withinMinAndMaxIfSet = (s.minWidthIfSet && s.maxWidthIfSet), scrollVertical = scrollAxis === 'y', offset = (scrollVertical ? s.elementOffset.top : s.elementOffset.left), winSide = (scrollVertical ? s.winHeight : s.winWidth) - rootMStart, scrollDir = (scrollVertical ? window.scrollY : window.scrollX), pixelStart = (offset > winSide ? (winSide - offset) + scrollDir : offset + (scrollDir - offset));
+        if (s.isInView(scrollVertical, pixelStart, scrollDir, rootMEnd) && withinMinAndMaxIfSet) {
+            const speed = (pixelStart * s.speed), zSpeed = (pixelStart * s.zSpeed), speedPx = (speed < s.zScrollMaxPxStop) ? speed : s.zScrollMaxPxStop, zSpeedPx = s.params.zAxis ? ((s.lastZSpeed < s.zScrollMaxPxStop) ? zSpeed : s.lastZSpeed) : 0, translateParams = s.axis === 'y' ? `0, ${speedPx}px, ${zSpeedPx}px` : `${speedPx}px, 0, ${zSpeedPx}px`;
+            const cssProps = {
+                transform: `translate3d(${translateParams})`,
+                [s.bgFillProp]: s.bgFill ? `calc(100% + ${s.fillAmount}px)` : null
+            };
+            s.lastZSpeed = zSpeedPx;
+            s.lastCssInProps = cssProps;
+            s.$element.css(cssProps);
+        }
+    }
+    isInView(scrollVertical, pixelStart, scrollDir, rootMargin) {
+        const s = this;
+        const elemOffsetEnd = scrollVertical ? s.elementOffset.bottom : s.elementOffset.right;
+        return scrollDir + rootMargin <= elemOffsetEnd && pixelStart >= 0;
+    }
+    //getters
+    get #fillAmount() {
+        const s = this;
+        const saY = s.params.scrollAxis === 'y';
+        const winSide = s.params.axis === 'y' ? s.winHeight : (s.winWidth + (saY ? 0 : s.elemWidth));
+        return (winSide * Math.abs(s.speed));
+    }
+    get #speed() {
+        const s = this;
+        return s.params.speed / 100;
+    }
+    get #zSpeed() {
+        const s = this;
+        return s.params.zSpeed / 100;
+    }
+    get #relElem() {
+        const s = this;
+        return s.params.relativeElem ?
+            s.$element.closest(s.params.relativeElem) :
+            s.$element;
+    }
+    static remove(element, plugin) {
+        external_$_default()(element).each(function () {
+            const s = plugin || core_Store(this, Parallax_DATA_NAME);
+            external_$_default()(window).off(`scroll.${s.instanceEvent} resize.${s.instanceEvent} ${s.instanceEvent}_resize ${s.instanceEvent}`);
+            s.$element.css({
+                'transform': null,
+                height: null,
+                width: null
+            }).removeClass(s.cssPrevDir);
+            core_Store(this, Parallax_DATA_NAME, null);
+        });
+    }
+}
+
+;// CONCATENATED MODULE: ./src/assets/js/SelectEnhance.ts
+
+
+
+
+const SelectEnhance_VERSION = "2.4.1";
+const SelectEnhance_EVENT_NAME = 'selectEnhance';
+const SelectEnhance_DATA_NAME = 'SelectEnhance';
+const SelectEnhance_DEFAULTS = {
+    cssPrefix: 'select-enhance',
+    mobileNative: true,
+    emptyValAsPlaceholder: true,
+    focusIn: noop,
+    focusOut: noop,
+    beforeChange: noop,
+    afterChange: noop,
+    blurDuration: 250,
+    typeAheadDuration: 500,
+    observeSelectbox: true
+};
+// wrap the select first
+const mobileOS = isMobileOS();
+// helper
+const getSelectedOptNode = ($el) => $el.find('option').filter(function () { return this.selected; })[0];
+// global private state props
+let to, $currSelectEnhance = null, listPosTop = true, registerEventScroll = false, currSelectInstance = null;
+class SelectEnhance {
+    $select;
+    select;
+    params;
+    index;
+    id;
+    selectId;
+    isReadOnly;
+    $label;
+    $selectEnhance;
+    $textInput;
+    textInput;
+    $selectList;
+    optionSet;
+    optionsShown;
+    selectboxObserver;
+    selectListBoxInFullView;
+    keyedInput;
+    static defaults = SelectEnhance_DEFAULTS;
+    static get version() {
+        return SelectEnhance_VERSION;
+    }
+    constructor(element, options, index) {
+        const s = this;
+        s.index = index;
+        s.$select = external_$_default()(element);
+        s.select = element;
+        s.id = s.$select.attr('id') || s.$select.attr('name') || 'select_enhance_' + index;
+        s.selectId = s.id + '_enhance';
+        s.$label = external_$_default()(`label[for="${s.id}"]`);
+        s.optionSet = new WeakMap();
+        s.optionsShown = false;
+        s.selectboxObserver;
+        s.selectListBoxInFullView = true;
+        s.keyedInput = "";
+        s.isReadOnly = typeof s.$select.attr('readonly') === "string";
+        if (s.select.multiple) {
+            console.warn(`The SelectEnhance plugin doesn't support multiple selections.`);
+        }
+        if (s.$label.length) {
+            s.$label.attr({ id: s.selectId + '_lbl' });
+        }
+        const dataOptions = getDataOptions(element, SelectEnhance_EVENT_NAME);
+        s.params = external_$_default().extend({}, SelectEnhance.defaults, options, dataOptions);
+        s.setUpSelectHtml();
+        if (mobileOS && s.params.mobileNative || s.isReadOnly) {
+            s.mobileOnlyIfNavite();
+        }
+        else {
+            // 
+            // attach events
+            // 
+            if (s.params.observeSelectbox) {
+                s.selectInputMutationObserver();
+            }
+            s.eventLabelClick();
+            s.eventKeyboardSearch();
+            s.eventShowOptions();
+            s.eventOptionClick();
+            s.eventSelectToggle();
+            s.eventArrowKeys();
+            s.observeSelectListBoxInFullView();
+            SelectEnhance.eventScrollGetListPosition();
+        }
+        return s;
+    }
+    mobileOnlyIfNavite() {
+        const s = this;
+        let prevElSelectedVal = getSelectedOptNode(s.$select);
+        s.$select.on('mouseup.' + SelectEnhance_EVENT_NAME, 'option', function (e) {
+            if (!this.isSameNode(prevElSelectedVal)) {
+                s.params.beforeChange(s.$select);
+            }
+        }).on('change.' + SelectEnhance_EVENT_NAME, function (e) {
+            s.params.afterChange(s.$select);
+            prevElSelectedVal = getSelectedOptNode(s.$select);
+        });
+    }
+    // Events 
+    blurSelect() {
+        const s = this;
+        s.$selectEnhance.addClass(s.params.cssPrefix + '--blurring');
+        s.$selectEnhance.removeClass(s.params.cssPrefix + '--focused');
+        s.$textInput.attr({ 'aria-expanded': 'false' });
+        setTimeout(() => {
+            s.$selectEnhance.removeClass(s.params.cssPrefix + '--blurring');
+            $currSelectEnhance = null;
+            currSelectInstance = null;
+            s.optionsShown = false;
+            s.params.focusOut(s.$select);
+        }, s.params.blurDuration);
+    }
+    setSelectionState($btn, doBlur = true) {
+        const s = this;
+        const { cssPrefix } = s.params;
+        const selectedOpt = s.optionSet.get($btn[0]);
+        const newSelectedState = !selectedOpt.selected;
+        s.params.beforeChange(s.$select);
+        selectedOpt.selected = true;
+        s.params.afterChange(s.$select);
+        s.$selectEnhance.find('.' + cssPrefix + '__list-btn[aria-selected]').attr({ 'aria-selected': 'false' });
+        $btn.attr({ 'aria-selected': newSelectedState + '' });
+        s.$textInput.attr({ 'aria-activedescendant': $btn[0].id });
+        // add a class whether there is an input value or not
+        s.$selectEnhance.toggleClass(cssPrefix + '--empty-val', !selectedOpt.value.trim());
+        s.select.dispatchEvent(new Event('change'));
+        if (s.params.emptyValAsPlaceholder && selectedOpt.value.trim() === '') {
+            s.$textInput.val('').attr({ placeholder: selectedOpt.text });
+        }
+        else {
+            s.$textInput.val(selectedOpt.text);
+        }
+        if (doBlur) {
+            s.textInput.focus();
+            s.blurSelect();
+        }
+        else {
+            $btn[0].focus();
+        }
+    }
+    eventLabelClick() {
+        const s = this;
+        s.$label.on('click.' + SelectEnhance_EVENT_NAME, function (e) {
+            e.preventDefault();
+            if (!s.select.disabled) {
+                s.textInput.focus();
+            }
+        });
+    }
+    showOptions(s) {
+        if (s.select.disabled) {
+            return;
+        }
+        const { cssPrefix } = s.params;
+        s.optionsShown = true;
+        s.$selectEnhance.toggleClass(cssPrefix + '--focused');
+        s.$textInput.attr({ 'aria-expanded': 'true' });
+        const $selectedBtn = s.$selectEnhance.find('.' + cssPrefix + '__list-btn[aria-selected="true"]');
+        if ($selectedBtn.length) {
+            $selectedBtn[0].focus();
+        }
+        $currSelectEnhance = s.$selectEnhance;
+        currSelectInstance = s;
+        SelectEnhance.getListPosition();
+        s.params.focusIn(s.$select);
+    }
+    eventShowOptions() {
+        const s = this;
+        const { cssPrefix } = s.params;
+        s.$selectEnhance.on('click.' + SelectEnhance_EVENT_NAME, '.' + cssPrefix + '__enable-text', (e) => {
+            if (s.select.disabled) {
+                return;
+            }
+            s.showOptions(s);
+        });
+        // Only works on keydown event
+        s.$textInput.on('keydown.' + SelectEnhance_EVENT_NAME, function (e) {
+            if ((e.key === constants_KEYS.down || e.key === constants_KEYS.up) && !s.optionsShown) {
+                s.showOptions(s);
+                e.preventDefault();
+            }
+        });
+        s.$selectList.on('keypress.' + SelectEnhance_EVENT_NAME, '.' + cssPrefix + '__list-btn', function (e) {
+            if (e.key === constants_KEYS.enter ||
+                e.code === constants_KEYS.space && s.keyedInput.trim() === '') {
+                s.setSelectionState(external_$_default()(document.activeElement));
+                s.blurSelect();
+                s.textInput.focus();
+                e.preventDefault();
+            }
+        });
+        s.$textInput.on('keypress.' + SelectEnhance_EVENT_NAME, function (e) {
+            if (e.key !== constants_KEYS.tab || e.shiftKey && e.key !== constants_KEYS.tab) {
+                e.preventDefault();
+            }
+            if (e.key === constants_KEYS.enter ||
+                e.code === constants_KEYS.space && s.keyedInput.trim() === '' ||
+                e.ctrlKey && e.altKey && e.shiftKey && constants_KEYS.space === e.code) {
+                s.showOptions(s);
+            }
+        });
+    }
+    eventOptionClick() {
+        const s = this;
+        s.$selectEnhance.on('click.' + SelectEnhance_EVENT_NAME, '.' + s.params.cssPrefix + '__list-btn', function (e) {
+            e.preventDefault();
+            s.$selectEnhance.removeClass(s.params.cssPrefix + '--focused');
+            s.$textInput.attr({ 'aria-expanded': 'false' });
+            s.setSelectionState(external_$_default()(this));
+        });
+    }
+    eventSelectToggle() {
+        const s = this;
+        s.$selectEnhance.on('focusin.' + SelectEnhance_EVENT_NAME, function (e) {
+            const closeEvent = 'click.close_' + s.selectId + SelectEnhance_EVENT_NAME;
+            external_$_default()(document.body).off(closeEvent).on(closeEvent, function (e) {
+                setTimeout(() => {
+                    const ae = document.activeElement;
+                    const aeIsInSelectEnhance = (ae && !s.$selectEnhance.has(ae).length);
+                    if (aeIsInSelectEnhance || s.$selectEnhance[0].isSameNode(ae)) {
+                        s.blurSelect();
+                        external_$_default()(document.body).off(closeEvent);
+                    }
+                }, 100);
+            });
+        });
+    }
+    eventKeyboardSearch() {
+        const s = this;
+        let keyInputTo = null;
+        let changedTo = null;
+        let keyedFound = [];
+        s.$selectEnhance.on('keypress.' + SelectEnhance_EVENT_NAME, function (e) {
+            if (s.select.disabled) {
+                return;
+            }
+            const keyCurr = (e.key.length === 1 ? e.key : '');
+            s.keyedInput += keyCurr;
+            clearTimeout(keyInputTo);
+            keyInputTo = setTimeout(() => {
+                s.keyedInput = "";
+            }, s.params.typeAheadDuration);
+            if (s.keyedInput.trim()) {
+                const rgx = RegExp('^' + s.keyedInput.trim(), 'i');
+                keyedFound = [].slice.call(s.select.getElementsByTagName('option')).filter((el) => rgx.test(el.text));
+                if (keyedFound.length) {
+                    clearTimeout(changedTo);
+                    changedTo = setTimeout(() => {
+                        s.setSelectionState(s.optionSet.get(keyedFound[0]), false);
+                    }, 100);
+                }
+            }
+        });
+    }
+    eventArrowKeys() {
+        const s = this;
+        s.$selectEnhance.on('keydown.navigate_' + SelectEnhance_EVENT_NAME, function (e) {
+            if (s.select.disabled) {
+                return;
+            }
+            if (e.key === constants_KEYS.down) {
+                if (!s.textInput.isSameNode(document.activeElement)) {
+                    e.preventDefault();
+                }
+                s.nextOptionButton('next');
+            }
+            if (e.key === constants_KEYS.up) {
+                e.preventDefault();
+                s.nextOptionButton('prev');
+            }
+            if (e.key === constants_KEYS.esc && $currSelectEnhance) {
+                s.blurSelect();
+                s.textInput.focus();
+            }
+        });
+    }
+    //  build the HTML for it
+    setUpSelectHtml() {
+        const s = this;
+        const $selectEnhance = external_$_default()('<div />').attr({
+            class: s.params.cssPrefix,
+            id: s.selectId + '_wrap'
+        });
+        const $textInput = external_$_default()('<input>').attr({
+            type: 'text',
+            class: s.params.cssPrefix + '__enable-text',
+            role: "combobox",
+            'aria-controls': s.selectId + '_listbox',
+            'aria-labelledby': s.selectId + '_lbl',
+            'aria-autocomplete': 'list',
+            'aria-expanded': 'false',
+            id: s.selectId + '_input'
+        });
+        s.$select.wrap($selectEnhance);
+        // jQuery, elements need to be bound to the DOM before they
+        // can have events attached to them. So this is the solution
+        s.$selectEnhance = s.$select.parent();
+        if (mobileOS && s.params.mobileNative || s.isReadOnly) {
+            // exit if its a mobile device after wrapping for styling
+            return;
+        }
+        $textInput.insertAfter(s.$select);
+        s.$select.attr({ tabindex: '-1', 'aria-hidden': 'true' });
+        // jQuery, elements need to be bound to the DOM before they
+        // can have events attached to them. So this is the solution
+        s.$textInput = s.$select.parent().find('#' + s.selectId + '_input');
+        s.textInput = s.$textInput[0];
+        SelectEnhance.buildOptionsList(s);
+    }
+    static buildOptionsList(s, $selectList) {
+        const { cssPrefix } = s.params;
+        const optGroup = s.select.getElementsByTagName('optgroup');
+        const hasOptGroup = !!optGroup.length;
+        const $optGroupWm = new WeakMap();
+        if (hasOptGroup) {
+            for (let i = 0, l = optGroup.length; i < l; i++) {
+                const group = optGroup[i];
+                $optGroupWm.set(group, external_$_default()('<div/>').attr({
+                    class: cssPrefix + '__optgroup',
+                    role: 'group',
+                    label: group.label || ""
+                }).append(external_$_default()('<span>').attr({
+                    class: cssPrefix + '__optgroup-label',
+                    'aria-hidden': 'true'
+                }).text(group.label || "")));
+            }
+        }
+        const options = s.select.getElementsByTagName('option');
+        s.$selectList = $selectList ? $selectList : external_$_default()('<div>').attr({
+            class: cssPrefix + '__list',
+            role: 'listbox',
+            id: s.selectId + '_listbox',
+            'aria-label': s.$label.text() || ''
+        });
+        const optId = s.selectId || 'select_' + s.index;
+        for (let i = 0, l = options.length; i < l; i++) {
+            const opt = options[i];
+            const id = optId + i;
+            if (opt.hidden)
+                continue;
+            const valCssStatus = opt.value === '' ? ' ' + cssPrefix + '__list-btn--empty' : '';
+            const attrs = {
+                // type: 'button',
+                tabIndex: '0',
+                role: 'option', id,
+                'data-value': opt.value,
+                'aria-selected': opt.selected + '',
+                disabled: opt.disabled ? 'disabled' : null,
+                class: cssPrefix + '__list-btn' + valCssStatus
+            };
+            const $btn = external_$_default()('<div/>').attr(attrs).text(opt.textContent);
+            s.optionSet.set($btn[0], opt);
+            s.optionSet.set(opt, $btn);
+            // append to list or optgroup
+            hasOptGroup && opt.parentElement.nodeName.toUpperCase() === 'OPTGROUP' ?
+                $optGroupWm.get(opt.parentElement).append($btn) :
+                s.$selectList.append($btn);
+            if (opt.selected) {
+                s.$textInput.attr({ 'aria-activedescendant': id });
+                s.$selectEnhance.toggleClass(cssPrefix + '--empty-val', !opt.value.trim());
+                if (s.params.emptyValAsPlaceholder && opt.value.trim() === '') {
+                    s.$textInput.val('');
+                    s.$textInput.attr({ placeholder: opt.text });
+                }
+                else {
+                    s.$textInput.val(opt.text);
+                }
+            }
+        }
+        if (hasOptGroup) {
+            for (let i = 0, l = optGroup.length; i < l; i++) {
+                const group = optGroup[i];
+                s.$selectList.append($optGroupWm.get(group));
+            }
+        }
+        s.$selectList.insertAfter(s.$textInput);
+    }
+    nextOptionButton(dir) {
+        const s = this;
+        const ae = document.activeElement;
+        const $btnList = s.$selectList.find('.' + s.params.cssPrefix + '__list-btn');
+        const btnLength = $btnList.length;
+        if (btnLength && s.textInput.isSameNode(ae)) {
+            $btnList.eq(dir === 'next' ? 0 : btnLength - 1)[0].focus();
+            return;
+        }
+        for (let i = 0; i < btnLength; i++) {
+            const el = $btnList[i];
+            let prevNextIndex = 0;
+            if (ae.isSameNode(el)) {
+                if (dir === 'next') {
+                    const isLast = i === btnLength - 1;
+                    prevNextIndex = isLast ? i : i + 1;
+                }
+                else {
+                    const isFirst = i === 0;
+                    prevNextIndex = isFirst ? i : i - 1;
+                }
+                $btnList.eq(prevNextIndex)[0].focus();
+                break;
+            }
+        }
+    }
+    selectInputMutationObserver() {
+        const s = this;
+        const selectNode = s.select;
+        const config = { attributes: true, childList: true, subtree: true };
+        // Callback function to execute when mutations are observed
+        const callback = function (mutationsList, observer) {
+            // Use traditional 'for loops' for IE 11
+            for (let i = 0, l = mutationsList.length; i < l; i++) {
+                const mutation = mutationsList[i];
+                if (mutation.type === 'childList') {
+                    SelectEnhance.refreshOptions(s.select);
+                }
+                else if (mutation.type === 'attributes') {
+                    s.$selectEnhance.toggleClass(s.params.cssPrefix + '--disabled', s.select.disabled);
+                }
+            }
+        };
+        // Create an observer instance linked to the callback function
+        s.selectboxObserver = new MutationObserver(callback);
+        // Start observing the target node for configured mutations
+        s.selectboxObserver.observe(selectNode, config);
+        // Later, you can stop observing
+        // s.selectboxObserver.disconnect();
+    }
+    static eventScrollGetListPosition() {
+        if (!registerEventScroll) {
+            external_$_default()(window).on('scroll.' + SelectEnhance_EVENT_NAME, () => {
+                to && clearTimeout(to);
+                to = setTimeout(SelectEnhance.getListPosition, 100);
+            });
+            registerEventScroll = true;
+        }
+    }
+    observeSelectListBoxInFullView() {
+        const s = this;
+        if (window.IntersectionObserver) {
+            const selectIntersectionObserver = new IntersectionObserver(function (selects) {
+                s.selectListBoxInFullView = selects[0].intersectionRatio === 1;
+            }, { threshold: [0, 1] });
+            s.$selectList[0] && selectIntersectionObserver.observe(s.$selectList[0]);
+        }
+    }
+    static getListPosition() {
+        if (currSelectInstance) {
+            const s = currSelectInstance;
+            const selWrapPosTop = s.$selectEnhance.offset().top;
+            const selListHeight = s.$selectList.height();
+            const listPosAndHeight = s.$selectEnhance.offset().top +
+                s.$selectEnhance.height() +
+                selListHeight;
+            const winPosAndHeight = window.scrollY + external_$_default()(window).height();
+            if (listPosAndHeight > winPosAndHeight &&
+                selWrapPosTop > selListHeight &&
+                !s.selectListBoxInFullView) {
+                s.$selectEnhance.addClass(s.params.cssPrefix + '--pos-bottom');
+                listPosTop = false;
+            }
+            else {
+                s.$selectEnhance.removeClass(s.params.cssPrefix + '--pos-bottom');
+                listPosTop = true;
+            }
+        }
+    }
+    static refreshOptions(element) {
+        external_$_default()(element).each(function () {
+            const s = core_Store(this, `${SelectEnhance_DATA_NAME}_instance`);
+            if (s) {
+                s.$selectList.empty();
+                s.optionSet = new WeakMap();
+                SelectEnhance.buildOptionsList(s, s.$selectList);
+            }
+            else {
+                console.warn(`No instance of a selectbox`, element);
+            }
+        });
+    }
+    static remove(element, plugin) {
+        external_$_default()(element).each(function () {
+            const s = plugin || core_Store(this, SelectEnhance_DATA_NAME);
+            s.$selectEnhance.off('keydown.' + SelectEnhance_EVENT_NAME);
+            s.$selectEnhance.off('keydown.navigate_' + SelectEnhance_EVENT_NAME);
+            s.$selectEnhance.off('click.' + SelectEnhance_EVENT_NAME);
+            s.$selectEnhance.off('focusout.' + SelectEnhance_EVENT_NAME);
+            s.$selectEnhance.off('blur.' + SelectEnhance_EVENT_NAME);
+            s.$label.off('click.' + SelectEnhance_EVENT_NAME);
+            external_$_default()(document.body).off('click.close_' + s.selectId + SelectEnhance_EVENT_NAME);
+            // the window event will just stay
+            s.$select.insertAfter(s.$selectEnhance);
+            s.$select.attr({ tabindex: null, 'aria-hidden': null });
+            s.$select.off('mouseup.' + SelectEnhance_EVENT_NAME);
+            s.$select.off('change.' + SelectEnhance_EVENT_NAME);
+            if (s.selectboxObserver) {
+                s.selectboxObserver.disconnect();
+            }
+            s.$selectEnhance.remove();
+            core_Store(this, SelectEnhance_DATA_NAME, null);
+        });
+    }
+}
+
+;// CONCATENATED MODULE: ./src/demo/assets/js/demo.ts
+
+
+
+
+
+
+
+
+
+
+
+
+core_libraryExtend([
+    AccessibleMenu,
+    Collapse,
+    LazyLoad,
+    Modal,
+    NavDesktop,
+    NavMobile,
+    Parallax,
+    SelectEnhance,
+    Tabs,
+    Toastr
+], true);
+external_$_default()('select').selectEnhance();
+external_$_default()('.collapse-group-1').collapse({
+    moveToTopOnOpen: true,
+    toggleGroup: true,
+    locationFilter: 'collapse'
+});
+external_$_default()('#main-nav')
+    .navMobile({ enableBtn: '#mobile-nav-btn' })
+    .navDesktop()
+    .accessibleMenu();
+external_$_default()('#example-nav')
+    .navMobile({ enableBtn: '#mobile-nav-btn-example' })
+    .navDesktop()
+    .accessibleMenu({
+    keyDirections: ['horizontal', 'vertical', 'vertical']
+});
+// Parallax
+external_$_default()('#jsBtnSCrollHorizontal').on('click', function () {
+    external_$_default()('main').toggleClass('body-content--scroll-x');
+    external_$_default()('.do-parallax--hz').parallax('update');
+});
+external_$_default()('.do-parallax').parallax({ speed: 25, bgFill: true });
+// Tabs
+external_$_default()(".tabs-outer").tabs({ locationFilter: 'tabs' });
+external_$_default()(".tabs-inner").tabs({ locationFilter: 'tabs-inner' });
+// Lazy Load
+external_$_default()('img[loading="lazy"]').lazyLoad({
+    observerID: 'imgLazy',
+    observerOpts: { rootMargin: '100px' }
+});
+//a bunch of paragraphs to style right!
+external_$_default()('.lazy-highlight').lazyLoad({
+    observerID: 'p',
+    loadImgs: false,
+    unobserve: false,
+    inEvt: (el) => {
+        setTimeout(() => { el.style.background = '#ccc'; }, 1000);
+    },
+    outEvt: (el) => {
+        setTimeout(() => { el.style.background = ''; }, 1000);
+    }
+});
+// TOASTR
+{
+    const toastRandomMsgs = [
+        'I boast about my toast.',
+        'The hostess with the toastess',
+        'toast is best, when its not burnt',
+        'The fire is quite toasty',
+        'Lets toast, to toast!'
+    ];
+    const randomToastMsg = () => {
+        return toastRandomMsgs[Math.floor(Math.random() * toastRandomMsgs.length)];
+    };
+    // Example 1: standard way
+    external_$_default()('#toastr-1').toastr({
+        content: 'Toast is good for breakfast',
+        duration: 7000
+    });
+    const $toastr2 = external_$_default()('#toastr-2');
+    if ($toastr2.length) {
+        // Example 2: extend perhaps in Cash then call on click
+        const toastr2 = new Toastr($toastr2[0], {
+            content: 'Toast is good for breakfast',
+            duration: 5000
+        });
+        $toastr2.on('click', function () {
+            setTimeout(() => {
+                toastr2.setContent(randomToastMsg(), true);
+            }, 2500);
+        });
+    }
+    // Example 3,4: somewhere else on the page
+    external_$_default()('#toastr-3').toastr({
+        content: randomToastMsg(),
+        duration: 5000,
+        cssGroupKey: 'bottom'
+    });
+    external_$_default()('#toastr-4').toastr({
+        content: randomToastMsg(),
+        duration: 5000,
+        cssGroupKey: 'bottom'
+    });
+}
+//  Modal
+{
+    external_$_default()('.btn-modal').modal({
+        modalID: 'from-dom'
+    });
+    external_$_default()('#btn-gen-content').modal({
+        locationFilter: 'modal',
+        src: external_$_default()('<div>').attr({ class: 'gen-content' }),
+        fromDOM: false,
+        modalID: 'gen-content',
+        onOpenOnce(modalObj) {
+            modalObj.$dialogContent.on('click', '.dismiss', modalObj.close);
+            modalObj.$dialogContent.append(`
+            <h2>Some generated Content</h2>
+            <p>Ullamco <a href="#">link</a> laboris nisi ut aliquid ex ea commodi consequat. Sed haec quis possit intrepidus aestimare tellus. Quam diu etiam furor <a href="#">iste tuus</a> nos eludet? Curabitur est gravida et libero vitae dictum.</p>
+            <button type="button" class="button dismiss">Dimiss</button>
+        `);
+        }
+    });
+    // quick and dirty image carousel
+    const $picGroup = external_$_default()('.pic-group');
+    $picGroup.each(function (index) {
+        const src = external_$_default()('<img>').attr({ src: this.dataset.imgSrc || '', loading: 'lazy' });
+        const modalID = 'pic-group_' + index;
+        let imgIndex = index;
+        external_$_default()(this).modal({
+            src,
+            modalID,
+            modalCss: 'modal--gallery',
+            locationFilter: 'gallery',
+            fromDOM: false,
+            onOpenOnce(modalObj) {
+                const $img = modalObj.$dialogContent.find('img');
+                modalObj.$dialogContent.append(`
+                    <footer class="pic-group-nav">
+                        <button type="button" class="prev-btn">Previous</button>
+                        <button type="button" class="next-btn">Next</button>
+                    </footer>
+                `);
+                modalObj.$dialogContent.on('click', 'button', function (e) {
+                    if (this.classList.contains('prev-btn')) {
+                        imgIndex = imgIndex === 0 ? $picGroup.length - 1 : imgIndex - 1;
+                    }
+                    else {
+                        imgIndex = imgIndex === $picGroup.length - 1 ? 0 : imgIndex + 1;
+                    }
+                    if (imgIndex > 0 && $picGroup.length) {
+                        $img.attr({ src: $picGroup[imgIndex].dataset.imgSrc || '' });
+                    }
+                });
+            },
+            onOpen(modalObj) {
+                const $img = modalObj.$dialogContent.find('img');
+                external_$_default()(window).on('keyup.gallery', function (e) {
+                    const arrowRight = e.key === 'ArrowRight';
+                    const arrowLeft = e.key === 'ArrowLeft';
+                    if (e.key === 'Escape') {
+                        modalObj.close();
+                    }
+                    if (arrowLeft) {
+                        imgIndex = imgIndex === 0 ? $picGroup.length - 1 : imgIndex - 1;
+                    }
+                    if (arrowRight) {
+                        imgIndex = imgIndex === $picGroup.length - 1 ? 0 : imgIndex + 1;
+                    }
+                    if (arrowLeft || arrowRight) {
+                        if (imgIndex > 0 && $picGroup.length) {
+                            $img.attr({ src: $picGroup[imgIndex].dataset.imgSrc || '' });
+                        }
+                    }
+                });
+            },
+            onClose() {
+                external_$_default()(window).off('keyup.gallery');
+            }
+        });
+    });
+}
+
 /******/ })()
 ;

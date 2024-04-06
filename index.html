@@ -1,9 +1,520 @@
-<html>
-  <head>
-    <title>Baseframe Demo</title>
-  </head>
-  <body>
-    <h1>Baseframe Demo</h1>
-    <p>More to Come...</p>
-  </body>
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <title>Demo - Baseframe JS</title>
+    <meta name="description" content="Demo of Baseframe scripting for Front-end development.">
+    <script>document.documentElement.classList.remove('no-js')</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" href="./demo/assets/css/main.css"></head>
+<body>
+<header class="site-header" id="site-header">
+	<div class="container">
+		<nav id="main-nav" class="main-nav">
+			<a href="/" class="logo">
+				<span class="sr-only">Baseframe, navigate home</span>
+			</a>
+			<ul>
+				<li><a href="#">Jump-to Plugins</a>
+					<ul>
+					    <li><a href="#section-parallax">Parallax</a></li>
+					    <li><a href="#section-tabs">Tabs</a></li>
+					    <li><a href="#section-collapse">Collapse</a></li>
+					    <li><a href="#section-toastr">Toastr</a></li>
+					    <li><a href="#section-modal">Modal</a></li>
+					    <li><a href="#section-selectEnhance">Select Box Enhance</a></li>
+					    <li><a href="#section-nav">Accessible Menu / Mobile and Desktop Nav</a></li>
+					    <li><a href="#section-lazyLoad">Lazy Load</a></li>
+					</ul>				</li>
+			</ul>
+			<button class="mobile-nav-btn" id="mobile-nav-btn">
+				<span></span>
+			</button>
+		</nav>
+	</div>
+</header><main role="main" class="body-content">
+	<section class="container intro-copy">
+		<h1>Baseframe JS Scripting</h1>
+		<p>A suite of useful JavaScript plugins and functions for front-end development. These plugins are to help solve the most common challenges associated with a build and below are some examples of it in action. To see the documentation on how these can be configured view the <a href="https://www.npmjs.com/package/baseframe-js" target="_baseframe">readme file</a>.</p>
+
+		<footer>
+			<a class="btn btn--primary" href="https://www.npmjs.com/package/baseframe-js" target="_baseframe">View Readme</a>
+		</footer>
+	</section>
+	<section class="container">
+	    <div>
+	        <h2 id="section-parallax">Parallax</h2>
+	    </div>
+	    <div class="parallax-area">
+	        <img class="parallax-area__bg parallax do-parallax"
+	            data-parallax-options="{speed: 20, bgFill: true, zAxis: true, rootMargin: 100}"
+	             src="https://picsum.photos/1920/760"
+	            srcset="https://picsum.photos/960/760 959w, https://picsum.photos/1920/760 960w"
+	            size="(max-width: 959px) 959px, 960px" 
+	            loading="lazy"
+	        />
+	    </div>
+	    <div>
+	        <h3>Randomized Movement</h3>
+	    </div>
+	    <div class="container parallax-tiles">
+	        <div class="parallax do-parallax"
+	            data-parallax-options="{speed: 10, bgFill: false, scrollMaxPxStop: 120}">
+	            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+	        </div>
+	
+	        <div class="parallax do-parallax"
+	            data-parallax-options="{speed:30, bgFill: false, scrollMaxPxStop: 220, axis: 'x'}">
+	            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+	        </div>
+	
+	        <div class="parallax do-parallax"
+	            data-parallax-options="{speed:-10, bgFill: false, scrollMaxPxStop: 120}">
+	            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+	        </div>
+	
+	        <div class="parallax do-parallax"
+	            data-parallax-options="{speed: -20, bgFill: false, scrollMaxPxStop: 180}">
+	            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+	        </div>
+	
+	        <div class="parallax do-parallax" data-parallax-options="{speed:-20, bgFill: false, axis: 'x'}">
+	            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+	        </div>
+	
+	        <div class="parallax do-parallax" data-parallax-options="{speed:-10, bgFill: false, axis: 'x', rootMargin: [200,0]}">
+	            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+	        </div> 
+	    </div>
+	    <div>
+	        <h3>Scroll Horizontally</h3>
+	        <button class="btn" id="jsBtnSCrollHorizontal">Add space for horizontal scrolling</button>
+	    </div>
+	    <div class="parallax-area">
+	        <img class="parallax-area__bg parallax -do-parallax do-parallax--hz" 
+	            data-parallax-options="{speed: -10, axis: 'x', bgFill: true, scrollAxis: 'x'}"
+	            src="https://picsum.photos/1920/760"
+	            srcset="https://picsum.photos/960/760 959w, https://picsum.photos/1920/760 960w"
+	            size="(max-width: 959px) 959px, 960px" 
+	            loading="lazy"
+	        />
+	    </div>
+	</section>	<section class="container">
+	    <h2 id="section-tabs">Tabs</h2>
+	    <div class="tabs__container tabs-outer">
+	        <div class="inline-ul tabs__nav" role="menubar">
+	            <ul>
+	                <li><button data-href="#description"><span>Description</span></button></li>
+	                <li><button data-href="#files"><span>Files</span></button></li>
+	                <li><button data-href="#requirements"><span>Requirements</span></button></li>
+	                <li><button data-href="#instructions"><span>Instructions</span></button></li>
+	                <li><button data-href="#files2"><span>Additional Info</span></button></li>
+	                <li><button data-href="#related"><span>Related</span></button></li>
+	            </ul>
+	        </div>
+	        <div class="tabs__body">
+	            <div data-tab-id="description" class="tabs__panel">
+	                <div class="tabs__container tabs-inner inner-one">
+	                    <div class="inline-ul tabs__nav" role="menubar">
+	                        <ul>
+	                            <li><button data-href="#description-inner"><span>Description Inner</span></button></li>
+	                            <li><button data-href="#files-inner"><span>Files Inner</span></button></li>
+	                            <li><button data-href="#requirements-inner"><span>Requirements Inner</span></button></li>
+	
+	                        </ul>
+	                    </div>
+	                    <div class="tabs__body">
+	                        <div data-tab-id="description-inner" class="tabs__panel">
+	                            <p><strong>Description Inner</strong> pellentesque habitant morbi tristique senectus et
+	                                netus.
+	                                Fabio vel iudice vincam, sunt in culpa qui officia. Curabitur blandit tempus ardua
+	                                ridiculus
+	                                sed magna. Petierunt uti sibi concilium totius Galliae in diem certam indicere.</p>
+	                            <p>Quis aute iure reprehenderit in voluptate velit esse. Quam diu etiam furor iste tuus nos
+	                                eludet? Ambitioni dedisse scripsisse iudicaretur porkchops.</p>
+	                            <p>Ab illo tempore, ab est sed immemorabili bacon. Lorem ipsum dolor sit amet, consectetur
+	                                adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Paullum
+	                                deliquit, ponderibus modulisque suis ratio utitur. Morbi odio eros, volutpat ut pharetra
+	                                vitae, lobortis sed nibh. Hi omnes lingua, institutis, legibus inter se differunt.
+	                                Salutantibus vitae elit libero, a pharetra augue.</p>
+	                            <p>Nec dubitamus multa iter quae et nos invenerat. Integer legentibus erat a ante
+	                                historiarum
+	                                dapibus. Curabitur est gravida et libero vitae dictum.</p>
+	                            <p>Non equidem invideo, miror magis posuere velit aliquet. Qui ipsorum lingua Celtae, nostra
+	                                Galli appellantur. Phasellus laoreet lorem vel dolor tempus vehicula. Plura mihi bona
+	                                sunt,
+	                                inclinet, amari petere vellent.</p>
+	                        </div>
+	                        <div data-tab-id="files-inner" class="tabs__panel">
+	                            <p><strong>Files Inner</strong> pellentesque habitant morbi tristique senectus et netus.
+	                                Fabio
+	                                vel iudice vincam, sunt in culpa qui officia. Curabitur blandit tempus ardua ridiculus
+	                                sed
+	                                magna. Petierunt uti sibi concilium totius Galliae in diem certam indicere.</p>
+	                            <p>Quis aute iure reprehenderit in voluptate velit esse. Quam diu etiam furor iste tuus nos
+	                                eludet? Ambitioni dedisse scripsisse iudicaretur porkchops.</p>
+	                            <p>Ab illo tempore, ab est sed immemorabili bacon. Lorem ipsum dolor sit amet, consectetur
+	                                adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Paullum
+	                                deliquit, ponderibus modulisque suis ratio.</p>
+	                            <p>Non equidem invideo, miror magis posuere velit aliquet. Qui ipsorum lingua Celtae, nostra
+	                                Galli appellantur. Phasellus laoreet lorem vel dolor tempus vehicula. Plura mihi bona
+	                                sunt,
+	                                inclinet, amari petere vellent.</p>
+	                        </div>
+	                        <div data-tab-id="requirements-inner" class="tabs__panel">
+	                            <p><strong>Requirements Inner</strong> pellentesque habitant morbi tristique senectus et
+	                                netus.
+	                                Fabio vel iudice vincam, sunt in culpa qui officia. Curabitur blandit tempus ardua
+	                                ridiculus
+	                                sed magna. Petierunt uti sibi concilium totius Galliae in diem certam indicere.</p>
+	                            <p>Quis aute iure reprehenderit in voluptate velit esse. Quam diu etiam furor iste tuus nos
+	                                eludet? Ambitioni dedisse scripsisse iudicaretur porkchops.</p>
+	                            <p>Ab illo tempore, ab est sed immemorabili bacon. Lorem ipsum dolor sit amet, consectetur
+	                                adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Paullum
+	                                deliquit, ponderibus modulisque suis ratio.</p>
+	                            <p>Non equidem invideo, miror magis posuere velit aliquet. Qui ipsorum lingua Celtae, nostra
+	                                Galli appellantur. Phasellus laoreet lorem vel dolor tempus vehicula. Plura mihi bona
+	                                sunt,
+	                                inclinet, amari petere vellent.</p>
+	                            <ul>
+	                                <li>Something in a list item</li>
+	                                <li>Something in a list item</li>
+	                                <li>Something in a list item</li>
+	                            </ul>
+	                        </div>
+	
+	                    </div>
+	                </div>
+	            </div>
+	            <div data-tab-id="files" class="tabs__panel">
+	                <p><strong>Description</strong> pellentesque habitant morbi tristique senectus et netus. Fabio vel
+	                    iudice
+	                    vincam, sunt in culpa qui officia. Curabitur blandit tempus ardua ridiculus sed magna. Petierunt uti
+	                    sibi concilium totius Galliae in diem certam indicere.</p>
+	                <p>Quis aute iure reprehenderit in voluptate velit esse. Quam diu etiam furor iste tuus nos eludet?
+	                    Ambitioni dedisse scripsisse iudicaretur porkchops.</p>
+	                <p>Ab illo tempore, ab est sed immemorabili bacon. Lorem ipsum dolor sit amet, consectetur adipisici
+	                    elit,
+	                    sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Paullum deliquit, ponderibus
+	                    modulisque
+	                    suis ratio utitur. Morbi odio eros, volutpat ut pharetra vitae, lobortis sed nibh. Hi omnes lingua,
+	                    institutis, legibus inter se differunt. Salutantibus vitae elit libero, a pharetra augue.</p>
+	                <p>Non equidem invideo, miror magis posuere velit aliquet. Qui ipsorum lingua Celtae, nostra Galli
+	                    appellantur. Phasellus laoreet lorem vel dolor tempus vehicula. Plura mihi bona sunt, inclinet,
+	                    amari
+	                    petere vellent.</p>
+	            </div>
+	            <div data-tab-id="requirements" class="tabs__panel">
+	                <p><strong>Description</strong> quis aute iure reprehenderit in voluptate velit esse. Quam diu etiam
+	                    furor
+	                    iste tuus nos eludet? Ambitioni dedisse scripsisse iudicaretur porkchops.</p>
+	                <p>Ab illo tempore, ab est sed immemorabili bacon. Lorem ipsum dolor sit amet, consectetur adipisici
+	                    elit,
+	                    sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Paullum deliquit, ponderibus
+	                    modulisque
+	                    suis ratio utitur. Morbi odio eros, volutpat ut pharetra vitae, lobortis sed nibh. Hi omnes lingua,
+	                    institutis, legibus inter se differunt. Salutantibus vitae elit libero, a pharetra augue.</p>
+	                <p>Nec dubitamus multa iter quae et nos invenerat. Integer legentibus erat a ante historiarum dapibus.
+	                    Curabitur est gravida et libero vitae dictum.</p>
+	            </div>
+	            <div data-tab-id="instructions" class="tabs__panel">
+	                <p><strong>Description</strong> pellentesque habitant morbi tristique senectus et netus. Fabio vel
+	                    iudice
+	                    vincam, sunt in culpa qui officia. Curabitur blandit tempus ardua ridiculus sed magna. Petierunt uti
+	                    sibi concilium totius Galliae in diem certam indicere.</p>
+	                <p>Quis aute iure reprehenderit in voluptate velit esse. Quam diu etiam furor iste tuus nos eludet?
+	                    Ambitioni dedisse scripsisse iudicaretur porkchops.</p>
+	                <p>Ab illo tempore, ab est sed immemorabili bacon. Lorem ipsum dolor sit amet, consectetur adipisici
+	                    elit,
+	                    sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Paullum deliquit, ponderibus
+	                    modulisque
+	                    suis ratio utitur. Morbi odio eros, volutpat ut pharetra vitae, lobortis sed nibh. Hi omnes lingua,
+	                    institutis, legibus inter se differunt. Salutantibus vitae elit libero, a pharetra augue.</p>
+	                <p>Nec dubitamus multa iter quae et nos invenerat. Integer legentibus erat a ante historiarum dapibus.
+	                    Curabitur est gravida et libero vitae dictum.</p>
+	                <p>Non equidem invideo, miror magis posuere velit aliquet. Qui ipsorum lingua Celtae, nostra Galli
+	                    appellantur. Phasellus laoreet lorem vel dolor tempus vehicula. Plura mihi bona sunt, inclinet,
+	                    amari
+	                    petere vellent.</p>
+	            </div>
+	            <div data-tab-id="files2" class="tabs__panel">
+	                <p><strong>Description</strong> pellentesque habitant morbi tristique senectus et netus. Fabio vel
+	                    iudice
+	                    vincam, sunt in culpa qui officia. Curabitur blandit tempus ardua ridiculus sed magna. Petierunt uti
+	                    sibi concilium totius Galliae in diem certam indicere.</p>
+	                <p>Quis aute iure reprehenderit in voluptate velit esse. Quam diu etiam furor iste tuus nos eludet?
+	                    Ambitioni dedisse scripsisse iudicaretur porkchops.</p>
+	                <p>Ab illo tempore, ab est sed immemorabili bacon. Lorem ipsum dolor sit amet, consectetur adipisici
+	                    elit,
+	                    sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Paullum deliquit, ponderibus
+	                    modulisque
+	                    suis ratio utitur. Morbi odio eros, volutpat ut pharetra vitae, lobortis sed nibh. Hi omnes lingua,
+	                    institutis, legibus inter se differunt. Salutantibus vitae elit libero, a pharetra augue.</p>
+	                <p>Non equidem invideo, miror magis posuere velit aliquet. Qui ipsorum lingua Celtae, nostra Galli
+	                    appellantur. Phasellus laoreet lorem vel dolor tempus vehicula. Plura mihi bona sunt, inclinet,
+	                    amari
+	                    petere vellent.</p>
+	            </div>
+	            <div data-tab-id="related" class="tabs__panel">
+	                <p><strong>Description</strong> quis aute iure reprehenderit in voluptate velit esse. Quam diu etiam
+	                    furor
+	                    iste tuus nos eludet? Ambitioni dedisse scripsisse iudicaretur porkchops.</p>
+	                <p>Ab illo tempore, ab est sed immemorabili bacon. Lorem ipsum dolor sit amet, consectetur adipisici
+	                    elit,
+	                    sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Paullum deliquit, ponderibus
+	                    modulisque
+	                    suis ratio utitur. Morbi odio eros, volutpat ut pharetra vitae, lobortis sed nibh. Hi omnes lingua,
+	                    institutis, legibus inter se differunt. Salutantibus vitae elit libero, a pharetra augue.</p>
+	                <p>Nec dubitamus multa iter quae et nos invenerat. Integer legentibus erat a ante historiarum dapibus.
+	                    Curabitur est gravida et libero vitae dictum.</p>
+	            </div>
+	        </div>
+	    </div>
+	</section>	<section class="container">
+	    <h2 id="section-toastr">Toastr</h2>
+	    <div>
+	        <ul>
+	            <li><button id="toastr-1">Launch a Toastr</button></li>
+	            <li><button id="toastr-2">Launch a Toastr Two</button></li>
+	            <li><button id="toastr-3">Launch a Toastr Three</button></li>
+	            <li><button id="toastr-4">Launch a Toastr Four</button></li>
+	        </ul>
+	    </div>
+	</section>	<section class="container">
+	    <div>
+	        <h2 id="section-collapse">Collapse</h2>
+	    </div>
+	    
+	    <div class="collapse collapse-group collapse-group-1" >
+	        <div class="collapse__item">
+	            <div class="collapse__header">
+	                <h2><button class="collapse__btn" aria-controls="item-1">Item 1</button></h2>
+	            </div>
+	            <div class="collapse__body" id="item-1">
+	                <p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
+	                <a href="#item-3" class="collapse__btn" aria-controls="item-3"><strong>Open Item 3 from here!</strong></a>
+	            </div>
+	        </div>
+	        <div class="collapse__item">
+	            <div class="collapse__header">
+	                <h2><button class="collapse__btn" aria-controls="item-2"
+	                >Item 2</button></h2>
+	            </div>
+	            <div class="collapse__body" id="item-2">
+	                <p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
+	                <p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
+	
+	                <p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
+	            </div>
+	        </div>
+	        <div class="collapse__item">
+	            <div class="collapse__header">
+	                <h2><a href="#item-3" class="collapse__btn" aria-controls="item-3">Item 3</a></h2>
+	            </div>
+	            <div class="collapse__body" id="item-3">
+	                <p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
+	            </div>
+	        </div>
+	    </div>
+	</section>	<section class="container">
+	    <h2 id="section-selectEnhance">Selectbox Enhance</h2>
+	    <div>
+	         <label for="select-1">Famous Rock Bands</label><br>
+	        <select id="select-1">
+	            <optgroup label="Classic Rockers">
+	                <option value="The Doors">The Doors</option>
+	                <option value="Led Zeppelin">Led Zeppelin</option>
+	                <option value="Jimi Hendrix">Jimi Hendrix</option>
+	                <option value="The Who">The Who</option>
+	                <option value="The Rolling Stones">The Rolling Stones</option>
+	                <option value="Warren Zevon">Warren Zevon</option>
+	            </optgroup>
+	            <optgroup label="90's + Rockers">
+	                <option value="Nirvana">Nirvana</option>
+	                <option value="RHCP">Red Hot Chili Peppers</option>
+	                <option value="Soundgarden">Soundgarden</option>
+	                <option value="Incubus">Incubus</option>
+	                <option value="The White Stripes">The White Stripes</option>
+	                <option value="The Strokes">The Strokes</option>
+	            </optgroup>
+	        </select>
+	        <br>
+	        <br>
+	        <label for="another-select">Famous Guitarists</label><br>
+	        <select id="another-select">
+	            <option value="Jimmy Page">Jimmy Page</option>
+	            <option value="Eric Clapton">Eric Clapton</option>
+	            <option value="Jeff Beck">Jeff Beck</option>
+	            <option value="Jimmy Hendrix">Jimmy Hendrix</option>
+	            <option value="Stevie Ray Vaughan">Stevie Ray Vaughan</option>
+	            <option value="Joe Walsh">Joe Walsh</option>
+	            <option value="Django Reinhardt">Django Reinhardt</option>
+	            <option value="Robert Johnson">Robert Johnson</option>
+	            <option value="Joe Pass">Joe Pass</option>
+	        </select>
+	    </div>
+	</section>	<section class="container">
+		<div>
+			<h2 id="section-nav">Navigation</h2>
+			<p>Navigation below features some edge detection on the fly-out nav elements, also little hover delay. Then all the links can be navigated with the arrow keys (on desktop).</p>
+		</div>
+	    <div class="section-nav">
+			<a href="/" class="logo">
+				<span class="sr-only">Baseframe, navigate home</span>
+			</a>
+			<button class="mobile-nav-btn" id="mobile-nav-btn-example">
+				<span></span>
+			</button>
+	        <nav id="example-nav" class="main-nav">
+				<ul>
+					<li><a href="#">About</a></li>
+	                <li><a href="#">News</a></li>
+					<li><a href="#">Cool Cars</a>
+						<ul>
+							<li><a href="#">Lamborghini</a>
+	                            <ul>
+	                                <li><a href="#">Muira</a></li>
+	                                <li><a href="#">Countach</a></li>
+	                                <li><a href="#">Diablo</a></li>
+	                                <li><a href="#">Aventador</a></li>
+	                            </ul>
+	                        </li>
+							<li><a href="#">Ferrari</a>
+								<ul>
+									<li><a href="#">Testarosa</a></li>
+									<li><a href="#">F40</a>
+										<ul>
+											<li><a href="#">Cool facts</a></li>
+											<li><a href="#">History behind it</a></li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+							<li><a href="#">Porche</a>
+	                            <ul>
+	                                <li><a href="#">959</a></li>
+	                                <li><a href="#">911</a></li>
+	                                <li><a href="#">Carerra GT</a></li>
+	                            </ul>
+	                        </li>
+							<li><a href="#">Ford</a>
+	                            <ul>
+	                                <li><a href="#">GT</a></li>
+	                                <li><a href="#">Shelby Mustang</a></li>
+	                            </ul>
+	                        </li>
+						</ul>
+					</li>
+					<li><a href="#">Cool JS Plugins</a>
+						<ul>
+						    <li><a href="#section-parallax">Parallax</a></li>
+						    <li><a href="#section-tabs">Tabs</a></li>
+						    <li><a href="#section-collapse">Collapse</a></li>
+						    <li><a href="#section-toastr">Toastr</a></li>
+						    <li><a href="#section-modal">Modal</a></li>
+						    <li><a href="#section-selectEnhance">Select Box Enhance</a></li>
+						    <li><a href="#section-nav">Accessible Menu / Mobile and Desktop Nav</a></li>
+						    <li><a href="#section-lazyLoad">Lazy Load</a></li>
+						</ul>				</li>
+				</ul>
+			</nav>
+	    </div>
+	</section>	<section class="modal-section container">
+	    <h2 id="section-modal">Modal</h2>
+	
+	    <div>
+	        <h3>Modal with Hidden Content</h3>
+	        <p>Modal with grabbing content from the page in a hidden section.</p>
+	        <a href="#modal-content" class="btn btn-modal"
+	            data-modal-options="{closeBtnLabel:'Close it up'}">Modal with content from DOM</a>
+	
+	        <h3>Modal With Generated Content</h3>
+	        <p>Content that is generated from some source. Could be an AJAX call, or in this case just defined in the JS.</p>
+	        <button type="button" class="btn" id="btn-gen-content">Generated Content</button>
+	        
+	
+	        <h3>Modal Group / Carousel</h3>
+	        <p>Carousel of items. Note: the 'carousel' portion is done with additional scripting separate from the modal.</p>
+	
+	        <div class="modal-section__group">
+	            <button type="button" 
+	                data-img-src="https://picsum.photos/600/400"
+	                alt="Picsum Pic 1" class="pic-group"
+	            >
+	                <img src="https://picsum.photos/600/400" alt="Picsum Pic 1" loading="lazy"/>
+	            </button>
+	
+	            <button type="button" 
+	                data-img-src="https://picsum.photos/900/550"
+	                class="pic-group"
+	            >
+	            <img src="https://picsum.photos/900/550" alt="Picsum Pic 2" loading="lazy"/>
+	            </button>
+	
+	            <button type="button" 
+	                data-img-src="https://picsum.photos/900/450"
+	                class="pic-group"
+	            >
+	                <img src="https://picsum.photos/900/450" alt="Picsum Pic 3" loading="lazy"/>
+	            </button>
+	
+	            <button type="button" 
+	                data-img-src="https://picsum.photos/800/600"
+	                class="pic-group"
+	            >
+	                <img src="https://picsum.photos/800/600" alt="Picsum Pic 4" loading="lazy"/>
+	            </button>
+	        </div>
+	    </div>
+	
+	     <div style="display: none;" hidden>
+	        <div id="modal-content">
+	            <h1>Pop-up</h1>
+	            <p>This is for a basic modal content</p>
+	            <p>Cum sociis natoque <a href="#"> some link </a>penatibus et magnis dis parturient. Etiam habebis
+	                sem dicantur magna mollis euismod. Curabitur blandit tempus ardua ridiculus sed magna. <button
+	                    type="button" disabled>Some Button</button> Unam incolunt Belgae, aliam Aquitani, tertiam.
+	                Nihil hic munitissimus habendi <button type="button">clickable btn</button> senatus locus, nihil
+	                horum?</p>
+	        </div>
+	    </div>
+	</section>
+	 	<section class="container">
+	    <h2 id="section-lazyLoad">Lazy Load</h2>
+	    <p class="lazy-highlight">Open up your console to see the loading of these images 100px before they ennter the screen. Look at your page to see the highlighting of the copy in this section with the hex value of #ccc. Side-note: if your scrolling fast on a slow network, may not help, but if slow/normal scrolling on a normal network, you shouldn't see a loading blip.</p>
+	    <div>
+	        <img src="https://placehold.it/768x768/565656" alt="Placeholder" width="300" height="300" loading="lazy"/>
+	
+	        <img src="https://placehold.it/768x768/444" alt="Placeholder" width="500" height="500" loading="lazy"/><br>
+	
+	        <img src="https://placehold.it/768x768/222" alt="Placeholder" width="400" height="400" loading="lazy"/>
+	
+	        <img src="https://placehold.it/768x768" alt="Placeholder" width="300" height="300" loading="lazy"/>
+	
+	
+	        <p class="lazy-highlight">It's nearly inevitable your website will need some JS plugin's and functions for it to work. These are made to work with <a href="https://github.com/fabiospampinato/cash" target="_blank">Cash</a> (with jQuery still an option) as the only dependency.</p>
+	        <p class="lazy-highlight">Within are some common plugin's to help enhance your website.</p>
+	
+	        <h2>Some nice features are their is some shared syntax in the way they all operate.</h2>
+	
+	        <p class="lazy-highlight"><strong>For Example:</strong> all have options that can be plugged in as a data attribute, in JSON format (loosely written somehat)</p>
+	    </div>
+	</section></main>
+
+<footer class="site-footer" id="site-footer" role="contentinfo">
+	<h2 class="sr-only">Footer Information</h2>
+	<div class="container">
+			<p><small><strong>Baseframe JS</strong> 5.0.0<br>
+				MIT License (or use/modify as needed, and at your own risk)</small></p>
+		</div>
+	</div>
+</footer>
+ 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cash/8.1.0/cash.min.js"></script>
+
+<script src="./demo/assets/js/demo.js"></script> 
+</body>
 </html>
+ 

@@ -5,7 +5,7 @@ const VERSION       = require('../package.json').version;
 
 const PRODUCTION    = !!yargs.argv.prod;
 const BUILD_DEMO    = !!yargs.argv.demo;
-const PROD_JS       = (!!yargs.argv.productionjs || PRODUCTION);
+const PROD_JS       = (PRODUCTION || BUILD_DEMO);
 const USE_JQUERY    = !!yargs.argv.jquery;
 
 // const SOURCE = alias('./src');
@@ -22,7 +22,7 @@ const config = {
     src: {
         img:    'src/demo/assets/img/**/*.{jpg,png,webp,svg,gif}',
         css:    ['src/assets/scss/**/*.scss', 'src/demo/assets/scss/**/*.scss'],
-        js:     [
+        js:     BUILD_DEMO ? 'src/demo/assets/js/demo.{ts,js}' : [
                     'src/assets/js/**/*.{js,ts}',
                     '!src/assets/js/**/*.d.ts', 
                     PRODUCTION ? '': 'src/demo/assets/js/demo.{ts,js}'
@@ -45,7 +45,7 @@ const config = {
             'use-jquery': USE_JQUERY,
             version: VERSION,
             path: {
-                root:"./src",
+                root: BUILD_DEMO ? "./demo/" : './',
             },
             placeholder: `https://via.placeholder.com/`
         }
@@ -92,5 +92,7 @@ const config = {
         }
     }
 }
+
+ 
 
 export default config;

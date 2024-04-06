@@ -23,7 +23,7 @@ import named 			from 'vinyl-named';
 import webpack 			from 'webpack';
 import webpackStream 	from 'webpack-stream';
 import ts 				from 'typescript';
-
+import uglify           from 'gulp-uglify';
 import config 			from './config';
 
 const { buildDemo, production } = config;
@@ -39,7 +39,7 @@ function buildCss() {
 			.pipe(sourcemaps.init())
 			.pipe(sass().on('error', sass.logError))
 			.pipe(autoprefixer())
-			.pipe(gulpIf(production, cleanCss({
+			.pipe(gulpIf(production || buildDemo, cleanCss({
 				compatibility: "ie11"
 			})))
 			.pipe(sourcemaps.write('./'))
@@ -57,7 +57,7 @@ function buildHtml(done) {
 		return gulp.src(config.src.html)
 			.pipe(handlebars(config.handlbars.vars, config.handlbars.config))
 			.pipe(rename({extname:'.html'}))
-			.pipe(gulp.dest(config.dest));
+			.pipe(gulp.dest(buildDemo ? '.' : config.dest));
 	}
 
 	done();
@@ -80,9 +80,11 @@ function buildJs(done) {
 		.pipe(gulp.dest(`${config.dest}/js`));
 
 	} else {
+
 		gulp.src(config.src.js)
 			.pipe(named())
 			.pipe(webpackStream(config.webpackConfig, webpack))
+			// .pipe(gulpIf(buildDemo, uglify()))
 			.pipe(gulp.dest(`${config.dest}/assets/js`));
 	}
 	done()
@@ -146,7 +148,7 @@ function compileReadme() {
 
 
 function watch(done) {
-	if (!production) {
+	if (!production && !buildDemo) {
 		gulp.watch(config.src.js).on('all', gulp.series(buildJs, reload));
 		gulp.watch(config.src.css).on('all', gulp.series(buildCss));
 		// gulp.watch('src/assets/scss/**/*.scss').on('all', gulp.series(buildCss));
@@ -160,8 +162,9 @@ function watch(done) {
 
 //
 // Server
+ 
 function server(done) {
-	if (!production) {
+	if (!production && !buildDemo) {
 		// Start a server with BrowserSync to preview the site in
 		browser.init({
 			server: config.dest,

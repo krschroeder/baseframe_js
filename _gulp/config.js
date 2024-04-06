@@ -4,21 +4,21 @@ import yargs from 'yargs';
 const VERSION       = require('../package.json').version;
 
 const PRODUCTION    = !!yargs.argv.prod;
+const BUILD_DEMO    = !!yargs.argv.demo;
 const PROD_JS       = (!!yargs.argv.productionjs || PRODUCTION);
 const USE_JQUERY    = !!yargs.argv.jquery;
-const DEMO_DEST     = !!yargs.argv.demo;
 
 // const SOURCE = alias('./src');
 const excludeRgx = /(node_modules)/;
 
-const destPath = DEMO_DEST ? 'demo' : 'dist';
+const destPath = BUILD_DEMO ? 'demo' : 'dist';
 
 const alias = (src) => path.resolve(__dirname, src);
 
 const config = {
     version: VERSION,
     production: PRODUCTION,
-    
+    buildDemo: BUILD_DEMO,
     src: {
         img:    'src/demo/assets/img/**/*.{jpg,png,webp,svg,gif}',
         css:    ['src/assets/scss/**/*.scss', 'src/demo/assets/scss/**/*.scss'],
@@ -27,7 +27,7 @@ const config = {
                     '!src/assets/js/**/*.d.ts', 
                     PRODUCTION ? '': 'src/demo/assets/js/demo.{ts,js}'
                 ].filter(e => e),
-        html:   ['src/demo/**/*.{html,hbs}'],
+        html:   [BUILD_DEMO ? 'src/demo/index.{html,hbs}' : 'src/demo/**/*.{html,hbs}'],
         readme: 'src/readmes/_readme.md',
         dts:    'src/assets/js/**/*.d.ts',
         tmp:    '.tmp'

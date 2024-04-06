@@ -26,7 +26,7 @@ import ts 				from 'typescript';
 
 import config 			from './config';
 
-const { production } = config;
+const { buildDemo, production } = config;
 // Load Handlebars helpers
 helpers({ handlebars: handlebars.Handlebars });
 

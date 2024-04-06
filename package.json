@@ -41,7 +41,7 @@
   "scripts": {
     "start": "gulp",
     "build": "gulp --prod",
-    "demo-site": "gulp --prod --demo",
+    "demo-site": "gulp --demo",
     "prepublishOnly": "npm build"
   },
   "devDependencies": {

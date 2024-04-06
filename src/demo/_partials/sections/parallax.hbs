@@ -1,0 +1,59 @@
+<section class="container">
+    <div>
+        <h2 id="section-parallax">Parallax</h2>
+    </div>
+    <div class="parallax-area">
+        <img class="parallax-area__bg parallax do-parallax"
+            data-parallax-options="{speed: 20, bgFill: true, zAxis: true, rootMargin: 100}"
+             src="https://picsum.photos/1920/760"
+            srcset="https://picsum.photos/960/760 959w, https://picsum.photos/1920/760 960w"
+            size="(max-width: 959px) 959px, 960px" 
+            loading="lazy"
+        />
+    </div>
+    <div>
+        <h3>Randomized Movement</h3>
+    </div>
+    <div class="container parallax-tiles">
+        <div class="parallax do-parallax"
+            data-parallax-options="{speed: 10, bgFill: false, scrollMaxPxStop: 120}">
+            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+        </div>
+
+        <div class="parallax do-parallax"
+            data-parallax-options="{speed:30, bgFill: false, scrollMaxPxStop: 220, axis: 'x'}">
+            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+        </div>
+
+        <div class="parallax do-parallax"
+            data-parallax-options="{speed:-10, bgFill: false, scrollMaxPxStop: 120}">
+            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+        </div>
+
+        <div class="parallax do-parallax"
+            data-parallax-options="{speed: -20, bgFill: false, scrollMaxPxStop: 180}">
+            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+        </div>
+
+        <div class="parallax do-parallax" data-parallax-options="{speed:-20, bgFill: false, axis: 'x'}">
+            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+        </div>
+
+        <div class="parallax do-parallax" data-parallax-options="{speed:-10, bgFill: false, axis: 'x', rootMargin: [200,0]}">
+            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+        </div> 
+    </div>
+    <div>
+        <h3>Scroll Horizontally</h3>
+        <button class="btn" id="jsBtnSCrollHorizontal">Add space for horizontal scrolling</button>
+    </div>
+    <div class="parallax-area">
+        <img class="parallax-area__bg parallax -do-parallax do-parallax--hz" 
+            data-parallax-options="{speed: -10, axis: 'x', bgFill: true, scrollAxis: 'x'}"
+            src="https://picsum.photos/1920/760"
+            srcset="https://picsum.photos/960/760 959w, https://picsum.photos/1920/760 960w"
+            size="(max-width: 959px) 959px, 960px" 
+            loading="lazy"
+        />
+    </div>
+</section>

@@ -1,0 +1,61 @@
+<section class="modal-section container">
+    <h2 id="section-modal">Modal</h2>
+
+    <div>
+        <h3>Modal with Hidden Content</h3>
+        <p>Modal with grabbing content from the page in a hidden section.</p>
+        <a href="#modal-content" class="btn btn-modal"
+            data-modal-options="{closeBtnLabel:'Close it up'}">Modal with content from DOM</a>
+
+        <h3>Modal With Generated Content</h3>
+        <p>Content that is generated from some source. Could be an AJAX call, or in this case just defined in the JS.</p>
+        <button type="button" class="btn" id="btn-gen-content">Generated Content</button>
+        
+
+        <h3>Modal Group / Carousel</h3>
+        <p>Carousel of items. Note: the 'carousel' portion is done with additional scripting separate from the modal.</p>
+
+        <div class="modal-section__group">
+            <button type="button" 
+                data-img-src="https://picsum.photos/600/400"
+                alt="Picsum Pic 1" class="pic-group"
+            >
+                <img src="https://picsum.photos/600/400" alt="Picsum Pic 1" loading="lazy"/>
+            </button>
+
+            <button type="button" 
+                data-img-src="https://picsum.photos/900/550"
+                class="pic-group"
+            >
+            <img src="https://picsum.photos/900/550" alt="Picsum Pic 2" loading="lazy"/>
+            </button>
+
+            <button type="button" 
+                data-img-src="https://picsum.photos/900/450"
+                class="pic-group"
+            >
+                <img src="https://picsum.photos/900/450" alt="Picsum Pic 3" loading="lazy"/>
+            </button>
+
+            <button type="button" 
+                data-img-src="https://picsum.photos/800/600"
+                class="pic-group"
+            >
+                <img src="https://picsum.photos/800/600" alt="Picsum Pic 4" loading="lazy"/>
+            </button>
+        </div>
+    </div>
+
+     <div style="display: none;" hidden>
+        <div id="modal-content">
+            <h1>Pop-up</h1>
+            <p>This is for a basic modal content</p>
+            <p>Cum sociis natoque <a href="#"> some link </a>penatibus et magnis dis parturient. Etiam habebis
+                sem dicantur magna mollis euismod. Curabitur blandit tempus ardua ridiculus sed magna. <button
+                    type="button" disabled>Some Button</button> Unam incolunt Belgae, aliam Aquitani, tertiam.
+                Nihil hic munitissimus habendi <button type="button">clickable btn</button> senatus locus, nihil
+                horum?</p>
+        </div>
+    </div>
+</section>
+ 

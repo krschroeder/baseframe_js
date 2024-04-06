@@ -1,0 +1,124 @@
+//
+// Variables
+// -----------
+@use "sass:math";
+@import "functions/class-list";
+//FONTS USED
+//<link href="https://fonts.googleapis.com/css?family=Raleway:300|Roboto:400,400i,700,700i" rel="stylesheet">
+
+//
+// colors
+//
+
+$brand-gray: #e9e7e9;
+$brand-yellow: #ffdc4a;
+$brand-dark-gray: #4d4d4d;
+$color-gray: #aaa;
+$color-darker-gray: #999;
+$color-dark-gray: #555;
+$color-darkest-gray: #323232;
+$color-reg-gray: #ccc;
+$color-warning: #d30003; 
+$color-sky-blue: #15c3dd;
+$color-orange: #fb791a;
+$color-dark-orange: #d96716;
+$color-selection: #b3d4fc;
+$black: #000;
+$white: #fff;
+//--------------*
+
+$brand-primary: $brand-gray;
+$brand-secondary: $brand-yellow;
+$brand-tertiary: $brand-dark-gray;
+//
+// body
+//
+$body-bg: $white;
+$font-body-color: $color-darkest-gray;
+$font-body-inverse-color: $white;
+
+
+//
+// Typography
+//
+// Headlines
+$font-headings: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+$headings-primary: $color-sky-blue;
+// body
+$font-body: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-body-line-height: 1.45;
+//--------------*
+
+//
+// Links
+//
+$link-color: $black;
+$link-hover-color: rgba($black,0.8);
+$link-hover-decoration: none;
+//--------------*
+
+//
+// Buttons
+//
+
+// button fontface
+$btn-font: $font-body;
+$btn-font-size: 0.875rem;
+$btn-font-weight: 500;
+// button color
+$btn-color: $white;
+$btn-hover-color: $white;
+$btn-focus-color: $color-dark-gray;
+// button background
+$btn-bg-color: $brand-tertiary;
+$btn-bg-hover-color: mix($white,$brand-tertiary,20%);
+// button etc
+$btn-text-decoration: none;
+$btn-text-hover-decoration: none;
+$btn-border-radius: 0;
+$btn-padding: .725rem 1.375rem .625rem;
+$btn-border: 1px solid $white;
+//--------------*
+
+//
+// Form Inputs
+//
+$input-border: 1px solid $brand-tertiary;
+$input-border-focus: 1px solid mix($brand-tertiary, $white, 35%);
+$input-min-height: 2.5rem;
+$input-bdr-radius: 0.25rem;
+$input-placeholder-color: tint($color-gray,75);
+//--------------*
+
+//
+// Navigation
+//
+$desktop-width: 64.0625rem;
+$mobile-width: ($desktop-width - 1);
+$min-device-width: 48rem;
+$max-device-width: ($desktop-width - 1);
+//--------------*
+
+//
+// Grid system
+//
+$container-width: 80rem;
+$columns-amount: 12;
+$container-sections: math.div($container-width, $columns-amount);
+$col-gutter: 1rem;
+$spacings: (0,4,8,12,16,20,24,28,32);
+$breakpoints: ('BASE',sm, md, lg, xl);
+
+//
+// Media queries breakpoints
+//
+$screen-sm: 30rem;
+$screen-md: 48rem;
+$screen-lg: 60rem;
+$screen-xl: 75rem;
+
+$screen-sm-max: ($screen-sm - 0.0625rem);
+$screen-md-max: ($screen-md - 0.0625rem);
+$screen-lg-max: ($screen-lg - 0.0625rem);
+$screen-xl-max: ($screen-xl - 0.0625rem);
+//--------------*

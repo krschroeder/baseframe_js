@@ -1,0 +1,44 @@
+//
+// main.css
+//---------
+
+
+//
+// Global
+//
+
+@import "variables";
+@import "mixins";
+@import "functions";
+
+@import "components/reset";
+@import "components/fonts";
+@import "components/tags";
+@import "components/buttons";
+
+
+//for the general styles of the image classes
+//the rest are defined in the _layout mixin
+@import "components/site-header";
+@import "components/site-footer";
+
+//after the media-queries to over-ride properites in there
+@import "components/layout";
+
+//common stuff
+@import "../../../assets/scss/collapse";
+@import "../../../assets/scss/modal";
+@import "../../../assets/scss/nav-desktop";
+@import "../../../assets/scss/nav-mobile";
+@import "../../../assets/scss/parallax";
+@import "../../../assets/scss/responsive-dropdown";
+@import "../../../assets/scss/select-enhance";
+@import "../../../assets/scss/tabs";
+@import "../../../assets/scss/toastr";
+
+//for the content container
+//boostrap equiv of .container
+@import "components/container";
+@import "components/parallax";
+@import "components/modal";
+@import "components/section-nav";

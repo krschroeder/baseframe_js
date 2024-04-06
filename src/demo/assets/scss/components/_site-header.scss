@@ -1,0 +1,73 @@
+//
+// Site Header
+//
+
+.site-header {
+    width: 100%;
+    padding: 1rem 0;
+    background: $white;
+    border-top: 0.25rem solid $brand-secondary;
+    position: fixed;
+    z-index: 2000;
+    height: 5rem;
+    inset: 0 0 auto;
+    box-shadow: 0 0 .875rem rgba(0,0,0,0.3);
+
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+
+        &:after,
+        &:before {
+            content: none;
+        }
+
+        > nav {
+            display: inline-flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+}
+
+.logo {
+    width: 200px;
+    height: 38px;
+    display: block;
+    position: relative;
+
+    &:after {
+        content: " ";
+        background: url("../img/logo__baseframe.svg") center center no-repeat;
+        background-size: contain;
+        display: block;
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    &:before {
+        content: " ";
+        display: block;
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 0;
+        height: 100;
+        z-index: 0;
+        transition: width 200ms ease;
+        opacity: 0;
+        background: $brand-secondary;
+    }
+    &:focus,
+    &:hover {
+        &:before {
+            width: 100%;
+            opacity: 1;
+        }
+    }
+}

@@ -2,38 +2,35 @@
 // Collapse!
 //
 
-$collapse-header-pad: 1rem 0 !default;
-$collapse-body-pad: 0 0 !default;
+ 
 $collapse-duration: 500ms;
 
-.collapse__item {
+.collapse {
 
-	[aria-expanded="true"] {
-		color: #000;
-	}
-	.collapse__header {
-		padding: $collapse-header-pad;
-	}
-	.collapse__body {
-		padding: $collapse-body-pad;
-		&,
-		&,
-		.collapse--closing {
-			height: 0px;
+	&__header {
+		padding: 1rem 0;
+
+		a[aria-expanded="true"],
+		button[aria-expanded="true"] {
+			color: #888;
 		}
-		overflow: hidden;
-		transition: height $collapse-duration ease-in-out;
+	}
 
+	&__body {
+		overflow: hidden;
+		height: 0;
+		
 		&.collapse--open {
 			height: auto;
 		}
-		&.collapse--toggling {
+
+		&.collapse--closing {
 			height: auto;
-			overflow: hidden;
 		}
 
-		&.collapse--no-animate {
-			transition: none;
+		&.collapse--toggling {
+			transition: height $collapse-duration ease;
+			overflow: hidden;
 		}
 	}
 }

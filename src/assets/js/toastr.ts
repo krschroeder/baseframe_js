@@ -1,25 +1,28 @@
 import type { Cash, Selector } from "cash-dom";
-import type { StringPluginArgChoices } from './types/shared';
+import type { StringPluginArgChoices } from './types';
 
 import $ from 'cash-dom';
-import parseObjectFromString from './util/parse-object-from-string';
-import elemData from "./util/elem-data";
-import { CSS_TRANSISTION_DELAY } from "./util/constants";
+import { getDataOptions } from "./util/helpers";
+import Store from "./core/Store";
 
 export interface IToasterDefaults {
-    duration?: number;
-    ariaLive?: 'off' | 'polite' | 'assertive';
-    animationDuration?: number;
-    appendTo?: Selector;
-    content: Selector;
-    outerCss?: string;
-    closeIconCss?: string;
-    closeTextCopy?: string;
-    enabledCss?: string;
-    dismissCss?: string;
-    btnDismissCss?: string;
-    cssGroupKey?: string;
-    oneOnly?: boolean;
+    content: string;
+    duration: number;
+    ariaLive: 'off' | 'polite' | 'assertive';
+    animationDuration: number;
+    appendTo: Selector;
+    outerCss: string;
+    closeIconCss: string;
+    closeTextCopy: string;
+    enabledCss: string;
+    dismissCss: string;
+    btnDismissCss: string;
+    cssGroupKey: string;
+    oneOnly: boolean;
+}
+
+export interface IToasterOptions extends Partial<IToasterDefaults>{
+    content: string;
 }
 
 const VERSION = "1.0.0";
@@ -49,7 +52,6 @@ let currentlyToastingGlobal = false;
 export default class Toastr {
 
     static get version() { return VERSION; }
-    static get pluginName() { return DATA_NAME; }
     public static Defaults = DEFAULTS;
     public static DismissedEventName = 'toastDismissed';
 
@@ -62,82 +64,82 @@ export default class Toastr {
     public $toastrWrap: Cash;
     public params: IToasterDefaults;
 
-    constructor(element: HTMLElement, options: IToasterDefaults | StringPluginArgChoices) {
-        const _ = this;
+    constructor(element: HTMLElement, options: IToasterOptions | StringPluginArgChoices) {
+        const s = this;
 
-        const dataOptions = parseObjectFromString($(element).data(EVENT_NAME + '-options'));
-        const instanceOptions = $.extend({}, Toastr.Defaults, options, dataOptions);
+        const dataOptions = getDataOptions(element, EVENT_NAME);
+        
         //state
-        _.$element = $(element);
-        _.toastrFinallyTimer = null;
-        _.$toastrBody = null;
-        _.$toastrWrap = null;
+        s.$element = $(element);
+        s.toastrFinallyTimer = null;
+        s.$toastrBody = null;
+        s.$toastrWrap = null;
 
-        _.currentlyToasting = false;
+        s.currentlyToasting = false;
 
-        elemData(element, `${DATA_NAME}_params`, instanceOptions);
+        s.params = $.extend({}, Toastr.Defaults, options, dataOptions);
+        s.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, () => s.launch());
 
-        _.params = elemData(element, `${DATA_NAME}_params`);
-        _.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, () => _.launch());
+        return s;
     }
 
     dismiss() {
-        const _ = this;
-        const { animationDuration, dismissCss } = _.params;
+        const s = this;
+        const { animationDuration, dismissCss } = s.params;
 
-        _.toastrFinallyTimer && clearTimeout(_.toastrFinallyTimer);
-        _.$toastrWrap.addClass(dismissCss);
+        s.toastrFinallyTimer && clearTimeout(s.toastrFinallyTimer);
+        s.$toastrWrap.addClass(dismissCss);
 
         setTimeout(() => {
-            const $toatrContainer = _.getToasterContainer();
-            _.$toastrWrap.removeClass(dismissCss).detach();
+            const $toatrContainer = s.getToasterContainer();
+            s.$toastrWrap.removeClass(dismissCss).detach();
 
             if (!$toatrContainer.children('div').length) {
-                _.getToasterContainer().detach();
+                s.getToasterContainer().detach();
             }
-            _.currentlyToasting = false;
+            s.currentlyToasting = false;
             currentlyToastingGlobal = false;
 
         }, animationDuration);
     }
 
     setContent(content, updateNow = false) {
-        const _ = this;
+        const s = this;
 
-        $.extend(_.params, { content });
+        $.extend(s.params, { content });
 
         if (updateNow) {
-            _.updateContent(_.params.content)
+            s.updateContent(s.params.content)
         }
     }
 
     launch() {
-        const _ = this;
+        const s = this;
 
-        const { content, dismissCss, duration, enabledCss, oneOnly } = _.params;
+        const { content, dismissCss, duration, enabledCss, oneOnly } = s.params;
 
-        if (!_.currentlyToasting) {
+        if (!s.currentlyToasting) {
 
             if (currentlyToastingGlobal && oneOnly) {
                 return;
             }
 
-            if (!_.toasterBodyBuilt) {
-                _.buildElems();
+            if (!s.toasterBodyBuilt) {
+                s.buildElems();
             }
 
-            _.$toastrWrap.removeClass(`${dismissCss} ${enabledCss}`);
+            s.$toastrWrap.removeClass(`${dismissCss} ${enabledCss}`);
 
-            _.updateContent(content);
+            s.updateContent(content);
 
             $(document.body).append(
-                _.getToasterContainer().append(_.$toastrWrap)
+                s.getToasterContainer().append(s.$toastrWrap)
             );
 
-            setTimeout(() => _.$toastrWrap.addClass(enabledCss), CSS_TRANSISTION_DELAY);
+            setTimeout(() => s.$toastrWrap.addClass(enabledCss), 0);
             // Auto remove if not dismissed
-            _.toastrFinallyTimer = setTimeout(() => _.dismiss(), duration + CSS_TRANSISTION_DELAY);    
-            _.currentlyToasting = true;
+            s.toastrFinallyTimer = setTimeout(() => s.dismiss(), duration);    
+            s.currentlyToasting = true;
             currentlyToastingGlobal = true;
         }
     }
@@ -159,12 +161,12 @@ export default class Toastr {
     }
 
     private buildElems() {
-        const _ = this;
-        const { ariaLive, btnDismissCss, closeIconCss, closeTextCopy, outerCss } = _.params;
+        const s = this;
+        const { ariaLive, btnDismissCss, closeIconCss, closeTextCopy, outerCss } = s.params;
 
-        _.$toastrBody = $('<div>').attr({ class: _.params.outerCss + '__body' });
-        _.$toastrWrap = $('<div>').attr({ class: outerCss, role: 'alert', 'aria-live': ariaLive }).append(
-            _.$toastrBody,
+        s.$toastrBody = $('<div>').attr({ class: s.params.outerCss + '__body' });
+        s.$toastrWrap = $('<div>').attr({ class: outerCss, role: 'alert', 'aria-live': ariaLive }).append(
+            s.$toastrBody,
             $('<button>').attr({ type: 'button', class: btnDismissCss }).append(
                 $('<i>').attr({ class: closeIconCss }).append(
                     $('<span>').attr({ class: 'sr-only' }).text(closeTextCopy)
@@ -172,53 +174,51 @@ export default class Toastr {
             )
         );
 
-        _.toasterBodyBuilt = true;
+        s.toasterBodyBuilt = true;
         // click event to dismiss
-        _.$toastrWrap.on('click', 'button', () => _.dismiss());
+        s.$toastrWrap.on('click', 'button', () => s.dismiss());
     }
 
     private updateContent(content: Selector) {
-        const _ = this;
+        const s = this;
 
-        if (_.$toastrBody) {
+        if (s.$toastrBody) {
 
-            _.$toastrBody.empty();
+            s.$toastrBody.empty();
 
             if ('string' === typeof content) {
-                _.$toastrBody.html(content);
+                s.$toastrBody.html(content);
             } else {
-                _.$toastrBody.append(content);
+                s.$toastrBody.append(content);
             }
         }
     }
 
-    static setContent(element, content, updateNow = false) {
+    static setContent(element: Cash, content: string, updateNow = false) {
         $(element).each(function () {
-            const params = elemData(this, `${DATA_NAME}_params`);
+            const s: Toastr = Store(this, DATA_NAME);
 
-            $.extend(params, { content });
+            $.extend(s.params, { content });
 
             if (updateNow) {
-                const _ = elemData(this, `${DATA_NAME}_instance`);
-                _.updateContent(params.content)
+                s.updateContent(s.params.content)
             }
         });
     }
 
-    static remove(element) {
+    static remove(element: Cash, plugin?: Toastr) {
         $(element).each(function () {
-            const instance = elemData(this, `${DATA_NAME}_instance`);
+            const s: Toastr = plugin || Store(this, DATA_NAME);
 
-            instance.$element.off(`click.${EVENT_NAME} ${EVENT_NAME}`);
+            s.$element.off(`click.${EVENT_NAME} ${EVENT_NAME}`);
 
-            elemData(this, `${DATA_NAME}_params`, null, true);
-            elemData(this, `${DATA_NAME}_instance`, null, true);
+            Store(this, DATA_NAME, null);
         })
     }
 }
 
 declare module 'cash-dom' {
     interface Cash {
-        toastr(options?: IToasterDefaults | StringPluginArgChoices): Cash;
+        toastr(options?: IToasterOptions | StringPluginArgChoices): Cash;
     }
 }

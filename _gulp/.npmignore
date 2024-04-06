@@ -1,0 +1,7 @@
+/_gulp
+/src
+yarn-error.log
+yarn.lock
+gulpfile.babel.js
+tsconfig.json
+.tmp

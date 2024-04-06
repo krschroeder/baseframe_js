@@ -6,72 +6,54 @@ $bg-min-height-sm: 380px;
 $bg-min-height-md: 540px;
 $bg-min-height-lg: 600px;
 
-$bg-color-img-overlay: rgba(0,0,0,.3);
+$bg-color-img-overlay: rgba(0, 0, 0, 0.3);
 
-.background-area{
+.background-area {
 	min-height: $bg-min-height-sm;
 	overflow: hidden;
 	position: relative;
 	background: #ccc;
-	@media only screen and (min-width: 768px){
-		min-height:$bg-min-height-md;
-	}
-	@media only screen and (min-width: 960px){
-		min-height: $bg-min-height-lg;
-		// &.shorter-bg-area{
-		// 	min-height: 500px;
-		// }
-	}
-	> *{
+	 
+	> * {
 		z-index: 10;
 		position: relative;
 	}
-
-	.content{
-		text-align: center;
-		//color: $white;
-		//font-size: 1.125rem;
-		//max-width:1048px;
-		*{
-			color: inherit;
-		}
-	}
 }
-.background-area-bg{
+.background-area-bg {
 	position: absolute;
-	top:0;
-	left:0;
-	min-width:100%;
+	top: 0;
+	left: 0;
+	min-width: 100%;
 	height: 100%;
 	min-height: inherit;
 	box-sizing: content-box;
 	background-position: center center;
-	background-repeat:no-repeat;
+	background-repeat: no-repeat;
 	background-size: cover;
 	z-index: 0;
 
-	&:before{
-		content:'';
+	&:before {
+		content: "";
 		display: block;
 		height: 100%;
 		width: 100%;
 		position: absolute;
-		left:0;
-		top:0;
+		left: 0;
+		top: 0;
 		z-index: 1;
 		background: $bg-color-img-overlay;
 	}
-	&.desktop-bg.parallax-bg{
+	&.desktop-bg.parallax-bg {
 		background-size: 1600px;
 	}
-	@media (min-width: 1600px){
-		&.desktop-bg.parallax-bg{
+	@media (min-width: 1600px) {
+		&.desktop-bg.parallax-bg {
 			background-size: cover;
 		}
 	}
 }
 
-.fill-to-bg-area{
+.fill-to-bg-area {
 	height: inherit;
 	min-height: inherit;
 }

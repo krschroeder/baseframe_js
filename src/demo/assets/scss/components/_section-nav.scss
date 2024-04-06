@@ -1,0 +1,23 @@
+
+.section-nav {
+    margin-block-start: 2rem;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    position: relative;
+    padding-block: 1rem;
+    border: 1px solid $color-reg-gray;
+
+    button {
+        flex-shrink: 0;
+    }
+
+    @include breakpoint(lg) {
+        flex-flow: row wrap;
+        
+		.main-nav { 
+            order:1;
+            position: relative;
+		}
+	}
+}

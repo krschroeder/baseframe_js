@@ -10,7 +10,8 @@ Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 keyDirections | array | ['horizontal', 'vertical', 'vertical'] | The direction in which the menu appears. For example, 'horizontal' means the `<li>` elements are going across the page. The next in the array is 'vertical', which means they're stacked. Typically if a third level exists they're also vertical as well.
 focusCss | string | 'focus' | the focus class that allows the menu to appear as being active
-focusLeaveElems | string | 'a, [tabindex], select, button' | listing of options to focus on to escape the last nav item via the arrow keys  
+focusInElems | string | 'a, [tabindex]' | Listing of elements that can be focused-in on.
+focusLeaveElems | string | 'a, [tabindex], select, button' | Listing of elements to focus on to escape the last nav item via the arrow keys  
 
 ### Example
 

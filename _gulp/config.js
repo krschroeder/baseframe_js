@@ -1,31 +1,44 @@
 import path from 'path';
 import yargs from 'yargs';
 
-const VERSION = require('../package.json').version;
+const VERSION       = require('../package.json').version;
 
-const PRODUCTION = !!yargs.argv.prod;
-const PROD_JS = (!!yargs.argv.productionjs || PRODUCTION);
-const USE_JQUERY = !!yargs.argv.jquery;
+const PRODUCTION    = !!yargs.argv.prod;
+const PROD_JS       = (!!yargs.argv.productionjs || PRODUCTION);
+const USE_JQUERY    = !!yargs.argv.jquery;
+const DEMO_DEST     = !!yargs.argv.demo;
 
-// const SOURCE = path.resolve(__dirname, './src');
+// const SOURCE = alias('./src');
 const excludeRgx = /(node_modules)/;
 
+const destPath = DEMO_DEST ? 'demo' : 'dist';
+
+const alias = (src) => path.resolve(__dirname, src);
+
 const config = {
+    version: VERSION,
+    production: PRODUCTION,
     
-    DEST: 'build',
-    PRODUCTION: PRODUCTION,
-    
-    SRC: {
-        css: PRODUCTION ? 'src/assets/scss/**/*.scss' : ['src/proj-assets/scss/**/*.scss','src/assets/scss/**/*.scss'],
-        html: ['src/pages/**/*.{html,hbs}'],
-        js: PRODUCTION ? 'src/assets/js/**/*.{js,ts}' : ['src/proj-assets/js/common-all-test.ts', 'src/assets/js/**/*.{js,ts}'],
-        dts: 'src/assets/js/**/*.d.ts'
+    src: {
+        img:    'src/demo/assets/img/**/*.{jpg,png,webp,svg,gif}',
+        css:    ['src/assets/scss/**/*.scss', 'src/demo/assets/scss/**/*.scss'],
+        js:     [
+                    'src/assets/js/**/*.{js,ts}',
+                    '!src/assets/js/**/*.d.ts', 
+                    PRODUCTION ? '': 'src/demo/assets/js/demo.{ts,js}'
+                ].filter(e => e),
+        html:   ['src/demo/**/*.{html,hbs}'],
+        readme: 'src/readmes/_readme.md',
+        dts:    'src/assets/js/**/*.d.ts',
+        tmp:    '.tmp'
     },
 
-    HBS:  {
-        handlebars: {
+    dest: destPath,
+
+    handlbars:  {
+        config: {
             ignorePartials: true,
-            batch: ['src/_partials'],
+            batch: ['src/demo/_partials'],
             partials: null
         },
         vars: {
@@ -38,20 +51,25 @@ const config = {
         }
     },
 
-    WEBPACK_CONFIG: {
+    webpackConfig: {
         mode: (PROD_JS ? 'production': 'development'),
         target: ['web','es6'],
         resolve: {
-            extensions: ['.js', '.tsx', '.ts']
+            extensions: ['.js', '.tsx', '.ts'],
+            alias: {
+                "@":        alias("../src/assets/js/"),
+                "@core":    alias("../src/assets/js/core/"),
+                "@fn":      alias("../src/assets/js/fn/"),
+                "@util":    alias("../src/assets/js/util/")
+            } 
         },
         module: {
             rules: [
                 {
-                    test: /.js$/,
+                    test: /\.jsx?$/,
                     exclude: excludeRgx,
                     loader: 'babel-loader'
                 },
-                // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
                 {
                     test: /\.tsx?$/,
                     exclude: excludeRgx,

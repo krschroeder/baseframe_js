@@ -1,9 +1,9 @@
-$select-arrow-bg: "data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M12 3L12 0L6 5L0 -5.23229e-07L-1.30807e-07 3L6 8L12 3Z' fill='%233A4455'/%3E%3C/svg%3E%0A";
+$select-arrow: "M15.6,0.4c-0.5-0.5-1.3-0.5-1.8,0L8,6L2.2,0.4c-0.5-0.5-1.3-0.5-1.8,0c-0.5,0.5-0.5,1.3,0,1.7l6.7,6.5 c0.5,0.5,1.3,0.5,1.8,0l6.7-6.5C16.1,1.6,16.1,0.8,15.6,0.4z";
 
 $select-hover-state: #eee;
 $select-selected-state: #ccc;
 $bdr-rad:  0.25rem;
-$color-font-body: #333;
+$select-color: #333;
 
 select {
 	z-index: 1;
@@ -23,25 +23,23 @@ select {
 .select-enhance {
 	position: relative;
     width: auto;
-    display: inline-block; 
-	 
+    display: inline-block;  
+	border:1px solid;
+
 	select {
 		border: 0;
 	}
 
 	&:after {
 		content: " ";
-		position: absolute;
-		z-index: 10;
-		top: 50%;
-		right: 0.75rem;
-		width: 0.75rem;
-		height: 0.5rem;
-		margin-top: -0.25rem;
-		background: url($select-arrow-bg) center center no-repeat;
-		background-size: cover;
 		display: block;
-
+		position: absolute;
+		inset: calc(50% - 0.3125rem) 0.75rem auto auto;
+		z-index: 10;
+		width: 1rem;
+		height: 0.625rem;
+		clip-path: path($select-arrow);
+		background-color: #000;
 		transition: transform 200ms ease;
 	}
 
@@ -53,36 +51,31 @@ select {
 		border-radius: 0;
 		background: transparent;
 		width: 100%;
+		height: 100%;
 		display: block;
-		@include block-full;
+		inset: 0;
+		position: absolute;
 		z-index: 100;
 		overflow: hidden;
 		text-indent: -999rem !important;
 		color: transparent !important;
-		font-size: 1rem;
-
-		&:focus {
-			outline: 1px dashed;
-			outline-offset: 3px;
-		}
+		font-size: 1rem;//to keep IOS from zooming
 	}
 
 	&__list-btn {
 		position: relative;
 		appearance: none;
-		border: 0;
-		border-radius: 0;
 		background: $white;
 		display: block;
 		visibility: hidden;
 		width: 100%;
-		padding: 1.25rem;
+		padding: 0.5rem 1.25rem;
 		text-align: left;
 		border: 1px solid #ddd;
-		color: $color-font-body;
+		color: $select-color;
 		font-weight: normal;
 
-		+ div {
+		&:not(:first-child) {
 			margin-top: -1px;
 		}
 

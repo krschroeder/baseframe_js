@@ -1,0 +1,37 @@
+
+.modal-section {
+    &__group {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: center;
+        justify-content: space-between;
+
+        > button {
+            margin: 0.5rem 0;
+            width: calc(50% - 0.5rem);
+        }
+    }
+}
+
+.modal--gallery {
+    .modal {
+        &__dialog {
+            max-width: 50rem;
+        }
+
+        &__dialog-content {
+            padding-block-start: 3rem;
+        }
+    }
+
+    .pic-group-nav {
+        padding: 1rem 0 0;
+        display: flex;
+        justify-content: space-between;
+
+        button {
+            font-size: 0.875rem;
+            font-weight: 700;
+        }
+    }
+}

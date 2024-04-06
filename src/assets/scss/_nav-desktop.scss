@@ -1,153 +1,98 @@
 //
 // main navigation
 //
+ 
+ 
 
-$main-nav-arrow-color: #777 !default;
-
-$main-nav-z-index: 1000 !default;
-$main-nav-color: #222 !default;
-
-$outline-color: #271c82 !default;
-
-//Level 1 Styles
-$main-nav-text-align-lvl1: center !default;
-$main-nav-li-lvl-1-bg: #fff !default;
-$main-nav-color-lvl-1: $main-nav-color !default;
-
-//Level 2 Styles
-$main-nav-text-align-lvl2: left !default;
-$main-nav-li-lvl-2-bg: #efefef !default;
-$main-nav-li-lvl-2-inner-bg: #efefef !default;
-$main-nav-ul-lvl-2-min-width: 200px !default;
-$main-nav-color-lvl-2: $main-nav-color !default;
-
-@mixin level-1-dropdown-pos() {
-	display: inline-block;
-	left: 50%;
-	top: 100%;
-	padding: 0;
-	transform: translateX(-50%);
-}
-
-@mixin level-2-dropdown-pos() {
-	transform: translateX(0%);
-	left: 100%;
-	right: auto;
-	top: 0;
-}
-
-@mixin level-2-dropdown-inner-pos() {
-	position: static;
-	font-size: 0.875rem;
-	li {
-		a {
-			background: $main-nav-li-lvl-2-inner-bg;
-			transition: none;
-		}
+@mixin nav-focus {
+	&:hover,
+	&.hover,
+	&:focus,
+	&.focus {
+		@content;
 	}
 }
 
 //main navigation/desktop
-@media only screen and (min-width: 1025px) {
-	//
-	// ADA Compliance, works with 3rd Party plugin from ADOBE
-	// https://github.com/adobe-accessibility/Accessible-Mega-Menu
-	//
-	#main-nav {
-		ul {
-			overflow: visible;
-			li {
-				margin: 0;
-			}
-			.sub-nav {
-				&.open {
-					@include level-1-dropdown-pos();
-				}
-			}
-			ul {
-				&.open {
-					@include level-2-dropdown-pos(); ul {
-						@include level-2-dropdown-inner-pos();
-					}
-				}
-			}
-		}
-	}
+@media (min-width: 64.0625rem) {
 
-	#main-nav {
+	.main-nav {
 		display: inline-block;
 		position: relative;
-		z-index: #{$main-nav-z-index};
+		z-index: 2000;
 
-		a:focus {
-			outline-offset: 2px;
-			outline: 1px dotted $outline-color;
-		}
 
 		//reset table
 		ul {
+			overflow: visible;
 			padding: 0;
 			margin: 0;
 			list-style: none;
-			z-index: #{$main-nav-z-index + 1};
 
 			li {
 
 				list-style: inherit;
 				position: relative;
-				text-align: $main-nav-text-align-lvl1;
-				background: $main-nav-li-lvl-1-bg;
+				text-align: left;
+				background: #fff;
 				display: block;
+				margin: 0;
 
-				> a {
+				> a, 
+				> strong {
 					display: block;
 					padding: 1ex;
-					color: $main-nav-color-lvl-1;
 					text-decoration: none;
+					position: relative;
+					&:focus {
+						z-index: 10;
+					}
 				}
 
 				//2nd level List
 				ul {
 					position: absolute;
 					box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
-					top: -9999em;
-					left: -9999em;
-					z-index: #{$main-nav-z-index + 2};
-					min-width: $main-nav-ul-lvl-2-min-width;
+					top: -300vh;
+					left: -300vw;
+					min-width: 14rem;
 					visibility: hidden;
 
 					li {
-						text-align: $main-nav-text-align-lvl2;
-						background: $main-nav-li-lvl-2-bg;
-						a {
-							color: $main-nav-color-lvl-2;
-							
+						text-align: left;
+						background: #fff;
+
+						> a:hover,
+						> a:focus {
+							background-color: #efefef;
 						}
 					}
+
 				}
-				&:hover,
-				&.hover,
-				&:focus,
-				&.focus {
+
+				@include nav-focus {
 					> ul {
 						visibility: visible;
+						display: inline-block;
+						left: 50%;
+						top: 100%;
+						padding: 0;
+						transform: translateX(-50%);
+						z-index: 10;
 						
-						@include level-1-dropdown-pos(); li {
-							&:hover,
-							&.hover,
-							&:focus,
-							&.focus {
+						li {
+							@include nav-focus {
 								> ul {
-									@include level-2-dropdown-pos();
+									transform: translateX(0%);
+									left: 100%;
+									right: auto;
+									top: 0;
 								}
 							}
 
 							//if we're on the edge position it to the left of it
-							&.ul-on-edge {
-								&:hover,
-								&.hover,
-								&:focus,
-								&.focus {
+							&.menu__elem-on-edge {
+								@include nav-focus {
 									> ul {
 										left: auto;
 										right: 100%;
@@ -161,7 +106,7 @@ $main-nav-color-lvl-2: $main-nav-color !default;
 		}
 		//first level override
 		> ul {
-			display: flex;
+			display: inline-flex;
 			align-items: flex-end;
 			justify-content: flex-end;
 			flex-wrap: nowrap;
@@ -175,7 +120,7 @@ $main-nav-color-lvl-2: $main-nav-color !default;
 				&:last-child { margin-right: 0;}
 			}
 
-			li.ul-on-edge {
+			li.menu__elem-on-edge {
 				> ul {
 					transform: translateX(0%);
 					right: 0;
@@ -184,7 +129,7 @@ $main-nav-color-lvl-2: $main-nav-color !default;
 			}
 		}
 	}
-	.back-btn {
+	.menu__btn-nav {
 		display: none;
 	}
 }

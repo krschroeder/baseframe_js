@@ -8,21 +8,19 @@ This has a move-to-top after open feature, open with location hash, and callback
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-cssPrefix | string |  'collapse' |   CSS class name for styling purposes that is used as prefix to all other classes (btn, body, etc).
-toggleClickBindOn | string |  'group' |  Attaches the click to the selector or `$('.your-selector').colla...`, other option is __'body'__ and it'll then be set on the body. Can come in handy, I had a use-case for it, forgot exactly why.
+cssPrefix | string |  'collapse' | The primary CSS class and prefix for all other derived elements. The BEM CSS naming convention is used for all derived elements.
 toggleDuration | number |  500 |  The speed at which the items will open, should pair with CSS transition settings.
 toggleGroup | boolean |  false |  More or less toggles the other opened element(s) closed, and make it behave like an accordion.
 moveToTopOnOpen | boolean |  false |  After the element is opened, the item will move to the top of it. Good for mobile.
 moveToTopOffset | number |  0 |  Should we need to offset the move to the top if the __moveToTopOnOpen__ is set to `true`.
 scrollSpeed | number |  100 |  The speed of the scroll if __moveToTopOnOpen__ is set to `true`.
-useHashFilter | string | null | If there is a number of elements where the `location.hash` value is used, it may be necessary to filter it to get the intended data. Pass in a string value, i.e.: 'collapse' and it'll load and filter through as needed while maintaining the remaining location hash values. this only gets used if 'useLocationHash' option is selected. 
-useLocationHash | boolean |  true |  Use the `window.location.hash` to open and close the items.
-loadLocationHash | boolean |  true | Loads with a location hash in the browser address bar, must of course be the ID of the item.
-historyType | string | 'push' | If using using `useLocationHash` or a history of events, 'push' pushes a new state, and 'replace' replaces the current.
-afterOpen | function |  ($btnElems, $collapsibleItem) => { } |  callback function after an item is opened.
-afterClose | function |  ($btnElems, $collapsibleItem) => { } |  callback function after an item is closed.
-afterInit | function |  (element) => { } | callback function after collapse is initialized.
-
+urlFilterType | 'hash'\|'search' | 'hash' | The filtering type to use (either `location.hash` or `location.search`) to track the status of an open modal.
+historyType | 'replace'\|'push'| 'replace' | The history state update. Either `history.pushState` or `history.replaceState`.
+locationFilter | string |  null | Key name of the param to be captured in the location URL. Example: `YOUR_URL#collapse=the-item-id`, where `the-item-id` is the ID property and `collapse` is our `locationFilter`.
+loadLocation | boolean |  true | Loads with a location hash in the browser address bar, must of course be the ID of the item.
+afterOpen | function |  ($btnElems, $collapsibleItem) => {} |  callback function after an item is opened.
+afterClose | function |  ($btnElems, $collapsibleItem) => {} |  callback function after an item is closed.
+afterInit | function |  (element) => {} | callback function after collapse is initialized.
 
 ### Example
 
@@ -33,7 +31,7 @@ __HTML__
 <div class="collapse collapse-group" >
 <div class="collapse__item">
 	<div class="collapse__header">
-		<h2><a href="#item-1" class="collapse__btn" role="button" aria-expanded="false" aria-controls="item-1"
+		<h2><a href="#item-1" class="collapse__btn" role="button" aria-controls="item-1"
 		>Item 1</a></h2>
 	</div>
 	<div class="collapse__body" id="item-1">

@@ -2,10 +2,9 @@
 
 
 ### Features
-This plugin adds a delay to the desktop navigation and for the nestled `<ul>`'s that fly out. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page. I think this is a nice feature to have and adds a small nice little touch to the finished project.
+This plugin adds a delay to the desktop navigation and for the nestled `<ul>`'s that fly out. Also, features an edge detection on the drop-down `<ul>` elements, and uses corresponding CSS to position, so it stays on the page.
 
 ### Settings
-
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 stopWidth | number | 768 | the width in which the navigaiton will stop for mobile.

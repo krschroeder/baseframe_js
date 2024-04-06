@@ -1,15 +1,13 @@
 {
-    // Change this to match your project
-    // "include": ["src/assets/js/**/*", "src/proj-assets/js/common-all-test.ts"],
-    "include": ["src/assets/js/**/*"],
-    "exclude": ["src/proj-assets/js/common-all-test.ts"],
+    "include": ["src/assets/js/**/*", "src/demo/assets/js/**/*"],
+    "exclude": ["src/demo/assets/js/demo.ts"],
     "compilerOptions": {
-      "lib": ["esNext", "dom"],
-      "declaration": true,
-      "declarationDir": ".",
-      "target": "ESNext",
-      "module": "ESNext",
-      "moduleResolution": "Node",
-      "declarationMap": false
+        "lib": ["esNext", "dom"],
+        "declaration": true,
+        "declarationDir": ".",
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "declarationMap": false
     }
 }

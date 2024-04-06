@@ -1,85 +1,73 @@
-import gulp, { src } from 'gulp';
-import path from 'path';
-import browser from 'browser-sync';
-import rename from 'gulp-rename';
-const sass = require('gulp-sass')(require('sass'));
-import sourcemaps from 'gulp-sourcemaps';
-import gulpIf from 'gulp-if';
+import gulp 			from 'gulp';
+// general
+import browser 			from 'browser-sync';
+import rename 			from 'gulp-rename';
+import sourcemaps 		from 'gulp-sourcemaps';
+import gulpIf 			from 'gulp-if';
+import clean 			from 'gulp-clean';
+import fileinclude 		from 'gulp-file-include';
+import tap 				from 'gulp-tap';
 
-import handlebars from 'gulp-compile-handlebars';
-import helpers from 'handlebars-helpers';
+// html
+import handlebars 		from 'gulp-compile-handlebars';
+import helpers 			from 'handlebars-helpers';
 
-import autoprefixer from 'gulp-autoprefixer';
-import cleanCss from 'gulp-clean-css';
-import clean from 'gulp-clean';
-import fileinclude from 'gulp-file-include';
-import tap from 'gulp-tap';
+// css
+import sassEngine		from 'sass';
+import gulpSass 		from 'gulp-sass';
+import autoprefixer 	from 'gulp-autoprefixer';
+import cleanCss 		from 'gulp-clean-css';
+
  
-//es6 javascript
-//this version of babel is needed for the plugin generation
-//since webpack isn't playing well with outputting to the same directory
+import named 			from 'vinyl-named';
+import webpack 			from 'webpack';
+import webpackStream 	from 'webpack-stream';
+import ts 				from 'typescript';
 
-import named from 'vinyl-named';
-import webpack from 'webpack';
-import webpackStream from 'webpack-stream';
+import config 			from './config';
 
-import ts from 'typescript';
-
-import config from './config';
-
-const {
-	DEST,
-	HBS,
-	PRODUCTION,
-	SRC,
-	WEBPACK_CONFIG
-} = config;
-
-const { css, dts, js, html } = SRC;
-
+const { production } = config;
 // Load Handlebars helpers
-helpers({
-	handlebars: handlebars.Handlebars
-});
+helpers({ handlebars: handlebars.Handlebars });
 
-
-
+const sass = gulpSass(sassEngine);
 //tasks
 
-function buildCSS() {
-	if (!PRODUCTION) {
-		return gulp.src(css)
+function buildCss() {
+	if (!production) {
+		return gulp.src(config.src.css)
 			.pipe(sourcemaps.init())
 			.pipe(sass().on('error', sass.logError))
 			.pipe(autoprefixer())
-			.pipe(gulpIf(PRODUCTION, cleanCss({
+			.pipe(gulpIf(production, cleanCss({
 				compatibility: "ie11"
 			})))
 			.pipe(sourcemaps.write('./'))
-			.pipe(gulp.dest(`${DEST}/assets/css`))
+			.pipe(gulp.dest(`${config.dest}/assets/css`))
 			.pipe(browser.reload({ stream: true }));
 	} else {
 		// Production
-		return gulp.src(css).pipe(gulp.dest(`${DEST}/scss`))
+		return gulp.src(config.src.css).pipe(gulp.dest(`${config.dest}/scss`))
 	}
 }
 
 
-function buildHTML(done) {
-	if (!PRODUCTION) {
-		return gulp.src(html)
-			.pipe(handlebars(HBS.vars, HBS.handlebars))
-			.pipe(gulp.dest(DEST));
+function buildHtml(done) {
+	if (!production) {
+		return gulp.src(config.src.html)
+			.pipe(handlebars(config.handlbars.vars, config.handlbars.config))
+			.pipe(rename({extname:'.html'}))
+			.pipe(gulp.dest(config.dest));
 	}
 
 	done();
 }
 
-function buildJS(done) {
+function buildJs(done) {
 
-	if (PRODUCTION) {
+	if (production) {
 		// just turn it into JS files
-		gulp.src(js).pipe(tap(function (file) {	 
+		gulp.src(config.src.js).pipe(tap(function (file) {	 
 			const transpiledToJs = ts.transpile(file.contents.toString('utf-8'),{
 				lib: ["esNext", "dom"],
 				target: "ESNext",
@@ -89,23 +77,26 @@ function buildJS(done) {
 			file.contents = Buffer.from(transpiledToJs);
 		}))
 		.pipe(rename({ extname: '.js'}))
-		.pipe(gulp.dest(`${DEST}/js`));
+		.pipe(gulp.dest(`${config.dest}/js`));
 
 	} else {
-		gulp.src(js)
+		gulp.src(config.src.js)
 			.pipe(named())
-			.pipe(webpackStream(WEBPACK_CONFIG, webpack))
-			.pipe(gulp.dest(`${DEST}/assets/js`));
+			.pipe(webpackStream(config.webpackConfig, webpack))
+			.pipe(gulp.dest(`${config.dest}/assets/js`));
 	}
 	done()
 }
 
 function buildDeclarationFilesToTemp(done) {
-	if (PRODUCTION) {
+	if (production) {
 		// declarations
-		return gulp.src(js)
+		return gulp.src(config.src.js)
 			.pipe(named())
-			.pipe(webpackStream(WEBPACK_CONFIG, webpack))
+			.pipe(webpackStream(config.webpackConfig, webpack))
+			.pipe(tap(function (file) {	 
+				console.log(file.path)
+			}))
 			.pipe(gulp.dest(`.tmp`));
 	} else {
 		done();
@@ -114,27 +105,26 @@ function buildDeclarationFilesToTemp(done) {
 }
 
 function buildDeclarationFiles(done) {
-	if (PRODUCTION) {
+	if (production) {  
 		// declarations
 		return gulp.src('.tmp/**/*.d.ts')
-		.pipe(gulp.dest(`${DEST}/js`))
+		.pipe(gulp.dest(`${config.dest}/js`))
 
 	} else {
 		done();
 	}
-	
 }
 
 function copyAssets(done) {
-	if (!PRODUCTION) {
-		return gulp.src('src/proj-assets/img/**/*')
-			.pipe(gulp.dest(DEST + '/assets/img'));
+	if (!production) {
+		return gulp.src(config.src.img)
+			.pipe(gulp.dest(`${config.dest}/assets/img`));
 	}
 	done();
 }
 
 function cleanUp() {
-	return gulp.src([DEST, '.tmp'], {
+	return gulp.src([config.dest, '.tmp'], {
 		read: false,
 		allowEmpty: true
 	}).pipe(clean());
@@ -148,26 +138,21 @@ function cleanUpTemp() {
 }
 
 function compileReadme() {
-	return gulp.src('src/readmes/_readme.md')
-		.pipe(fileinclude({
-			prefix: '@@',
-			basepath: '@file'
-		}))
-		.pipe(rename({
-			basename: 'readme'
-		}))
+	return gulp.src(config.src.readme)
+		.pipe(fileinclude({ prefix: '@@', basepath: '@file'}))
+		.pipe(rename({basename: 'readme'}))
 		.pipe(gulp.dest('./'));
 }
 
 
 function watch(done) {
-	if (!PRODUCTION) {
-		gulp.watch(js).on('all', gulp.series(buildJS, reload));
-		gulp.watch(css).on('all', gulp.series(buildCSS));
-		gulp.watch('src/assets/scss/**/*.scss').on('all', gulp.series(buildCSS));
-		gulp.watch('src/proj-assets/img/**/*').on('all', gulp.series(copyAssets));
-		gulp.watch(['src/**/*.{html,hbs}']).on('all', gulp.series(buildHTML, reload));
-		gulp.watch('src/readmes/*.md').on('all', gulp.series(compileReadme));
+	if (!production) {
+		gulp.watch(config.src.js).on('all', gulp.series(buildJs, reload));
+		gulp.watch(config.src.css).on('all', gulp.series(buildCss));
+		// gulp.watch('src/assets/scss/**/*.scss').on('all', gulp.series(buildCss));
+		gulp.watch(config.src.img).on('all', gulp.series(copyAssets));
+		gulp.watch(config.src.html).on('all', gulp.series(buildHtml, reload));
+		gulp.watch(config.src.readme).on('all', gulp.series(compileReadme));
 	}
 	done();
 }
@@ -176,10 +161,10 @@ function watch(done) {
 //
 // Server
 function server(done) {
-	if (!PRODUCTION) {
+	if (!production) {
 		// Start a server with BrowserSync to preview the site in
 		browser.init({
-			server: DEST,
+			server: config.dest,
 			port: 8000,
 			extensions: ['html'] // pretty urls
 		});
@@ -194,20 +179,19 @@ function reload(done) {
 	done();
 }
 
-const BUILD = gulp.parallel(
-	gulp.series(
-		cleanUp,
-		buildCSS,
-		buildJS,
-		buildDeclarationFilesToTemp,
-		buildDeclarationFiles,
-		buildHTML,
-		copyAssets,
-		server,
-		compileReadme,
-		watch,
-		cleanUpTemp
-	)
+const BUILD = gulp.series(
+	cleanUp,
+	buildCss,
+	buildJs,
+	buildDeclarationFilesToTemp,
+	buildDeclarationFiles,
+	buildHtml,
+	copyAssets,
+	server,
+	compileReadme,
+	watch,
+	cleanUpTemp
 );
+
 
 gulp.task('default', BUILD);

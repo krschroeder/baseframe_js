@@ -1,0 +1,17 @@
+ 
+@use 'sass:math';
+
+
+@function grid-cols-width($col-nth) {
+    @return $container-sections * $col-nth;
+}
+
+@function grid-cols-pct($col-nth) {
+    @return math.div($col-nth, $columns-amount) * 100%;
+}
+
+@function grid-overflow-columns($left, $right) {
+    $minMax: minmax(#{get-cols($left)}, get-width($left)) minmax(#{get-cols($right)}, get-width($right));
+
+    @return 1fr #{$minMax} 1fr;
+}

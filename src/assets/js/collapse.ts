@@ -1,30 +1,19 @@
 import type { Cash } from "cash-dom";
-import type { LocationHashTrackingHistory, StringPluginArgChoices } from './types/shared';
+import type { LocationHashTracking, StringPluginArgChoices } from './types';
 
 import $ from 'cash-dom';
-import parseObjectFromString from './util/parse-object-from-string';
-import smoothScroll from './util/smooth-scroll';
-import { getHashParam } from './util/get-param';
-import elemData from "./util/elem-data";
-import updateHistoryState from './util/plugin/update-history-state';
-import { noop, transitionElem } from './util/helpers';
 
-export interface ICollapseOptions extends LocationHashTrackingHistory {
-	cssPrefix?: string;
-	toggleClickBindOn?: 'group' | 'body';
-	toggleDuration?: number;
-	toggleGroup?: boolean;
-	moveToTopOnOpen?: boolean;
-	moveToTopOffset?: number;
-	scrollSpeed?: number;
-	afterOpen?($btnElems: Cash, $collapsibleItem: Cash): void;
-	afterClose?($btnElems: Cash, $collapsibleItem: Cash): void;
-	afterInit?(element: HTMLElement): void;
-}
+import { getDataOptions, noop } from './util/helpers';
 
-export interface ICollapseDefaults extends LocationHashTrackingHistory {
+import smoothScroll from './fn/smoothScroll';
+import transition	from "./fn/transition";
+
+import UrlState 	from "./core/UrlState"; 
+import Store 		from "./core/Store";
+
+ 
+export interface ICollapseDefaults extends LocationHashTracking {
 	cssPrefix: string;
-	toggleClickBindOn: 'group' | 'body';
 	toggleDuration: number;
 	toggleGroup: boolean;
 	moveToTopOnOpen: boolean;
@@ -32,272 +21,238 @@ export interface ICollapseDefaults extends LocationHashTrackingHistory {
 	scrollSpeed: number;
 	afterOpen($btnElems: Cash, $collapsibleItem: Cash): void;
 	afterClose($btnElems: Cash, $collapsibleItem: Cash): void;
-	afterInit(element: HTMLElement): void;
+	afterInit($element: Cash): void;
 }
 
-const VERSION = "3.1.2";
+export interface ICollapseOptions extends Partial<ICollapseDefaults> {};
+
+const VERSION = "4.0.0";
 const DATA_NAME = 'Collapse';
 const EVENT_NAME = 'collapse';
 const DEFAULTS: ICollapseDefaults = {
 	cssPrefix: 'collapse',
-	toggleClickBindOn: 'group',
 	toggleDuration: 500,
 	toggleGroup: false,
 	moveToTopOnOpen: false,
 	moveToTopOffset: 0,
 	scrollSpeed: 100,
-	useHashFilter: null,
-	useLocationHash: true,
+	urlFilterType: 'hash',
 	historyType: 'replace',
-	loadLocationHash: true,
+	locationFilter: null,
+	loadLocation: true,
 	afterOpen: noop,
 	afterClose: noop,
 	afterInit: noop
 };
 
-
-
 export default class Collapse {
-
-	public element: HTMLElement;
-	public onElem: HTMLElement;
-	public index: number;
+	 
+	public $element: Cash;
 	public params: ICollapseDefaults;
 	public toggling: boolean;
-	public prevID: string;
-	public initiallyLoaded: boolean;
 	public $btnElems: Cash | null;
-	public $collapsibleItem: Cash | null;
+	public $activeItem: Cash | null;
+	public initLoaded: boolean;
+	
+	public static defaults = DEFAULTS;
 
+	#transition = transition();
 
-	public static Defaults = DEFAULTS;
+	constructor(element: HTMLElement, options: ICollapseOptions | StringPluginArgChoices, index?: number) {
 
-	constructor(element: HTMLElement, options: ICollapseOptions, index: number) {
+		const s = this;
 
-		const _ = this;
+		s.$element = $(element);
 
-		_.element = element;
-		_.onElem = element;
-		_.index = index;
-
-		const dataOptions = parseObjectFromString($(element).data(EVENT_NAME + '-options'));
-		const instanceOptions = $.extend({}, Collapse.Defaults, options, dataOptions);
-
-		elemData(element, `${DATA_NAME}_params`, instanceOptions);
-		_.params = elemData(element, `${DATA_NAME}_params`);
-
-		_.toggling = false;
-		_.prevID = '#';
-		_.initiallyLoaded = false;
-		_.$btnElems = null;
-		_.$collapsibleItem = null;
-
+		const dataOptions = getDataOptions(element, EVENT_NAME);
+	 
+		s.params = $.extend({}, Collapse.defaults, options, dataOptions);
+		s.toggling = false;
+		s.$btnElems = s.$element.find(`.${s.params.cssPrefix}__btn`).attr({'aria-expanded': 'false'});
+		s.$activeItem = null;
+		s.initLoaded = false;
 		// init
-		_.loadContentFromHash();
-		_.collapseEvents();
-		_.params.afterInit(_.element);
+		s.loadFromUrl();
+		s.handleEvents();
+		s.params.afterInit(s.$element);
 
-		return this;
+		Store(element, DATA_NAME, s);
+
+		return s;
 	}
 
 	static get version() {
 		return VERSION;
 	}
 
-	static get pluginName() {
-		return DATA_NAME;
-	}
-
-	static remove(element) {
+	static remove(element: Cash, plugin?: Collapse) {
 		$(element).each(function () {
 
-			const instance = elemData(this, `${DATA_NAME}_instance`);
+			const s: Collapse = plugin || Store(this, DATA_NAME);
 
-			$(instance.onElem).off(`click.${EVENT_NAME} ${EVENT_NAME}`);
+			s.$element.off(`click.${EVENT_NAME} ${EVENT_NAME}`);
 			$(window).off(`popstate.${EVENT_NAME}`);
-
-			elemData(this, `${DATA_NAME}_params`, null, true);
-			elemData(this, `${DATA_NAME}_instance`, null, true);
+			// delete the Store item
+			Store(this, DATA_NAME, null);
 		})
 	}
 
-	collapseEvents() {
-		const _ = this;
-		const { cssPrefix, toggleClickBindOn } = _.params;
+	handleEvents() {
+		const s = this;
+		const { cssPrefix } = s.params;
  
-		_.onElem = toggleClickBindOn === 'body' ? document.body : _.element;
-
-		$(_.onElem).on(`click.${EVENT_NAME} ${EVENT_NAME}`, `.${cssPrefix}__btn`, function (e: Event) {
-
-			_.toggleAction(this.hash || this.dataset.href);
+	 
+		s.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, `.${cssPrefix}__btn`, function (e: Event) {
+			const elemId = $(this).attr('aria-controls') || this.hash.substring(1);
+			 
+			s.toggleAction(elemId);
 
 			e.preventDefault();
 		});
 
 		$(window).on(`popstate.${EVENT_NAME}`, (e: Event) => {
-			if (_.params.historyType === 'push') {
-				_.loadContentFromHash(false, false);
+			if (s.params.historyType === 'push') {
+				s.loadFromUrl(); 
+				s.initLoaded = true;
 				e.preventDefault();
 			}
 		})
 	}
 
-	loadContentFromHash(noAnimation = true, history = true) {
-		const _ = this;
+	loadFromUrl() {
+		const s = this;
+		const p = s.params;
 
-		const { cssPrefix, useLocationHash, loadLocationHash, useHashFilter } = _.params;
+		const loadElem = (filterEl: string) => {
+			
+			const cssOpen = `${p.cssPrefix}--open`;
+			const $tryElem = s.$element.find('#' + filterEl);
 
-		if (useLocationHash || loadLocationHash) {
+			if ($tryElem.length) {
 
-			const hash = (useHashFilter ? (getHashParam(useHashFilter) || '') : location.hash);
-
-			//if there are multiples
-			const hashes = hash.split('=');
-
-			for (let i = 0, l = hashes.length; i < l; i++) {
-				const elID = '#' + hashes[i].split('&')[0].replace(/#/g, '');
-
-				_.toggleAction(elID, noAnimation, history);
+				s.$activeItem = $tryElem;
+				s.$activeItem.addClass(cssOpen);
+				
+				s.$btnElems
+					.filter((i, el) => $(el).attr('aria-controls') === filterEl)
+					.attr({'aria-expanded': 'true'});
 			}
+		} 
+		 
+		if (p.locationFilter !== null || p.loadLocation) {
+			 
+			const filterEl = UrlState.get(p.urlFilterType, p.locationFilter);
+			const cssOpen = `${p.cssPrefix}--open`;
+			s.$element.find(`.${p.cssPrefix}__body.${cssOpen}`).removeClass(cssOpen);
+			s.$btnElems.attr({'aria-expanded': 'false'});
 
-			// if it's the last tab, then the 
-			// location hash will not exist on the element
-			// so just look for an open one
-			if (_.prevID !== '#' && _.initiallyLoaded) {
-				const $prevTab = $(_.onElem).find(_.prevID);
+			if (filterEl) {
+				if (Array.isArray(filterEl)) {
+						
+					filterEl.forEach(loadElem);
+					
+				} else {
+					loadElem(filterEl);
+				}
+					
+			}
+		}
+	}
 
-				if ($prevTab.length) {
-					const isOpen = $prevTab.hasClass(`${cssPrefix}--open`);
+	toggleAction(currElemID: string) {
+		const s = this;
 
-					if (isOpen) {
-						_.toggleAction(_.prevID, false, history);
+		if (s.toggling || currElemID === null) return;
+		
+		const { cssPrefix } = s.params;
+		const p = s.params;
+
+		s.$activeItem = s.$element.find('#' + currElemID);
+		
+		if (s.$activeItem.length) {
+			
+			const 
+				cssOpen 	= `${cssPrefix}--open`,
+				cssToggling = `${cssPrefix}--toggling`,
+				cssOpening 	= `${cssPrefix}--opening`,
+				cssClosing 	= `${cssPrefix}--closing`,
+				cssBodyOpen = `.${cssPrefix}__body.${cssOpen}`
+			;
+			const $currOpenItems = s.$element.find(cssBodyOpen);
+			const $itemsToClose = $currOpenItems.filter((i, el) =>  p.toggleGroup || el.id === currElemID);
+			const activeAlreadyOpen = s.$activeItem.hasClass(cssOpen);
+
+			s.#transition(() => {
+				s.toggling = true;
+				
+				s.$btnElems.each(function(){
+					const $btn = $(this);
+					const isCurrent = $btn.attr('aria-controls') === currElemID;
+					const expanded = isCurrent && $btn.attr('aria-expanded') === 'false';
+					
+					if (p.toggleGroup) {
+						$btn.attr({ 'aria-expanded': expanded + '' });
+						
+					} else {
+						if (isCurrent) {
+							$btn.attr({ 'aria-expanded': expanded + '' });
+						}
 					}
+				});
+
+				$itemsToClose.each(function(){
+					$(this).css({ height: this.scrollHeight });
+				});
+				setTimeout(() => {
+					$itemsToClose
+						.removeClass(cssOpen)
+						.addClass(`${cssToggling} ${cssClosing}`)
+						.css({ height: 0 });
+				},0);
+
+				if (!activeAlreadyOpen) {
+
+					s.$activeItem
+						.addClass(`${cssToggling} ${cssOpening}`)
+						.css({ height: s.$activeItem[0].scrollHeight })
 				}
 
-				_.initiallyLoaded = true;
-			}
-		}
-	}
+			},
+			() => {
+				s.toggling = false;
 
-	toggleAction(collapseID, noAnimation = false, history = true) {
-		const _ = this;
+				$itemsToClose
+					.removeClass(`${cssToggling} ${cssClosing}`)
+					.css({ height: null });
+				
+				s.params.afterClose(s.$btnElems, $itemsToClose);
+				
 
-		if (_.toggling || collapseID === '#') return;
-
-		_.$collapsibleItem = $(_.element).find(collapseID);
-
-		if (_.$collapsibleItem.length) {
-			const { cssPrefix } = _.params;
-
-			const close = _.$collapsibleItem.hasClass(`${cssPrefix}--open`);
-			const openingCss = noAnimation ? (`${cssPrefix}--open ${cssPrefix}--no-animate`):`${cssPrefix}--toggling`;
-
-			_.$btnElems = _.getBtnElems(collapseID);
-			_.$collapsibleItem.addClass(openingCss);
-			_.$btnElems.addClass(`${cssPrefix}--toggling`).attr({'aria-expanded': 'true'});
-
-			_.toggleOpenItems();
-			close ? _.closeItems(_.$btnElems, _.$collapsibleItem) : _.openItems();
-
-			if (history) {
-				 
-				updateHistoryState(_.params, collapseID.substring(1), close, _.prevID.substring(1));
-			}
-
-			_.prevID = collapseID;
-		}
-	}
-
-
-	toggleOpenItems() {
-		const _ = this;
-
-		if (!_.params.toggleGroup) return;
-
-		const { cssPrefix } = _.params;
-
-		const $btnElems = _.getBtnElems(_.prevID);
-
-		$(_.element).find(`.${cssPrefix}__body.${cssPrefix}--open`)
-			// .not($clickedItem)
-			.each(function () {
-				_.closeItems($btnElems, $(this));
-			});
-	}
-
-	closeItems($btnElems: Cash, $openItem: Cash) {
-		const _ = this;
-		const { cssPrefix } = _.params;
-
-		_.toggling = true;
-
-		$openItem
-			.addClass(`${cssPrefix}--toggling ${cssPrefix}--closing`)
-			.css({ height: $openItem.height() })
-
-		transitionElem(() => {
-			$openItem.css({ height: '0px' });
-		})
-
-		transitionElem(() => {
-
-			const rmClasses = `${cssPrefix}--open ${cssPrefix}--toggling ${cssPrefix}--closing`;
-			$openItem.removeClass(rmClasses).css({ height: '' });
-			$btnElems.removeClass(rmClasses).attr({'aria-expanded': 'false'});
-
-			_.params.afterClose($btnElems, $openItem);
-
-			_.toggling = false;
-
-		}, _.params.toggleDuration);
-
-	}
-
-	openItems() {
-		const _ = this;
-		const { cssPrefix, toggleDuration } = _.params;
-
-		_.toggling = true;
-
-		if (_.$collapsibleItem) {
-
-			_.$collapsibleItem.addClass(`${cssPrefix}--toggling ${cssPrefix}--opening`);
-			const height = _.$collapsibleItem.height();
-
-			_.$collapsibleItem.css({ height: '0px' })
-
-			transitionElem(() => {
-				(_.$collapsibleItem as Cash).css({ height: height });
-			});
-
-
-			transitionElem(() => {
-
-				const rmClasses = `${cssPrefix}--toggling ${cssPrefix}--opening ${cssPrefix}--no-animate`;
-
-				(_.$collapsibleItem as Cash).addClass(`${cssPrefix}--open`);
-				(_.$collapsibleItem as Cash).removeClass(rmClasses).css({ height: '' });
-
-				if (_.$btnElems) {
-
-					_.$btnElems.addClass(`${cssPrefix}--open`).removeClass(rmClasses);
+				if (!activeAlreadyOpen) {
+					s.$activeItem
+						.addClass(cssOpen)
+						.removeClass(`${cssToggling} ${cssOpening}`)
+						.css({ height: null });
 				}
 
-				_.params.afterOpen(_.$btnElems as Cash, _.$collapsibleItem as Cash);
+				// Update History in URL
+				const paramList = [...s.$element.find(cssBodyOpen)].map((el:HTMLElement) => el.id)
+				const paramVal = paramList.length === 1 ? paramList[0] : paramList.length > 0 ? paramList : null;
 
-				_.moveToTopOnOpen();
-
-				_.toggling = false;
-			}, toggleDuration);
+				UrlState.set(p.urlFilterType, p.locationFilter, paramVal, p.historyType);
+		
+				s.params.afterOpen(s.$btnElems, s.$activeItem);
+				s.moveToTopOnOpen();
+			});			
 		}
 	}
 
 	moveToTopOnOpen() {
-		const _ = this;
-		const { cssPrefix, moveToTopOffset, moveToTopOnOpen, scrollSpeed } = _.params;
+		const s = this;
+		const { cssPrefix, moveToTopOffset, moveToTopOnOpen, scrollSpeed } = s.params;
 		
-		if (_.$collapsibleItem) {
-			const $item: Cash = _.$collapsibleItem.parent(`.${cssPrefix}__item`) || _.$collapsibleItem as Cash;
+		if (s.$activeItem) {
+			const $item: Cash = s.$activeItem.parent(`.${cssPrefix}__item`) || s.$activeItem as Cash;
 
 			if ($item.length && moveToTopOnOpen) {
 				// get the compiler to stop from throwing 
@@ -309,14 +264,10 @@ export default class Collapse {
 			}
 		}
 	}
-
-	getBtnElems(id) {
-		return $(this.onElem).find(`button[data-href="${id}"], a[href="${id}"]`);
-	}
 }
 
 declare module 'cash-dom' {
     export interface Cash {
         collapse(options?: ICollapseOptions | StringPluginArgChoices): Cash;
-    }
+	}
 }

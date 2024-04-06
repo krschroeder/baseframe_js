@@ -8,19 +8,20 @@ This plugin is for parallaxing page elements (and yes background images). Use th
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-speed | number | 7 | Speed of the scroll. A negative amount will move it in the opposite direction.
-axis | string | 'y' | Axis of movement, it can be 'y','Y','x', or 'X' and is the axis in which the element moves.
-relativeElem | boolean/HTMLElement/string | false | If you need to set the parallaxing of one element relative to the offset it's parent. Parent which needs to be specified, in a classname or HTML element.
-$heightElem | HTMLElement | $(element) | the class or the element of the primary element to base the height off of.
-initOffset | boolean | false | If parallaxing an element, it'll account for the position and adjust it back to its start as it would be positioned without the plugin.
-bgFill | boolean| false | If it's a background image, this adds extra height to ensure it fills the area.
-outStop | number | 1 | 1 = 100% of the height of the element. 0.5 = 50%, etc. If it's set to .5, the element will stop parallaxing if 50% of the element has left the viewport, instead of the 100% by default.
+
+speed | number |  7 | Speed of the scroll. A negative amount will move it in the opposite direction.
+zSpeed | number |  5 | Speed of the z-axis. A negative amount will move it in the opposite direction.
+axis | string | 'y' | Axis of movement, it can be 'y','x'.
+zAxis | boolean | false | If `true` used will utilize the z-axis.
+cssPrefix | number |  'parallax' | CSS class name for styling purposes. Other derived CSS classes use the BEM naming convention.
+scrollAxis | number |  'y' | The axis of which the parallax is based on.
+relativeElem |  boolean \| HTMLElement \| string | false | If you need to bsae the parallaxing of one element relative to the offset of it's parent. 
+bgFill | number |  false | If the parallaxing element is a background image, this adds extra height to ensure it fills the it's containing element.
+rootMargin | number\| \[number,number\] | 0 | Delay the parallax effect relative to the viewport. Pass in an array \[start,end\] for tighter control.
+scrollMaxPxStop | number |  5000 | The max an item can scroll. Make this less should you want it to stop prior to exiting the screen. Good for when you have content that it shouldn't overlap. 
+zScrollMaxPxStop | number |  2000 | Max an item can scroll regarding the z-axis.
 minWidth | number | null | The minimum width for the parallax effect to run.
 maxWidth | number | null | The maximum width for the parallax effect to run.
-scrollMaxPxStop | number | 5000 | max an item can scroll. Make this less should you want it to stop prior to exiting the screen. Good for when you have content that it shouldn't overlap.
-zAxis | boolean | false  | Turns on a potential Z axis for zooming in (or out) of the element.
-zSpeed | number | 5 | Zoom speed of the element.
-zScrollMaxPxStop| number | 2000 | The maximum amount of pixels the Z axis can move.
 
 ### Example
 
@@ -28,38 +29,65 @@ __The following structure should be used with this plugin:__
 
 __HTML__
 ```html
-<div class="container v-space">
-	<div class="relative col" style="perspective: 800px;">
-		<div class="parallax-bg" data-parallax-options="{speed:-10, initOffset:true, bgFill: false, scrollMaxPxStop: 120, zAxis: true}">
-			<img src="https://via.placeholder.com/768x768/565656" alt="Placeholder" />
-		</div>
-	</div>
-	<div class="relative col">
-		<div class="parallax-bg" data-parallax-options="{speed:10, initOffset:true, bgFill: false, scrollMaxPxStop: 120}">
-			<img src="https://via.placeholder.com/768x768/444" alt="Placeholder" />
-		</div>
-	</div>
-	<div class="relative col">
-		<div class="parallax-bg" data-parallax-options="{speed:30, initOffset:true, bgFill: false, scrollMaxPxStop: 220, axis: 'x'}">
-			<img src="https://via.placeholder.com/768x768/222" alt="Placeholder" />
-		</div>
-	</div>
-	<div class="relative col">
-		<div class="parallax-bg" data-parallax-options="{speed:-10, initOffset:true, bgFill: false, scrollMaxPxStop: 120}">
-			<img src="https://via.placeholder.com/768x768" alt="Placeholder" />
-		</div>
-	</div>
-	<div class="relative col">
-		<div class="parallax-bg" data-parallax-options="{speed: -20, initOffset:true, bgFill: false, scrollMaxPxStop: 180}">
-			<img src="https://via.placeholder.com/768x768/777" alt="Placeholder" />
-		</div>
-	</div>
-	<div class="relative col">
-		<div class="parallax-bg" data-parallax-options="{speed:-20, initOffset:true, bgFill: false, axis: 'x'}">
-			<img src="https://via.placeholder.com/768x768/999" alt="Placeholder" />
-		</div>
-	</div>
-</div>
+<section class="container">
+    <div>
+        <h2 id="section-parallax">Parallax</h2>
+    </div>
+    <div class="parallax-area">
+        <img class="parallax-area__bg parallax do-parallax"
+            data-parallax-options="{speed: 20, bgFill: true, zAxis: true, rootMargin: 100}"
+             src="https://picsum.photos/1920/760"
+            srcset="https://picsum.photos/960/760 959w, https://picsum.photos/1920/760 960w"
+            size="(max-width: 959px) 959px, 960px" 
+            loading="lazy"
+        />
+    </div>
+    <div>
+        <h3>Randomized Movement</h3>
+    </div>
+    <div class="container parallax-tiles">
+        <div class="parallax do-parallax"
+            data-parallax-options="{speed: 10, bgFill: false, scrollMaxPxStop: 120}">
+            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+        </div>
+
+        <div class="parallax do-parallax"
+            data-parallax-options="{speed:30, bgFill: false, scrollMaxPxStop: 220, axis: 'x'}">
+            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+        </div>
+
+        <div class="parallax do-parallax"
+            data-parallax-options="{speed:-10, bgFill: false, scrollMaxPxStop: 120}">
+            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+        </div>
+
+        <div class="parallax do-parallax"
+            data-parallax-options="{speed: -20, bgFill: false, scrollMaxPxStop: 180}">
+            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+        </div>
+
+        <div class="parallax do-parallax" data-parallax-options="{speed:-20, bgFill: false, axis: 'x'}">
+            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+        </div>
+
+        <div class="parallax do-parallax" data-parallax-options="{speed:-10, bgFill: false, axis: 'x', rootMargin: [200,0]}">
+            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+        </div> 
+    </div>
+    <div>
+        <h3>Scroll Horizontally</h3>
+        <button class="btn" id="jsBtnSCrollHorizontal">Add space for horizontal scrolling</button>
+    </div>
+    <div class="parallax-area">
+        <img class="parallax-area__bg parallax -do-parallax do-parallax--hz" 
+            data-parallax-options="{speed: -10, axis: 'x', bgFill: true, scrollAxis: 'x'}"
+            src="https://picsum.photos/1920/760"
+            srcset="https://picsum.photos/960/760 959w, https://picsum.photos/1920/760 960w"
+            size="(max-width: 959px) 959px, 960px" 
+            loading="lazy"
+        />
+    </div>
+</section>
 ```
 
 ```javascript

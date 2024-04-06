@@ -1,50 +1,22 @@
-//cash dom or jquery are a dependency
-//not importing them because it can be either or
-import installStoreToLibrary from './util/install-store-to-library';
-import libraryExtend from './util/library-extend';
-import smoothScroll from './util/smooth-scroll';
-import getUrlParam, { getHashParam } from './util/get-param';
-import updateSearchParams from './util/update-search-params';
+ 
+import libraryExtend                    from './core/libraryExtend';
 
-import AccessibleMenu from './accessible-menu';
-import Collapse from './collapse';
-import EqualizeContent from './equalize-content';
-import LazyLoad from './lazy-load';
-import Modal from './modal';
-import NavDesktop from './nav-desktop';
-import NavMobile from './nav-mobile';
-import Parallax from './parallax';
-import SelectEnhance from './select-enhance';
-import Tabs from './tabs';
-import Toastr from './toastr';
+export { default as Cookies }           from './fn/Cookies';
+export { default as UrlState }          from './core/UrlState';
+export { default as smoothScroll }      from './fn/smoothScroll';
+export { default as throttledResize }   from './fn/throttleResize';
+export { default as transition }        from './fn/transition';
+export { default as trapFocus }         from './fn/trapFocus';
 
-import cookies from './cookies';
-import formInputs from './form-input';
-import throttledResize from './util/throttle-resize';
+export { default as AccessibleMenu }    from './AccessibleMenu';
+export { default as Collapse }          from './Collapse';
+export { default as LazyLoad }          from './LazyLoad';
+export { default as Modal }             from './Modal';
+export { default as NavDesktop }        from './NavDesktop';
+export { default as NavMobile }         from './NavMobile';
+export { default as Parallax }          from './Parallax';
+export { default as SelectEnhance }     from './SelectEnhance';
+export { default as Tabs }              from './Tabs';
+export { default as Toastr }            from './Toastr';
 
-
-// this is needed for all to operate
-// so I would say this makes sense
-export default installStoreToLibrary;
-
-export {
-    libraryExtend,
-    AccessibleMenu,
-    Collapse,
-    EqualizeContent,
-    LazyLoad,
-    Modal,
-    NavDesktop,
-    NavMobile,
-    Parallax,
-    SelectEnhance,
-    Tabs,
-    Toastr,
-    cookies,
-    formInputs,
-    getHashParam,
-    getUrlParam,
-    smoothScroll,
-    throttledResize,
-    updateSearchParams
-} 
+export default libraryExtend;

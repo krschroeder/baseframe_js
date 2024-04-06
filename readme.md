@@ -1,14 +1,10 @@
-# Base_Frame Plugins &amp; Functions
+# Baseframe JS Scripting #
+A suite of useful JavaScript plugins and functions for front-end development. Instead of searching for unconnected plugins that may not work together well, this suite does. The package features plugins for collapsible sections, modals, parallaxing elements, tabs and more. It features utilities for setting and getting cookies, smooth scrolling, throttled resizing, querystring parameter filtering and more. The plugin's are meant to be configurable and consistent with each other.
 
-A suite of useful Javascript plugins and functions to help with front-end development on websites. Instead of searching for unconnected plugins that may not work together well, this suite is to help remedy that. It's not to solve every problem with front-end web development, but the most common. The scripting features plugins for collapsible sections, popups, parallaxing elements, tabs and more. It features utilities for setting and getting cookies, smooth scrolling (without jQuery, or with CSS), throttled resizing, querystring parameter filtering and more. The plugin's are meant to be configurable and consistent. This scripting is designed to be imported in easily so you can start building!
+## Runs with [Cash](https://github.com/fabiospampinato/cash) (or JQuery if you wish) ##
+These are made to work with [Cash](https://github.com/fabiospampinato/cash) (with jQuery still an option) as the only dependency. Cash is a small jQuery alternative that give developers DOM traversing and manipulation.
 
-## Runs with [Cash](https://github.com/fabiospampinato/cash) (or JQuery if you wish)
-
-These are made to work with [Cash](https://github.com/fabiospampinato/cash) (with jQuery still an option) as the only dependency. Cash is a small jQuery alternative that give developers DOM traversing without the extra bloat. In my opinion, having a DOM traversing Library is essential. Also, everybody who's done any web developement is familiar with jQuery syntax.
-
-## Features
-### It's small!
-Combined all together its ~ 65k. Add that with Cash and its less than jQuery alone!
+## Features ##
 
 ### Pass in parameter options with a `data-` attribute
 The data attribute is always the `data-` (of course) and then the plugin name `pluginName` followed by `-options`.
@@ -18,34 +14,29 @@ __For Example:__ all have options that can be plugged in as a data attribute, in
 ```html
 <div id="your-plugin-elem" data-pluginName-options="{option:'text',option2: true, etc: 'you get the idea'}"></div>
 ```
-### Update Parameters After Init!
-Once initialized, each plugin when re-accessed (when not 'removed') will only get updates to their parameters. Could come in handy for instance when you have an accordion (or collapsible section) and on mobile you want it to scroll to the top on open (that plugin does that!), but not on desktop. This works for the vast majority of params, but not all FYI. For example, I can specify a 'click' event and that can only be set on 'init'. Perhaps I'll document this later on though.
+
+### Update Parameters After Initialization! ###
+Once initialized, each plugin when re-accessed (when not 'removed') will only get updates to their parameters. Handy for instance when you have an accordion (or collapsible section) and on mobile you want it to scroll to the top on of the item on open, but not on desktop. This works for the vast majority of params, but not all FYI. For example, I can specify a 'click' event and that can only be set on 'init'. However, each plugin can be 'removed' and then re-installed as well.
     
 ```javascript
-$('.your-plugin-elem').PluginOfSorts({change:'yep', height: 1e6})
+$('.your-plugin-elem').plugin({change:'yep', height: 1e6})
 ```
 
-### Callbacks after events
+### Callbacks after events ###
 
 Lots of callback functions to run after and before events and such that may help you out when you need it most.
 
-### IE11 usage
-Most of these scripts all work back to IE11. There should be some polyfilling needed for this "retired" browser, that may still be a requirement for some of you out there.
+## Example Script of Importing Everything In ##
 
-
-## Example Script of Importing Everything In
-
-### Barrel File
-
+### Barrel File ###
+ 
 This project is set-up with a __barrel file__ or a single reference to everything in the project. This is the neater syntax, but the drawback to this is that it will not tree-shake the unused imports.
 
 ```javascript
-import installStoreToLibrary, {
-    installStoreAsDataToLibrary,
-    libraryExtend,
+import libraryExtend, {
     AccessibleMenu,
     Collapse,
-    EqualizeContent,
+    Cookies,
     LazyLoad,
     NavDesktop,
     NavMobile,
@@ -53,8 +44,7 @@ import installStoreToLibrary, {
     SelectEnhance,
     Tabs,
     Toastr,
-    cookies,
-    formInputs,
+    UrlState,
     smoothScroll,
     throttledResize,
     trapFocus
@@ -66,41 +56,25 @@ import installStoreToLibrary, {
 This is the recommended way to bring everything in. Not a 'neat' as the use of the barrel file, but this will reliably tree-shake anything unused in the project. 
 
 ```javascript
-// necessary functions
-import installStoreToLibrary from 'baseframe-js/build/js/util/install-store-to-library';
-// or to extend as $.data to mimick jQuery's
-import installStoreAsDataToLibrary from 'baseframe-js/build/js/util/install-store-as-data-to-library';
-
-import libraryExtend from 'baseframe-js/build/js/util/library-extend';
+// Will install to either Cash Dom or jQuery (details below)
+import libraryExtend from 'baseframe-js/dist/js/core/libraryExtend';
 
 // Plugins individually (best for TS type support)
-import AccessibleMenu from 'baseframe-js/build/js/accessible-menu';
-import Collapse from 'baseframe-js/build/js/collapse';
+import AccessibleMenu from 'baseframe-js/dist/js/AccessibleMenu';
+import Collapse from 'baseframe-js/dist/js/Collapse';
+//... and the other plugins
+
 
 // some of the utility functions in the project...
-import throttledResize from 'baseframe-js/build/js/util/throttle-resize';
-import smoothScroll from 'baseframe-js/build/js/util/smooth-scroll';
-import trapFocus from 'baseframe-js/build/js/util/trap-focus';
+import throttledResize from 'baseframe-js/dist/js/fn/throttleResize';
+import smoothScroll from 'baseframe-js/dist/js/fn/smoothScroll';
+import trapFocus from 'baseframe-js/dist/js/fn/trapFocus';
 ```
 
-### Plugins and the \$.store (or \$.data) method.
+### Extending into the Library ###
+By default the plugins don't extend into the __Cash Dom__ library, rather they need to be explicitly extended. This applies the same if using jQuery of course as well.
 
-If the `libraryExtend` function is used to extend the plugins in __Cash Dom__, when initialized the plugin instance is stored to the element. In __Cash Dom__ the data method doesn't work the same as it does (by design) with jQuery's, so a `$.store` method was made to essentially mimick that. If using jQuery, this function call can be ignored.
-
-```javascript
-// necessary for all plugin's to operate
-// much like jQuery's $.data method, the $.store is similar
-// NOTE: this can be ignored if using jQuery, and it'll fallback to its 
-// $.fn.data method to store instances and their params.
-installStoreToLibrary(true);
-// or the following function to mimick jQuery's data fn
-installStoreAsDataToLibrary(true);
-```
-### Extending into the Library
-
-By default the plugin's don't extend into the __Cash Dom__ library, rather they need to be explicitly extended. This applies the same if using jQuery of course as well.
-
-```javascript
+```typescript
 // not necessary for the plugin's to work,
 // but it's recommended that we do extend to the library
 libraryExtend([
@@ -117,60 +91,58 @@ libraryExtend([
 ]); 
 ```
 
-## Using Styles For Plugins
-Styles are located in the `src/assets/scss/` directory and all can be grabbed that way and added on in. Still should do a little more work in updating the SCSS variables to be frank. So I would just drag those files into the project directly. The SCSS should be pretty minimal and generic so it'll more easily take on custom styling.
+### Removing the plugin ###
+Each plugin can be removed by calling `$('.element').plugin('remove')`, and it'll call the static method to remove it and all its components. Or if you want it can be stored as a method `$.plugin.remove($('.element').eq(1))` or `$.plugin.remove('.element')` and done that way.
 
 
-## Plugin Names and What They Do.
 
-### Accessible Menu
-Adds tabbing, allows the use of arrows for toggling around the navigation, which is configurable depending on the menu design. The use of the escape key to go up a level.<br>
+## Using Styles For Plugins ##
+Styles are located in the `src/assets/scss/` directory, and all can be grabbed that way and added on in. The SCSS is minimal and generic to do what you want with it.
+
+
+## Plugin Names and What They Do. ##
+
+### Accessible Menu ###
+Adds tabbing, allows the use of arrows for toggling around the navigation, which is configurable depending on the menu design. Also adds functionality so the use of the escape key to go up a level.<br>
 __[View Accessible Menu](#accessible-menu-plugin)__
 
-### Collapse 
-It's is for toggling collapsible sections. Can be used like an accordion and etc.<br>
+### Collapse ###
+It's for toggling collapsible sections. Can be used like an accordion and etc.<br>
 __[View Collapse](#collapse-plugin)__
 
-### Equalize Content
-When Flexbox, or other options won&rsquo;t work, use this to equalize content. With current CSS will very seldom, if ever really need to be used <br>
-__[View Equalize Content](#equalize-plugin)__
 
-### Lazy Load
-Load background images and images lazily once they appear in the viewport! Also, run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` API.<br>
+### Lazy Load ###
+Load background images and images lazily once they appear in the viewport. Also, run custom functions, by hooking into callbacks as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` API underneath the hood.<br>
 __[View Lazy Load](#plugin-lazy-load)__
 
-### Modal
-This is a more minimalistic version of the 'popup' plugin. Nice bit of flexibility do things like image carousels, confirm prompts and such with just a little peppering of custom code.<br>
+### Modal ###
+A modal, that will give you flexibility to do various things. Nice bit of flexibility do things like image carousels, confirm prompts, alerts and such with just a little configuration and CSS styling.<br>
 __[View Modal](#modal-plugin)__
 
-### Navigation Desktop
-This plugin just adds a delay to the desktop navigation for the nestled levels of a `<ul>`. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page.<br>
+### Navigation Desktop ###
+This plugin allows a user to refocus their mouse over a dropdown in the navigation if they accidentally hover off. Also, features an edge detection on the drop-downs `<ul>`, and uses corresponding CSS to position, so it stays on the page. It's a<br>
 __[View Navigation Desktop](#nav-desktop-plugin)__
 
-### Navigation Mobile
-Neat little mobile navigation plugin.<br> 
+### Navigation Mobile ###
+Neat little mobile navigation plugin to enable the menu and toggle sub-sections.<br> 
 __[View Navigation Mobile](#nav-mobile-plugin)__
 
-### Parallax Elements
-For making a parallaxing elements on the page. Lots of configurable options.<br>
+### Parallax Elements ###
+For making a parallaxing elements on the page, parallax horizontally, vertically and zoom-in or out. Lots of configurable options.<br>
 __[View Parallax Elements](#parallax-plugin)__
 
-### Select Enhance
-Enhance a selectbox.<br>
+### Select Enhance ###
+Enhance a `<select>` element and it's options Unlike a radio button or checkbox, a select element can't fully be styled without further HTML enhancement.<br>
 __[View Select Enhance](#select-enhance-plugin)__
 
-### Tabs
-Tabs in tabs, change onhashchange this does it for tabs!<br>
+### Tabs ###
+For tab sections. A user can add tabs inside another tabs section. Also, track the state of the tabs using history push or replace states.<br>
 __[View Tabs](#tabs-plugin)__
 
 
-### Toastr
-Toastr for little dissmisable message to notify a user!<br>
+### Toastr ###
+Toastr for little dissmisable message to notify a user! Enable several at once, customize their positions and more.<br>
 __[View Tabs](#toastr-plugin)__
-#### Removing the plugin ####
-
-Each plugin can be removed by calling `$('.plugin-selector').plugin('remove')`, and it'll call the static method to remove it and all its components. Or if you want it can be stored as a method `$.plugin.remove($('.plugin-selector').eq(1))` or `$.plugin.remove('.plugin-selector')` and done that way.
-
 
 <br>
 <br>
@@ -187,18 +159,13 @@ Each Plugin class has the following properties set on it.
             return VERSION;
         }
 
-        static get pluginName() {
-            //Data Name is `YourClass`
-            return DATA_NAME;
-        }
-
         static remove() {
             //... remove operations ridding of data stored
             //    and any associated events
         }
         
-        constructor(element, options, index){
-            //... your constructor
+        constructor(element, options, index) {
+            //... constructor code
         }
     }
 
@@ -209,132 +176,108 @@ Each Plugin class has the following properties set on it.
 ### Essential Functions ###
 
 #### libraryExtend ####
-First parameter can be one Plugin, or an array of them. Pass in the second param which will notify the user of updated parameters (good for development).
+First parameter can be one Plugin, or an array of them. Pass in the second param which will notify the user of updated parameters (good for development). Third options if you just want to specify the library your extending it into.
 
-```javascript
+```typescript
 // the third option 'Lib' allows a user to pass in either 
 // jQuery or Cash library to extend the plugin's to. 
-libraryExtend(plugins:Array<Plugin> | Plugin, notify?:boolean, Lib: $)
-```
-
-
-#### installStoreToLibrary ####
-If using **Cash** and installing plugins into the library, this function needs to be run to install `$.store`, which is used internally on all the plugins. If using **jQuery** this can be ignored as it'll use `$.fn.data` to store instances of plugins and their parameters.
-Pass in the first attribute to add in the `expose` method, which allows you to see all the data stored in the Map.
-
-```javascript
-installStoreToLibrary(expose?:boolean) 
-```
-
-#### $.store ####
-
-Inside the `$.store` method is the following structure. The first parameter can be an `HTMLElement` or a `$(HTMLElement)`. The second parameter is a `string` and is the identifier on on which the data is stored. Multiple properties can be stored on the same element. In the plugin's the instance (`PluginName_instance`) is saved, as well as the instance paremeters (`PluginName_params`). 
-
-```javascript
-const Store = {
-	set(element, keyStore, data) {
-		mapData.set(element, keyStore, data)
-	},
-	get(element, keyStore) {
-		return mapData.get(element, keyStore)
-	},
-	remove(element, keyStore) {
-		mapData.delete(element, keyStore)
-    },
-    //console logs the all the data stored in the Map
-    //which could be helpful if developing.
-    //only added if the first parameter is set to true in the function
-	expose(){
-		mapData.expose()
-	}
-};
-```
-#### installStoreAsDataToLibrary ####
-
-If using **jQuery** and you have plugins that use `$.fn.data` and `$.fn.removeData` this can alternatively be used to map over the **Cash Dom's** built-in data method. The data retrieval for `data-attrs` is the same pulling the first occurance on the same items queried. It first checks the data stored in the `Store`.
-
-
-```javascript
-installStoreAsDataToLibrary(expose?:boolean) 
+libraryExtend(plugins:Array<Plugin> | Plugin, notify?:boolean, Lib: Cash | jQuery);
 ```
 
 ### Functions
 
-
-#### formInputs
-formInputs function currently adds in space-bar support for radio buttons, and checkbox inputs. As long as there is a `for` attribute on a `<label>` that maps to an input.
-
-```javascript
-formInputs.init();
-```
-
 #### smoothScroll
 
-First parameter is the HTMLElement's top to scroll to position top, the second is the speed. Default speed is 100. This uses the `window.scroll` so should work cross-browser. This stops scrolling if the previous pixel is the same as the next, if the scroll tries to get broken, or if it can't scroll to anymore. Third argument is a callback function to run after the scrolling is done. The 4th parameter is the arguments for that function if necessary.
+First parameter is the `HTMLElement`'s top to scroll to position top, the second is the speed. Default speed is 100. This uses the `window.scroll` so should work cross-browser. This stops scrolling if the previous pixel is the same as the next, if the scroll tries to get broken, or if it can't scroll to anymore. Third argument is a callback function to run after the scrolling is done. The 4th parameter is the arguments for that function if necessary.
 
-```javascript
-smoothScroll(scrollToTop :number ,speed?: number , afterScroll?:Function, afterScrollArgs?:Array<any>);
-```
-
-#### cookies
-
-Getting and setting cookies made easy!
-
- 
-__params__
-Option | Description
------- | -------
-path | path to the cookie, default is the current `location.pathname`.
-expires | set in minutes. Time the cookie will expire.
-secure | if it can only be accessed via https. This gets set automatically when `sameSite` is set to `None`.
-sameSite | `Lax`, `Strict` or `None` are the options.
-
-
-```javascript
-//setting a cookie
-cookies.set('cookieName','your cookie value',{path:'/',expires: 60, secure: true, sameSite: 'Lax'});
-
-//getting a cookie
-cookies.get('cookieName',{path: '/'});
-
-//removing a cookie
-cookies.remove('cookieName',{path:'/path/to-your/cookie'});
-
-//maybe you want to extend $ ?
-$.extend({cookies: cookies});
-```
-
-
-#### getHashParam
-Searches for a query-string value using `location.hash`.
-
-```javascript
-getHashParam(search:string)
-```
-
-#### getUrlParam
-Searches for a query-string value using `location.search`, pass in an optional second parameter to search another string for key-pair values.
-
-```javascript
-getUrlParam(search:string ,searchString?:string)
+```typescript
+smoothScroll(scrollToTop :number ,speed?: number , afterScroll?:(...args:any) => void, afterScrollArgs?:Array<any>);
 ```
 
 #### trapFocus
-This is used in the `Popup` and `NavMobile` plugin's, to trap the focus of tabbing events to just the availble focusable elements. Each tab it re-takes inventory on what is available to tab to, so you can load dynamic/change content that may not be available when the focus trap is created.
+This is used in the `Modal`, `Tabs` and `Collapse` plugin's, to trap the focus of tabbing events to just the availble focusable elements. Each tab it re-takes inventory on what is available to tab to, so you can load dynamic/change content that may not be available when the focus trap is created.
 
 __params__
+The parameters that make the `ITrapFocusProps` interface.
+
 Option | Type | Default | Description
 ------ | ---- | ------- | -------
 focusFirst | boolean | true | Focus's the first element
 nameSpace | string | 'trapFocus' | Unique namespace for the tabbing keydown event.
 focusableElements | string or array | ['button', 'a', 'input', 'select', 'textarea', '[tabindex]'] | A listing of focusable elements.
-```javascript
-const trappedFocus = trapFocus(element:JQuery<HTMLElement> | Cash | HTMLElement, params?: PlainObject);
+
+```typescript
+const trappedFocus = trapFocus(element:Cash | HTMLElement, params?: ITrapFocusProps);
 // to remove later on
 trappedFocus.remove();
 
 ```
 
+#### Cookies
+Static class for or getting, setting and deleting cookies.
+
+```javascript
+//setting a cookie
+Cookies.set('cookieName','your cookie value',{path:'/',expires: 60, secure: true, sameSite: 'Lax'});
+```
+__Cookies Set Params__
+Option | Description
+------ | -------
+path | Path to the cookie, default is the current `location.pathname`.
+expires | Set in minutes. Time the cookie will expire.
+secure | Sets the cookie so it can only be accessed via https protocol. This gets set automatically when `sameSite` is set to `None`.
+sameSite | `Lax`, `Strict` or `None` are the options.
+
+```javascript
+//getting a cookie
+Cookies.get('cookieName',{path: '/'});
+
+//removing a cookie
+Cookies.remove('cookieName',{path:'/path/to-your/cookie'});
+
+//maybe you want to extend $ ?
+$.extend({cookies: Cookies});
+```
+
+
+#### UrlState
+Static class to set, get URL hash and search parameters. Easiest way to explain is to just show the types.
+```typescript
+type StateChangeType = 'push' | 'replace';
+type UrlSearchType   = 'search' | 'hash' | 'hashVal';
+type UrlPrintPattern = 'repeat' | 'normal';
+type UrlPrintOptions = { pattern: UrlPrintPattern; brackets: boolean };
+type UrlParamRawValue = string | (number | string)[] | null;
+ 
+// 'on' set to true, sets the window popstate event
+// 'on' set to false removes the event
+UrlState.refresh(on: boolean):void;
+ 
+// prints the values, 'brackets' option will add the [] to any
+// key that contains an array value, as back-end needs or doesn't
+UrlState.print(type: UrlSearchType, options: UrlPrintOptions): string
+
+// updates the url, this is used in the UrlState.set if the fourth param is set
+UrlState.toUrl(type: UrlSearchType, paramName: string): UrlParamRawValue
+ 
+// sets new value, updates params in url if 4th param set
+UrlState.set( 
+    type: UrlSearchType, 
+    paramName: string, 
+    value: UrlParamRawValue,
+    state?: StateChangeType
+):void;
+ 
+// sets a hash value, ex: 'https://your-website.com/some-page#your-hash-val'
+// passing in null removes the value
+UrlState.setHashVal(value: string | null, state?: StateChangeType): void;
+ 
+// returns the 'search', 'hash', 'hashVal' values
+UrlState.get(type: UrlSearchType, paramName: string);
+```
+
+
+###Plugins###
 <br>
 <br>
 <br>
@@ -350,7 +293,8 @@ Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 keyDirections | array | ['horizontal', 'vertical', 'vertical'] | The direction in which the menu appears. For example, 'horizontal' means the `<li>` elements are going across the page. The next in the array is 'vertical', which means they're stacked. Typically if a third level exists they're also vertical as well.
 focusCss | string | 'focus' | the focus class that allows the menu to appear as being active
-focusLeaveElems | string | 'a, [tabindex], select, button' | listing of options to focus on to escape the last nav item via the arrow keys  
+focusInElems | string | 'a, [tabindex]' | Listing of elements that can be focused-in on.
+focusLeaveElems | string | 'a, [tabindex], select, button' | Listing of elements to focus on to escape the last nav item via the arrow keys  
 
 ### Example
 
@@ -398,21 +342,19 @@ This has a move-to-top after open feature, open with location hash, and callback
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-cssPrefix | string |  'collapse' |   CSS class name for styling purposes that is used as prefix to all other classes (btn, body, etc).
-toggleClickBindOn | string |  'group' |  Attaches the click to the selector or `$('.your-selector').colla...`, other option is __'body'__ and it'll then be set on the body. Can come in handy, I had a use-case for it, forgot exactly why.
+cssPrefix | string |  'collapse' | The primary CSS class and prefix for all other derived elements. The BEM CSS naming convention is used for all derived elements.
 toggleDuration | number |  500 |  The speed at which the items will open, should pair with CSS transition settings.
 toggleGroup | boolean |  false |  More or less toggles the other opened element(s) closed, and make it behave like an accordion.
 moveToTopOnOpen | boolean |  false |  After the element is opened, the item will move to the top of it. Good for mobile.
 moveToTopOffset | number |  0 |  Should we need to offset the move to the top if the __moveToTopOnOpen__ is set to `true`.
 scrollSpeed | number |  100 |  The speed of the scroll if __moveToTopOnOpen__ is set to `true`.
-useHashFilter | string | null | If there is a number of elements where the `location.hash` value is used, it may be necessary to filter it to get the intended data. Pass in a string value, i.e.: 'collapse' and it'll load and filter through as needed while maintaining the remaining location hash values. this only gets used if 'useLocationHash' option is selected. 
-useLocationHash | boolean |  true |  Use the `window.location.hash` to open and close the items.
-loadLocationHash | boolean |  true | Loads with a location hash in the browser address bar, must of course be the ID of the item.
-historyType | string | 'push' | If using using `useLocationHash` or a history of events, 'push' pushes a new state, and 'replace' replaces the current.
-afterOpen | function |  ($btnElems, $collapsibleItem) => { } |  callback function after an item is opened.
-afterClose | function |  ($btnElems, $collapsibleItem) => { } |  callback function after an item is closed.
-afterInit | function |  (element) => { } | callback function after collapse is initialized.
-
+urlFilterType | 'hash'\|'search' | 'hash' | The filtering type to use (either `location.hash` or `location.search`) to track the status of an open modal.
+historyType | 'replace'\|'push'| 'replace' | The history state update. Either `history.pushState` or `history.replaceState`.
+locationFilter | string |  null | Key name of the param to be captured in the location URL. Example: `YOUR_URL#collapse=the-item-id`, where `the-item-id` is the ID property and `collapse` is our `locationFilter`.
+loadLocation | boolean |  true | Loads with a location hash in the browser address bar, must of course be the ID of the item.
+afterOpen | function |  ($btnElems, $collapsibleItem) => {} |  callback function after an item is opened.
+afterClose | function |  ($btnElems, $collapsibleItem) => {} |  callback function after an item is closed.
+afterInit | function |  (element) => {} | callback function after collapse is initialized.
 
 ### Example
 
@@ -423,7 +365,7 @@ __HTML__
 <div class="collapse collapse-group" >
 <div class="collapse__item">
 	<div class="collapse__header">
-		<h2><a href="#item-1" class="collapse__btn" role="button" aria-expanded="false" aria-controls="item-1"
+		<h2><a href="#item-1" class="collapse__btn" role="button" aria-controls="item-1"
 		>Item 1</a></h2>
 	</div>
 	<div class="collapse__body" id="item-1">
@@ -464,56 +406,6 @@ $('.collapse-group').collapse();
 <br>
 <br>
 <br>
-<h2 id="equalize-plugin">Equalize</h2>
-
-
-### Features
-This __equalization script__ will work with any responsive classes your heart desires to use. It will take elements and measure their position top and add them to an array. Then it assigns the tallest height to that row, so they all are sized per row neatly. You can stop it at certain widths, you can start it, and there are other configurable options. If the equalize items are all in one column rows then no heights will be added. Look at the __Settings__ for the rest.
-
-### Settings
-
-Option | Type | Default | Description
------- | ---- | ------- | -----------
-equalizeItem | string | '.equalize' | The class of the the item to be equalized
-startWidth | number | 0 | The width to start the plugin's equalization process
-stopWidth | number |  480 | The width in which it stops equalizing. Perhaps you have just one column, your not going to need to equalize anything!
-timerDelay | number |  100 | The throttling delay on the resizing of the window/element. May need to be adjusted if other corresponding scripting is going on.
-useHeight | boolean |  false | Set to __true__ will use 'height' instead use 'min-height' with css.
-useMargin | boolean |  false | Calculates in 'margin' and applies to the height
-aligningCss| string |  'flex-l' | This is the class that lines up the containers for equalization. Other classes that do the same thing can be used. That or if you set up an inline-block class as well to line them up.
-resizeCss| string |  'in-resize' | Transition effects will destroy equalization in certain scenarios, so this removes the transition while its being resized
-fuzzy| number |  1 | The variance it can have so it doesn't need to be exactly aligned per pixel. So if an element is off by 1px it'll still align.
-
-
-### Example
-
-__The following is an example html structure for this plugin:__
-
-__HTML__
-```html
-<div class="equalize-container">
-	<div class="col" >
-		<div class="equalize or-your-equalize-class box">
-			<h3>Demand Generation</h3>
-			<p> Hileman Group provides holistic demand generation services for our clients, from top-of-the-funnel tactics to nurturing tactics that drive the closing sale.</p>
-		</div>
-	</div>
-	<div class="col" >
-		<div class="equalize or-your-equalize-class box">
-			&hellip;
-		</div>
-	</div>
-</div>
-```
-
-__JavaScript__
-```javascript
-$('.equalize-container').equalizeContent();
-```
-
-<br>
-<br>
-<br>
 <h2 id="plugin-lazy-load">Lazy Load</h2>
 
 By default it will load background images and images lazily once they appear in the viewport. But also run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses [window.IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API). This plugin works to load images with the `loading="lazy"` attribute (yes it would work by itself!). It loads the image/iframe before the first pixel enters the viewport--see settings as we can pad so it can appear loaded once scrolled to. The `loading="lazy"` attribute only works once the first pixel enters the viewport, which may cause a blank space before the image loads.
@@ -530,89 +422,51 @@ force | boolean | false | Pass in a custom condition that will just bypass the l
 observerID| string | null | ID of `window.IntersectionObserver` which gets created with the 'new' operator, so one can get used for each instance.
 unobserve| boolean | true | once entered in on the viewport, it'll unobserve. Make `false` should you want to re-observe an element.
 observerOpts| object | { rootMargin: '48px' } | Object being passed is the 'options' argument for the IntersectionObserver, please refer to documentation regarding that [here](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#Creating_an_intersection_observer).
-
-
-
 ### Example
 
 __The following is an example html structure for this plugin:__
 
 __HTML__
 ```html
-<img src="./assets/images/cleardot.gif" 
-    data-src="https://placehold.it/768x768/565656" 
-    alt="Placeholder" 
-/>
+<img src="https://placehold.it/768x768/565656" alt="Placeholder" loading="lazy"/>
 
-<img src="./assets/images/cleardot.gif" 
-    data-src="https://placehold.it/768x768/444" 
-    alt="Placeholder" 
-/>
+<img src="https://placehold.it/768x768/444" alt="Placeholder" loading="lazy"/>
 
-<img src="./assets/images/cleardot.gif" 
-    data-src="https://placehold.it/768x768/222" 
-    alt="Placeholder" 
-/>
+<img src="https://placehold.it/768x768/222" alt="Placeholder" loading="lazy"/>
 
-<img src="./assets/images/cleardot.gif" 
-    data-src="https://placehold.it/768x768" 
-    alt="Placeholder" 
-/>
+<img src="https://placehold.it/768x768" alt="Placeholder" loading="lazy"/>
 
 
-
-<div class="background-area-bg desktop-bg md-up-show"
- data-bg-src="https://placehold.it/1920x760"
-></div>
-
-<div class="background-area-bg mobile-bg md-up-hide"
-    data-bg-src="https://placehold.it/768x768"
-></div>
-
-
-<h1>Common Plugins and JavaScript for Websites</h1>
-<p class="text-md">It's nearly inevitable your website will need these plugin's and functions for it to work. These are made to work with <a href="https://github.com/fabiospampinato/cash" target="_blank">Cash</a> (with jQuery still an option) as the only dependency.</p>
+<p>It's nearly inevitable your website will need these plugin's and functions for it to work. These are made to work with <a href="https://github.com/fabiospampinato/cash" target="_blank">Cash</a> (with jQuery still an option) as the only dependency.</p>
 <h2>About</h2>
 <p><a href="#page-bottom" class="smooth-scroll">Go To Page Bottom Smooth Scroll</a> Below are some common plugin's to help enhance your website. You'll notice some are missing (like a Carousel for example), that's because there are just some really, realy well made, IMO. Not touching that stuff, use it, its great. Others I always thought could be better, even though a few are frankly near duplicates 🤷🏻‍♂️. Anyways here we are, and you're stil reading this! If you download you probably work where I do, or somehow stumbled across.</p>
 
 <h2>Some nice features are their is some shared syntax in the way they all operate.</h2>
 
 <p><strong>For Example:</strong> all have options that can be plugged in as a data attribute, in JSON format (loosely written somehat)</p>
-<code>
-    &lt;div id="your-plugin-elem" data-plugin-name="{option:'text',option2: true, etc: 'you get the idea'}"&gt;&lt;/div&gt;
-</code>
-
-<p><strong>For Example:</strong> all can have their configuration change. Which can come in handy sometimes when things get complex</p>
-<code>
-    $('.your-plugin-elem').PluginOfSorts({change:'yep', height: 1e6})
-</code>
                 
 ```
 
 __JavaScript__
 ```javascript
 
-//Background images... with a custom in event
-$('.background-area-bg').lazyLoad({
-    observerID: 'background-area-bg', 
-    inEvt: (el)=>{console.log('el',el)}
-});
-
-//regular images
-$('img[data-src]').lazyLoad({
-    observerID: 'img[data-src]'
+//load regular images few pixels before then enter
+//the screen rather than the first pixel to enter
+$('img[loading="lazy"]').lazyLoad({
+    observerID: 'imgLazy',
+    observerOpts: { rootMargin: '100px' }
 });
 
 //a bunch of paragraphs to style right!
-$('p').lazyLoad({
+$('p.highlight').lazyLoad({
     observerID: 'p',
     loadImgs: false, 
     unobserve:false,
     inEvt: (el) => {
-        setTimeout(()=> {el.style.color = 'red';},1000);
+        setTimeout(()=> {el.style.background = '#ccc';},1000);
     },
     outEvt: (el) => {
-        setTimeout(()=> {el.style.color = '';},1000);
+        setTimeout(()=> {el.style.background = null;},1000);
     }
 });
 ```
@@ -633,7 +487,7 @@ enableEvent | string |  'click' | The event to show the modal, change to whateve
 appendTo | string | HTMLElement |  document.body | the HTML element the popup appends to.
 ariaLabelledby | string |  null | If using an `aria-labelledby` to label the modal for ADA purposes.
 ariaLabel | string |  null | If using an `aria-label` to label the modal for ADA purposes.
-cssPrefix | string |  'modal' | CSS class name for styling purposes. The outer most CSS class. Children elements naming uses the BEM naming convention.
+cssPrefix | string |  'modal' | The primary CSS class and prefix for all other derived elements. The BEM CSS naming convention is used for all derived elements.
 closeBtnIconCss | string |  'ico i-close' | CSS used on the close button.
 closeOutDelay | number |  250 | Time for closing the animation. Sync with CSS transition or animation.
 backDropClose | boolean|  true | Toggle whether a user can click the backdrop to close the modal.
@@ -641,13 +495,14 @@ fromDOM | boolean |  true | If the modal content is grabbed from the DOM. Set to
 modalCss | string |  null | Additional modal css for styling or other scripting purposes
 modalID | string |  null | The ID of the modal.
 src | string |  '' | CSS selector for DOM elements, or can be custom created element from data either from an AJAX call or computed otherwise. Optional if modal content is dynamic/generated.
-useHashFilter | string |  null | If there is a number of elements where the `location.hash` value is used, it may be necessary to filter it to get the intended data. Pass in a string value, i.e.: 'modal' and it'll load and filter through as needed while maintaining the remaining location hash values. this only gets used if 'useLocationHash' option is selected. 
-useLocationHash | boolean |  true |  Use the `window.location.hash` to open and close the items.
-loadLocationHash | boolean |  true | Loads with a location hash in the browser address bar, must of course be the ID of the item.
+urlFilterType | 'hash'\|'search' | 'hash' | The filtering type to use (either `location.hash` or `location.search`) to track the status of an open modal.
+historyType | 'replace'\|'push'| 'replace' | The history state update. Either `history.pushState` or `history.replaceState`.
+locationFilter | string |  null | Key name of the filter to be captured in the location URL. Example: `YOUR_URL#modal=the-modal-id`, where `the-modal-id` is the `modalID` property and `modal` is our `locationFilter`.
+loadLocation | boolean |  true | Loads with a location from the browser address bar, must of course be the ID of the item.
 onOpenOnce | object |  (modalObj) => {} | Event that fires only the first time the modal is enabled
 onOpen | object |  (modalObj) => {} | Event that fires when the element is opened
 afterClose | object | (modalObj) => {} | Event that fires after the element is closed
-
+    
 #### Modal Object
 This is an object with the following props/elements that is the first (and only) argument above in the callback functions (`onOpenOnce`,`onOpen` and `afterClose`). This should help allow for more flexibility with the prompt to attach any additional events or styling more easily. Below some examples with a little bit of custom code with this object.
 
@@ -661,7 +516,7 @@ This is an object with the following props/elements that is the first (and only)
     $closeBtn,
     id: modalID,
     $modal, //outermost element
-    disableModal: () => _.disableModal(), //disable modal fn
+    close: () => _.close(), //disable modal fn
     show: false //state
 }
 ```
@@ -672,124 +527,161 @@ __The following structure should be used with this plugin:__
 
 __HTML__
 ```html
-<div style="display: none;">
-    <div id="modal-content">
-        <h1>Pop-up</h1>
-        <p>This is for a basic modal content</p>
-        <p>Cum sociis natoque <a href="#"> some link </a>penatibus et magnis dis parturient. Etiam habebis sem dicantur magna mollis euismod. Curabitur blandit tempus ardua ridiculus sed magna. <button type="button" disabled>Some Button</button> Unam incolunt Belgae, aliam Aquitani, tertiam. Nihil hic munitissimus habendi <button type="button">clickable btn</button> senatus locus, nihil horum?</p>
+<section class="modal-section container">
+    <h2 id="section-modal">Modal</h2>
+
+    <div>
+        <h3>Modal with Hidden Content</h3>
+        <p>Modal with grabbing content from the page in a hidden section.</p>
+        <a href="#modal-content" class="button btn-modal"
+            data-modal-options="{closeBtnLabel:'Close it up'}">Modal with content from DOM</a>
+
+        <h3>Modal With Generated Content</h3>
+        <p>Content that is generated from some source. Could be an AJAX call, or in this case just defined in the JS.</p>
+        <button type="button" class="button" id="btn-gen-content">Generated Content</button>
+        
+
+        <h3>Modal Group / Carousel</h3>
+        <p>Carousel of items. Note: the 'carousel' portion is done with additional scripting separate from the modal.</p>
+
+        <div class="modal-section__group">
+            <button type="button" 
+                data-img-src="https://picsum.photos/600/400"
+                alt="Picsum Pic 1" class="pic-group"
+            >
+                <img src="https://picsum.photos/600/400" alt="Picsum Pic 1" loading="lazy"/>
+            </button>
+
+            <button type="button" 
+                data-img-src="https://picsum.photos/900/550"
+                class="pic-group"
+            >
+            <img src="https://picsum.photos/900/550" alt="Picsum Pic 2" loading="lazy"/>
+            </button>
+
+            <button type="button" 
+                data-img-src="https://picsum.photos/900/450"
+                class="pic-group"
+            >
+                <img src="https://picsum.photos/900/450" alt="Picsum Pic 3" loading="lazy"/>
+            </button>
+
+            <button type="button" 
+                data-img-src="https://picsum.photos/800/600"
+                class="pic-group"
+            >
+                <img src="https://picsum.photos/800/600" alt="Picsum Pic 4" loading="lazy"/>
+            </button>
+        </div>
     </div>
-</div>
 
-<a href="#modal-content" class="button btn-modal"
-    data-modal-options="{title:'How About That'}"
->Modal With HTML</a>
-
-<button type="button" id="btn-gen-content">Generated Content</button>
-
-<!-- Quick Image Carousel Example -->
-<div class="col pic-group-holder">
-    <button type="button" 
-        data-img-src="https://placekitten.com/1200/800"
-        alt="Kittens (1)" class="pic-group"
-    >
-        <img src="https://placekitten.com/600/400" />
-    </button>
-
-    <button type="button" 
-        data-img-src="https://placekitten.com/900/550"
-        class="pic-group"
-    >
-    <img src="https://placekitten.com/600/500" alt="Kittens (2)"/>
-    </button>
-
-    <button type="button" 
-        data-img-src="https://placekitten.com/900/450"
-        class="pic-group"
-    >
-        <img src="https://placekitten.com/600/300" alt="Kittens (3)" />
-    </button>
-
-    <button type="button" 
-        data-img-src="https://placekitten.com/900/450"
-        class="pic-group"
-    >
-        <img src="https://placekitten.com/600/400"alt="Kittens (4)" />
-    </button>
-</div>
+     <div style="display: none;" hidden>
+        <div id="modal-content">
+            <h1>Pop-up</h1>
+            <p>This is for a basic modal content</p>
+            <p>Cum sociis natoque <a href="#"> some link </a>penatibus et magnis dis parturient. Etiam habebis
+                sem dicantur magna mollis euismod. Curabitur blandit tempus ardua ridiculus sed magna. <button
+                    type="button" disabled>Some Button</button> Unam incolunt Belgae, aliam Aquitani, tertiam.
+                Nihil hic munitissimus habendi <button type="button">clickable btn</button> senatus locus, nihil
+                horum?</p>
+        </div>
+    </div>
+</section>
 ```
 
 ```javascript
-(function($){
-    // simple usage
+{
     $('.btn-modal').modal({
-        useHashFilter: 'modal'
+        modalID: 'from-dom'
     });
 
-    // usage for a Prompt to dismiss itself
-    // with self generated content
+
     $('#btn-gen-content').modal({
-        useHashFilter: 'modal',
-        src: $('<div>').attr({class: 'gen-content'}),
+        locationFilter: 'modal',
+        src: $('<div>').attr({ class: 'gen-content' }), 
         fromDOM: false,
         modalID: 'gen-content',
-        onOpenOnce(modalObj) { 
-             
-            modalObj.$content.on('click','.dismiss', modalObj.disableModal );
-            
-            // generated content from somewhere
-            modalObj.$content.append(`
-                <h2>Some generated Content</h2>
-                <p>Ullamco <a href="#">link</a> laboris nisi ut aliquid ex ea commodi consequat. Sed haec quis possit intrepidus aestimare tellus. Quam diu etiam furor <a href="#">iste tuus</a> nos eludet? Curabitur est gravida et libero vitae dictum.</p>
-                <button type="button" class="button dismiss">Dimiss</button>
-            `);
-        }
-    })
-})($);
+        onOpenOnce(modalObj) {
+         
+            modalObj.$dialogContent.on('click', '.dismiss', modalObj.close);
 
-// quick image carousel
-(function ($) {
+            modalObj.$dialogContent.append(`
+            <h2>Some generated Content</h2>
+            <p>Ullamco <a href="#">link</a> laboris nisi ut aliquid ex ea commodi consequat. Sed haec quis possit intrepidus aestimare tellus. Quam diu etiam furor <a href="#">iste tuus</a> nos eludet? Curabitur est gravida et libero vitae dictum.</p>
+            <button type="button" class="button dismiss">Dimiss</button>
+        `);
+        }
+    });
+ 
+
+    // quick and dirty image carousel
     const $picGroup = $('.pic-group');
 
     $picGroup.each(function (index) {
-        const src = $('<img>').attr({ src: this.dataset.imgSrc, loading: 'lazy' });
+        const src = $('<img>').attr({ src: this.dataset.imgSrc || '', loading: 'lazy' });
         const modalID = 'pic-group_' + index;
-
+        let imgIndex = index;
+        
         $(this).modal({
-            src,
+            src, 
             modalID,
-            useHashFilter: 'modal',
+            modalCss: 'modal--gallery', 
+            locationFilter: 'gallery',
             fromDOM: false,
             onOpenOnce(modalObj) {
                 
                 const $img = modalObj.$dialogContent.find('img');
-                
-                let imgIndex = index;
 
                 modalObj.$dialogContent.append(`
                     <footer class="pic-group-nav">
-                        <button type="button" class="prev-btn">previous image</button>
-                        <button type="button" class="next-btn">next image</button>
+                        <button type="button" class="prev-btn">Previous</button>
+                        <button type="button" class="next-btn">Next</button>
                     </footer>
                 `);
 
-                // NOTE: Keyboard events with arrow keys and escape should be added for accessibility 
-                // in addition to click... but this is a quick example!
                 modalObj.$dialogContent.on('click', 'button', function(e){
                     if (this.classList.contains('prev-btn')) {
 
                         imgIndex = imgIndex === 0 ? $picGroup.length - 1 : imgIndex - 1;
-                            
+                         
                     } else {
                         imgIndex = imgIndex === $picGroup.length - 1 ? 0 : imgIndex + 1;
 
                     }
-                            
-                    $img.attr({src: $picGroup[imgIndex].dataset.imgSrc});
-                })
+                    
+                    if (imgIndex > 0 && $picGroup.length) {
+                        $img.attr({src: ($picGroup as any)[imgIndex].dataset.imgSrc || ''});
+                    }
+                });
+            },
+            onOpen(modalObj) {
+                const $img = modalObj.$dialogContent.find('img');
+
+                $(window).on('keyup.gallery', function(e:KeyboardEvent){
+                    const arrowRight = e.key === 'ArrowRight';
+                    const arrowLeft = e.key === 'ArrowLeft';
+                    if (e.key === 'Escape') {
+                        modalObj.close();
+                    }
+                    if (arrowLeft) {
+                        imgIndex = imgIndex === 0 ? $picGroup.length - 1 : imgIndex - 1;
+                    }
+                    if (arrowRight) {
+                        imgIndex = imgIndex === $picGroup.length - 1 ? 0 : imgIndex + 1;
+                    }
+                    if (arrowLeft || arrowRight) {
+                        if (imgIndex > 0 && $picGroup.length) {
+                            $img.attr({src: ($picGroup as any)[imgIndex].dataset.imgSrc || ''});
+                        }
+                    }
+                });
+            },
+            onClose() {
+                $(window).off('keyup.gallery');
             }
         });
     })
-})($);
+} 
 ```
 
 <br>
@@ -799,10 +691,9 @@ __HTML__
 
 
 ### Features
-This plugin adds a delay to the desktop navigation and for the nestled `<ul>`'s that fly out. Also, features an edge detection on the drop-downs, and uses corresponding CSS to position, so it stays on the page. I think this is a nice feature to have and adds a small nice little touch to the finished project.
+This plugin adds a delay to the desktop navigation and for the nestled `<ul>`'s that fly out. Also, features an edge detection on the drop-down `<ul>` elements, and uses corresponding CSS to position, so it stays on the page.
 
 ### Settings
-
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 stopWidth | number | 768 | the width in which the navigaiton will stop for mobile.
@@ -859,15 +750,9 @@ subMenuText | string | 'toggle menu for' | Copy to prefix the button that toggle
 insertToggleBtnAfter | string | 'a' | the element selector name for inserting the toggle button after.
 slideDuration | number | 400 | Duration for showing a sub menu item, CSS transistion should correspond.
 outerElement | string or HTMLElement | document.body | Element to attach `menuOpenCss` class to.
-outsideClickClose | boolean | true | Can close if clicked outside of the menu.
-hasUlCls | string | 'has-ul' | CSS class for `<li>` that have a `<ul>` nestled.
-menuOuterOpenCss | string | 'menu-opened' | CSS class added to the `outerElement` saying its opened.
-menuOpenCss | string | 'menu-opened' | CSS class added to the elements saying its opened.
-menuTogglingCss | string | 'menu-toggling' | CSS class added while the element is toggling.
-menuIsOpeningCss | string | 'menu-is-opening' | CSS class added to the body/outerElement when the menu is opening.
-menuIsClosingCss | string | 'menu-is-closing' | CSS class added to the body/outerElement when the menu is closing.
-subMenuItemCss | string | 'i i-arrow-b' | CSS class of the button added to the `<li>` element for toggling open/closed.
-submenuBtnSkip| () => : boolean \| false | (li) => { return true|false } | Function that takes the `li` as the parameter, which tests whether or not to skip adding a button adjacent to it's `<a/>` element. Ex. (in the mark-up) `<li class="skip-li">` and the config the following: `submenuBtnSkip(li) { return li.classList.contains('skip-li')}` in which it'd skip adding a button to that level in the nav.
+cssPrefix | string | 'menu' | The primary CSS class and prefix for all other derived elements. The BEM CSS naming convention is used for all derived elements.
+menuBtnSkip | () => : boolean \| (li) => boolean | Function that takes the `li` as the parameter, which tests whether or not to skip adding a button adjacent to it's `<a/>` element. Ex. (in the mark-up) `<li class="skip-li">` and the config the following: `menuBtnSkip(li) { return li.classList.contains('skip-li')}` in which it'd skip adding a button to that level in the nav.
+menuBtnCss | string | 'i i-arrow-b' | CSS class for the indicating element as to the sub menu open/closed status.
 animateHeight | boolean | true | Animates the height of the list. Good if you want the `<ul>` to fade-in rather than scroll open (with corresponding CSS written of course).
 afterNavItemOpen | function | ($li) => {} | Function to run after an nav item is opened.
 afterNavItemClose | function | ($li) => {} | Function to run after a nav item is closed.
@@ -876,8 +761,7 @@ afterClose | function | ($element, outerElement, enableBtn) => {} | Function to 
 doTrapFocus | boolean | true | Traps the focus to just the visible anchors and buttons within the navigation.
 trapFocusElem | string | null | selector string (or can be dom element) if we need to extend the trap focus slightly outside the main nav element.
 stopPropagation | boolean | true | Stops the click from propagating up in the DOM from the nav element.
-bkptEnable | number | null | Optionally specify when to enable the mobile navigation with screen width (in pixels). This will override whether or not the `enableBtn` is visible, which is the conditional that enables this menu to function.
-
+bkptEnable | number | null | Optionally specify when to enable the mobile navigation with screen width (in pixels). This will override whether or not the `enableBtn` is visible, which is the conditional that enables this menu to function. 
 ### Example
 
 __The following is an example html structure for this plugin:__
@@ -885,12 +769,8 @@ __The following is an example html structure for this plugin:__
 __HTML__
 ```html
 <nav id="main-nav">
-	<button id="mobile-nav-btn">
-		<div id="mobile-nav-btn-inner">
-			<div class="nav-top-bar"></div>
-			<div class="nav-mid-bar"></div>
-			<div class="nav-bot-bar"></div>
-		</div>
+	<button class="mobile-nav-btn" id="mobile-nav-btn">
+		<span></span>
 	</button>
 	<ul>
 		<li><a href="#">Some Link</a>
@@ -922,19 +802,20 @@ This plugin is for parallaxing page elements (and yes background images). Use th
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-speed | number | 7 | Speed of the scroll. A negative amount will move it in the opposite direction.
-axis | string | 'y' | Axis of movement, it can be 'y','Y','x', or 'X' and is the axis in which the element moves.
-relativeElem | boolean/HTMLElement/string | false | If you need to set the parallaxing of one element relative to the offset it's parent. Parent which needs to be specified, in a classname or HTML element.
-$heightElem | HTMLElement | $(element) | the class or the element of the primary element to base the height off of.
-initOffset | boolean | false | If parallaxing an element, it'll account for the position and adjust it back to its start as it would be positioned without the plugin.
-bgFill | boolean| false | If it's a background image, this adds extra height to ensure it fills the area.
-outStop | number | 1 | 1 = 100% of the height of the element. 0.5 = 50%, etc. If it's set to .5, the element will stop parallaxing if 50% of the element has left the viewport, instead of the 100% by default.
+
+speed | number |  7 | Speed of the scroll. A negative amount will move it in the opposite direction.
+zSpeed | number |  5 | Speed of the z-axis. A negative amount will move it in the opposite direction.
+axis | string | 'y' | Axis of movement, it can be 'y','x'.
+zAxis | boolean | false | If `true` used will utilize the z-axis.
+cssPrefix | number |  'parallax' | CSS class name for styling purposes. Other derived CSS classes use the BEM naming convention.
+scrollAxis | number |  'y' | The axis of which the parallax is based on.
+relativeElem |  boolean \| HTMLElement \| string | false | If you need to bsae the parallaxing of one element relative to the offset of it's parent. 
+bgFill | number |  false | If the parallaxing element is a background image, this adds extra height to ensure it fills the it's containing element.
+rootMargin | number\| \[number,number\] | 0 | Delay the parallax effect relative to the viewport. Pass in an array \[start,end\] for tighter control.
+scrollMaxPxStop | number |  5000 | The max an item can scroll. Make this less should you want it to stop prior to exiting the screen. Good for when you have content that it shouldn't overlap. 
+zScrollMaxPxStop | number |  2000 | Max an item can scroll regarding the z-axis.
 minWidth | number | null | The minimum width for the parallax effect to run.
 maxWidth | number | null | The maximum width for the parallax effect to run.
-scrollMaxPxStop | number | 5000 | max an item can scroll. Make this less should you want it to stop prior to exiting the screen. Good for when you have content that it shouldn't overlap.
-zAxis | boolean | false  | Turns on a potential Z axis for zooming in (or out) of the element.
-zSpeed | number | 5 | Zoom speed of the element.
-zScrollMaxPxStop| number | 2000 | The maximum amount of pixels the Z axis can move.
 
 ### Example
 
@@ -942,38 +823,65 @@ __The following structure should be used with this plugin:__
 
 __HTML__
 ```html
-<div class="container v-space">
-	<div class="relative col" style="perspective: 800px;">
-		<div class="parallax-bg" data-parallax-options="{speed:-10, initOffset:true, bgFill: false, scrollMaxPxStop: 120, zAxis: true}">
-			<img src="https://via.placeholder.com/768x768/565656" alt="Placeholder" />
-		</div>
-	</div>
-	<div class="relative col">
-		<div class="parallax-bg" data-parallax-options="{speed:10, initOffset:true, bgFill: false, scrollMaxPxStop: 120}">
-			<img src="https://via.placeholder.com/768x768/444" alt="Placeholder" />
-		</div>
-	</div>
-	<div class="relative col">
-		<div class="parallax-bg" data-parallax-options="{speed:30, initOffset:true, bgFill: false, scrollMaxPxStop: 220, axis: 'x'}">
-			<img src="https://via.placeholder.com/768x768/222" alt="Placeholder" />
-		</div>
-	</div>
-	<div class="relative col">
-		<div class="parallax-bg" data-parallax-options="{speed:-10, initOffset:true, bgFill: false, scrollMaxPxStop: 120}">
-			<img src="https://via.placeholder.com/768x768" alt="Placeholder" />
-		</div>
-	</div>
-	<div class="relative col">
-		<div class="parallax-bg" data-parallax-options="{speed: -20, initOffset:true, bgFill: false, scrollMaxPxStop: 180}">
-			<img src="https://via.placeholder.com/768x768/777" alt="Placeholder" />
-		</div>
-	</div>
-	<div class="relative col">
-		<div class="parallax-bg" data-parallax-options="{speed:-20, initOffset:true, bgFill: false, axis: 'x'}">
-			<img src="https://via.placeholder.com/768x768/999" alt="Placeholder" />
-		</div>
-	</div>
-</div>
+<section class="container">
+    <div>
+        <h2 id="section-parallax">Parallax</h2>
+    </div>
+    <div class="parallax-area">
+        <img class="parallax-area__bg parallax do-parallax"
+            data-parallax-options="{speed: 20, bgFill: true, zAxis: true, rootMargin: 100}"
+             src="https://picsum.photos/1920/760"
+            srcset="https://picsum.photos/960/760 959w, https://picsum.photos/1920/760 960w"
+            size="(max-width: 959px) 959px, 960px" 
+            loading="lazy"
+        />
+    </div>
+    <div>
+        <h3>Randomized Movement</h3>
+    </div>
+    <div class="container parallax-tiles">
+        <div class="parallax do-parallax"
+            data-parallax-options="{speed: 10, bgFill: false, scrollMaxPxStop: 120}">
+            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+        </div>
+
+        <div class="parallax do-parallax"
+            data-parallax-options="{speed:30, bgFill: false, scrollMaxPxStop: 220, axis: 'x'}">
+            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+        </div>
+
+        <div class="parallax do-parallax"
+            data-parallax-options="{speed:-10, bgFill: false, scrollMaxPxStop: 120}">
+            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+        </div>
+
+        <div class="parallax do-parallax"
+            data-parallax-options="{speed: -20, bgFill: false, scrollMaxPxStop: 180}">
+            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+        </div>
+
+        <div class="parallax do-parallax" data-parallax-options="{speed:-20, bgFill: false, axis: 'x'}">
+            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+        </div>
+
+        <div class="parallax do-parallax" data-parallax-options="{speed:-10, bgFill: false, axis: 'x', rootMargin: [200,0]}">
+            <img loading="lazy" src="https://placehold.co/768" alt="Placeholder" />
+        </div> 
+    </div>
+    <div>
+        <h3>Scroll Horizontally</h3>
+        <button class="btn" id="jsBtnSCrollHorizontal">Add space for horizontal scrolling</button>
+    </div>
+    <div class="parallax-area">
+        <img class="parallax-area__bg parallax -do-parallax do-parallax--hz" 
+            data-parallax-options="{speed: -10, axis: 'x', bgFill: true, scrollAxis: 'x'}"
+            src="https://picsum.photos/1920/760"
+            srcset="https://picsum.photos/960/760 959w, https://picsum.photos/1920/760 960w"
+            size="(max-width: 959px) 959px, 960px" 
+            loading="lazy"
+        />
+    </div>
+</section>
 ```
 
 ```javascript
@@ -1057,21 +965,15 @@ Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 defaultContent | number \| 'none' | 0 | The order of the list item selected. Goes of course their appearance in the DOM. Passing in `'none'` does as it sounds and hides them all by default.
 tabsEvent | string | 'click' | Event to change the tabs content
-activeCss | string | 'tab--active' | The 'active' CSS class that is added to the tabs list on the `<li>` element.
-tabsBodyCss | string | 'tabs__body' | The CSS class for the body element in which all the tab content resides.
-tabsBodyItemCss | string | 'tabs__body-item' | The CSS class for the tab content within the 'tabs body'.
-tabsBodyItemShowCss | string | 'tabs__body-item--show' | The CSS class added to the 'tabs body item' to show it.
-tabsHeadCss | string | 'tabs__nav' | The CSS class for the tabs navigation, added to the `<ul>` or its parent element.
-useHashFilter | string | null | If there is a number of elements where the `location.hash` value is used, it may be necessary to filter it to get the intended data. Pass in a string value, i.e.: 'tabs' and it'll load and filter through as needed while maintaining the remaining location hash values. Example value of this could be `#tabs=tabid&tabs2=another-tabids&foo=bar&baz=foo`. This only gets used if 'useLocationHash' option is selected. 
-useLocationHash | boolean | true | Use window location hash and history push state so the browser back button can be used (or forward as well) to toggle through tabs.
-loadLocationHash | boolean | true | Add in location hash parameters to load default tabs. `#files=files-inner` loading multiple is possible if many diffrent tabs. Also load tabs within tabs and such as well.
+cssPrefix | string | 'tab' | The CSS that prefixes every relevant structural element contained within. Uses BEM convention.
+locationFilter | string | null | Key name of the param to be captured in the location URL. Example: `YOUR_URL#tab=the-item-id`.
+loadLocation | boolean | true | Add in location hash parameters to load default tabs. `#files=files-inner` loading multiple is possible if many diffrent tabs. Also load tabs within tabs and such as well.
 historyType | 'push'\|'replace' | 'push' | If using using `useLocationHash` or a history of events, 'push' pushes a new state, and 'replace' replaces the current.
 tabbing | boolean | true | Enables tabbing with keyboard arrows. A tab list should only be focusable one at a time with the 'tab' key.
 tabDirection| string | 'horizontal' | Typically tabs are 'horizontal' but may also go 'vertical'. They take either or as an option, otherwise it'll throw a `console.warn` to correct.
 addIDtoPanel | boolean | true | Adds an ID attribute to the panel for ADA compliance, but isn't necessary for its functionality.
 ariaLabel | boolean | true | Adds an 'aria-label' attribute to the panel for ADA compliance. Set to false if an equivalent exists in the mark-up.
-beforeChange | (prevTabId: string, tabsList: Cash, tabsBody: Cash): void | () => {} | Function to run before the tab change, passed variables are the 'previous tab ID', 'tabs list', 'tabs body' elements.
-afterChange | (prevTabId: string, tabsList: Cash, tabsBody: Cash): void | () => {}  | Function to run after the tab change, passed variables are the 'previous tab ID', 'tabs list', 'tabs body' elements.
+tabChange | (tabId: string, prevTabId: string, tabsList: Cash, tabsBody: Cash): void | () => {} | Function to run before the tab change, passed variables are the 'previous tab ID', 'tabs list', 'tabs body' elements.
 onInit | (tabsList: Cash, tabsBody: Cash): void | () => {} | Function to run after the the plugin intializes, passed variables are the  'tabs list', 'tabs body' elements.
 
 
@@ -1082,58 +984,83 @@ __The following is an example html structure for this plugin:__
 
 __HTML__
 ```html
-<div class="tab__container">
-	<div class="inline-ul tabs__nav" role="tablist">
-		<ul role="presentation">
-			<li><a role="tab" href="#description"><span>Description</span></a></li>
-			<li><a role="tab" href="#files"><span>Files</span></a></li>
-			<li><a role="tab" href="#requirements"><span>Requirements</span></a></li>
-			<li><a role="tab" href="#instructions"><span>Instructions</span></a></li>
-		</ul>
-	</div>
-	<div class="tabs__body">
-		<div class="tabs__body-item" data-tab-id="description">
-			Description Text...
-		</div>
-		<div class="tabs__body-item" data-tab-id="files">
-			Files Text...
-		</div>
-		<div class="tabs__body-item" data-tab-id="requirements">
-			Requirements Text...
-		</div>
-		<div class="tabs__body-item" data-tab-id="instructions">
-			Instructions Text...
+<section class="container">
+    <h2 id="section-tabs">Tabs</h2>
+    <div class="tabs__container tabs-outer">
+        <div class="inline-ul tabs__nav" role="menubar">
+            <ul>
+                <li><button data-href="#description"><span>Description</span></button></li>
+                <li><button data-href="#files"><span>Files</span></button></li>
+                <li><button data-href="#requirements"><span>Requirements</span></button></li>
+                <li><button data-href="#instructions"><span>Instructions</span></button></li>
+                <li><button data-href="#files2"><span>Additional Info</span></button></li>
+                <li><button data-href="#related"><span>Related</span></button></li>
+            </ul>
+        </div>
+        <div class="tabs__body">
+            <div data-tab-id="description" class="tabs__panel">
+                <div class="tabs__container tabs-inner inner-one">
+                    <div class="inline-ul tabs__nav" role="menubar">
+                        <ul>
+                            <li><button data-href="#description-inner"><span>Description Inner</span></button></li>
+                            <li><button data-href="#files-inner"><span>Files Inner</span></button></li>
+                            <li><button data-href="#requirements-inner"><span>Requirements Inner</span></button></li>
 
-			<div class="tabs__container">
-				<div class="inline-ul tabs__nav" role="menubar">
-					<ul>
-						<li><a href="#description"><span>Description Nestled</span></a></li>
-						<li><a href="#files"><span>Files Nestled</span></a></li>
-					</ul>
-				</div>
-				<div class="tabs__body">
-					<!-- html goes here... -->
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+                        </ul>
+                    </div>
+                    <div class="tabs__body">
+                        <div data-tab-id="description-inner" class="tabs__panel">
+                            <p><strong>Description Inner</strong> pellentesque habitant morbi tristique senectus et netus. Fabio vel iudice vincam,sunt in culpa qui officia. Curabitur blandit tempus ardua ridiculus sed magna. Petierunt uti sibi concilium totius Galliae in diem certam indicere.</p>
+                        </div>
+                        <div data-tab-id="files-inner" class="tabs__panel">
+                            
+                            <p>Non equidem invideo, miror magis posuere velit aliquet. Qui ipsorum lingua Celtae, nostra galli appellantur. Phasellus laoreet lorem vel dolor tempus vehicula. Plura mihi bona sunt, inclinet, amari petere vellent.</p>
+                        </div>
+                        <div data-tab-id="requirements-inner" class="tabs__panel">
+                            
+                            <ul>
+                                <li>Something in a list item</li>
+                                <li>Something in a list item</li>
+                                <li>Something in a list item</li>
+                            </ul>
+                        </div>
 
-
-</div>
+                    </div>
+                </div>
+            </div>
+            <div data-tab-id="files" class="tabs__panel">
+                <p><strong>Description</strong> pellentesque habitant morbi tristique senectus et netus. Fabio vel iudice vincam, sunt in culpa qui officia. Curabitur blandit tempus ardua ridiculus sed magna. Petierunt uti sibi concilium totius Galliae in diem certam indicere.</p>
+               
+            </div>
+            <div data-tab-id="requirements" class="tabs__panel">
+                <p><strong>Description</strong> quis aute iure reprehenderit in voluptate velit esse. Quam diu etiam furor iste tuus nos eludet? Ambitioni dedisse scripsisse iudicaretur porkchops.</p>
+                
+            </div>
+            <div data-tab-id="instructions" class="tabs__panel">
+                <p><strong>Description</strong> pellentesque habitant morbi tristique senectus et netus. Fabio vel iudice vincam, sunt in culpa qui officia. Curabitur blandit tempus ardua ridiculus sed magna. Petierunt uti sibi concilium totius Galliae in diem certam indicere.</p>
+            
+            </div>
+            <div data-tab-id="files2" class="tabs__panel">
+                <p><strong>Description</strong> pellentesque habitant morbi tristique senectus et netus. Fabio vel iudice vincam, sunt in culpa qui officia. Curabitur blandit tempus ardua ridiculus sed magna. Petierunt uti sibi concilium totius Galliae in diem certam indicere.</p>
+            </div>
+            <div data-tab-id="related" class="tabs__panel">
+                 
+                <p>Nec dubitamus multa iter quae et nos invenerat. Integer legentibus erat a ante historiarum dapibus.
+                    Curabitur est gravida et libero vitae dictum.</p>
+            </div>
+        </div>
+    </div>
+</section>
 ```
 
 __JavaScript__
 ```javascript
 $(".tabs__container").tabs({
-	onInit: (tab,list,body) =>{
-		console.log('init',tab,list,body)
+	onInit: (tabId, prevTabId, tabsList, tabsBody) =>{
+		// do something ...
 	},
-	beforeChange: (tab,list,body) =>{
-		console.log('before',tab,list,body)
-	},
-	afterChange: (tab,list,body) =>{
-		console.log('after',tab,list,body)
+	tabChange: (tabsList, tabsBody) =>{
+		// do something to start
 	}
 });
 

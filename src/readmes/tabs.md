@@ -13,21 +13,15 @@ Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 defaultContent | number \| 'none' | 0 | The order of the list item selected. Goes of course their appearance in the DOM. Passing in `'none'` does as it sounds and hides them all by default.
 tabsEvent | string | 'click' | Event to change the tabs content
-activeCss | string | 'tab--active' | The 'active' CSS class that is added to the tabs list on the `<li>` element.
-tabsBodyCss | string | 'tabs__body' | The CSS class for the body element in which all the tab content resides.
-tabsBodyItemCss | string | 'tabs__body-item' | The CSS class for the tab content within the 'tabs body'.
-tabsBodyItemShowCss | string | 'tabs__body-item--show' | The CSS class added to the 'tabs body item' to show it.
-tabsHeadCss | string | 'tabs__nav' | The CSS class for the tabs navigation, added to the `<ul>` or its parent element.
-useHashFilter | string | null | If there is a number of elements where the `location.hash` value is used, it may be necessary to filter it to get the intended data. Pass in a string value, i.e.: 'tabs' and it'll load and filter through as needed while maintaining the remaining location hash values. Example value of this could be `#tabs=tabid&tabs2=another-tabids&foo=bar&baz=foo`. This only gets used if 'useLocationHash' option is selected. 
-useLocationHash | boolean | true | Use window location hash and history push state so the browser back button can be used (or forward as well) to toggle through tabs.
-loadLocationHash | boolean | true | Add in location hash parameters to load default tabs. `#files=files-inner` loading multiple is possible if many diffrent tabs. Also load tabs within tabs and such as well.
+cssPrefix | string | 'tab' | The CSS that prefixes every relevant structural element contained within. Uses BEM convention.
+locationFilter | string | null | Key name of the param to be captured in the location URL. Example: `YOUR_URL#tab=the-item-id`.
+loadLocation | boolean | true | Add in location hash parameters to load default tabs. `#files=files-inner` loading multiple is possible if many diffrent tabs. Also load tabs within tabs and such as well.
 historyType | 'push'\|'replace' | 'push' | If using using `useLocationHash` or a history of events, 'push' pushes a new state, and 'replace' replaces the current.
 tabbing | boolean | true | Enables tabbing with keyboard arrows. A tab list should only be focusable one at a time with the 'tab' key.
 tabDirection| string | 'horizontal' | Typically tabs are 'horizontal' but may also go 'vertical'. They take either or as an option, otherwise it'll throw a `console.warn` to correct.
 addIDtoPanel | boolean | true | Adds an ID attribute to the panel for ADA compliance, but isn't necessary for its functionality.
 ariaLabel | boolean | true | Adds an 'aria-label' attribute to the panel for ADA compliance. Set to false if an equivalent exists in the mark-up.
-beforeChange | (prevTabId: string, tabsList: Cash, tabsBody: Cash): void | () => {} | Function to run before the tab change, passed variables are the 'previous tab ID', 'tabs list', 'tabs body' elements.
-afterChange | (prevTabId: string, tabsList: Cash, tabsBody: Cash): void | () => {}  | Function to run after the tab change, passed variables are the 'previous tab ID', 'tabs list', 'tabs body' elements.
+tabChange | (tabId: string, prevTabId: string, tabsList: Cash, tabsBody: Cash): void | () => {} | Function to run before the tab change, passed variables are the 'previous tab ID', 'tabs list', 'tabs body' elements.
 onInit | (tabsList: Cash, tabsBody: Cash): void | () => {} | Function to run after the the plugin intializes, passed variables are the  'tabs list', 'tabs body' elements.
 
 
@@ -38,58 +32,83 @@ __The following is an example html structure for this plugin:__
 
 __HTML__
 ```html
-<div class="tab__container">
-	<div class="inline-ul tabs__nav" role="tablist">
-		<ul role="presentation">
-			<li><a role="tab" href="#description"><span>Description</span></a></li>
-			<li><a role="tab" href="#files"><span>Files</span></a></li>
-			<li><a role="tab" href="#requirements"><span>Requirements</span></a></li>
-			<li><a role="tab" href="#instructions"><span>Instructions</span></a></li>
-		</ul>
-	</div>
-	<div class="tabs__body">
-		<div class="tabs__body-item" data-tab-id="description">
-			Description Text...
-		</div>
-		<div class="tabs__body-item" data-tab-id="files">
-			Files Text...
-		</div>
-		<div class="tabs__body-item" data-tab-id="requirements">
-			Requirements Text...
-		</div>
-		<div class="tabs__body-item" data-tab-id="instructions">
-			Instructions Text...
+<section class="container">
+    <h2 id="section-tabs">Tabs</h2>
+    <div class="tabs__container tabs-outer">
+        <div class="inline-ul tabs__nav" role="menubar">
+            <ul>
+                <li><button data-href="#description"><span>Description</span></button></li>
+                <li><button data-href="#files"><span>Files</span></button></li>
+                <li><button data-href="#requirements"><span>Requirements</span></button></li>
+                <li><button data-href="#instructions"><span>Instructions</span></button></li>
+                <li><button data-href="#files2"><span>Additional Info</span></button></li>
+                <li><button data-href="#related"><span>Related</span></button></li>
+            </ul>
+        </div>
+        <div class="tabs__body">
+            <div data-tab-id="description" class="tabs__panel">
+                <div class="tabs__container tabs-inner inner-one">
+                    <div class="inline-ul tabs__nav" role="menubar">
+                        <ul>
+                            <li><button data-href="#description-inner"><span>Description Inner</span></button></li>
+                            <li><button data-href="#files-inner"><span>Files Inner</span></button></li>
+                            <li><button data-href="#requirements-inner"><span>Requirements Inner</span></button></li>
 
-			<div class="tabs__container">
-				<div class="inline-ul tabs__nav" role="menubar">
-					<ul>
-						<li><a href="#description"><span>Description Nestled</span></a></li>
-						<li><a href="#files"><span>Files Nestled</span></a></li>
-					</ul>
-				</div>
-				<div class="tabs__body">
-					<!-- html goes here... -->
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+                        </ul>
+                    </div>
+                    <div class="tabs__body">
+                        <div data-tab-id="description-inner" class="tabs__panel">
+                            <p><strong>Description Inner</strong> pellentesque habitant morbi tristique senectus et netus. Fabio vel iudice vincam,sunt in culpa qui officia. Curabitur blandit tempus ardua ridiculus sed magna. Petierunt uti sibi concilium totius Galliae in diem certam indicere.</p>
+                        </div>
+                        <div data-tab-id="files-inner" class="tabs__panel">
+                            
+                            <p>Non equidem invideo, miror magis posuere velit aliquet. Qui ipsorum lingua Celtae, nostra galli appellantur. Phasellus laoreet lorem vel dolor tempus vehicula. Plura mihi bona sunt, inclinet, amari petere vellent.</p>
+                        </div>
+                        <div data-tab-id="requirements-inner" class="tabs__panel">
+                            
+                            <ul>
+                                <li>Something in a list item</li>
+                                <li>Something in a list item</li>
+                                <li>Something in a list item</li>
+                            </ul>
+                        </div>
 
-
-</div>
+                    </div>
+                </div>
+            </div>
+            <div data-tab-id="files" class="tabs__panel">
+                <p><strong>Description</strong> pellentesque habitant morbi tristique senectus et netus. Fabio vel iudice vincam, sunt in culpa qui officia. Curabitur blandit tempus ardua ridiculus sed magna. Petierunt uti sibi concilium totius Galliae in diem certam indicere.</p>
+               
+            </div>
+            <div data-tab-id="requirements" class="tabs__panel">
+                <p><strong>Description</strong> quis aute iure reprehenderit in voluptate velit esse. Quam diu etiam furor iste tuus nos eludet? Ambitioni dedisse scripsisse iudicaretur porkchops.</p>
+                
+            </div>
+            <div data-tab-id="instructions" class="tabs__panel">
+                <p><strong>Description</strong> pellentesque habitant morbi tristique senectus et netus. Fabio vel iudice vincam, sunt in culpa qui officia. Curabitur blandit tempus ardua ridiculus sed magna. Petierunt uti sibi concilium totius Galliae in diem certam indicere.</p>
+            
+            </div>
+            <div data-tab-id="files2" class="tabs__panel">
+                <p><strong>Description</strong> pellentesque habitant morbi tristique senectus et netus. Fabio vel iudice vincam, sunt in culpa qui officia. Curabitur blandit tempus ardua ridiculus sed magna. Petierunt uti sibi concilium totius Galliae in diem certam indicere.</p>
+            </div>
+            <div data-tab-id="related" class="tabs__panel">
+                 
+                <p>Nec dubitamus multa iter quae et nos invenerat. Integer legentibus erat a ante historiarum dapibus.
+                    Curabitur est gravida et libero vitae dictum.</p>
+            </div>
+        </div>
+    </div>
+</section>
 ```
 
 __JavaScript__
 ```javascript
 $(".tabs__container").tabs({
-	onInit: (tab,list,body) =>{
-		console.log('init',tab,list,body)
+	onInit: (tabId, prevTabId, tabsList, tabsBody) =>{
+		// do something ...
 	},
-	beforeChange: (tab,list,body) =>{
-		console.log('before',tab,list,body)
-	},
-	afterChange: (tab,list,body) =>{
-		console.log('after',tab,list,body)
+	tabChange: (tabsList, tabsBody) =>{
+		// do something to start
 	}
 });
 

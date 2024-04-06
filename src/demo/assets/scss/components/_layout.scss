@@ -5,6 +5,7 @@ main {
 	display: flex;
 	flex-flow: column nowrap;
 	margin-top: 5rem;
+	overflow-x: hidden;
 	&.body-content--scroll-x {
 		width: 300vw;
 	}

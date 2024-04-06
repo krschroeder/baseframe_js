@@ -277,7 +277,7 @@ UrlState.get(type: UrlSearchType, paramName: string);
 ```
 
 
-###Plugins###
+### Plugins ###
 <br>
 <br>
 <br>

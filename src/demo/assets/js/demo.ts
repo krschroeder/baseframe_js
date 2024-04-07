@@ -12,6 +12,7 @@ import NavDesktop from '../../../assets/js/NavDesktop';
 import NavMobile from '../../../assets/js/NavMobile';
 import Parallax from '../../../assets/js/Parallax';
 import SelectEnhance from '../../../assets/js/SelectEnhance';
+import throttledResize from '../../../assets/js/fn/throttleResize';
 
 libraryExtend([
     AccessibleMenu, 
@@ -28,12 +29,25 @@ libraryExtend([
 
  
 $('select').selectEnhance();
+const $collapseGroup = $('.collapse-group-1');
+$collapseGroup.on('click', '.collapse__header h2', function(e){
+    const $btn = $(this).parent().find('button');
 
-$('.collapse-group-1').collapse({
-    moveToTopOnOpen:true,
-    toggleGroup:true,
+    if ($btn.length) {
+        $btn[0]?.click();
+    }
+}).collapse({
+    moveToTopOnOpen: false,
+    toggleGroup: true,
     locationFilter: 'collapse'
 });
+
+throttledResize(() => {
+    const inMobile = $('#mobile-nav-btn').width() !== 0; //hidden if zero
+    $collapseGroup.collapse({
+        moveToTopOnOpen:  inMobile,
+    })
+},'collapse',true);
 
 $('#main-nav')
     .navMobile({enableBtn: '#mobile-nav-btn'})

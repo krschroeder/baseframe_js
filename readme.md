@@ -361,40 +361,47 @@ __The following is an example html structure for this plugin:__
 
 __HTML__
 ```html
-<div class="collapse collapse-group" >
-<div class="collapse__item">
-	<div class="collapse__header">
-		<h2><a href="#item-1" class="collapse__btn" role="button" aria-controls="item-1"
-		>Item 1</a></h2>
-	</div>
-	<div class="collapse__body" id="item-1">
-		<p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
-		<a href="#item-3" class="collapse-btn" role="button" aria-expanded="false" aria-controls="item-3"
-		><strong>Open Item 3 from here!</strong></a>
-	</div>
-</div>
-<div class="collapse__item">
-	<div class="collapse__header">
-		<h2><a href="#item-2" class="collapse__btn" role="button" aria-expanded="false" aria-controls="item-2"
-		>Item 2</a></h2>
-	</div>
-	<div class="collapse__body" id="item-2">
-		<p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
-		<p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
+<section class="container">
+    <div class="collapse collapse-group collapse-group-1" >
+        <div class="collapse__item">
+            <div class="collapse__header">
+                <h2>Collapse Item 1</h2>
+                <button class="collapse__btn" aria-controls="item-1" aria-label="toggle section"></button>
+            </div>
+            <div class="collapse__body" id="item-1">
+                <div class="collapse__body-inner">
+                    <p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
+                    <a href="#item-3" class="collapse__btn" aria-controls="item-3"><strong>Open Item 3 from here!</strong></a>
+                </div>
+            </div>
+        </div>
+        <div class="collapse__item">
+            <div class="collapse__header">
+                <h2>Collapse Item 2</h2>
+                <button class="collapse__btn" aria-controls="item-2" aria-label="toggle section"></button>
+            </div>
+            <div class="collapse__body" id="item-2">
+                <div class="collapse__body-inner">
+                    <p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
+                    <p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
 
-		<p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
-	</div>
-</div>
-<div class="collapse__item">
-	<div class="collapse__header">
-		<h2><a href="#item-3" class="collapse__btn" role="button" aria-expanded="false" aria-controls="item-3"
-		>Item 3</a></h2>
-	</div>
-	<div class="collapse__body" id="item-3">
-		<p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
-	</div>
-</div>
-</div> 
+                    <p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
+                </div>
+            </div>
+        </div>
+        <div class="collapse__item">
+            <div class="collapse__header">
+                <h2>Collapse Item 3</h2>
+                <button class="collapse__btn" aria-controls="item-3" aria-label="toggle section"></button>
+            </div>
+            <div class="collapse__body" id="item-3">
+                <div class="collapse__body-inner">
+                    <p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 ```
 
 __JavaScript__

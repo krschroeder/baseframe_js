@@ -1,7 +1,9 @@
+const ensureTransitionDelay = 100;
 
 const transition = () => {
     let inTransition = false;
-    let tto: ReturnType<typeof setTimeout> = null;
+    let sto: ReturnType<typeof setTimeout> = null;
+    let eto: ReturnType<typeof setTimeout> = null;
     let currEndTransitionFn = () => {};
 
     return (
@@ -12,19 +14,22 @@ const transition = () => {
         
         if (inTransition) {
             currEndTransitionFn();
-            clearTimeout(tto);
+            clearTimeout(sto);
+            clearTimeout(eto);
         }
 
-        startFn();
+        sto = setTimeout(() => {
+            startFn();
+        }, ensureTransitionDelay);
 
         currEndTransitionFn = endFn;
 
         inTransition = true;
-        tto = setTimeout(() => {
+        eto = setTimeout(() => {
             currEndTransitionFn();
 
             inTransition = false;
-        }, duration)
+        }, duration + ensureTransitionDelay)
     }
 }
 

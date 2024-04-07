@@ -231,22 +231,27 @@ function smoothScroll(elemYPos, _speed = 100, afterScroll, afterScrollArgs = [])
 }
 
 ;// CONCATENATED MODULE: ./src/assets/js/fn/transition.ts
+const ensureTransitionDelay = 100;
 const transition = () => {
     let inTransition = false;
-    let tto = null;
+    let sto = null;
+    let eto = null;
     let currEndTransitionFn = () => { };
     return (startFn, endFn, duration = 300) => {
         if (inTransition) {
             currEndTransitionFn();
-            clearTimeout(tto);
+            clearTimeout(sto);
+            clearTimeout(eto);
         }
-        startFn();
+        sto = setTimeout(() => {
+            startFn();
+        }, ensureTransitionDelay);
         currEndTransitionFn = endFn;
         inTransition = true;
-        tto = setTimeout(() => {
+        eto = setTimeout(() => {
             currEndTransitionFn();
             inTransition = false;
-        }, duration);
+        }, duration + ensureTransitionDelay);
     };
 };
 /* harmony default export */ const fn_transition = (transition);
@@ -2574,6 +2579,7 @@ class SelectEnhance {
 
 
 
+
 core_libraryExtend([
     AccessibleMenu,
     Collapse,
@@ -2587,11 +2593,23 @@ core_libraryExtend([
     Toastr
 ], true);
 external_$_default()('select').selectEnhance();
-external_$_default()('.collapse-group-1').collapse({
-    moveToTopOnOpen: true,
+const $collapseGroup = external_$_default()('.collapse-group-1');
+$collapseGroup.on('click', '.collapse__header h2', function (e) {
+    const $btn = external_$_default()(this).parent().find('button');
+    if ($btn.length) {
+        $btn[0]?.click();
+    }
+}).collapse({
+    moveToTopOnOpen: false,
     toggleGroup: true,
     locationFilter: 'collapse'
 });
+throttleResize(() => {
+    const inMobile = external_$_default()('#mobile-nav-btn').width() !== 0; //hidden if zero
+    $collapseGroup.collapse({
+        moveToTopOnOpen: inMobile,
+    });
+}, 'collapse', true);
 external_$_default()('#main-nav')
     .navMobile({ enableBtn: '#mobile-nav-btn' })
     .navDesktop()

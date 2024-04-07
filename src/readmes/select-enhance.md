@@ -10,7 +10,7 @@ Can refresh the options list by calling static methods such as `SelectEnhance.re
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 cssPrefix  | string | 'select-enhance' | CSS class name for styling purposes
-mobileNative | boolean | true | Off by default this doesn't render the stylized dropdowns for mobile devices.
+mobileNative | boolean | false | Off by default this doesn't render the stylized dropdowns for mobile devices.
 emptyValAsPlaceholder | boolean | true | if the value is empty, then render placeholder copy instead of the text value inside the option its pulling data from.
 focusIn | Function | ($element) => {} | event when focusing in on the select box
 focusOut | Function | ($element) => {} | event when focusing out on the select box
@@ -46,7 +46,7 @@ __HTML__
         <option value="three">Three!</option>
     </select>
 ```
-
+__JavaScript__
 ```javascript
 $('select').selectEnhance();
 ```

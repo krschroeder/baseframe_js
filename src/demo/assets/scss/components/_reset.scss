@@ -132,7 +132,7 @@ select,
 textarea,
 button {
     &:focus {
-        outline: 0.125rem solid rgba($font-body-color, 0.7);
+        outline: 0.125rem dashed;
     }
 }
 

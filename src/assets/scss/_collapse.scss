@@ -4,11 +4,20 @@
 
  
 $collapse-duration: 500ms;
+$arrow-bdr-size: 0.5rem;
+$arrow-color: #999;
 
 .collapse {
 
 	&__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 		padding: 1rem 0;
+
+		h2, h3 {
+			margin: 0 1rem 0 0;
+		}
 
 		a[aria-expanded="true"],
 		button[aria-expanded="true"] {
@@ -31,6 +40,30 @@ $collapse-duration: 500ms;
 		&.collapse--toggling {
 			transition: height $collapse-duration ease;
 			overflow: hidden;
+		}
+	}
+
+	&__header &__btn {
+		padding: 0.75rem;
+		
+		&:after {
+			content:' ';
+			display: block;
+			padding:0;
+			width: 0;
+			height: 0;
+			margin-top: -#{floor($arrow-bdr-size * 0.5)};
+			color: $arrow-color;
+			border-top: $arrow-bdr-size solid;
+			border-left: $arrow-bdr-size solid transparent;
+			border-right: $arrow-bdr-size solid transparent;
+			transition: 200ms all ease-out;
+		}
+
+		&[aria-expanded="true"] {
+			&:after {
+				transform: rotateX(-180deg);
+			}
 		}
 	}
 }

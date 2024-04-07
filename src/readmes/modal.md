@@ -113,7 +113,7 @@ __HTML__
     </div>
 </section>
 ```
-
+__JavaScript__
 ```javascript
 {
     $('.btn-modal').modal({

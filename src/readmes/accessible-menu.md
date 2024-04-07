@@ -38,7 +38,7 @@ __HTML__
     </ul>
 </nav>
 ```
-
+__JavaScript__
 ```javascript
 $('#main-menu').accessibleMenu({
 	keyDirections: ['horizontal', 'vertical', 'vertical'],

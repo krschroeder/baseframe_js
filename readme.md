@@ -1,4 +1,4 @@
-# Baseframe JS Scripting #
+# Baseframe JS #
 A suite of useful JavaScript plugins and functions for front-end development. Instead of searching for unconnected plugins that may not work together well, this suite does. The package features plugins for collapsible sections, modals, parallaxing elements, tabs and more. It features utilities for setting and getting cookies, smooth scrolling, throttled resizing, querystring parameter filtering and more. The plugin's are meant to be configurable and consistent with each other.
 
 ## Runs with [Cash](https://github.com/fabiospampinato/cash) (or JQuery if you wish) ##
@@ -95,7 +95,6 @@ libraryExtend([
 Each plugin can be removed by calling `$('.element').plugin('remove')`, and it'll call the static method to remove it and all its components. Or if you want it can be stored as a method `$.plugin.remove($('.element').eq(1))` or `$.plugin.remove('.element')` and done that way.
 
 
-
 ## Using Styles For Plugins ##
 Styles are located in the `src/assets/scss/` directory, and all can be grabbed that way and added on in. The SCSS is minimal and generic to do what you want with it.
 
@@ -132,7 +131,7 @@ For making a parallaxing elements on the page, parallax horizontally, vertically
 __[View Parallax Elements](#parallax-plugin)__
 
 ### Select Enhance ###
-Enhance a `<select>` element and it's options Unlike a radio button or checkbox, a select element can't fully be styled without further HTML enhancement.<br>
+Enhance a `<select>` element and it's options. Unlike a radio button or checkbox, a select element can't fully be styled without further HTML enhancement.<br>
 __[View Select Enhance](#select-enhance-plugin)__
 
 ### Tabs ###
@@ -195,7 +194,7 @@ smoothScroll(scrollToTop :number ,speed?: number , afterScroll?:(...args:any) =>
 ```
 
 #### trapFocus
-This is used in the `Modal`, `Tabs` and `Collapse` plugin's, to trap the focus of tabbing events to just the availble focusable elements. Each tab it re-takes inventory on what is available to tab to, so you can load dynamic/change content that may not be available when the focus trap is created.
+This is used in the `Modal` plugin to trap the focus of tabbing events to just the available focusable elements. Each tab keypress it re-takes inventory on what is available to tab to, this way any dynamic changes can be accounted for.
 
 __params__
 The parameters that make the `ITrapFocusProps` interface.
@@ -321,7 +320,7 @@ __HTML__
     </ul>
 </nav>
 ```
-
+__JavaScript__
 ```javascript
 $('#main-menu').accessibleMenu({
 	keyDirections: ['horizontal', 'vertical', 'vertical'],
@@ -588,7 +587,7 @@ __HTML__
     </div>
 </section>
 ```
-
+__JavaScript__
 ```javascript
 {
     $('.btn-modal').modal({
@@ -906,7 +905,7 @@ Can refresh the options list by calling static methods such as `SelectEnhance.re
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 cssPrefix  | string | 'select-enhance' | CSS class name for styling purposes
-mobileNative | boolean | true | Off by default this doesn't render the stylized dropdowns for mobile devices.
+mobileNative | boolean | false | Off by default this doesn't render the stylized dropdowns for mobile devices.
 emptyValAsPlaceholder | boolean | true | if the value is empty, then render placeholder copy instead of the text value inside the option its pulling data from.
 focusIn | Function | ($element) => {} | event when focusing in on the select box
 focusOut | Function | ($element) => {} | event when focusing out on the select box
@@ -942,7 +941,7 @@ __HTML__
         <option value="three">Three!</option>
     </select>
 ```
-
+__JavaScript__
 ```javascript
 $('select').selectEnhance();
 ```
@@ -1106,7 +1105,7 @@ __HTML__
 	<li><button id="toastr-4">Launch a Toastr Four</button></li>
 </ul> 
 ```
-
+__JavaScript__
 ```javascript
 	// Example 1: standard way
     $('#toastr-1').toastr({

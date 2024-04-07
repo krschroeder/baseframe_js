@@ -2,7 +2,8 @@
 // main navigation
 //
  
- 
+$arrow-bdr-size: 0.5rem;
+$arrow-color: #efefef;
 
 @mixin nav-focus {
 	&:hover,
@@ -30,22 +31,46 @@
 			list-style: none;
 
 			li {
-
+				display: flex;
+				width: 100%;
+				align-items: center;
 				list-style: inherit;
 				position: relative;
 				text-align: left;
 				background: #fff;
-				display: block;
 				margin: 0;
 
 				> a, 
 				> strong {
 					display: block;
 					padding: 1ex;
+					width: 100%;
 					text-decoration: none;
 					position: relative;
 					&:focus {
 						z-index: 10;
+					}
+				}
+
+				&.menu__has-ul {
+					 &:after {
+						content: ' ';
+						display: block;
+						height: $arrow-bdr-size;
+						width:$arrow-bdr-size;
+						margin-left: 1rem;
+						margin-top: -#{floor($arrow-bdr-size * 0.5)};
+						color: $arrow-color;
+						border-top: $arrow-bdr-size solid;
+						border-left: $arrow-bdr-size solid transparent;
+						border-right: $arrow-bdr-size solid transparent;
+						transition: 200ms all ease-out;
+					}
+
+					@include nav-focus {
+						&:after {
+							transform: rotateX(-180deg);
+						}
 					}
 				}
 

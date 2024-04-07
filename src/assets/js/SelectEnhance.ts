@@ -28,7 +28,7 @@ const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 const DEFAULTS: ISelectEnhanceDefaults = {
     cssPrefix: 'select-enhance',
-    mobileNative: true,
+    mobileNative: false,
     emptyValAsPlaceholder: true,
     focusIn: noop,
     focusOut: noop,

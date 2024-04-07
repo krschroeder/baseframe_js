@@ -35,7 +35,7 @@ __HTML__
 	<li><button id="toastr-4">Launch a Toastr Four</button></li>
 </ul> 
 ```
-
+__JavaScript__
 ```javascript
 	// Example 1: standard way
     $('#toastr-1').toastr({

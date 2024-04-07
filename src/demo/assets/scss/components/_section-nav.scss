@@ -3,6 +3,7 @@
     margin-block-start: 2rem;
     display: flex;
     flex-flow: row wrap;
+    align-items: center;
     justify-content: space-between;
     position: relative;
     padding-block: 1rem;
@@ -11,6 +12,19 @@
     button {
         flex-shrink: 0;
     }
+    
+    .logo {
+        width: 12.5rem;
+        height: 2.375rem;
+    }
+
+    .main-nav { 
+        position: absolute;
+        inset: auto -1rem 0rem;
+        width: calc(100% + 2rem);
+        z-index: 1000;
+
+    }
 
     @include breakpoint(lg) {
         flex-flow: row wrap;
@@ -18,6 +32,17 @@
 		.main-nav { 
             order:1;
             position: relative;
+            width: auto;
+            
+            > ul {
+                > li > a {
+                    white-space: nowrap;
+                }
+            }
+
+            ul ul li.menu__has-ul:after {
+                content: none;
+            }
 		}
 	}
 }

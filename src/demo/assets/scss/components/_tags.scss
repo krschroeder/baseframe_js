@@ -134,11 +134,11 @@ ol {
 	}
 }
 
-a,button,input {
-	&:focus {
-		outline: 2px dashed $font-body-color;
-	}
-}
+	// a,button,input {
+	// 	&:focus {
+	// 		outline: 2px dashed $font-body-color;
+	// 	}
+	// }
 
 .sr-only {
 	position: absolute;

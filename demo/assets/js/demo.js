@@ -2062,7 +2062,7 @@ const SelectEnhance_EVENT_NAME = 'selectEnhance';
 const SelectEnhance_DATA_NAME = 'SelectEnhance';
 const SelectEnhance_DEFAULTS = {
     cssPrefix: 'select-enhance',
-    mobileNative: true,
+    mobileNative: false,
     emptyValAsPlaceholder: true,
     focusIn: noop,
     focusOut: noop,

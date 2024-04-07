@@ -43,7 +43,7 @@
     "start": "gulp",
     "build": "gulp --prod",
     "demo-site": "gulp --demo",
-    "prepublishOnly": "npm build"
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@babel/core": "^7.23.9",

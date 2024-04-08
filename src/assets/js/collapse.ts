@@ -182,6 +182,10 @@ export default class Collapse {
 			const $itemsToClose = $currOpenItems.filter((i, el) =>  p.toggleGroup || el.id === currElemID);
 			const activeAlreadyOpen = s.$activeItem.hasClass(cssOpen);
 
+			$itemsToClose.each(function(){
+				$(this).css({ height: this.scrollHeight });
+			});
+			
 			s.#transition(() => {
 				s.toggling = true;
 				
@@ -199,16 +203,12 @@ export default class Collapse {
 						}
 					}
 				});
-
-				$itemsToClose.each(function(){
-					$(this).css({ height: this.scrollHeight });
-				});
-				setTimeout(() => {
-					$itemsToClose
-						.removeClass(cssOpen)
-						.addClass(`${cssToggling} ${cssClosing}`)
-						.css({ height: 0 });
-				},0);
+				 
+				$itemsToClose
+					.removeClass(cssOpen)
+					.addClass(`${cssToggling} ${cssClosing}`)
+					.css({ height: 0 });
+			
 
 				if (!activeAlreadyOpen) {
 
@@ -243,7 +243,7 @@ export default class Collapse {
 		
 				s.params.afterOpen(s.$btnElems, s.$activeItem);
 				s.moveToTopOnOpen();
-			});			
+			}, s.params.toggleDuration);			
 		}
 	}
 

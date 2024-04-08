@@ -477,6 +477,9 @@ class Collapse {
             const $currOpenItems = s.$element.find(cssBodyOpen);
             const $itemsToClose = $currOpenItems.filter((i, el) => p.toggleGroup || el.id === currElemID);
             const activeAlreadyOpen = s.$activeItem.hasClass(cssOpen);
+            $itemsToClose.each(function () {
+                external_$_default()(this).css({ height: this.scrollHeight });
+            });
             s.#transition(() => {
                 s.toggling = true;
                 s.$btnElems.each(function () {
@@ -492,15 +495,10 @@ class Collapse {
                         }
                     }
                 });
-                $itemsToClose.each(function () {
-                    external_$_default()(this).css({ height: this.scrollHeight });
-                });
-                setTimeout(() => {
-                    $itemsToClose
-                        .removeClass(cssOpen)
-                        .addClass(`${cssToggling} ${cssClosing}`)
-                        .css({ height: 0 });
-                }, 0);
+                $itemsToClose
+                    .removeClass(cssOpen)
+                    .addClass(`${cssToggling} ${cssClosing}`)
+                    .css({ height: 0 });
                 if (!activeAlreadyOpen) {
                     s.$activeItem
                         .addClass(`${cssToggling} ${cssOpening}`)
@@ -524,7 +522,7 @@ class Collapse {
                 core_UrlState.set(p.urlFilterType, p.locationFilter, paramVal, p.historyType);
                 s.params.afterOpen(s.$btnElems, s.$activeItem);
                 s.moveToTopOnOpen();
-            });
+            }, s.params.toggleDuration);
         }
     }
     moveToTopOnOpen() {

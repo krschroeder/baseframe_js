@@ -8,6 +8,7 @@ export type PrimaryClickElems = HTMLButtonElement | HTMLAnchorElement;
 
 export type PluginBaseClass = {
     version: string;
+    pluginName: string;
     remove: (element: Cash) => void;
     Constructor?: Function;
     new (...args: any[]);

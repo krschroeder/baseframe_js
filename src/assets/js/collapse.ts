@@ -55,6 +55,8 @@ export default class Collapse {
 	public initLoaded: boolean;
 	
 	public static defaults = DEFAULTS;
+	static get version() { return VERSION;}
+	static get pluginName() { return EVENT_NAME; }
 
 	#transition = transition();
 
@@ -79,10 +81,6 @@ export default class Collapse {
 		Store(element, DATA_NAME, s);
 
 		return s;
-	}
-
-	static get version() {
-		return VERSION;
 	}
 
 	static remove(element: Cash, plugin?: Collapse) {

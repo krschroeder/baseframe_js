@@ -36,6 +36,6 @@ export const isHidden = (el) => !isVisible(el);
 // string manipulation
 export const kebabCase = (str: string): string => str.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/\s+/g, '-').toLowerCase();
 export const camelCase = (str: string): string => str.replace(/-./g, x => x.toUpperCase()[1]);
-export const capitalize = (str: string): string => str.charAt(0).toLowerCase() + str.substring(1);
+export const lowercaseFirstLetter = (str: string): string => str.charAt(0).toLowerCase() + str.substring(1);
 // device
 export const isMobileOS = (): boolean => /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);

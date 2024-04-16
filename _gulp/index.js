@@ -24,7 +24,7 @@ import webpack 			from 'webpack';
 import webpackStream 	from 'webpack-stream';
 import ts 				from 'typescript';
 import uglify           from 'gulp-uglify';
-import config 			from './config';
+import config 			from '../gulp.config';
 
 const { buildDemo, production } = config;
 // Load Handlebars helpers
@@ -65,29 +65,29 @@ function buildHtml(done) {
 
 function buildJs(done) {
 
-	if (production) {
-		// just turn it into JS files
-		gulp.src(config.src.js).pipe(tap(function (file) {	 
-			const transpiledToJs = ts.transpile(file.contents.toString('utf-8'),{
-				lib: ["esNext", "dom"],
-				target: "ESNext",
-				module: "ESNext",
-				moduleResolution: "Node"
-			})
-			file.contents = Buffer.from(transpiledToJs);
-		}))
-		.pipe(rename({ extname: '.js'}))
-		.pipe(gulp.dest(`${config.dest}/js`));
+	// if (production) {
+	// 	// just turn it into JS files
+	// 	gulp.src(config.src.js).pipe(tap(function (file) {	 
+	// 		const transpiledToJs = ts.transpile(file.contents.toString('utf-8'),{
+	// 			lib: ["esNext", "dom"],
+	// 			target: "ESNext",
+	// 			module: "ESNext",
+	// 			moduleResolution: "Node"
+	// 		})
+	// 		file.contents = Buffer.from(transpiledToJs);
+	// 	}))
+	// 	.pipe(rename({ extname: '.js'}))
+	// 	.pipe(gulp.dest(`${config.dest}/js`));
 
-	} else {
+	// } else {
 
-		gulp.src(config.src.js)
-			.pipe(named())
+		return gulp.src(config.src.js)
+			.pipe(gulpIf(!production, named()))
 			.pipe(webpackStream(config.webpackConfig, webpack))
 			// .pipe(gulpIf(buildDemo, uglify()))
 			.pipe(gulp.dest(`${config.dest}/assets/js`));
-	}
-	done()
+	// }
+	// done()
 }
 
 function buildDeclarationFilesToTemp(done) {
@@ -186,8 +186,8 @@ const BUILD = gulp.series(
 	cleanUp,
 	buildCss,
 	buildJs,
-	buildDeclarationFilesToTemp,
-	buildDeclarationFiles,
+	// buildDeclarationFilesToTemp,
+	// buildDeclarationFiles,
 	buildHtml,
 	copyAssets,
 	server,

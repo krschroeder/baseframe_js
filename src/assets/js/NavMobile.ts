@@ -80,8 +80,9 @@ export default class NavMobile {
 	public allowClick: boolean;
 	public cssList: NavMobileCssList;
 
-	static get version() { return VERSION; }
 	public static defaults = DEFAULTS;
+	static get version() { return VERSION; }
+	static get pluginName() { return EVENT_NAME; }
 
 	#transition = transition();
 	

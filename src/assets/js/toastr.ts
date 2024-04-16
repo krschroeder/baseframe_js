@@ -51,8 +51,10 @@ let currentlyToastingGlobal = false;
 
 export default class Toastr {
 
-    static get version() { return VERSION; }
     public static Defaults = DEFAULTS;
+    static get version() { return VERSION; }
+    static get pluginName() { return EVENT_NAME; }
+    
     public static DismissedEventName = 'toastDismissed';
 
     private toastrFinallyTimer: ReturnType<typeof setTimeout>;

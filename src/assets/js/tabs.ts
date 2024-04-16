@@ -46,10 +46,7 @@ const getTabIDFromEl = (el:PrimaryClickElems): string => {
 
 export default class Tabs {
 
-	static get version() { 
-		return VERSION; 
-	}
-
+	
 	public $element: Cash;
 	public params: ITabsDefaults;
 	public $tabsNav: Cash;
@@ -60,7 +57,10 @@ export default class Tabs {
 	public prevTabId: string;
 	public initTabId: string;
 	public initDefaultContent: tabDefaultContent;
+	
 	public static defaults = DEFAULTS;
+	static get version() { return VERSION; }
+	static get pluginName() { return EVENT_NAME; }
 
 	#transition = transition();
 

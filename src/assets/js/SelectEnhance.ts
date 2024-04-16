@@ -75,9 +75,8 @@ export default class SelectEnhance {
     public keyedInput: string;
 
     static defaults = DEFAULTS;
-    static get version() { 
-        return VERSION;
-    }
+    static get version() { return VERSION;}
+    static get pluginName() { return EVENT_NAME; }
     
 
     constructor(element: HTMLSelectElement, options: ISelectEnhanceOptions | StringPluginArgChoices, index: number) {

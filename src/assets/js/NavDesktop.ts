@@ -45,9 +45,8 @@ export default class NavDesktop {
 	public navLeaving: ReturnType<typeof setTimeout>;
 
 	public static defaults = DEFAULTS;
-	static get version() {
-		return VERSION;
-	}
+	static get version() { return VERSION;}
+	static get pluginName() { return EVENT_NAME; }
 
 	constructor(element: HTMLElement, options: INavDesktopOptions | StringPluginArgChoices) {
 		const s = this;

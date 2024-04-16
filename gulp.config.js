@@ -1,7 +1,7 @@
 import path from 'path';
 import yargs from 'yargs';
 
-const VERSION       = require('../package.json').version;
+const VERSION       = require('./package.json').version;
 
 const PRODUCTION    = !!yargs.argv.prod;
 const BUILD_DEMO    = !!yargs.argv.demo;
@@ -22,10 +22,10 @@ const config = {
     src: {
         img:    'src/demo/assets/img/**/*.{jpg,png,webp,svg,gif}',
         css:    ['src/assets/scss/**/*.scss', 'src/demo/assets/scss/**/*.scss'],
-        js:     BUILD_DEMO ? 'src/demo/assets/js/demo.{ts,js}' : [
-                    'src/assets/js/**/*.{js,ts}',
-                    '!src/assets/js/**/*.d.ts', 
-                    PRODUCTION ? '': 'src/demo/assets/js/demo.{ts,js}'
+        js:     BUILD_DEMO ? 'src/demo/assets/js/demo.ts' : [
+                    'src/assets/js/**/*.ts',
+                    //'!src/assets/js/**/*.d.ts', 
+                    PRODUCTION ? '': 'src/demo/assets/js/demo.ts'
                 ].filter(e => e),
         html:   [BUILD_DEMO ? 'src/demo/index.{html,hbs}' : 'src/demo/**/*.{html,hbs}'],
         readme: 'src/readmes/_readme.md',
@@ -51,6 +51,13 @@ const config = {
         }
     },
 
+    tsProdConfig: {
+        lib: ["esNext", "dom"],
+        target: "ESNext",
+        module: "ESNext",
+        moduleResolution: "Node"
+    },
+
     webpackConfig: {
         mode: (PROD_JS ? 'production': 'development'),
         target: ['web','es6'],
@@ -66,29 +73,23 @@ const config = {
         module: {
             rules: [
                 {
-                    test: /\.jsx?$/,
-                    exclude: excludeRgx,
-                    loader: 'babel-loader'
-                },
-                {
                     test: /\.tsx?$/,
                     exclude: excludeRgx,
                     loader: "ts-loader" 
-                },
-                {
-                    test: /src\/assets\/js\/index\.ts/i,
-                    sideEffects: false
                 }
             ]
         },
         
         externals: { 
-            'cash-dom': '$',
-            'jquery': 'jQuery'
+            'cash-dom': '$'
         },
         
         optimization: {
-            minimize: false
+            minimize: PRODUCTION
+        },
+        output: {
+            libraryTarget: 'umd',
+            filename: 'index.bundled.min.js',
         }
     }
 }

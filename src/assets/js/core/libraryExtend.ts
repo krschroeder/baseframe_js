@@ -1,5 +1,5 @@
 import $ from 'cash-dom';
-import { capitalize } from '../util/helpers';
+import { lowercaseFirstLetter } from '../util/helpers';
 import store from './Store';
 import type PluginBaseClass from '../types';
 
@@ -16,8 +16,8 @@ const checkIfParamsExist = (setParams, params, notify = true) => {
 
 const extendPlugin = <T extends PluginBaseClass>(Plugin: T, notify:boolean, Lib) => {
   
-    const DataName = Plugin.name;
-    const pluginName = capitalize(DataName);
+    const DataName = Plugin.pluginName;
+    const pluginName = lowercaseFirstLetter(DataName);
 
     Plugin.Constructor = Plugin;
     

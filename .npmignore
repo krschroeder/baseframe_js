@@ -1,5 +1,6 @@
 /_gulp
 /src
+/demo
 yarn-error.log
 yarn.lock
 gulpfile.babel.js

@@ -84,8 +84,9 @@ export default class Parallax {
 	public effectCleared: boolean;
 	public cssPrevDir: string;
 
-	static get version() { return VERSION; }
 	static defaults = DEFAULTS;
+	static get version() { return VERSION; }
+	static get pluginName() { return EVENT_NAME; }
 
 	constructor(element: HTMLElement, options: IParallaxOptions | StringPluginArgChoices, index: number) {
 		const s = this; 

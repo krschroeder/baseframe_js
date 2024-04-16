@@ -57,6 +57,7 @@ export default class AccessibleMenu {
 	public params: IAccessibleMenuDefaults;
 
 	static get version() { return VERSION; }
+	static get pluginName() { return EVENT_NAME; }
 	public static defaults = DEFAULTS;
 
 	constructor(element, options: IAccessibleMenuOptions | StringPluginArgChoices) {
@@ -222,14 +223,14 @@ export default class AccessibleMenu {
 		}
 	}
 	
-	#escapeFromUlAtRootNext(focusLeaveElems: string, $ulParents: Cash, activeElem: Element):void {
+	#escapeFromUlAtRootNext(focusLeaveElems: string, $ulParents: Cash, activeElem: Element | null):void {
 		const $rootUl = $ulParents.eq(0);
 		const focusableElems = document.querySelectorAll(focusLeaveElems);
 		let atCurrElem = false;
 	
 		for (let i = 0, l = focusableElems.length; i < l; i++) {
 			const elem = focusableElems[i];
-			if (!atCurrElem && activeElem.isSameNode(elem)) {
+			if (!atCurrElem && activeElem?.isSameNode(elem)) {
 				atCurrElem = true;
 			}
 			if (atCurrElem && !$rootUl.has(elem).length) {

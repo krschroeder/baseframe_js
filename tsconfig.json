@@ -1,13 +1,16 @@
 {
-    "include": ["src/assets/js/**/*", "src/demo/assets/js/**/*"],
+    "include": ["src/assets/js/**/*.ts", "src/demo/assets/js/**/*.ts"],
     "exclude": ["src/demo/assets/js/demo.ts"],
     "compilerOptions": {
-        "lib": ["esNext", "dom"],
-        "declaration": true,
-        "declarationDir": ".",
-        "target": "ESNext",
-        "module": "ESNext",
+        "target": "ES6",
         "moduleResolution": "Node",
-        "declarationMap": false
+        "module": "ESNext",
+        // "noEmit": false,
+        "forceConsistentCasingInFileNames": true,
+        "noUnusedParameters": false,
+        "strictNullChecks": false,
+        "esModuleInterop": true,
+        "declaration": true,
+        "declarationDir": "."
     }
 }

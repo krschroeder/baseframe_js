@@ -87,10 +87,11 @@ const config = {
         optimization: {
             minimize: PRODUCTION
         },
-        output: {
+        
+        ...(PRODUCTION ? {output: {
             libraryTarget: 'umd',
             filename: 'index.bundled.min.js',
-        }
+        }} : {})
     }
 }
 

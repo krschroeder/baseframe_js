@@ -1,6 +1,6 @@
  
 import libraryExtend                    from './core/libraryExtend';
-
+export { default as SelectorEngine}     from './core/SelectorEngine';
 export { default as Cookies }           from './fn/Cookies';
 export { default as UrlState }          from './core/UrlState';
 export { default as smoothScroll }      from './fn/smoothScroll';

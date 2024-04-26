@@ -154,8 +154,12 @@ Each Plugin class has the following properties set on it.
 
 ```javascript
     class YourClass {
-       static get version() {
+        static get version() {
             return VERSION;
+        }
+
+        static get pluginName(){
+            return PLUGIN_NAME;
         }
 
         static remove() {

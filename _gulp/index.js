@@ -90,32 +90,32 @@ function buildJs(done) {
 	// done()
 }
 
-function buildDeclarationFilesToTemp(done) {
-	if (production) {
-		// declarations
-		return gulp.src(config.src.js)
-			.pipe(named())
-			.pipe(webpackStream(config.webpackConfig, webpack))
-			.pipe(tap(function (file) {	 
-				console.log(file.path)
-			}))
-			.pipe(gulp.dest(`.tmp`));
-	} else {
-		done();
-	}
+// function buildDeclarationFilesToTemp(done) {
+// 	if (production) {
+// 		// declarations
+// 		return gulp.src(config.src.js)
+// 			.pipe(named())
+// 			.pipe(webpackStream(config.webpackConfig, webpack))
+// 			.pipe(tap(function (file) {	 
+// 				console.log(file.path)
+// 			}))
+// 			.pipe(gulp.dest(`.tmp`));
+// 	} else {
+// 		done();
+// 	}
 	
-}
+// }
 
-function buildDeclarationFiles(done) {
-	if (production) {  
-		// declarations
-		return gulp.src('.tmp/**/*.d.ts')
-		.pipe(gulp.dest(`${config.dest}/js`))
+// function buildDeclarationFiles(done) {
+// 	if (production) {  
+// 		// declarations
+// 		return gulp.src('.tmp/**/*.d.ts')
+// 		.pipe(gulp.dest(`${config.dest}/js`))
 
-	} else {
-		done();
-	}
-}
+// 	} else {
+// 		done();
+// 	}
+// }
 
 function copyAssets(done) {
 	if (!production) {

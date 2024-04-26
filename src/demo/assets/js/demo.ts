@@ -1,6 +1,7 @@
 import $ from 'cash-dom';
  
 import libraryExtend from '../../../assets/js/core/libraryExtend';
+import SelectorEngine from '../../../assets/js/core/SelectorEngine';
 
 import Collapse from '../../../assets/js/Collapse';
 import LazyLoad from '../../../assets/js/LazyLoad';
@@ -27,7 +28,10 @@ libraryExtend([
     Toastr
 ], true);
 
+
+window['SelectorEngine'] = SelectorEngine;
  
+
 $('select').selectEnhance();
 const $collapseGroup = $('.collapse-group-1');
 $collapseGroup.on('click', '.collapse__header h2', function(e){

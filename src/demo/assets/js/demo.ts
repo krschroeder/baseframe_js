@@ -13,7 +13,7 @@ import NavMobile from '../../../assets/js/NavMobile';
 import Parallax from '../../../assets/js/Parallax';
 import SelectEnhance from '../../../assets/js/SelectEnhance';
 import throttledResize from '../../../assets/js/fn/throttleResize';
-
+import ScrollSpy from '../../../assets/js/ScrollSpy';
 libraryExtend([
     AccessibleMenu, 
     Collapse, 
@@ -22,6 +22,7 @@ libraryExtend([
     NavDesktop,
     NavMobile,
     Parallax,
+    ScrollSpy,
     SelectEnhance,
     Tabs,
     Toastr

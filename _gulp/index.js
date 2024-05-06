@@ -63,59 +63,13 @@ function buildHtml(done) {
 	done();
 }
 
-function buildJs(done) {
-
-	// if (production) {
-	// 	// just turn it into JS files
-	// 	gulp.src(config.src.js).pipe(tap(function (file) {	 
-	// 		const transpiledToJs = ts.transpile(file.contents.toString('utf-8'),{
-	// 			lib: ["esNext", "dom"],
-	// 			target: "ESNext",
-	// 			module: "ESNext",
-	// 			moduleResolution: "Node"
-	// 		})
-	// 		file.contents = Buffer.from(transpiledToJs);
-	// 	}))
-	// 	.pipe(rename({ extname: '.js'}))
-	// 	.pipe(gulp.dest(`${config.dest}/js`));
-
-	// } else {
-
-		return gulp.src(config.src.js)
-			.pipe(gulpIf(!production, named()))
-			.pipe(webpackStream(config.webpackConfig, webpack))
-			// .pipe(gulpIf(buildDemo, uglify()))
-			.pipe(gulp.dest(`${config.dest}/assets/js`));
-	// }
-	// done()
+function buildJs() {
+	return gulp.src(config.src.js)
+		.pipe(gulpIf(!production, named()))
+		.pipe(webpackStream(config.webpackConfig, webpack))
+		.pipe(gulp.dest(`${config.dest}/assets/js`));
 }
 
-function buildDeclarationFilesToTemp(done) {
-	if (production) {
-		// declarations
-		return gulp.src(config.src.js)
-			.pipe(named())
-			.pipe(webpackStream(config.webpackConfig, webpack))
-			.pipe(tap(function (file) {	 
-				console.log(file.path)
-			}))
-			.pipe(gulp.dest(`.tmp`));
-	} else {
-		done();
-	}
-	
-}
-
-function buildDeclarationFiles(done) {
-	if (production) {  
-		// declarations
-		return gulp.src('.tmp/**/*.d.ts')
-		.pipe(gulp.dest(`${config.dest}/js`))
-
-	} else {
-		done();
-	}
-}
 
 function copyAssets(done) {
 	if (!production) {

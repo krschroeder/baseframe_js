@@ -15,6 +15,7 @@ export { default as Modal }             from './Modal';
 export { default as NavDesktop }        from './NavDesktop';
 export { default as NavMobile }         from './NavMobile';
 export { default as Parallax }          from './Parallax';
+export { default as ScrollSpy }         from './ScrollSpy';
 export { default as SelectEnhance }     from './SelectEnhance';
 export { default as Tabs }              from './Tabs';
 export { default as Toastr }            from './Toastr';

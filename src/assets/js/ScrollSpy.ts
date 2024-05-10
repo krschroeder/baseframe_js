@@ -9,16 +9,17 @@ export interface IScrollSpyDefaults {
     cssPrefix: string;
     spyNavElems: 'a' | 'button';
     setActiveCssToLi: boolean,
-    spyContents: Selector;
+    spyBody: Selector;
+    spyElems: string;
     callback?: ScrollSpyCallBack;
 }
 
 export interface IScrollSpyOptions extends Partial<IScrollSpyDefaults> {
-    spyContents: Selector;
+    spyBody: Selector;
 }
 
 type ScrollSpyCallBack = (topMostEntries: HTMLElement[], navEntries: HTMLElement[]) => void;
- 
+
 const VERSION = "1.0.0";
 const DATA_NAME = 'ScrollSpy';
 const EVENT_NAME = 'scrollSpy';
@@ -29,11 +30,12 @@ const DEFAULTS: IScrollSpyOptions = {
     },
     cssPrefix: 'scroll-spy',
     spyNavElems: 'a',
-    spyContents: '.spy-contents h2',
+    spyBody: '.scroll-spy-body',
+    spyElems: 'h2',
     setActiveCssToLi: true
 }
 
- 
+
 
 export default class ScrollSpy {
 
@@ -44,31 +46,40 @@ export default class ScrollSpy {
     #observer: IntersectionObserver | null = null;
     public params: IScrollSpyOptions;
     public element: HTMLElement;
+    public $spyBody: Cash;
     public spyContents: HTMLElement[];
 
     public static defaults = DEFAULTS;
-	public static version = VERSION;
-	public static pluginName = EVENT_NAME; 
+    public static version = VERSION;
+    public static pluginName = DATA_NAME;
 
     constructor(element: HTMLElement, options: IScrollSpyOptions) {
         const s = this;
         const dataOptions = getDataOptions(element, EVENT_NAME);
+        s.element = element;
+
         s.params = $.extend({}, ScrollSpy.defaults, options, dataOptions);
-        s.spyContents = Array.from($(s.params.spyContents).filter((i, el) => isVisible(el)));
+        s.$spyBody = $(s.params.spyBody);
+        s.spyContents = Array.from(s.$spyBody.find(s.params.spyElems)).filter((el) => isVisible(el) && (el as HTMLElement).id);
+
 
         if (s.spyContents.length > 0) {
-           
-            s.#lastSpyElem = s.spyContents[s.spyContents.length -1];
+            $(element).addClass(`${s.params.cssPrefix}-nav`);
+            s.$spyBody.addClass(`${s.params.cssPrefix}-body`);
+
+            s.#lastSpyElem = s.spyContents[s.spyContents.length - 1];
             s.backUpInViewEntry = s.#getInitialBackUpInViewEntry();
             s.#pairElementsToNavEls();
             s.handleEvents();
 
         } else {
             console.warn(
-                `there is nothing to spy, check your 'spyContents' for those elements`, 
-                s.params.spyContents
+                `there is nothing to spy, check your 'spyBody' for those elements`,
+                s.params.spyBody
             );
         }
+
+        return s;
     }
 
     handleEvents() {
@@ -80,31 +91,34 @@ export default class ScrollSpy {
             s.#spyElements();
         }
 
-        const observer = new IntersectionObserver(observerProcess, observerOptions);
+        s.#observer = new IntersectionObserver(observerProcess, observerOptions);
 
         for (const elem of s.spyContents) {
-            observer.observe(elem);
+            s.#observer.observe(elem);
         }
 
-        $(s.element).on(`click.${EVENT_NAME}`,spyNavElems, function(){
+        $(s.element).on(`click.${EVENT_NAME}`, spyNavElems, function (e) {
             const clickElem = this as HTMLElement;
             const scrollRoot = observerOptions.root as HTMLElement || window;
-          
+            const $bodyElem = $((this.nodeName === 'A' ? this.hash : clickElem.dataset.hash) || document.body);
 
-            scrollRoot.scrollTo( {
-                top: s.#pairedElems.get(clickElem).getBoundingClientRect().top,
-                behavior: 'smooth'
-            })
+            if ($bodyElem.length) {
+
+                scrollRoot.scrollTo({
+                    top: $bodyElem.offset().top,
+                    behavior: 'smooth'
+                });
+
+                e.preventDefault();
+            }
         });
-
-        s.#observer = observer;
     }
 
     #getInitialBackUpInViewEntry() {
         const s = this;
         const sortedByTop = s.spyContents
-            .map(el => ({el, top: el.getBoundingClientRect().top}))
-            .sort((a,b) => a.top < b.top ? -1 : 1)
+            .map(el => ({ el, top: el.getBoundingClientRect().top }))
+            .sort((a, b) => a.top < b.top ? -1 : 1)
 
         for (let i = 0, l = sortedByTop.length; i < l; i++) {
             const curr = sortedByTop[i];
@@ -131,16 +145,16 @@ export default class ScrollSpy {
                 const foundElem = s.spyContents.find((el: HTMLElement) => el.id && el.id === hash.replace('#', ''))
 
                 if (foundElem) {
-                    
+
                     const pairedElem = setActiveCssToLi ? (clickEl.closest('li') || clickEl) : clickEl;
                     s.#pairedElems.set(foundElem, pairedElem);
-                    s.#pairedElems.set(pairedElem, foundElem);
+                    s.#pairedElems.set(clickEl, foundElem);
                 }
             }
         });
     }
 
-    #setInViewEntries(entries:IntersectionObserverEntry[]) {
+    #setInViewEntries(entries: IntersectionObserverEntry[]) {
         const s = this;
         for (const entry of entries) {
             const target = entry.target as HTMLElement;
@@ -149,7 +163,7 @@ export default class ScrollSpy {
                 s.inViewEntries.add(target);
             } else {
                 if (s.inViewEntries.has(target)) {
-                    
+
                     s.backUpInViewEntry = target;
                     s.inViewEntries.delete(target);
                     s.#toggleActiveCss(target, 'remove');
@@ -161,48 +175,47 @@ export default class ScrollSpy {
     #toggleActiveCss(target: HTMLElement, type: 'remove' | 'add') {
         const s = this;
         const { cssPrefix } = s.params;
-        const activeCss = `${cssPrefix}--active`;
-        const navLink = s.#pairedElems.get(target);
-                    
-        navLink.classList[type](activeCss);
-        target.classList[type](activeCss);
+        const clickElem = s.#pairedElems.get(target);
+
+        clickElem.classList[type](`${cssPrefix}-nav__active`);
+        target.classList[type](`${cssPrefix}-body__active`);
     }
 
-    #spyElements () {
+    #spyElements() {
         const s = this;
         const hasInViewEntries = s.inViewEntries.size > 0;
-        const topMostEntries:HTMLElement[] = hasInViewEntries ? [] : [s.backUpInViewEntry];
-    
-        for (const entry of s.inViewEntries) {
-            
-            if (topMostEntries.length) {
-            const elTop = entry.getBoundingClientRect().top;
-            
-            for (let i = 0, l = topMostEntries.length; i < l; i++) {
-                const tmEntry = topMostEntries[i];
-                const tmElTop = tmEntry.getBoundingClientRect().top;
-               
-                if (elTop < tmElTop && elTop >= 0) {
-                    topMostEntries.splice(i, 1, entry);
-                    s.#toggleActiveCss(tmEntry, 'remove');
-                }
+        const topMostEntries: HTMLElement[] = hasInViewEntries ? [] : [s.backUpInViewEntry];
 
-                const isLastEntry = s.#lastSpyElem.isSameNode(entry);
-                
-                if (isLastEntry) {
-                    const remainingBodyScroll = document.body.scrollHeight - window.scrollY;
-                    const canScrollAmount = window.innerHeight;
-                    if (canScrollAmount > remainingBodyScroll) {
-                        // if we can't get to the last scroll element
-                        // then highlight once in the screen
+        for (const entry of s.inViewEntries) {
+
+            if (topMostEntries.length) {
+                const elTop = entry.getBoundingClientRect().top;
+
+                for (let i = 0, l = topMostEntries.length; i < l; i++) {
+                    const tmEntry = topMostEntries[i];
+                    const tmElTop = tmEntry.getBoundingClientRect().top;
+
+                    if (elTop < tmElTop && elTop >= 0) {
+                        topMostEntries.splice(i, 1, entry);
+                        s.#toggleActiveCss(tmEntry, 'remove');
+                    }
+
+                    const isLastEntry = s.#lastSpyElem.isSameNode(entry);
+
+                    if (isLastEntry) {
+                        const remainingBodyScroll = document.body.scrollHeight - window.scrollY;
+                        const canScrollAmount = window.innerHeight;
+                        if (canScrollAmount > remainingBodyScroll) {
+                            // if we can't get to the last scroll element
+                            // then highlight once in the screen
+                            topMostEntries.push(entry);
+                        }
+                    }
+
+                    if (elTop === tmElTop) {
                         topMostEntries.push(entry);
                     }
                 }
-
-                if (elTop === tmElTop ) {
-                    topMostEntries.push(entry);
-                }
-            }
             } else {
                 topMostEntries.push(entry);
             }
@@ -224,18 +237,22 @@ export default class ScrollSpy {
 
     static remove(element: Cash, plugin?: ScrollSpy) {
 
-		$(element).each(function () {
-			const s: ScrollSpy = plugin || Store(this, DATA_NAME);
-			
+        $(element).each(function () {
+            
+            const s: ScrollSpy = plugin || Store(this, DATA_NAME);
+            
             for (const elem of s.spyContents) {
                 s.#toggleActiveCss(elem, 'remove');
             }
-            
-            $(s.element).off(`click.${EVENT_NAME}`);
+
+            $(s.element)
+                .off(`click.${EVENT_NAME}`)
+                .removeClass(`${s.params.cssPrefix}-nav`);
+            s.$spyBody.removeClass(`${s.params.cssPrefix}-body`);
             s.#observer.disconnect();
-			Store(this, DATA_NAME, null);
-		});
-	}
+            Store(this, DATA_NAME, null);
+        });
+    }
 }
 
 declare module 'cash-dom' {

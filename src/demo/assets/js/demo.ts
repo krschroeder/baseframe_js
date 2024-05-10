@@ -53,7 +53,10 @@ throttledResize(() => {
 $('#main-nav')
     .navMobile({enableBtn: '#mobile-nav-btn'})
     .navDesktop()
-    .accessibleMenu();
+    .accessibleMenu()
+    .scrollSpy({
+        spyBody: 'main.body-content'
+    })
 
 $('#example-nav')
     .navMobile({enableBtn: '#mobile-nav-btn-example'})

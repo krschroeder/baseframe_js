@@ -56,10 +56,10 @@ export default class AccessibleMenu {
 	public $element: Cash;
 	public params: IAccessibleMenuDefaults;
 
-	static get version() { return VERSION; }
-	static get pluginName() { return EVENT_NAME; }
 	public static defaults = DEFAULTS;
-
+    public static version = VERSION;
+    public static pluginName = DATA_NAME;
+	
 	constructor(element, options: IAccessibleMenuOptions | StringPluginArgChoices) {
 		const s = this;
 		

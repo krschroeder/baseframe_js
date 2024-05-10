@@ -30,9 +30,8 @@ __The following structure should be used with this plugin:__
 __HTML__
 ```html
 <section class="container">
-    <div>
-        <h2 id="section-parallax">Parallax</h2>
-    </div>
+   
+    <h2 id="section-parallax">Parallax</h2>
     <div class="parallax-area">
         <img class="parallax-area__bg parallax do-parallax"
             data-parallax-options="{speed: 20, bgFill: true, zAxis: true, rootMargin: 100}"

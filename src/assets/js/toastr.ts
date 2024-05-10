@@ -51,9 +51,9 @@ let currentlyToastingGlobal = false;
 
 export default class Toastr {
 
-    public static Defaults = DEFAULTS;
-    static get version() { return VERSION; }
-    static get pluginName() { return EVENT_NAME; }
+    public static defaults = DEFAULTS;
+    public static version = VERSION;
+    public static pluginName = DATA_NAME;
     
     public static DismissedEventName = 'toastDismissed';
 
@@ -79,7 +79,7 @@ export default class Toastr {
 
         s.currentlyToasting = false;
 
-        s.params = $.extend({}, Toastr.Defaults, options, dataOptions);
+        s.params = $.extend({}, Toastr.defaults, options, dataOptions);
         s.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, () => s.launch());
 
         return s;

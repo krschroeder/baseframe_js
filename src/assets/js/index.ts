@@ -1,4 +1,3 @@
- 
 import libraryExtend                    from './core/libraryExtend';
 
 export { default as Cookies }           from './fn/Cookies';

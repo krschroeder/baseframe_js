@@ -1,5 +1,6 @@
-import path from 'path';
-import yargs from 'yargs';
+import path             from 'path';
+import webpack 			from 'webpack';
+import yargs            from 'yargs';
 
 const VERSION       = require('./package.json').version;
 
@@ -28,9 +29,7 @@ const config = {
                     PRODUCTION ? '': 'src/demo/assets/js/demo.ts'
                 ].filter(e => e),
         html:   [BUILD_DEMO ? 'src/demo/index.{html,hbs}' : 'src/demo/**/*.{html,hbs}'],
-        readme: 'src/readmes/_readme.md',
-        dts:    'src/assets/js/**/*.d.ts',
-        tmp:    '.tmp'
+        readme: 'src/readmes/_readme.md'
     },
 
     dest: destPath,
@@ -51,16 +50,15 @@ const config = {
         }
     },
 
-    tsProdConfig: {
-        lib: ["esNext", "dom"],
-        target: "ESNext",
-        module: "ESNext",
-        moduleResolution: "Node"
-    },
+    // tsProdConfig: {
+    //     lib: ["esNext", "dom"],
+    //     target: "ESNext",
+    //     module: "ESNext",
+    //     moduleResolution: "Node"
+    // },
 
     webpackConfig: {
         mode: (PROD_JS ? 'production': 'development'),
-        target: ['web','es6'],
         resolve: {
             extensions: ['.js', '.tsx', '.ts'],
             alias: {
@@ -75,22 +73,23 @@ const config = {
                 {
                     test: /\.tsx?$/,
                     exclude: excludeRgx,
-                    loader: "ts-loader" 
+                    loader: "babel-loader",
+                    // options: {
+                    //     transpileOnly: true
+                    // } 
                 }
             ]
         },
-        
-        externals: { 
-            'cash-dom': '$'
-        },
-        
+
         optimization: {
-            minimize: PRODUCTION
+            minimize: false
         },
-        output: {
-            libraryTarget: 'umd',
-            filename: 'index.bundled.min.js',
+        
+        target: ['web','es6'],
+        externals: {
+            'cash-dom': '$'
         }
+        
     }
 }
 

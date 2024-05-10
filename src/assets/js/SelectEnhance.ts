@@ -74,9 +74,9 @@ export default class SelectEnhance {
     public selectListBoxInFullView: boolean;
     public keyedInput: string;
 
-    static defaults = DEFAULTS;
-    static get version() { return VERSION;}
-    static get pluginName() { return EVENT_NAME; }
+    public static defaults = DEFAULTS;
+    public static version = VERSION;
+    public static pluginName = DATA_NAME;
     
 
     constructor(element: HTMLSelectElement, options: ISelectEnhanceOptions | StringPluginArgChoices, index: number) {

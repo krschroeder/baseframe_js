@@ -93,8 +93,8 @@ export default class Modal {
     public openedOnce: boolean;
 
     public static defaults = DEFAULTS;
-    static get version() {return VERSION;}
-    static get pluginName() { return EVENT_NAME; }
+    public static version = VERSION;
+    public static pluginName = DATA_NAME;
 
     constructor(element: HTMLAnchorElement | HTMLElement | HTMLButtonElement, options: IModalOptions | StringPluginArgChoices) {
         const s = this;

@@ -20,5 +20,4 @@ export interface LocationHashTracking {
 	locationFilter: string | null;
 	loadLocation: boolean;
 }
-
-export default PluginBaseClass;
+ 

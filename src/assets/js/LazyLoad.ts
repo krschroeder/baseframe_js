@@ -70,8 +70,8 @@ export default class LazyLoad {
     public lazyElemObserver: IntersectionObserver;
     
     public static defaults = DEFAULTS;
-    static get version() {return VERSION;}
-    static get pluginName() { return EVENT_NAME; }
+    public static version = VERSION;
+    public static pluginName = DATA_NAME;
 
     constructor(element: HTMLElement, options: ILazyLoadOptions | StringPluginArgChoices) {
         const s = this;

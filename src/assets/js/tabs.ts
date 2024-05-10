@@ -59,8 +59,8 @@ export default class Tabs {
 	public initDefaultContent: tabDefaultContent;
 	
 	public static defaults = DEFAULTS;
-	static get version() { return VERSION; }
-	static get pluginName() { return EVENT_NAME; }
+    public static version = VERSION;
+    public static pluginName = DATA_NAME;
 
 	#transition = transition();
 

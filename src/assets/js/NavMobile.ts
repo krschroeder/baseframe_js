@@ -4,7 +4,7 @@ import type { StringPluginArgChoices } from './types';
 import $ from 'cash-dom';
 import { isVisible, getDataOptions, noop } from './util/helpers';
  
-import trapFocus, { ITrapFocusRemove } from './fn/trapFocus';
+import trapFocus, { type ITrapFocusRemove } from './fn/trapFocus';
 import transition from "./fn/transition";
 import { KEYS } from "./core/constants";
 import Store from "./core/Store";
@@ -81,8 +81,8 @@ export default class NavMobile {
 	public cssList: NavMobileCssList;
 
 	public static defaults = DEFAULTS;
-	static get version() { return VERSION; }
-	static get pluginName() { return EVENT_NAME; }
+    public static version = VERSION;
+    public static pluginName = DATA_NAME;
 
 	#transition = transition();
 	

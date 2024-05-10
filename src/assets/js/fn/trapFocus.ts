@@ -17,7 +17,7 @@ const defaultProps: ITrapFocusProps = {
 };
 
 export interface ITrapFocusRemove {
-    remove(): void
+    remove: () => void
 };
 
 const canFocusEls = (i, el:HTMLElement) => {

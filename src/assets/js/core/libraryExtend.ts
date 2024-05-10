@@ -1,7 +1,7 @@
 import $ from 'cash-dom';
 import { lowercaseFirstLetter } from '../util/helpers';
-import store from './Store';
-import type PluginBaseClass from '../types';
+import Store from './Store';
+import type { PluginBaseClass } from '../types';
 
 const checkIfParamsExist = (setParams, params, notify = true) => {
     for (let k in params) {
@@ -27,11 +27,11 @@ const extendPlugin = <T extends PluginBaseClass>(Plugin: T, notify:boolean, Lib)
 
             return s.each(function (index) {
 
-                const instance = store(this, DataName);
+                const instance = Store(this, DataName);
 
                 if (!instance) {
                     const plugin = new Plugin(this, params, index);
-                    store(this, DataName, plugin);
+                    Store(this, DataName, plugin);
 
                 } else {
                     const canUpdate = instance.handleUpdate && typeof instance.handleUpdate === 'function';

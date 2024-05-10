@@ -5,7 +5,7 @@ const Store = (storeElem: HTMLElement, key: string, value?: any): any | null => 
 
     const storeRecord = storeMap.get(storeElem) || storeMap.set(storeElem, {});
     const keyExists = Reflect.has(storeRecord, key);
-
+    
     if (keyExists) {
         const valueIsNull = value === null;
 

@@ -1,0 +1,29 @@
+
+
+.scroll-spy-nav {
+
+    &__active a {
+        background-color: $brand-yellow;
+    }
+}
+
+
+.scroll-spy-body {
+
+    &__active { 
+        position: relative;
+
+        &:before {
+            content: ' ';
+            height: 0;
+            width: 0;
+            display: block;
+            position: absolute;
+            inset: 50% auto auto 0;
+            transform: translateY(-50%);
+            border-top: 0.5rem solid transparent;
+            border-bottom: 0.5rem solid transparent;
+            border-left: 0.5rem solid $brand-yellow;   
+        }
+    }
+}

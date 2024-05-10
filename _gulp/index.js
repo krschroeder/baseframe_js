@@ -22,7 +22,9 @@ import cleanCss 		from 'gulp-clean-css';
 import named 			from 'vinyl-named';
 import webpack 			from 'webpack';
 import webpackStream 	from 'webpack-stream';
-import ts 				from 'typescript';
+ 
+import babel            from 'gulp-babel';
+import typescript       from 'gulp-typescript';
 import uglify           from 'gulp-uglify';
 import config 			from '../gulp.config';
 
@@ -63,13 +65,44 @@ function buildHtml(done) {
 	done();
 }
 
-function buildJs() {
-	return gulp.src(config.src.js)
-		.pipe(gulpIf(!production, named()))
-		.pipe(webpackStream(config.webpackConfig, webpack))
-		.pipe(gulp.dest(`${config.dest}/assets/js`));
+function buildJsForDev(done) {
+	if (!production) {
+	 
+		return gulp.src(config.src.js)
+			.pipe(gulpIf(!production, named()))
+			.pipe(webpackStream(config.webpackConfig, webpack))
+			.pipe(gulp.dest(`${config.dest}/assets/js`));
+	}
+	done();
 }
 
+
+const buildJsForProd = (done) => {
+	if (production) {
+		const tsProject = typescript.createProject('tsconfig.json');
+	 
+		return gulp.src(config.src.js)
+			.pipe(tsProject())
+			.pipe(babel())
+			.pipe(gulp.dest(`${config.dest}/js`));
+	}
+	done();
+}
+
+const buildJsDeclarations = (done) => {
+	if (production) {
+		const tsProject = typescript.createProject('tsconfig.json',{
+			declaration: true,
+			emitDeclarationOnly: true
+			 
+		});
+	 
+		return gulp.src(config.src.js)
+			.pipe(tsProject())
+			.pipe(gulp.dest(`${config.dest}/js`));
+	}
+	done();
+}
 
 function copyAssets(done) {
 	if (!production) {
@@ -103,7 +136,7 @@ function compileReadme() {
 
 function watch(done) {
 	if (!production && !buildDemo) {
-		gulp.watch(config.src.js).on('all', gulp.series(buildJs, reload));
+		gulp.watch(config.src.js).on('all', gulp.series(buildJsForDev, reload));
 		gulp.watch(config.src.css).on('all', gulp.series(buildCss));
 		// gulp.watch('src/assets/scss/**/*.scss').on('all', gulp.series(buildCss));
 		gulp.watch(config.src.img).on('all', gulp.series(copyAssets));
@@ -139,9 +172,9 @@ function reload(done) {
 const BUILD = gulp.series(
 	cleanUp,
 	buildCss,
-	buildJs,
-	// buildDeclarationFilesToTemp,
-	// buildDeclarationFiles,
+	buildJsForDev,
+	buildJsForProd,
+	buildJsDeclarations,
 	buildHtml,
 	copyAssets,
 	server,

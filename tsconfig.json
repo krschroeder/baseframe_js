@@ -1,16 +1,16 @@
 {
-    "include": ["src/assets/js/**/*.ts", "src/demo/assets/js/**/*.ts"],
-    "exclude": ["src/demo/assets/js/demo.ts"],
+    // "include": ["src/assets/js/**/*.ts", "src/demo/assets/js/**/*.ts"],
+    // "exclude": ["src/demo/assets/js/demo.ts"],
     "compilerOptions": {
-        "target": "ES6",
-        "moduleResolution": "Node",
-        "module": "ESNext",
-        // "noEmit": false,
-        "forceConsistentCasingInFileNames": true,
-        "noUnusedParameters": false,
-        "strictNullChecks": false,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "target": "esnext",
+        "jsx": "preserve",
+    
+        "resolveJsonModule": true,
+        "sourceMap": true,
         "esModuleInterop": true,
-        "declaration": true,
-        "declarationDir": "."
-    }
+        "verbatimModuleSyntax": true,
+        "skipLibCheck": true
+      }
 }

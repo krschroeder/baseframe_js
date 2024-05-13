@@ -252,7 +252,7 @@ export default class Tabs {
 					
 					if (p.urlFilterType === 'hashVal') { 
 						UrlState.setHashVal(paramVal, p.historyType);
-					} else {
+					} else if (p.urlFilterType === 'hash' || p.urlFilterType === 'search') {
 						UrlState.set(p.urlFilterType, p.locationFilter, paramVal, p.historyType);
 					}
 				}

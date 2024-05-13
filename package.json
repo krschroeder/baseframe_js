@@ -38,7 +38,6 @@
   "private": false,
   "browsers": "> 0.25%, not dead",
   "main": "dist/js/index.js",
-  "module": "dist/js/module.js",
   "homepage": "https://krschroeder.github.io/baseframe_js/",
   "scripts": {
     "start": "gulp",

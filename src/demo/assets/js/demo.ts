@@ -53,10 +53,19 @@ throttledResize(() => {
 $('#main-nav')
     .navMobile({enableBtn: '#mobile-nav-btn'})
     .navDesktop()
-    .accessibleMenu()
-    .scrollSpy({
-        spyBody: 'main.body-content'
+    .accessibleMenu();
+
+$(window).on('load',function() {
+    // need to wait for images to load
+    $('#main-nav').scrollSpy({
+        spyBody: 'main.body-content',
+        locationFilter: 'spy',
+        observerOptions: {
+            rootMargin: "80px 0px 0px",
+            threshold: 1
+        }
     })
+})
 
 $('#example-nav')
     .navMobile({enableBtn: '#mobile-nav-btn-example'})

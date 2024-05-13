@@ -1,6 +1,6 @@
 {
-    // "include": ["src/assets/js/**/*.ts", "src/demo/assets/js/**/*.ts"],
-    // "exclude": ["src/demo/assets/js/demo.ts"],
+    "include": ["src/assets/js/**/*.ts", "src/demo/assets/js/**/*.ts"],
+    "exclude": ["src/demo/assets/js/demo.ts"],
     "compilerOptions": {
         "module": "esnext",
         "moduleResolution": "node",

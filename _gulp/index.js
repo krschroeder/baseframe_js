@@ -24,6 +24,7 @@ import webpack 			from 'webpack';
 import webpackStream 	from 'webpack-stream';
  
 import babel            from 'gulp-babel';
+import ts 				from 'typescript';
 import typescript       from 'gulp-typescript';
 import uglify           from 'gulp-uglify';
 import config 			from '../gulp.config';
@@ -65,26 +66,38 @@ function buildHtml(done) {
 	done();
 }
 
-function buildJsForDev(done) {
-	if (!production) {
-	 
+function buildMainJs(done) {
+
+	if (production) {
+		// just turn it into JS files
+		gulp.src(config.src.js).pipe(tap(function (file) {	 
+            const contents = file.contents.toString('utf-8');
+			const transpiledToJs = ts.transpile(contents, config.tsProdConfig);
+			file.contents = Buffer.from(transpiledToJs);
+		}))
+		.pipe(rename({ extname: '.js'}))
+		.pipe(gulp.dest(`${config.dest}/js`));
+
+	} else {
+
 		return gulp.src(config.src.js)
-			.pipe(gulpIf(!production, named()))
+			.pipe(named())
 			.pipe(webpackStream(config.webpackConfig, webpack))
+			.pipe(gulpIf(buildDemo, uglify()))
 			.pipe(gulp.dest(`${config.dest}/assets/js`));
 	}
-	done();
+	done()
 }
 
 
-const buildJsForProd = (done) => {
+const buildCJs= (done) => {
 	if (production) {
 		const tsProject = typescript.createProject('tsconfig.json');
 	 
 		return gulp.src(config.src.js)
 			.pipe(tsProject())
 			.pipe(babel())
-			.pipe(gulp.dest(`${config.dest}/js`));
+			.pipe(gulp.dest(`${config.dest}/cjs`));
 	}
 	done();
 }
@@ -99,7 +112,8 @@ const buildJsDeclarations = (done) => {
 	 
 		return gulp.src(config.src.js)
 			.pipe(tsProject())
-			.pipe(gulp.dest(`${config.dest}/js`));
+			.pipe(gulp.dest(`${config.dest}/js`))
+			.pipe(gulp.dest(`${config.dest}/cjs`));
 	}
 	done();
 }
@@ -136,7 +150,7 @@ function compileReadme() {
 
 function watch(done) {
 	if (!production && !buildDemo) {
-		gulp.watch(config.src.js).on('all', gulp.series(buildJsForDev, reload));
+		gulp.watch(config.src.js).on('all', gulp.series(buildMainJs, reload));
 		gulp.watch(config.src.css).on('all', gulp.series(buildCss));
 		// gulp.watch('src/assets/scss/**/*.scss').on('all', gulp.series(buildCss));
 		gulp.watch(config.src.img).on('all', gulp.series(copyAssets));
@@ -172,8 +186,8 @@ function reload(done) {
 const BUILD = gulp.series(
 	cleanUp,
 	buildCss,
-	buildJsForDev,
-	buildJsForProd,
+	buildMainJs,
+	buildCJs,
 	buildJsDeclarations,
 	buildHtml,
 	copyAssets,

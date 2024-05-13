@@ -50,13 +50,13 @@ const config = {
         }
     },
 
-    // tsProdConfig: {
-    //     lib: ["esNext", "dom"],
-    //     target: "ESNext",
-    //     module: "ESNext",
-    //     moduleResolution: "Node"
-    // },
-
+    tsProdConfig: {
+        lib: ["esNext", "dom"],
+        target: "ESNext",
+        module: "ESNext",
+        moduleResolution: "Node"
+    },
+ 
     webpackConfig: {
         mode: (PROD_JS ? 'production': 'development'),
         resolve: {
@@ -73,10 +73,10 @@ const config = {
                 {
                     test: /\.tsx?$/,
                     exclude: excludeRgx,
-                    loader: "babel-loader",
-                    // options: {
-                    //     transpileOnly: true
-                    // } 
+                    loader: "ts-loader",
+                    options: {
+                        transpileOnly: true
+                    } 
                 }
             ]
         },

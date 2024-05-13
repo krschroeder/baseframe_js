@@ -30,7 +30,7 @@ Lots of callback functions to run after and before events and such that may help
 
 ### Barrel File ###
  
-This project is set-up with a __barrel file__ or a single reference to everything in the project. This is the neater syntax, but the drawback to this is that it will not tree-shake the unused imports.
+This project is set-up with a __barrel file__ or a single reference to everything in the project. This is the neater syntax, but the drawback may have issues tree-shaking the unused imports.
 
 ```javascript
 import libraryExtend, {

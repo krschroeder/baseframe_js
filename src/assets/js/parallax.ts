@@ -143,7 +143,7 @@ export default class Parallax {
 
 		//reset to get new measurements
 		s.$element.css({ 
-			'transform': null, 
+			transform: null, 
 			height: null, 
 			width: null
 		})

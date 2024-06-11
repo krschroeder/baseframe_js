@@ -114,7 +114,7 @@ export default class ScrollSpy {
 
                         if (p.urlFilterType === 'hashVal') { 
                             UrlState.setHashVal(paramVal, p.historyType);
-                        } else {
+                        } else if (p.urlFilterType === 'hash' || p.urlFilterType === 'search') {
                             UrlState.set(p.urlFilterType, p.locationFilter, paramVal, p.historyType);
                         }
                     }
@@ -147,7 +147,7 @@ export default class ScrollSpy {
 		const s = this;
 		const p = s.params;
 
-		if (p.locationFilter !== null || p.loadLocation) {
+		if (p.locationFilter !== null && p.loadLocation && p.urlFilterType !== 'none') {
 		
 			const spyId = UrlState.get(p.urlFilterType, p.locationFilter) as string;
 			 

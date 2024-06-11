@@ -109,7 +109,7 @@ export default class Tabs {
 		const s = this;
 		const p = s.params;
 
-		if (p.locationFilter !== null || p.loadLocation) {
+		if (p.locationFilter !== null && p.loadLocation && p.urlFilterType !== 'none') {
 		
 			const tabId = UrlState.get(p.urlFilterType, p.locationFilter) as string;
 			 
@@ -120,7 +120,7 @@ export default class Tabs {
 		}
 	}
 
-	getClickElemFromTabId(tabId: string):PrimaryClickElems {
+	getClickElemFromTabId(tabId: string):PrimaryClickElems | null {
 		const $clickElem = this.$tabsNavClickElems.filter((i, el: PrimaryClickElems) => getTabIDFromEl(el) === tabId);
 
 		if ($clickElem.length) {
@@ -247,7 +247,7 @@ export default class Tabs {
 					.attr({ 'aria-selected': 'true', tabindex: '0' })
 					.parent('li').addClass(`${p.cssPrefix}__nav-li--active`);
 		
-				if (updateUrl) {
+				if (updateUrl && p.urlFilterType !== 'none') {
 					const paramVal = s.initDefaultContent === tabId ? null : tabId;
 					
 					if (p.urlFilterType === 'hashVal') { 

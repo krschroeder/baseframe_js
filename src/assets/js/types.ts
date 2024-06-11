@@ -16,7 +16,7 @@ export type PluginBaseClass = {
 
 export interface LocationHashTracking {
 	historyType: StateChangeType;
-	urlFilterType: UrlSearchType;
+	urlFilterType: UrlSearchType | 'none';
 	locationFilter: string | null;
 	loadLocation: boolean;
 }

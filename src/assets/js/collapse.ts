@@ -136,8 +136,8 @@ export default class Collapse {
 					.attr({'aria-expanded': 'true'});
 			}
 		} 
-		 
-		if (p.locationFilter !== null || p.loadLocation) {
+
+		if (p.locationFilter !== null && p.loadLocation && p.urlFilterType !== 'none') {
 			 
 			const filterEl = UrlState.get(p.urlFilterType, p.locationFilter);
 			const cssOpen = `${p.cssPrefix}--open`;
@@ -234,10 +234,12 @@ export default class Collapse {
 				}
 
 				// Update History in URL
-				const paramList = [...s.$element.find(cssBodyOpen)].map((el:HTMLElement) => el.id)
-				const paramVal = paramList.length === 1 ? paramList[0] : paramList.length > 0 ? paramList : null;
+				if ( p.urlFilterType !== 'none') {
+					const paramList = [...s.$element.find(cssBodyOpen)].map((el:HTMLElement) => el.id)
+					const paramVal = paramList.length === 1 ? paramList[0] : paramList.length > 0 ? paramList : null;
 
-				UrlState.set(p.urlFilterType, p.locationFilter, paramVal, p.historyType);
+					UrlState.set(p.urlFilterType, p.locationFilter, paramVal, p.historyType);
+				}
 		
 				s.params.afterOpen(s.$btnElems, s.$activeItem);
 				s.moveToTopOnOpen();

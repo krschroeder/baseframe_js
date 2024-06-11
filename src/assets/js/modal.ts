@@ -252,7 +252,9 @@ export default class Modal {
             'padding-right': '0px'
         });
 
-        UrlState.set(p.urlFilterType, p.locationFilter, s.modalID, p.historyType);
+        if (p.urlFilterType !== 'none') {
+            UrlState.set(p.urlFilterType, p.locationFilter, s.modalID, p.historyType);
+        }
        
     }
 
@@ -277,7 +279,9 @@ export default class Modal {
             .off(`keydown.${s.modalEvent}Dismiss`)
             .off(`${s.modalEvent}Dismiss`);
         
-        UrlState.set(p.urlFilterType, p.locationFilter, null, p.historyType);
+        if (p.urlFilterType !== 'none') {
+            UrlState.set(p.urlFilterType, p.locationFilter, null, p.historyType);
+        }
 
         setTimeout(() => {
             $modal.attr({
@@ -314,7 +318,7 @@ export default class Modal {
         const s = this;
         const p = s.params;
 
-        if (p.locationFilter !== null || p.loadLocation) {
+        if (p.locationFilter !== null && p.loadLocation && p.urlFilterType !== 'none') {
 			 
             const filterEl = UrlState.get(p.urlFilterType, p.locationFilter);
 

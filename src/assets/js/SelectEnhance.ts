@@ -651,7 +651,7 @@ export default class SelectEnhance {
 
     static refreshOptions(element) {
         $(element).each(function () {
-            const s: SelectEnhance = Store(this, `${DATA_NAME}_instance`);
+            const s: SelectEnhance = Store(this, DATA_NAME);
 
             if (s) {
 

@@ -83,7 +83,7 @@ $('.do-parallax').parallax({speed:25, bgFill:true});
 
 
 // Tabs
-$(".tabs-outer").tabs({ locationFilter: 'tabs'});
+$(".tabs-outer").tabs({ locationFilter: 'tabs', defaultContent: 1});
 $(".tabs-inner").tabs({ locationFilter: 'tabs-inner'});
 
 // Lazy Load

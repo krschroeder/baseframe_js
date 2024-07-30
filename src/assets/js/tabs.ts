@@ -15,6 +15,7 @@ export interface ITabsDefaults extends LocationHashTracking {
 	cssPrefix: string;	 
 	addIDtoPanel: boolean;
 	ariaLabel: boolean;
+	defaultContent: number;
 	tabChange(tabId: string, prevTabId: string, tabsList: Cash, tabsBody: Cash): void;
 	onInit(tabsList: Cash, tabsBody: Cash): void
 }
@@ -33,7 +34,7 @@ const DEFAULTS: ITabsDefaults = {
 	loadLocation: true,
 	addIDtoPanel: true,
 	ariaLabel: true,
-	
+	defaultContent: 0,
 	tabChange: () => { },
 	onInit: () => { }
 };
@@ -84,7 +85,7 @@ export default class Tabs {
 		s.$tabsNavClickElems = s.$tabsNav.find('a, button');
 		s.tabsNavClickElems = [...s.$tabsNavClickElems] as PrimaryClickElems[];
 		s.prevTabId = null;
-		s.initDefaultContent = s.$tabsBodyPanels.eq(0).data('tab-id');
+		s.initDefaultContent = s.$tabsBodyPanels.eq(p.defaultContent).data('tab-id');
 		 	 
 		//init
 		s.setAriaAttrs();

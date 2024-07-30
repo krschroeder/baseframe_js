@@ -130,6 +130,10 @@ __[View Navigation Mobile](#nav-mobile-plugin)__
 For making a parallaxing elements on the page, parallax horizontally, vertically and zoom-in or out. Lots of configurable options.<br>
 __[View Parallax Elements](#parallax-plugin)__
 
+### Scroll Spy ###
+For doing a scroll spy that will highlight navigational elements to their body anchor id elements.<br>
+__[View Scroll Spy](#scroll-spy-plugin)__
+
 ### Select Enhance ###
 Enhance a `<select>` element and it's options. Unlike a radio button or checkbox, a select element can't fully be styled without further HTML enhancement.<br>
 __[View Select Enhance](#select-enhance-plugin)__
@@ -305,6 +309,10 @@ UrlState.get(type: UrlSearchType, paramName: string);
 <br>
 <br>
 @@include('./parallax.md')
+<br>
+<br>
+<br>
+@@include('./scroll-spy.md')
 <br>
 <br>
 <br>

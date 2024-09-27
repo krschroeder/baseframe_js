@@ -500,6 +500,7 @@ ariaLabel | string |  null | If using an `aria-label` to label the modal for ADA
 cssPrefix | string |  'modal' | The primary CSS class and prefix for all other derived elements. The BEM CSS naming convention is used for all derived elements.
 closeBtnIconCss | string |  'ico i-close' | CSS used on the close button.
 closeOutDelay | number |  250 | Time for closing the animation. Sync with CSS transition or animation.
+focusInDelay | number | 0 | A delay in the focusing in on the first element, which may be necessary for animation purposes. If an item within gets focus before it enters the viewport it may have adverse affects on it.
 backDropClose | boolean|  true | Toggle whether a user can click the backdrop to close the modal.
 fromDOM | boolean |  true | If the modal content is grabbed from the DOM. Set to false if grabbed via an AJAX call or otherwise generated.
 modalCss | string |  null | Additional modal css for styling or other scripting purposes

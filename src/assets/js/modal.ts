@@ -6,9 +6,10 @@ import $ from 'cash-dom';
 import Store from "./core/Store";
 import UrlState from "./core/UrlState";
 import trapFocus from './fn/trapFocus';
-import { camelCase, getDataOptions } from './util/helpers';
+import { camelCase, getDataOptions, reflow } from './util/helpers';
 import { noop } from './util/helpers';
 import h from "./fn/hyperScript";
+
 
 type ModalObj = {
     $backdrop: Cash;
@@ -37,6 +38,7 @@ export interface IModalDefaults extends LocationHashTracking {
     backDropClose: boolean;
     fromDOM: boolean;
     modalCss: string | null;
+    focusInDelay: number;
     onOpenOnce(modalObj: ModalObj): void;
     onOpen(modalObj: ModalObj): void;
     onClose(modalObj: ModalObj): void;
@@ -59,6 +61,7 @@ const DEFAULTS: IModalDefaults = {
     closeBtnIconCss: 'ico i-close',
     closeBtnLabel: 'Close',
     closeOutDelay: 250,
+    focusInDelay: 0,
     backDropClose: true,
     fromDOM: false,
     modalCss: null,
@@ -241,10 +244,13 @@ export default class Modal {
 
         setTimeout(() => {
             $modal.addClass(p.cssPrefix + '--show');
-
-            s.trappedFocus = trapFocus($modal, { nameSpace: camelCase(s.modalID) });
+            reflow($modal[0] as HTMLElement);
             $.extend(s.modalObj, { show: true });
         },0);
+
+        setTimeout(() => {
+            s.trappedFocus = trapFocus($modal, { nameSpace: camelCase(s.modalID) });
+        }, p.focusInDelay);
 
 
         $(document.body).addClass(p.cssPrefix + '-open').css({

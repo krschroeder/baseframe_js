@@ -25,12 +25,10 @@ export const isVisible = (el: HTMLElement, visibility = false): boolean => {
     }
 }
 
+export const reflow = (elem: HTMLElement) => elem.offsetHeight; //triggers reflow with reading the height
 export const getDataOptions = (el: HTMLElement, evtName: string) => parseObjectFromString(el.dataset[evtName + 'Options'])
-
 export const docTop = () => document.documentElement.scrollTop || document.body.scrollTop || 0;
-
 export const noop = () => { };
-
 export const isHidden = (el) => !isVisible(el);
 
 // string manipulation

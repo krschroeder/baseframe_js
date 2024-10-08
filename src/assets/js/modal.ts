@@ -297,7 +297,7 @@ export default class Modal {
                 display: ''
             });
 
-            $(document.body).removeClass(p.cssPrefix + '-open').css({
+            $(p.appendTo).removeClass(p.cssPrefix + '-open').css({
                 overflow: '',
                 'padding-right': ''
             });

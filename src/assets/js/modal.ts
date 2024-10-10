@@ -38,7 +38,7 @@ export interface IModalDefaults extends LocationHashTracking {
     backDropClose: boolean;
     fromDOM: boolean;
     modalCss: string | null;
-    focusInDelay: number;
+    focusInDelay: number | null;
     onOpenOnce(modalObj: ModalObj): void;
     onOpen(modalObj: ModalObj): void;
     onClose(modalObj: ModalObj): void;
@@ -248,12 +248,13 @@ export default class Modal {
             $.extend(s.modalObj, { show: true });
         },0);
 
-        setTimeout(() => {
-            s.trappedFocus = trapFocus($modal, { nameSpace: camelCase(s.modalID) });
-        }, p.focusInDelay);
+        if (p.focusInDelay !== null) {
+            setTimeout(() => {
+                s.trappedFocus = trapFocus($modal, { nameSpace: camelCase(s.modalID) });
+            }, p.focusInDelay);
+        }
 
-
-        $(document.body).addClass(p.cssPrefix + '-open').css({
+        $(p.appendTo).addClass(p.cssPrefix + '-open').css({
             overflow: 'hidden',
             'padding-right': '0px'
         });
@@ -302,7 +303,9 @@ export default class Modal {
                 'padding-right': ''
             });
 
-            s.trappedFocus.remove();
+            if (p.focusInDelay !== null) {
+                s.trappedFocus.remove();
+            }
 
             if (s.enabledElem && s.enabledElem instanceof HTMLElement) {
                 s.enabledElem.focus();

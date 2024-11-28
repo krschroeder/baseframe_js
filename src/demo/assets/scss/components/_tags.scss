@@ -134,11 +134,12 @@ ol {
 	}
 }
 
-	// a,button,input {
-	// 	&:focus {
-	// 		outline: 2px dashed $font-body-color;
-	// 	}
-	// }
+a,button,input {
+    &:focus {
+        outline: 0.125rem solid rgba($font-body-color, 0.5);
+        outline-offset: 0.25rem;
+    }
+}
 
 .sr-only {
 	position: absolute;

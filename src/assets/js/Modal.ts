@@ -11,6 +11,7 @@ import { noop } from './util/helpers';
 import h from "./fn/hyperScript";
 
 
+
 type ModalObj = {
     $backdrop: Cash;
     $content: Cash;
@@ -242,9 +243,10 @@ export default class Modal {
             'aria-modal': 'true'
         })
 
+        reflow($modal[0] as HTMLElement);
+        
         setTimeout(() => {
             $modal.addClass(p.cssPrefix + '--show');
-            reflow($modal[0] as HTMLElement);
             $.extend(s.modalObj, { show: true });
         },0);
 

@@ -21,7 +21,7 @@ export interface IScrollSpyOptions extends Partial<IScrollSpyDefaults> {
 
 type ScrollSpyCallBack = (topMostEntries: HTMLElement[], navEntries: HTMLElement[]) => void;
 
-const VERSION = "1.0.0";
+const VERSION = "1.0.1";
 const DATA_NAME = 'ScrollSpy';
 const EVENT_NAME = 'scrollSpy';
 const DEFAULTS: IScrollSpyOptions = {
@@ -219,9 +219,10 @@ export default class ScrollSpy {
         const s = this;
         const { cssPrefix } = s.params;
         const clickElem = s.#pairedElems.get(target);
-
-        clickElem.classList[type](`${cssPrefix}-nav__active`);
-        target.classList[type](`${cssPrefix}-body__active`);
+        if (clickElem) {
+            clickElem.classList[type](`${cssPrefix}-nav__active`);
+            target.classList[type](`${cssPrefix}-body__active`);
+        }
     }
 
     #spyElements() {

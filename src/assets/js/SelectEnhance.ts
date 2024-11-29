@@ -7,7 +7,6 @@ import $ from 'cash-dom';
 import Store from "./core/Store";
 import { KEYS } from "./core/constants";
 import { isMobileOS, getDataOptions, noop } from "./util/helpers";
-import throttledResize from "./fn/throttleResize";
 
 export interface ISelectEnhanceDefaults {
     cssPrefix: string;
@@ -40,6 +39,9 @@ const DEFAULTS: ISelectEnhanceDefaults = {
     observeSelectbox: true
 };
 
+// TOOD:
+// - Search with Keyboard
+
 // wrap the select first
 const mobileOS = isMobileOS();
 
@@ -63,6 +65,7 @@ export default class SelectEnhance {
     public $textInput: Cash;
     public textInput: HTMLInputElement;
     public $selectList: Cash;
+    public selectList: HTMLDivElement;
     public optionSet: WeakMap<object, any>;
     public listPosTop: boolean;
     public optionsShown: boolean;
@@ -161,7 +164,7 @@ export default class SelectEnhance {
         const $selectedBtn = s.$selectList.find('[aria-selected="true"]');
 
         s.optionsShown = true;
-        $(document.body).append(s.$selectList);
+        document.body.append(s.selectList);
         s.$selectEnhance.toggleClass(cssPrefix + '--focused');
         s.$textInput.attr({ 'aria-expanded': 'true' });
 
@@ -297,13 +300,11 @@ export default class SelectEnhance {
             }
 
             if (
-                e.key === KEYS.enter ||
-                e.code === KEYS.space && s.keyedInput.trim() === '' ||
+                e.key === KEYS.enter || //enter key
+                e.code === KEYS.space && s.keyedInput.trim() === '' || // space key
                 e.ctrlKey && e.altKey && e.shiftKey && KEYS.space === e.code
             ) {
-                if (!s.optionsShown) {
-                    s.showOptions();
-                }
+                s.showOptions();    
             }
         });
     }
@@ -510,6 +511,8 @@ export default class SelectEnhance {
             'aria-label': s.$label.text() || ''
         });
 
+        s.selectList = s.$selectList[0] as HTMLDivElement;
+
         const optId = s.selectId || 'select_' + s.index;
 
         for (let i = 0, l = options.length; i < l; i++) {
@@ -560,8 +563,6 @@ export default class SelectEnhance {
                 s.$selectList.append($optGroupWm.get(group))
             }
         }
-        // s.$selectList.insertAfter(s.$textInput);
-
     }
 
     nextOptionButton(dir: 'next' | 'prev') {
@@ -661,23 +662,31 @@ export default class SelectEnhance {
         if (s.optionsShown) {
             const 
                 {cssPrefix} = s.params,
-                selWrapPosTop = (s.$selectEnhance as any).offset().top,
-                selListHeight = s.selectEnhance.scrollHeight,
-                listPosAndHeight = selWrapPosTop + s.selectEnhance.scrollHeight,
-                winPosAndHeight = window.scrollY + $(window).height(),
-                {offsetHeight, offsetTop, offsetLeft, scrollWidth} = s.selectEnhance
-            ;
-            
-            s.listPosTop = !(listPosAndHeight > winPosAndHeight && selWrapPosTop > selListHeight && !s.selectListBoxInFullView)
+                selWrapOffset = s.$selectEnhance.offset(),
+                selWrapHeight = s.selectEnhance.scrollHeight,
+                selWrapPosTop = selWrapOffset.top,
+                selWrapPosBot = selWrapPosTop + selWrapHeight,
+                selWrapWidth = s.selectEnhance.offsetWidth,
+                selListHeight = s.selectList.offsetHeight,
+                {innerHeight, scrollY}  = window,
+                scrollYBot = scrollY + innerHeight,
 
-            const top = s.listPosTop ? offsetHeight + offsetTop : offsetTop - selListHeight;
-            const left = offsetLeft;
-                
-            s.$selectEnhance.toggleClass(cssPrefix + '--pos-above', s.listPosTop);
+                isSpaceAbove = selWrapPosTop - scrollY > selListHeight,
+                isSpaceBelow = scrollYBot - selWrapPosBot > selListHeight,
+
+                // If space below use that, else if no space at all prefer space below
+                canPlaceBelow = isSpaceBelow ? true : isSpaceAbove ? false: true
+            ;
+
+            s.$selectEnhance.toggleClass(cssPrefix + '--pos-above', !canPlaceBelow);
             s.$selectList
-                .css({ left, top, width: scrollWidth })
+                .css({ 
+                    left: selWrapOffset.left, 
+                    top: canPlaceBelow ? selWrapPosBot : selWrapPosTop - selListHeight, 
+                    width: selWrapWidth 
+                })
                 .toggleClass(cssPrefix + '__list--focused', s.optionsShown)
-                .toggleClass(cssPrefix + '__list--pos-above', s.listPosTop);
+                .toggleClass(cssPrefix + '__list--pos-above', !canPlaceBelow);
         }
     }
 
@@ -701,19 +710,23 @@ export default class SelectEnhance {
         $(element).each(function () {
             const s: SelectEnhance = plugin || Store(this, DATA_NAME);
 
-            s.$selectEnhance.off('keydown.' + EVENT_NAME);
-            s.$selectEnhance.off('keydown.navigate_' + EVENT_NAME);
-            s.$selectEnhance.off('click.' + EVENT_NAME);
-            s.$selectEnhance.off('focusout.' + EVENT_NAME);
-            s.$selectEnhance.off('blur.' + EVENT_NAME);
+            s.$selectEnhance
+                .off('keydown.' + EVENT_NAME)
+                .off('keydown.navigate_' + EVENT_NAME)
+                .off('click.' + EVENT_NAME)
+                .off('focusout.' + EVENT_NAME)
+                .off('blur.' + EVENT_NAME);
+
             s.$label.off('click.' + EVENT_NAME);
-            $(document.body).off('click.close_' + s.selectId + EVENT_NAME);
+            $(document.body).off(s.bodyCloseEvt);
             $(window).off('resize.' + EVENT_NAME);
             // the window event will just stay
             s.$select.insertAfter(s.$selectEnhance);
-            s.$select.attr({ tabindex: null, 'aria-hidden': null });
-            s.$select.off('mouseup.' + EVENT_NAME);
-            s.$select.off('change.' + EVENT_NAME);
+            
+            s.$select
+                .attr({ tabindex: null, 'aria-hidden': null })
+                .off('mouseup.' + EVENT_NAME)
+                .off('change.' + EVENT_NAME);
 
             if (s.selectboxObserver) {
                 s.selectboxObserver.disconnect();

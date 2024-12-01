@@ -2,8 +2,6 @@ import type { Cash } from "cash-dom";
 import type { StringPluginArgChoices } from './types';
 
 import $ from 'cash-dom';
- 
-
 import Store from "./core/Store";
 import { KEYS } from "./core/constants";
 import { isMobileOS, getDataOptions, noop } from "./util/helpers";
@@ -158,12 +156,12 @@ export default class SelectEnhance {
     showOptions() {
         const s = this;
         if (s.select.disabled || s.optionsShown) { return }
+        s.optionsShown = true; 
 
         currSelectEnhance = s.selectEnhance;
         const {cssPrefix} = s.params;
         const $selectedBtn = s.$selectList.find('[aria-selected="true"]');
 
-        s.optionsShown = true;
         document.body.append(s.selectList);
         s.$selectEnhance.toggleClass(cssPrefix + '--focused');
         s.$textInput.attr({ 'aria-expanded': 'true' });
@@ -183,7 +181,8 @@ export default class SelectEnhance {
     closeOptions(focusBack: boolean = true) {
         const s = this;
         const { cssPrefix} = s.params;
-        // currSelectEnhance = null;
+        
+        s.optionsShown = false;
 
         s.$selectEnhance
             .addClass(cssPrefix + '--blurring')
@@ -197,7 +196,6 @@ export default class SelectEnhance {
 
         // remove the close event on the body
         $(document.body).off(s.bodyCloseEvt);
-        s.optionsShown = false;
 
         setTimeout(() => {
             s.$selectEnhance.removeClass(cssPrefix + '--blurring ' + cssPrefix + '--pos-above')
@@ -219,11 +217,13 @@ export default class SelectEnhance {
 
     }
 
-    setSelectionState(option: HTMLDivElement, doBlur = true) {
+    setSelectionState(optionBtn: HTMLDivElement, doBlur = true) {
         const s = this;
         const { cssPrefix } = s.params;
+        const selectedOpt = s.optionSet.get(optionBtn);
 
-        const selectedOpt = s.optionSet.get(option);
+        if (!selectedOpt) return;
+
         const newSelectedState = !selectedOpt.selected;
 
         s.params.beforeChange(s.$select);
@@ -233,8 +233,8 @@ export default class SelectEnhance {
         s.params.afterChange(s.$select); 
         s.$selectList.find('.' + cssPrefix + '__list-btn[aria-selected]').attr({ 'aria-selected': 'false' });
 
-        $(option).attr({ 'aria-selected': newSelectedState + '' });
-        s.$textInput.attr({ 'aria-activedescendant': option.id });
+        $(optionBtn).attr({ 'aria-selected': newSelectedState + '' });
+        s.$textInput.attr({ 'aria-activedescendant': optionBtn.id });
 
         // add a class whether there is an input value or not
         s.$selectEnhance.toggleClass(cssPrefix + '--empty-val', !selectedOpt.value.trim());
@@ -249,9 +249,8 @@ export default class SelectEnhance {
         if (doBlur) {
                 
             s.closeOptions();
-            
         } else {
-            option[0].focus();
+            optionBtn.focus();
         }
     }
     
@@ -282,6 +281,7 @@ export default class SelectEnhance {
         s.$selectEnhance.on('click.' + EVENT_NAME, '.' + cssPrefix + '__enable-text', (e: MouseEvent) => {
             if (s.select.disabled) { return }
             s.showOptions();
+            
         });
 
         // Only works on keydown event
@@ -304,7 +304,7 @@ export default class SelectEnhance {
                 e.code === KEYS.space && s.keyedInput.trim() === '' || // space key
                 e.ctrlKey && e.altKey && e.shiftKey && KEYS.space === e.code
             ) {
-                s.showOptions();    
+                s.showOptions();    console.log('whha')
             }
         });
     }
@@ -339,14 +339,16 @@ export default class SelectEnhance {
 
     eventOutsideClickClose() {
         const s = this;
-       
-        $(document.body).on(s.bodyCloseEvt, function (e) {
-            const ae = document.activeElement;
-            
-            if (ae && !s.$selectList.has(ae).length) {
-                s.closeOptions();
-            }
-        });
+        setTimeout(() => {
+
+            $(document.body).off(s.bodyCloseEvt).on(s.bodyCloseEvt, function (e) {
+                const ae = document.activeElement;
+                
+                if (ae && !s.$selectList.has(ae).length) {
+                    s.closeOptions(); 
+                }
+            });
+        },100);
     }
 
     eventKeyboardSearch() {
@@ -354,7 +356,7 @@ export default class SelectEnhance {
 
         let keyInputTo: ReturnType<typeof setTimeout> | null = null;
         let changedTo: ReturnType<typeof setTimeout> | null = null;
-        let keyedFound = [];
+        let keyedFound: HTMLOptionElement;
 
         function keyboardSearch (e:KeyboardEvent) {
             if (s.select.disabled) { return }
@@ -369,15 +371,15 @@ export default class SelectEnhance {
 
             if (s.keyedInput.trim()) {
 
-                const rgx = RegExp('^'+s.keyedInput.trim(), 'i'); 
+                const rgx = RegExp(s.keyedInput.trim(), 'i'); 
 
-                keyedFound = Array.from(s.select.options).filter( (el) => rgx.test(el.text));
+                keyedFound = Array.from(s.select.options).find( (el) => rgx.test(el.text));
 
-                if (keyedFound.length) {
+                if (keyedFound) {
 
                     clearTimeout(changedTo);
                     changedTo = setTimeout(() => {
-                        s.setSelectionState(s.optionSet.get(keyedFound[0]), false);
+                        s.setSelectionState(s.optionSet.get(keyedFound), false);
                          
                     }, 100);
                 }
@@ -502,7 +504,7 @@ export default class SelectEnhance {
             }
         }
 
-        const options = s.select.getElementsByTagName('option');
+        const options = s.select.options;
  
         s.$selectList = $selectList ? $selectList : $('<div>').attr({
             class: cssPrefix + '__list',
@@ -516,42 +518,42 @@ export default class SelectEnhance {
         const optId = s.selectId || 'select_' + s.index;
 
         for (let i = 0, l = options.length; i < l; i++) {
-            const opt = options[i];
+            const option = options[i];
             const id = optId + i;
 
-            if (opt.hidden) continue;
+            if (option.hidden) continue;
 
-            const valCssStatus = opt.value === '' ? ' ' + cssPrefix + '__list-btn--empty' : '';
+            const valCssStatus = option.value === '' ? ' ' + cssPrefix + '__list-btn--empty' : '';
 
             const attrs = {
                 // type: 'button',
                 tabIndex: '0',
                 role: 'option', id,
-                'data-value': opt.value,
-                'aria-selected': opt.selected + '',
-                disabled: opt.disabled ? 'disabled' : null,
+                'data-value': option.value,
+                'aria-selected': option.selected + '',
+                disabled: option.disabled ? 'disabled' : null,
                 class: cssPrefix + '__list-btn' + valCssStatus
             };
-            const $btn: Cash = $('<div/>').attr(attrs).text(opt.textContent);
+            const optionBtn: HTMLDivElement = $('<div/>').attr(attrs).text(option.textContent)[0] as HTMLDivElement;
 
-            s.optionSet.set($btn[0], opt);
-            s.optionSet.set(opt, $btn);
+            s.optionSet.set(optionBtn, option);
+            s.optionSet.set(option, optionBtn);
             // append to list or optgroup
 
-            hasOptGroup && opt.parentElement.nodeName.toUpperCase() === 'OPTGROUP' ?
-                $optGroupWm.get(opt.parentElement).append($btn) :
-                s.$selectList.append($btn)
+            hasOptGroup && option.parentElement.nodeName.toUpperCase() === 'OPTGROUP' ?
+                $optGroupWm.get(option.parentElement).append(optionBtn) :
+                s.$selectList.append(optionBtn)
                 ;
 
-            if (opt.selected) {
+            if (option.selected) {
                 s.$textInput.attr({ 'aria-activedescendant': id });
-                s.$selectEnhance.toggleClass(cssPrefix + '--empty-val', !opt.value.trim());
+                s.$selectEnhance.toggleClass(cssPrefix + '--empty-val', !option.value.trim());
 
-                if (s.params.emptyValAsPlaceholder && opt.value.trim() === '') {
+                if (s.params.emptyValAsPlaceholder && option.value.trim() === '') {
                     s.$textInput.val('');
-                    s.$textInput.attr({ placeholder: opt.text });
+                    s.$textInput.attr({ placeholder: option.text });
                 } else {
-                    s.$textInput.val(opt.text);
+                    s.$textInput.val(option.text);
                 }
 
             }

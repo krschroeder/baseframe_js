@@ -33,7 +33,7 @@ interface IElementInView {
 
 export interface IParallaxOptions extends Partial<IParallaxDefaults> {}
 
-const VERSION = "2.0.0";
+const VERSION = "2.0.1";
 const DATA_NAME = 'Parallax';
 const EVENT_NAME = 'parallax';
 const DEFAULTS: IParallaxDefaults = {
@@ -170,9 +170,9 @@ export default class Parallax {
 		s.minWidthIfSet = s.params.minWidth ? s.winWidth > s.params.minWidth : true;
 		s.maxWidthIfSet = s.params.maxWidth ? s.winWidth < s.params.maxWidth : true;
 		s.elementOffset = s.getElementRects();
-
-		s.$element.css(s.lastCssInProps);
-		
+        if (s.lastCssInProps) {
+            s.$element.css(s.lastCssInProps);
+        }
 	}
 
 	getElementRects():IElementInView {

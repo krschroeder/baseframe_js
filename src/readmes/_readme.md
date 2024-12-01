@@ -325,3 +325,9 @@ UrlState.get(type: UrlSearchType, paramName: string);
 <br>
 <br>
 @@include('./toastr.md')
+
+
+## Release Notes
+
+### __Version 6.0.0__
+Major changes to the `SelectEnhance` plugin so the dropdown is appended to the body which resolves issues with anything overflow hidden. Will not work with current CSS in Verion 5, which is why this is bumped up a Major Version. Also, fixed bug in `Parallax` which occurs when jQuery is used.

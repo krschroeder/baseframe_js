@@ -8,6 +8,7 @@ import { isMobileOS, getDataOptions, noop } from "./util/helpers";
 
 export interface ISelectEnhanceDefaults {
     cssPrefix: string;
+    cssListModifer: string;
     mobileNative: boolean;
     emptyValAsPlaceholder: boolean;
     blurDuration: number;
@@ -26,6 +27,7 @@ const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 const DEFAULTS: ISelectEnhanceDefaults = {
     cssPrefix: 'select-enhance',
+    cssListModifer: null,
     mobileNative: false,
     emptyValAsPlaceholder: true,
     focusIn: noop,
@@ -484,10 +486,11 @@ export default class SelectEnhance {
 
     static buildOptionsList(s: SelectEnhance, $selectList?: Cash) {
 
-        const { cssPrefix } = s.params;
+        const { cssListModifer, cssPrefix } = s.params;
         const optGroup = s.select.getElementsByTagName('optgroup');
         const hasOptGroup = !!optGroup.length;
         const $optGroupWm = new WeakMap();
+        const modifierCss =  " " + (cssListModifer ? cssPrefix + '__list--' + cssListModifer : '');
 
         if (hasOptGroup) {
             for (let i = 0, l = optGroup.length; i < l; i++) {
@@ -507,7 +510,7 @@ export default class SelectEnhance {
         const options = s.select.options;
  
         s.$selectList = $selectList ? $selectList : $('<div>').attr({
-            class: cssPrefix + '__list',
+            class: cssPrefix + '__list' + modifierCss,
             role: 'listbox',
             id: s.selectId + '_listbox',
             'aria-label': s.$label.text() || ''

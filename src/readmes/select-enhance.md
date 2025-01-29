@@ -10,6 +10,7 @@ Can refresh the options list by calling static methods such as `SelectEnhance.re
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 cssPrefix  | string | 'select-enhance' | CSS class name for styling purposes
+cssListModifer | string | null | Value that will serve as a modifier class to the list. Neccessary if the list dropdown is divergent from the rest of the site.
 mobileNative | boolean | false | Off by default this doesn't render the stylized dropdowns for mobile devices.
 emptyValAsPlaceholder | boolean | true | if the value is empty, then render placeholder copy instead of the text value inside the option its pulling data from.
 focusIn | Function | ($element) => {} | event when focusing in on the select box

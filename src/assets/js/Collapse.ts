@@ -1,7 +1,8 @@
-import type { Cash } from "cash-dom";
+// import type { BaseElem } from "cash-dom";
 import type { LocationHashTracking, StringPluginArgChoices } from './types';
 
-import $ from 'cash-dom';
+// import $ from 'cash-dom';
+import $be, {type BaseElem} from "base-elem-js";
 
 import { getDataOptions, noop } from './util/helpers';
 
@@ -19,9 +20,9 @@ export interface ICollapseDefaults extends LocationHashTracking {
 	moveToTopOnOpen: boolean;
 	moveToTopOffset: number;
 	scrollSpeed: number;
-	afterOpen($btnElems: Cash, $collapsibleItem: Cash): void;
-	afterClose($btnElems: Cash, $collapsibleItem: Cash): void;
-	afterInit($element: Cash): void;
+	afterOpen($btnElems: BaseElem, $collapsibleItem: BaseElem): void;
+	afterClose($btnElems: BaseElem, $collapsibleItem: BaseElem): void;
+	afterInit($element: BaseElem): void;
 }
 
 export interface ICollapseOptions extends Partial<ICollapseDefaults> {};
@@ -45,13 +46,15 @@ const DEFAULTS: ICollapseDefaults = {
 	afterInit: noop
 };
 
+const bes = $be.static;
+
 export default class Collapse {
 	 
-	public $element: Cash;
+	public $element: BaseElem;
 	public params: ICollapseDefaults;
 	public toggling: boolean;
-	public $btnElems: Cash | null;
-	public $activeItem: Cash | null;
+	public $btnElems: BaseElem | null;
+	public $activeItem: BaseElem | null;
 	public initLoaded: boolean;
 	
 	public static defaults = DEFAULTS;
@@ -64,11 +67,11 @@ export default class Collapse {
 
 		const s = this;
 
-		s.$element = $(element);
+		s.$element = $be(element);
 
 		const dataOptions = getDataOptions(element, EVENT_NAME);
 	 
-		s.params = $.extend({}, Collapse.defaults, options, dataOptions);
+		s.params = Object.assign({}, Collapse.defaults, options, dataOptions);
 		s.toggling = false;
 		s.$btnElems = s.$element.find(`.${s.params.cssPrefix}__btn`).attr({'aria-expanded': 'false'});
 		s.$activeItem = null;
@@ -83,13 +86,13 @@ export default class Collapse {
 		return s;
 	}
 
-	static remove(element: Cash, plugin?: Collapse) {
-		$(element).each(function () {
+	static remove(element: BaseElem, plugin?: Collapse) {
+		$be(element).each(function () {
 
 			const s: Collapse = plugin || Store(this, DATA_NAME);
 
 			s.$element.off(`click.${EVENT_NAME} ${EVENT_NAME}`);
-			$(window).off(`popstate.${EVENT_NAME}`);
+			$be(window).off(`popstate.${EVENT_NAME}`);
 			// delete the Store item
 			Store(this, DATA_NAME, null);
 		})
@@ -100,15 +103,15 @@ export default class Collapse {
 		const { cssPrefix } = s.params;
  
 	 
-		s.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, `.${cssPrefix}__btn`, function (e: Event) {
-			const elemId = $(this).attr('aria-controls') || this.hash.substring(1);
+		s.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, function (e: Event, elem) {
+			const elemId = $be(elem).attr('aria-controls') || (elem as HTMLAnchorElement).hash.substring(1);
 			 
 			s.toggleAction(elemId);
 
 			e.preventDefault();
-		});
+		},`.${cssPrefix}__btn`);
 
-		$(window).on(`popstate.${EVENT_NAME}`, (e: Event) => {
+		$be(window).on(`popstate.${EVENT_NAME}`, (e: Event) => {
 			if (s.params.historyType === 'push') {
 				s.loadFromUrl(); 
 				s.initLoaded = true;
@@ -126,13 +129,13 @@ export default class Collapse {
 			const cssOpen = `${p.cssPrefix}--open`;
 			const $tryElem = s.$element.find('#' + filterEl);
 
-			if ($tryElem.length) {
+			if ($tryElem.elem.length) {
 
 				s.$activeItem = $tryElem;
 				s.$activeItem.addClass(cssOpen);
 				
 				s.$btnElems
-					.filter((i, el) => $(el).attr('aria-controls') === filterEl)
+					.filter(el => $be(el).attr('aria-controls') === filterEl)
 					.attr({'aria-expanded': 'true'});
 			}
 		} 
@@ -141,7 +144,7 @@ export default class Collapse {
 			 
 			const filterEl = UrlState.get(p.urlFilterType, p.locationFilter);
 			const cssOpen = `${p.cssPrefix}--open`;
-			s.$element.find(`.${p.cssPrefix}__body.${cssOpen}`).removeClass(cssOpen);
+			s.$element.find(`.${p.cssPrefix}__body.${cssOpen}`).rmClass(cssOpen);
 			s.$btnElems.attr({'aria-expanded': 'false'});
 
 			if (filterEl) {
@@ -167,7 +170,7 @@ export default class Collapse {
 
 		s.$activeItem = s.$element.find('#' + currElemID);
 		
-		if (s.$activeItem.length) {
+		if (s.$activeItem.elem.length) {
 			
 			const 
 				cssOpen 	= `${cssPrefix}--open`,
@@ -177,18 +180,19 @@ export default class Collapse {
 				cssBodyOpen = `.${cssPrefix}__body.${cssOpen}`
 			;
 			const $currOpenItems = s.$element.find(cssBodyOpen);
-			const $itemsToClose = $currOpenItems.filter((i, el) =>  p.toggleGroup || el.id === currElemID);
+			const $itemsToClose = $currOpenItems.filter(el =>  p.toggleGroup || el.id === currElemID);
 			const activeAlreadyOpen = s.$activeItem.hasClass(cssOpen);
 
-			$itemsToClose.each(function(){
-				$(this).css({ height: this.scrollHeight });
+
+			$itemsToClose.each((elem) => {
+				bes.css(elem, { height: elem.scrollHeight + 'px' });
 			});
 			
 			s.#transition(() => {
 				s.toggling = true;
 				
-				s.$btnElems.each(function(){
-					const $btn = $(this);
+				s.$btnElems.each((elem) => {
+					const $btn = $be(elem);
 					const isCurrent = $btn.attr('aria-controls') === currElemID;
 					const expanded = isCurrent && $btn.attr('aria-expanded') === 'false';
 					
@@ -203,16 +207,16 @@ export default class Collapse {
 				});
 				 
 				$itemsToClose
-					.removeClass(cssOpen)
-					.addClass(`${cssToggling} ${cssClosing}`)
-					.css({ height: 0 });
+					.rmClass(cssOpen)
+					.addClass([cssToggling, cssClosing])
+					.css({ height: '0px' });
 			
 
 				if (!activeAlreadyOpen) {
 
 					s.$activeItem
-						.addClass(`${cssToggling} ${cssOpening}`)
-						.css({ height: s.$activeItem[0].scrollHeight })
+						.addClass([cssToggling, cssOpening])
+						.css({ height: (s.$activeItem.elem[0] as HTMLElement).scrollHeight + 'px' })
 				}
 
 			},
@@ -220,7 +224,7 @@ export default class Collapse {
 				s.toggling = false;
 
 				$itemsToClose
-					.removeClass(`${cssToggling} ${cssClosing}`)
+					.rmClass([cssToggling,cssClosing])
 					.css({ height: null });
 				
 				s.params.afterClose(s.$btnElems, $itemsToClose);
@@ -229,13 +233,13 @@ export default class Collapse {
 				if (!activeAlreadyOpen) {
 					s.$activeItem
 						.addClass(cssOpen)
-						.removeClass(`${cssToggling} ${cssOpening}`)
+						.rmClass([cssToggling, cssOpening])
 						.css({ height: null });
 				}
 
 				// Update History in URL
 				if ( p.urlFilterType !== 'none') {
-					const paramList = [...s.$element.find(cssBodyOpen)].map((el:HTMLElement) => el.id)
+					const paramList = s.$element.find(cssBodyOpen).map((el:HTMLElement) => el.id) as string[];
 					const paramVal = paramList.length === 1 ? paramList[0] : paramList.length > 0 ? paramList : null;
 
 					UrlState.set(p.urlFilterType, p.locationFilter, paramVal, p.historyType);
@@ -252,22 +256,18 @@ export default class Collapse {
 		const { cssPrefix, moveToTopOffset, moveToTopOnOpen, scrollSpeed } = s.params;
 		
 		if (s.$activeItem) {
-			const $item: Cash = s.$activeItem.parent(`.${cssPrefix}__item`) || s.$activeItem as Cash;
+			const item: HTMLElement[] = s.$activeItem.map(el => el.closest(`.${cssPrefix}__item`));
 
-			if ($item.length && moveToTopOnOpen) {
-				// get the compiler to stop from throwing 
-				// an error it'll never throw by setting to 'any'
-				const elemOffsetTop = ($item as any).offset().top;
-				const top = elemOffsetTop - moveToTopOffset;
-
-				smoothScroll(top, scrollSpeed)
+			if (item.length && moveToTopOnOpen) {
+			 
+				smoothScroll(item[0].offsetTop - moveToTopOffset, scrollSpeed)
 			}
 		}
 	}
 }
 
 declare module 'cash-dom' {
-    export interface Cash {
-        collapse(options?: ICollapseOptions | StringPluginArgChoices): Cash;
+    export interface BaseElem {
+        collapse(options?: ICollapseOptions | StringPluginArgChoices): BaseElem;
 	}
 }

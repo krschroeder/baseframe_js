@@ -164,14 +164,14 @@ $('.lazy-highlight').lazyLoad({
 
     $('#btn-gen-content').modal({
         locationFilter: 'modal',
-        src: $('<div>').attr({ class: 'gen-content' }), 
+        src: '', 
         fromDOM: false,
         modalID: 'gen-content',
         onOpenOnce(modalObj) {
          
-            modalObj.$dialogContent.on('click', '.dismiss', modalObj.close);
+            modalObj.$dialogContent.on('click', modalObj.close,'button.dismiss');
 
-            modalObj.$dialogContent.append(`
+            modalObj.$dialogContent.insert(`
             <h2>Some generated Content</h2>
             <p>Ullamco <a href="#">link</a> laboris nisi ut aliquid ex ea commodi consequat. Sed haec quis possit intrepidus aestimare tellus. Quam diu etiam furor <a href="#">iste tuus</a> nos eludet? Curabitur est gravida et libero vitae dictum.</p>
             <button type="button" class="button dismiss">Dimiss</button>
@@ -184,12 +184,13 @@ $('.lazy-highlight').lazyLoad({
     const $picGroup = $('.pic-group');
 
     $picGroup.each(function (index) {
-        const src = $('<img>').attr({ src: this.dataset.imgSrc || '', loading: 'lazy' });
+        // const src = $('<img>').attr({ src: this.dataset.imgSrc || '', loading: 'lazy' });
         const modalID = 'pic-group_' + index;
         let imgIndex = index;
-        
+        const imgDefaultSrc = this.dataset.imgSrc;
+
         $(this).modal({
-            src, 
+            // src, 
             modalID,
             modalCss: 'modal--gallery', 
             locationFilter: 'gallery',
@@ -198,15 +199,16 @@ $('.lazy-highlight').lazyLoad({
                 
                 const $img = modalObj.$dialogContent.find('img');
 
-                modalObj.$dialogContent.append(`
+                modalObj.$dialogContent.insert(`
+                    <img src="${imgDefaultSrc}" loading="lazy" />
                     <footer class="pic-group-nav">
                         <button type="button" class="prev-btn">Previous</button>
                         <button type="button" class="next-btn">Next</button>
                     </footer>
                 `);
 
-                modalObj.$dialogContent.on('click', 'button', function(e){
-                    if (this.classList.contains('prev-btn')) {
+                modalObj.$dialogContent.on('click', (e, elem) => {
+                    if (elem.classList.contains('prev-btn')) {
 
                         imgIndex = imgIndex === 0 ? $picGroup.length - 1 : imgIndex - 1;
                          
@@ -218,7 +220,7 @@ $('.lazy-highlight').lazyLoad({
                     if (imgIndex > 0 && $picGroup.length) {
                         $img.attr({src: ($picGroup as any)[imgIndex].dataset.imgSrc || ''});
                     }
-                });
+                },'button');
             },
             onOpen(modalObj) {
                 const $img = modalObj.$dialogContent.find('img');

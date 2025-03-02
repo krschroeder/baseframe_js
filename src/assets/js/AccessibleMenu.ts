@@ -1,10 +1,11 @@
-import type { Cash } from 'cash-dom';
+// import type { BaseElem } from 'cash-dom';
 import type { StringPluginArgChoices } from './types';
-import $ from 'cash-dom';
+import $be, {type BaseElem, type EventName} from "base-elem-js";
 
 import { getDataOptions } from "./util/helpers";
 import { isVisible } from './util/helpers';
 import Store 		from "./core/Store";
+
 
 const KEYS = {
 	esc: 'Escape',
@@ -21,7 +22,7 @@ const KEYS = {
 type keyDirections = 'horizontal' | 'vertical';
 type prevNextArgs = {
 	e: KeyboardEvent,
-	$ulParents: Cash,
+	$ulParents: BaseElem,
 	activeElem: Element | null,
 	focusCss: string,
 	keyDirections: keyDirections[];
@@ -48,12 +49,15 @@ const DEFAULTS: IAccessibleMenuDefaults = {
 	focusLeaveElems: 'a, [tabindex], select, button'
 }
 
+const bes = $be.static;
+const af = Array.from;
+
 const visible = (i:number, el:HTMLElement) => isVisible(el);
 
 export default class AccessibleMenu {
 
 	public element: HTMLElement;
-	public $element: Cash;
+	public $element: BaseElem;
 	public params: IAccessibleMenuDefaults;
 
 	public static defaults = DEFAULTS;
@@ -65,38 +69,44 @@ export default class AccessibleMenu {
 		
 		const dataOptions = getDataOptions(element, EVENT_NAME);
 		s.element = element;
-		s.$element = $(element);
-		s.params = $.extend({}, AccessibleMenu.defaults, options, dataOptions);
+		s.$element = $be(element);
+		s.params = Object.assign({}, AccessibleMenu.defaults, options, dataOptions);
 
 		s.handleEvents();
 
 		return s;
 	}
 
-	static remove(element: Cash, plugin?: AccessibleMenu) {
+	static remove(element: BaseElem, plugin?: AccessibleMenu) {
 
-		$(element).each(function () {
-			const s: AccessibleMenu = plugin || Store(this, DATA_NAME);
+		$be(element).each((elem) => {
+			const s: AccessibleMenu = plugin || Store(elem, DATA_NAME);
 			 
-			s.$element.off('focusin.' + EVENT_NAME);
-			s.$element.off('mouseleave.' + EVENT_NAME);
-			s.$element.off('blur.' + EVENT_NAME);
-			s.$element.off('keydown.' + EVENT_NAME);
+			s.$element.off([
+                `focusin.${EVENT_NAME}`,
+			    `mouseleave.${EVENT_NAME}`,
+			    `blur.${EVENT_NAME}`,
+			    `keydown.${EVENT_NAME}`
+            ]);
 
-			Store(this, DATA_NAME, null);
+			Store(elem, DATA_NAME, null);
 		});
 	}
+
+    #getIndex (elem: HTMLElement) {
+        return af(elem.parentElement.children).indexOf(elem);
+    }
 	
 	prev(props: prevNextArgs): void {
 		const s = this;
 		const p = props;
-		const l = p.$ulParents.length - 1;
+		const l = p.$ulParents.elem.length - 1;
 		const key = p.e.key;
 		if (
 			key === KEYS.left && p.keyDirections[l] === "horizontal" ||
 			key === KEYS.up && p.keyDirections[l] === "vertical" ||
 			key === KEYS.left && p.keyDirections[l] === "vertical" &&
-			(l > 1 && p.keyDirections[l - 1] === "vertical" && $(p.activeElem).parent('li').index() === 0)
+			(l > 1 && p.keyDirections[l - 1] === "vertical" && s.#getIndex(p.activeElem.closest('li')) === 0)
 		) {
 			s.#focusListItem(p.activeElem, p.$ulParents, p.focusCss, true, p.focusInElems);
 			p.e.preventDefault();
@@ -106,19 +116,20 @@ export default class AccessibleMenu {
 	next(props: prevNextArgs): void {
 		const s = this;
 		const p = props;
-		const l = p.$ulParents.length - 1;
-		const atRootUl = p.$ulParents.length === 1;
+		const l = p.$ulParents.elem.length - 1;
+		const atRootUl = p.$ulParents.elem.length === 1;
 		const key = p.e.key;
 		if (
 			//go to sibling <li>
 			key === KEYS.right && p.keyDirections[l] === "horizontal" ||
 			key === KEYS.down && p.keyDirections[l] === "vertical"
 		) {
-			const isLastAtRoolLevel = atRootUl && $(p.activeElem).closest('li').last();
-			const $currentLi = $(p.activeElem).closest('li');
-			const isLastListItem = !$currentLi.next('li').length;
+            const 
+                activeLi = p.activeElem.closest('li'),
+                isLastLi = s.#getIndex(activeLi) === l,
+			    isLastAtRoolLevel = atRootUl && isLastLi;
 	
-			if (isLastAtRoolLevel && isLastListItem) {
+			if (isLastAtRoolLevel && isLastLi) {
 				s.#escapeFromUlAtRootNext(s.params.focusLeaveElems, p.$ulParents, p.activeElem);
 				 
 			} else {
@@ -141,29 +152,32 @@ export default class AccessibleMenu {
 	handleEvents() {
 		const s = this;
 		let to: ReturnType<typeof setTimeout> | null = null;
+        
+        const $lis = s.$element.findBy('tag', 'li');
 
-		$(s.element).on('focusin.' + EVENT_NAME, this.params.focusInElems, function (e: KeyboardEvent) {
+		s.$element.on(`focusin.${EVENT_NAME}`, (e: KeyboardEvent, elem: HTMLAnchorElement) => {
 
 			to && clearTimeout(to);
 
-			$(this).parent('li').addClass('focus')
-				.siblings('li').removeClass('focus');
-
-		}).on('mouseleave.' + EVENT_NAME, function () {
-
-			$(this).find('li.focus').removeClass('focus');
-		}).on('focusout.' + EVENT_NAME, function () {
-			to = setTimeout(() => {
-
-				$(this).find('li.focus').removeClass('focus');
-			}, 200)
+            $lis.elem.forEach(el => {
+                el === elem ? 
+                bes.addClass(el, 'focus') : 
+                bes.rmClass(el as HTMLElement, 'focus')
+            });
+            
+		},this.params.focusInElems)
+        .on(`mouseleave.${EVENT_NAME}`, (ev, elem) => {
+            $lis.rmClass('focus');
+			 
+		}).on(`focusout.${EVENT_NAME}`, () => {
+			to = setTimeout(() => $lis.rmClass('focus'), 200)
 		});
 
-		$(s.element).on('keydown.' + EVENT_NAME, function (e: KeyboardEvent) {
+		$be(s.element).on(`keydown.${EVENT_NAME}`, (e: KeyboardEvent) => {
 
 			const { focusCss, keyDirections, focusInElems } = s.params;
 			const activeElem = document.activeElement;
-			const $ulParents: Cash = $(activeElem).parents('ul');
+			const $ulParents: BaseElem = $be(activeElem).parents('ul');
 			const props: prevNextArgs = { e, $ulParents, activeElem, focusCss, keyDirections, focusInElems };
 
 			s.#escapeKey(e, $ulParents, focusCss, focusInElems);
@@ -172,7 +186,7 @@ export default class AccessibleMenu {
 		});
 	}
 
-	#escapeKey(e: KeyboardEvent, $ulParents: Cash, focusCss: string, focusInElems: string): void {
+	#escapeKey(e: KeyboardEvent, $ulParents: BaseElem, focusCss: string, focusInElems: string): void {
 		if (e.key == KEYS.esc) {
 	
 			if ($ulParents.length > 1) {
@@ -186,16 +200,16 @@ export default class AccessibleMenu {
 	
 	#focusListItem(
 		activeElem: Element | null,
-		$ulParents: Cash,
+		$ulParents: BaseElem,
 		focusCss: string,
 		prev: boolean,
 		focusInElems: string
 	): void {
-		const $aeLi = $(activeElem).parent('li');
+		const $aeLi = $be(activeElem).parent('li');
 		const $el = $aeLi[prev ? 'prev' : 'next']('li').filter(visible);
 		
 		if ($el.length) {
-			$el.addClass(focusCss).siblings('li').removeClass(focusCss);
+			$el.addClass(focusCss).siblings('li').rmClass(focusCss);
 			$el.find(focusInElems)[0].focus();
 		} else {
 			if ($ulParents.length > 1) {
@@ -215,15 +229,15 @@ export default class AccessibleMenu {
 		focusCss: string,
 		focusInElems: string
 	): void {
-		const $el = $(activeElem).parent('li').find('li').filter(visible);
+		const $el = $be(activeElem).parent('li').find('li').filter(visible);
 	
 		if ($el.length) {
-			$el.addClass(focusCss).siblings('li').removeClass(focusCss);
+			$el.addClass(focusCss).siblings('li').rmClass(focusCss);
 			$el.find(focusInElems).filter(visible)[0].focus();
 		}
 	}
 	
-	#escapeFromUlAtRootNext(focusLeaveElems: string, $ulParents: Cash, activeElem: Element | null):void {
+	#escapeFromUlAtRootNext(focusLeaveElems: string, $ulParents: BaseElem, activeElem: Element | null):void {
 		const $rootUl = $ulParents.eq(0);
 		const focusableElems = document.querySelectorAll(focusLeaveElems);
 		let atCurrElem = false;
@@ -245,7 +259,7 @@ export default class AccessibleMenu {
 }
 
 declare module 'cash-dom' {
-	export interface Cash {
-		accessibleMenu(options?: IAccessibleMenuOptions | StringPluginArgChoices): Cash;
+	export interface BaseElem {
+		accessibleMenu(options?: IAccessibleMenuOptions | StringPluginArgChoices): BaseElem;
 	}
 }

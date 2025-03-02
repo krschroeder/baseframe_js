@@ -1,6 +1,5 @@
-import type { Selector } from 'cash-dom';
-
-import $ from 'cash-dom';
+// import $ from 'cash-dom';
+import $be, { type BaseElem, type SelectorRoot } from 'base-elem-js';
 import { isVisible } from "../util/helpers";
 
 
@@ -20,7 +19,7 @@ export interface ITrapFocusRemove {
     remove: () => void
 };
 
-const canFocusEls = (i, el:HTMLElement) => {
+const canFocusEls = (el:HTMLElement) => {
     
     const baseFocusableRules = isVisible(el, true) && el.tabIndex !== -1;
     const nodeName = el.nodeName.toUpperCase();
@@ -32,27 +31,27 @@ const canFocusEls = (i, el:HTMLElement) => {
     return baseFocusableRules && el.style.pointerEvents !== 'none';
 }
 
-const trapFocus = (modalEl: Selector, props?: ITrapFocusProps): ITrapFocusRemove => {
+const trapFocus = (modalEl: SelectorRoot | BaseElem, props?: ITrapFocusProps): ITrapFocusRemove => {
 
-    const { focusFirst, focusable, nameSpace } = $.extend({}, defaultProps, props);
-    const $trapElem = $(modalEl);  
+    const { focusFirst, focusable, nameSpace } = Object.assign({}, defaultProps, props);
+    const $trapElem = $be(modalEl);  
     const focusableJoined = typeof focusable === 'string' ? focusable : focusable.join(',');
     const $firstFocusable = $trapElem.find(focusableJoined).filter(canFocusEls);
 
-    let firstFocusable = $firstFocusable.length ? $firstFocusable[0] : null;
+    let firstFocusable = $firstFocusable.elem.length ? $firstFocusable[0] : null;
 
     if (focusFirst && firstFocusable) {
 
         firstFocusable.focus();
     }
     
-    $(document.body).on(`keydown.${nameSpace}`, function (e:KeyboardEvent) {
+    $be(document.body).on(`keydown.${nameSpace}`, function (e:KeyboardEvent) {
          
         const $focusable = $trapElem.find(focusableJoined).filter(canFocusEls);
         
-        if (!$focusable.length) return;
+        if (!$focusable.elem.length) return;
         const activeEl = document.activeElement;
-        const lastFocusable = $focusable[$focusable.length - 1];
+        const lastFocusable = $focusable.elem[$focusable.elem.length - 1] as HTMLElement;
         const isTabPressed = e.key === 'Tab';
 
         firstFocusable = $focusable[0]; 
@@ -92,7 +91,7 @@ const trapFocus = (modalEl: Selector, props?: ITrapFocusProps): ITrapFocusRemove
 
     return {
         remove: () => {
-            $(document.body).off(`keydown.${nameSpace}`);
+            $be(document.body).off(`keydown.${nameSpace}`);
         }
     }
 }

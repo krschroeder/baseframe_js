@@ -1,8 +1,8 @@
-import type { Cash, Selector } from "cash-dom";
+ 
 import type { LocationHashTracking, StringPluginArgChoices } from './types';
 
-import $ from 'cash-dom';
-
+// import $ from 'cash-dom';
+import $be, {type BaseElem, type EventName, type Selector, type SelectorRoot} from "base-elem-js";
 import Store from "./core/Store";
 import UrlState from "./core/UrlState";
 import trapFocus from './fn/trapFocus';
@@ -12,24 +12,25 @@ import h from "./fn/hyperScript";
 
 
 
+
 type ModalObj = {
-    $backdrop: Cash;
-    $content: Cash;
+    $backdrop: BaseElem;
+    $content: BaseElem;
     contentAppended: boolean; //state
-    $dialog: Cash //modal dialog
-    $dialogContent: Cash // modal dialog content
-    $closeBtn: Cash
+    $dialog: BaseElem //modal dialog
+    $dialogContent: BaseElem // modal dialog content
+    $closeBtn: BaseElem
     id: string,
-    $modal: Cash, //outermost element
+    $modal: BaseElem, //outermost element
     close: () => void, //disable modal fn
     show: boolean //state
 }
 
 export interface IModalDefaults extends LocationHashTracking {
-    src: Selector;
+    src: SelectorRoot | string;
     modalID: string | null;
     enableEvent: string;
-    appendTo: Selector;
+    appendTo: SelectorRoot;
     ariaLabelledby: string | null;
     ariaLabel: string | null;
     cssPrefix: string;
@@ -49,6 +50,8 @@ export interface IModalDefaults extends LocationHashTracking {
 export interface IModalOptions extends Partial<IModalDefaults> {
     modalID: string | null;
 }
+
+const bes = $be.static;
 
 const VERSION = '1.2.0';
 const EVENT_NAME = 'modal';
@@ -107,7 +110,7 @@ export default class Modal {
 
         const dataOptions = getDataOptions(element, EVENT_NAME);
         
-        s.params = $.extend({}, Modal.defaults, options, dataOptions);
+        s.params = Object.assign({}, Modal.defaults, options, dataOptions);
         s.modalID = s.params.modalID;
         s.modalObj = s.getModalObj();
         s.modalEvent = EVENT_NAME + '_' + s.modalID;
@@ -124,22 +127,22 @@ export default class Modal {
     }
 
 
-    static remove(element: Cash, plugin?: Modal) {
+    static remove(element: BaseElem, plugin?: Modal) {
 
-        $(element).each(function () {
+        $be(element).each(function () {
 
             const s: Modal = plugin || Store(this, DATA_NAME);
             const params = s.params;
             const { $backdrop, $closeBtn } = s.modalObj;
 
             s.modalObj.show && s.modalObj.close();
-            $(s.element).off(`${s.params.enableEvent}.${s.modalEvent}`);
+            $be(s.element).off(`${s.params.enableEvent}.${s.modalEvent}` as EventName);
             $closeBtn.off(`click.${s.modalEvent}Dismiss`);
             if (params.backDropClose) $backdrop.off(`click.${s.modalEvent}Dismiss`);
-            $(document)
+            $be(document)
                 .off(`keydown.${s.modalEvent}Dismiss`)
-                .off(`${s.modalEvent}Dismiss`);
-            $(window).off(`popstate.${s.modalEvent} ${s.modalEvent}`);
+                .off(`${s.modalEvent}Dismiss` as EventName);
+            $be(window).off(`popstate.${s.modalEvent} ${s.modalEvent}`);
             
             Store(this, DATA_NAME, null);
         });
@@ -148,7 +151,7 @@ export default class Modal {
     handleEvents() {
         const s = this;
 
-        $(s.element).on(`${s.params.enableEvent}.${s.modalEvent}`, function (e) {
+        $be(s.element).on(`${s.params.enableEvent}.${s.modalEvent}` as EventName, (e) => {
             s.setDisplayAndEvents();
             e.preventDefault();
         });
@@ -160,7 +163,7 @@ export default class Modal {
 
         s.enableModal();
 
-        $(document).on(`keydown.${s.modalEvent}Dismiss`, function (e) {
+        $be(document).on(`keydown.${s.modalEvent}Dismiss`, function (e) {
             const ekey = e.code || e.originalEvent.key; //cash-dom || jquery
             if (ekey === 'Escape') {
                 s.close();
@@ -168,37 +171,42 @@ export default class Modal {
             }
         });
 
-        $(document).on(`${s.modalEvent}Dismiss`, s.close);
+        $be(document).on(`${s.modalEvent}Dismiss` as EventName, s.close);
     }
 
     getModalObj() {
-
-        const s = this,
-            p = s.params,
-            $closeBtn = h(`button.${p.cssPrefix}__btn-dismiss`, { 
+        const { make } = bes;
+        const 
+            s               = this,
+            p               = s.params,
+            rootCss         = p.cssPrefix + (p.modalCss ? ' ' + p.modalCss : ''),
+            $closeBtn       = $be(make(`button.${p.cssPrefix}__btn-dismiss`, { 
                 type: 'button', 
-                'aria-label': p.closeBtnLabel 
-            }).append(h(`i.${p.closeBtnIconCss}`)),
-            $dialogContent = h(`div.${p.cssPrefix}__dialog-content`),
-            $dialog = h(`div.${p.cssPrefix}__dialog`).append($closeBtn, $dialogContent),
-            $backdrop = h(`div.${p.cssPrefix}__backdrop`),
-            $modal = h(`div`,{
-                class: p.cssPrefix + (p.modalCss ? ' ' + p.modalCss : ''),
-                'aria-label': (p.ariaLabel || s.element.dataset.ariaLabel) || null,
+                ariaLabel: p.closeBtnLabel 
+            }, `<i class="${p.closeBtnIconCss}"></i>`)),
+            $dialogContent  = $be(make(`div.${p.cssPrefix}__dialog-content`)),
+            $dialog         = $be(make(`div.${p.cssPrefix}__dialog`)).insert([$closeBtn, $dialogContent]),
+            $backdrop       = $be(make(`div.${p.cssPrefix}__backdrop`)),
+            $modal          = $be(make(`div.${rootCss}`)).attr({
+                id: s.modalID,
+                ariaLabel: (p.ariaLabel || s.element.dataset.ariaLabel) || null,
                 'aria-labelledby': (p.ariaLabelledby || s.element.dataset.ariaLabelledby) || null,
-                id: s.modalID
-            }).append($backdrop, $dialog),
-            $content = $(s.params.src || (<HTMLAnchorElement>s.element).hash || s.element.dataset.modalSrc)
+            }).insert([$backdrop, $dialog]),
+            $content        = $be(
+                s.params.src || 
+                (<HTMLAnchorElement>s.element).hash || 
+                s.element.dataset.modalSrc
+            )
         ;
-
-        return {
+            console.log('$content',$content)
+        return { 
             $backdrop,
             $content,
             contentAppended: false,
             $dialog,
             $dialogContent,
             $closeBtn,
-            id: s.modalID,
+            id: s.modalID, 
             $modal,
             close: () => s.close(),
             show: false
@@ -214,18 +222,19 @@ export default class Modal {
         s.enabledElem = document.activeElement;
         
         if (p.fromDOM) {
-            $content.after(
-                h(`span.${p.cssPrefix}-content-placemarker#${s.modalObj.id}_marker`)
+            $content.insert(
+                bes.make(`span.${p.cssPrefix}-content-placemarker`, {id: `${s.modalObj.id}_marker`}),
+                'after'
             );
         }
 
         if (!s.modalObj.contentAppended) {
+             
+            s.modalObj.$dialogContent.insert($content);
+            Object.assign(s.modalObj, { contentAppended: true });
+        } 
 
-            s.modalObj.$dialogContent.append($content);
-            $.extend(s.modalObj, { contentAppended: true });
-        }
-
-        $(p.appendTo).append($modal);
+        $be(p.appendTo).insert($modal);
 
         // attach events after appended to DOM
         $closeBtn.on(`click.${s.modalEvent}Dismiss`, () => s.close());
@@ -243,11 +252,11 @@ export default class Modal {
             'aria-modal': 'true'
         })
 
-        reflow($modal[0] as HTMLElement);
+        reflow($modal.elem[0] as HTMLElement);
         
         setTimeout(() => {
             $modal.addClass(p.cssPrefix + '--show');
-            $.extend(s.modalObj, { show: true });
+            Object.assign(s.modalObj, { show: true });
         },0);
 
         if (p.focusInDelay !== null) {
@@ -256,9 +265,9 @@ export default class Modal {
             }, p.focusInDelay);
         }
 
-        $(p.appendTo).addClass(p.cssPrefix + '-open').css({
+        $be(p.appendTo).addClass(p.cssPrefix + '-open').css({
             overflow: 'hidden',
-            'padding-right': '0px'
+            paddingRight: '0px'
         });
 
         if (p.urlFilterType !== 'none') {
@@ -277,16 +286,19 @@ export default class Modal {
         hasCb(p.onClose, s.modalObj);
 
         $modal.addClass(p.cssPrefix + '--dismissing');
-        $modal.removeClass(p.cssPrefix + '--show');
+        $modal.rmClass(p.cssPrefix + '--show');
 
         // detach events
         $closeBtn.off(`click.${s.modalEvent}Dismiss`);
 
         if (p.backDropClose) $backdrop.off(`click.${s.modalEvent}Dismiss`);
         
-        $(document)
-            .off(`keydown.${s.modalEvent}Dismiss`)
-            .off(`${s.modalEvent}Dismiss`);
+        $be(document)
+            .off([
+                `keydown.${s.modalEvent}Dismiss`, 
+                `${s.modalEvent}Dismiss`
+            ] as EventName[]);
+           
         
         if (p.urlFilterType !== 'none') {
             UrlState.set(p.urlFilterType, p.locationFilter, null, p.historyType);
@@ -296,13 +308,13 @@ export default class Modal {
             $modal.attr({
                 role: 'dialog',
                 'aria-modal': ''
-            }).removeClass(p.cssPrefix + '--dismissing').css({
+            }).rmClass(p.cssPrefix + '--dismissing').css({
                 display: ''
             });
 
-            $(p.appendTo).removeClass(p.cssPrefix + '-open').css({
-                overflow: '',
-                'padding-right': ''
+            $be(p.appendTo).rmClass(p.cssPrefix + '-open').css({
+                overflow: null,
+                paddingRight: null
             });
 
             if (p.focusInDelay !== null) {
@@ -314,13 +326,13 @@ export default class Modal {
             }
 
             if (p.fromDOM) {
-                $('#' + s.modalObj.id + '_marker').after($content).remove();
-                $.extend(s.modalObj, { contentAppended: false });
+                $be('#' + s.modalObj.id + '_marker').insert($content[0], 'after').remove();
+                Object.assign(s.modalObj, { contentAppended: false });
             }
 
             hasCb(p.afterClose, s.modalObj);
             $modal.remove();
-            $.extend(s.modalObj, { show: false });
+            Object.assign(s.modalObj, { show: false });
 
         }, p.closeOutDelay);
     }
@@ -342,7 +354,7 @@ export default class Modal {
 
 
 declare module 'cash-dom' {
-    export interface Cash {
-        modal(options: IModalOptions | StringPluginArgChoices): Cash;
+    export interface BaseElem {
+        modal(options: IModalOptions | StringPluginArgChoices): BaseElem;
     }
 }

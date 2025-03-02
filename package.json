@@ -1,6 +1,6 @@
 {
   "name": "baseframe-js",
-  "version": "6.0.0",
+  "version": "6.1.0",
   "description": "A suite of useful Javascript plugins and functions to help with Front-end Development on websites",
   "repository": {
     "type": "git",
@@ -81,6 +81,7 @@
     "yargs": "^8.0.2"
   },
   "dependencies": {
+    "base-elem-js": "^1.6.1",
     "cash-dom": "^8.1.5"
   }
 }

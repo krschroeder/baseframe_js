@@ -1,9 +1,11 @@
-import { Cash } from "cash-dom";
+ 
 import type { StringPluginArgChoices } from './types';
-import $ from 'cash-dom';
+// import $ from 'cash-dom';
+import $be, {type BaseElem} from "base-elem-js";
 import Store from "./core/Store";
 import { getDataOptions } from "./util/helpers";
 import throttledResize from "./fn/throttleResize";
+import type { EventName } from 'base-elem-js';
 
 type Axis =  'x' | 'y';
  
@@ -15,7 +17,7 @@ export interface IParallaxDefaults {
 	cssPrefix: string;
 	scrollAxis: Axis;
 	zAxis: boolean;
-    relativeElem: false | Cash;
+    relativeElem: false | BaseElem;
     bgFill: boolean;
 	rootMargin: number | [number,number];
     minWidth: number | null;
@@ -58,11 +60,11 @@ export default class Parallax {
 	public zInitOffset: number;
 	public index: number;
 	public instanceEvent: string;
-	public $window: Cash;
-	public $element: Cash;
+	public $window: BaseElem;
+	public $element: BaseElem;
 	public element: HTMLElement;
 	public elementOffset: IElementInView;
-	public $relElem: Cash;
+	public $relElem: BaseElem;
 	public winHeight: number;
 	public winWidth: number;
 	public elemHeight: number;
@@ -82,7 +84,7 @@ export default class Parallax {
 	public minWidthIfSet: boolean;
 	public maxWidthIfSet: boolean;
 	public effectCleared: boolean;
-	public cssPrevDir: string;
+	public cssPrevDir: string[] | string;
 
 	public static defaults = DEFAULTS;
     public static version = VERSION;
@@ -92,15 +94,15 @@ export default class Parallax {
 		const s = this; 
 		const dataOptions = getDataOptions(element, EVENT_NAME);
 		 
-		s.$window = $(window);
-		s.$element = $(element);
+		s.$window = $be(window);
+		s.$element = $be(element);
 		s.element = element;
-		s.params = $.extend({}, Parallax.defaults, options, dataOptions)
+		s.params = Object.assign({}, Parallax.defaults, options, dataOptions)
 		s.zInitOffset = 0;
 		s.index = index;
 		s.instanceEvent = EVENT_NAME + index;
 		s.$relElem = s.#relElem;
-		s.cssPrevDir = '';
+		s.cssPrevDir = [];
 		//props to get updated on resize
 		s.updatableProps();
 		s.handleEvents();
@@ -113,11 +115,11 @@ export default class Parallax {
 		 
 		throttledResize(() => { 
 			s.updatableProps();
-			// $(window).trigger(s.instanceEvent);
+			// $be(window).trigger(s.instanceEvent);
 			s.parallax(s);
-		},`${s.instanceEvent}_resize`,true);
+		},`[${s.instanceEvent}_resize]`,true);
 
-		$(window).on(`scroll.${s.instanceEvent} ${s.instanceEvent}`, () => {
+		$be(window).on([`scroll.${s.instanceEvent}`,`[${s.instanceEvent}]`], () => {
 			window.requestAnimationFrame(() => {
 				s.parallax(s);
 			});
@@ -127,7 +129,7 @@ export default class Parallax {
 	handleUpdate() {
 		const s = this;
 		s.updatableProps();
-		$(window).trigger(s.instanceEvent);
+		$be(window).trigger(s.instanceEvent);
 	}
 
 	updatableProps() {
@@ -136,8 +138,8 @@ export default class Parallax {
 			zSpeed = s.#zSpeed,
 			{ cssPrefix } = s.params,
 			speedCss = `${cssPrefix}--${s.params.axis}-${zSpeed > 0 ? 'pos' : 'neg'}`,
-			zSpeedCss = s.params.zAxis ? ` ${cssPrefix}--z-${zSpeed > 0 ? 'pos' : 'neg'}` : '',
-			newCssDir = `${speedCss}${zSpeedCss}`,
+			zSpeedCss = s.params.zAxis ? `${cssPrefix}--z-${zSpeed > 0 ? 'pos' : 'neg'}` : '',
+			newCssDir = zSpeedCss ? [speedCss, zSpeedCss] : speedCss,
 			rm = s.params.rootMargin
 		;
 
@@ -147,29 +149,33 @@ export default class Parallax {
 			height: null, 
 			width: null
 		})
-		.removeClass(s.cssPrevDir)
-		.addClass(newCssDir);
+        if (s.cssPrevDir) s.$element.rmClass(s.cssPrevDir);
+        s.$element.addClass(newCssDir);
 
-		s.cssPrevDir = newCssDir;
-		s.winHeight = s.$window.height();
-		s.winWidth = s.$window.width();
-		s.elemHeight = s.$relElem[0].scrollHeight;
-		s.elemWidth = s.$relElem[0].scrollWidth;
-		s.speed = speed;
-		s.zSpeed = zSpeed;
-		s.fillAmount = s.#fillAmount;
-		s.bgFill = s.params.bgFill;
-		s.axis = s.params.axis;
-		s.bgFillProp = s.axis === 'y' ? 'height' : 'width';
-		s.zAxis = s.params.zAxis;
-		s.$relElem = s.#relElem;
-		s.scrollMaxPxStop = s.params.scrollMaxPxStop;
-		s.zScrollMaxPxStop = s.params.zScrollMaxPxStop;
-		s.lastZSpeed = 0;
-		s.rootMargin = typeof s.params.rootMargin === 'number' ? [rm as number,rm as number] : rm as [number, number];
-		s.minWidthIfSet = s.params.minWidth ? s.winWidth > s.params.minWidth : true;
-		s.maxWidthIfSet = s.params.maxWidth ? s.winWidth < s.params.maxWidth : true;
-		s.elementOffset = s.getElementRects();
+        const relElem = s.$relElem.elem[0] as HTMLElement;
+        // const windowRects = s.$window.elemRects();
+
+		s.cssPrevDir        = newCssDir;
+		s.winHeight         = window.innerHeight;
+		s.winWidth          = window.innerHeight;
+		s.elemHeight        = relElem.scrollHeight;
+		s.elemWidth         = relElem.scrollWidth;
+		s.speed             = speed;
+		s.zSpeed            = zSpeed;
+		s.fillAmount        = s.#fillAmount;
+		s.bgFill            = s.params.bgFill;
+		s.axis              = s.params.axis;
+		s.bgFillProp        = s.axis === 'y' ? 'height' : 'width';
+		s.zAxis             = s.params.zAxis;
+		s.$relElem          = s.#relElem;
+		s.scrollMaxPxStop   = s.params.scrollMaxPxStop;
+		s.zScrollMaxPxStop  = s.params.zScrollMaxPxStop;
+		s.lastZSpeed        = 0;
+		s.rootMargin        = typeof s.params.rootMargin === 'number' ? [rm as number,rm as number] : rm as [number, number];
+		s.minWidthIfSet     = s.params.minWidth ? s.winWidth > s.params.minWidth : true;
+		s.maxWidthIfSet     = s.params.maxWidth ? s.winWidth < s.params.maxWidth : true;
+		s.elementOffset     = s.getElementRects();
+
         if (s.lastCssInProps) {
             s.$element.css(s.lastCssInProps);
         }
@@ -177,9 +183,9 @@ export default class Parallax {
 
 	getElementRects():IElementInView {
 		const s = this;
-		const elPos = s.$element.offset(),
-			top = elPos.top,
-			left = elPos.left,
+		const elPos = s.$element.elemRects(),
+			top = elPos.top + window.scrollY,
+			left = elPos.left + window.scrollX,
 			bottom = top + s.elemHeight,
 			right = left + s.elemWidth
 		;
@@ -251,33 +257,35 @@ export default class Parallax {
 
 	get #relElem() {
 		const s = this;
-
-		return s.params.relativeElem ?
-			s.$element.closest(s.params.relativeElem) :
-			s.$element
-		;
+        const { relativeElem } = s.params;
+		return relativeElem ? relativeElem : s.$element;
 	}
 
-	static remove(element: Cash, plugin?: Parallax) {
+	static remove(element: BaseElem, plugin?: Parallax) {
 
-		$(element).each(function () {
-			const s: Parallax = plugin || Store(this, DATA_NAME);
+		$be(element).each((elem) => {
+			const s: Parallax = plugin || Store(elem, DATA_NAME);
 			
-			$(window).off(`scroll.${s.instanceEvent} resize.${s.instanceEvent} ${s.instanceEvent}_resize ${s.instanceEvent}`);
+			$be(window).off([
+                `scroll.${s.instanceEvent}`,
+                `resize.${s.instanceEvent}`,
+                `[${s.instanceEvent}_resize]`,
+                `[${s.instanceEvent}`
+            ] as EventName[]);
 
 			s.$element.css({ 
 				'transform': null, 
 				height: null, 
 				width: null
-			}).removeClass(s.cssPrevDir)
+			}).rmClass(s.cssPrevDir)
 
-			Store(this, DATA_NAME, null);
+			Store(elem, DATA_NAME, null);
 		});
 	}
 }
 
-declare module 'cash-dom' {
-    interface Cash {
-        parallax(options?: IParallaxOptions | StringPluginArgChoices): Cash;
+declare module 'base-elem-js' {
+    interface BaseElem {
+        parallax(options?: IParallaxOptions | StringPluginArgChoices): BaseElem;
     }
 }

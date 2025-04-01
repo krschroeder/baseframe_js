@@ -1,7 +1,8 @@
-import type { Cash } from 'cash-dom';
+// import type { BaseElem } from 'cash-dom';
 import type { StringPluginArgChoices } from './types';
 
-import $ from 'cash-dom';
+// import $ from 'cash-dom';
+import $be, { type BaseElem } from "base-elem-js";
 import { getDataOptions } from "./util/helpers";
 import Store from "./core/Store";
  
@@ -57,7 +58,7 @@ export default class NavDesktop {
 
 		const dataOptions = getDataOptions(element, EVENT_NAME);
 	 
-		s.params = $.extend({}, NavDesktop.defaults, options, dataOptions)
+		s.params = Object.assign({}, NavDesktop.defaults, options, dataOptions)
 		const { cssPrefix } = s.params;
 		 
 		s.cssList = {
@@ -75,33 +76,37 @@ export default class NavDesktop {
 		return s;
 	}
 
-	static remove(element: Cash, plugin?: NavDesktop) {
+	static remove(element: BaseElem, plugin?: NavDesktop) {
 
-		$(element).each(function () {
-			const s: NavDesktop = plugin || Store(this, DATA_NAME);
-			const $el = $(s.element);
+		$be(element).each((elem) => {
+			const s: NavDesktop = plugin || Store(elem, DATA_NAME);
+			const $el = $be(s.element);
 
-			$el.find('ul').off(`mouseover.${EVENT_NAME} focusin.${EVENT_NAME} focusout.${EVENT_NAME}`);
+			$el.find('ul').off([`mouseover.${EVENT_NAME}`, `focusin.${EVENT_NAME}`, `focusout.${EVENT_NAME}`]);
 			$el.off(`mouseout.${EVENT_NAME}`);
 
-			Store(this, DATA_NAME, null);
+			Store(elem, DATA_NAME, null);
 		});
 	}
 
 	addCssToElems() {
 		const s = this;
 		const css = s.cssList;
+        const $li = $be('li', s.element);
+        const $ul = $li.find('ul');
+		
+        $li.addClass(css.menuNoUl);
 
-		$('li', s.element)
-		.addClass(css.menuNoUl)
-		.has('ul').each(function () {
+        if ($ul.hasElems()) {
+            $li.find('ul').each((elem) => {
+                const $elem = $be(elem);
+                $elem.rmClass(css.menuNoUl);
 
-			$(this).removeClass(css.menuNoUl);
-
-			if (!$(this).hasClass(css.menuHasUL)) {
-				$(this).addClass(css.menuHasUL);
-			}
-		});
+                if (!$elem.hasClass(css.menuHasUL)) {
+                    $elem.addClass(css.menuHasUL);
+                }
+            });
+        }
 	}
 
 	handleEvents() {
@@ -110,7 +115,7 @@ export default class NavDesktop {
 
 		const evtTracker = (elem, e: MouseEvent, cb) => {
 			const currEvent = e.type;
-			const containsOrISElem = elem.isSameNode(e.target) ? true : !!$(e.target as HTMLElement).parents(elem).length;
+			const containsOrISElem = elem.isSameNode(e.target) ? true : !!$be(e.target as HTMLElement).parents(elem).hasElems();
 
 			if (!prevEvent || (prevEvent !== currEvent && containsOrISElem)) {
 
@@ -119,69 +124,71 @@ export default class NavDesktop {
 			}
 		}
 
-		$(s.element).find('ul').on(`mouseover.${EVENT_NAME} focusin.${EVENT_NAME}`, 'li, ul', function (e) {
+		$be(s.element).find('ul').on([`mouseover.${EVENT_NAME}`,`focusin.${EVENT_NAME}`], (ev: MouseEvent, elem: HTMLElement) => {
 
-			const li = this;
+			const liOrUl = elem as HTMLElement;
 			const css = s.cssList;
 			const p = s.params;
 			
-			evtTracker(li, e, () => {
-				s.edgeDetector(li);
+			evtTracker(liOrUl, ev, () => {
+				s.edgeDetector(liOrUl);
+                const $li = $be(liOrUl);
+				const $liLiParents = $be(liOrUl).parents('li');
 
-				const $liLiParents = $(li).parents('li');
-
-				li.classList.add(p.hoverCss);
+				liOrUl.classList.add(p.hoverCss);
 				$liLiParents.addClass(p.hoverCss);
+                $be(elem).find('li').rmClass(p.hoverCss);
+				$li.find(`.${p.hoverCss}`).rmClass(p.hoverCss);
+				 
 
-				$(li).find(`.${p.hoverCss}`).removeClass(p.hoverCss);
-				$(li).siblings('li').removeClass(p.hoverCss)
+				if (!$liLiParents.hasElems() ) {
 
-				$liLiParents.length === 0 &&
-					$(s.element).find(`.${p.hoverCss}`).removeClass(p.hoverCss);
-
+                    $be(s.element).find(`.${p.hoverCss}`).rmClass(p.hoverCss);
+                }
+                
 				s.navLeaving && clearTimeout(s.navLeaving);
 				s.stayHover && clearTimeout(s.stayHover);
 
-				$(p.outerElem).addClass(css.menuHovered).removeClass(css.menuLeaving)
+				$be(p.outerElem).addClass(css.menuHovered).rmClass(css.menuLeaving)
 
 			});
 
-		}).on(`mouseout.${EVENT_NAME} focusout.${EVENT_NAME}`, 'li, ul', function (e) {
+		}, 'li, ul').on([`mouseout.${EVENT_NAME}`, `focusout.${EVENT_NAME}`], (ev: MouseEvent, elem: HTMLElement) => {
 
-			const liOrUl: HTMLElement = this;
+			const liOrUl = elem as HTMLElement;
 			const p = s.params;
 			const css = s.cssList;
-			evtTracker(liOrUl, e, () => {
+			evtTracker(liOrUl, ev, () => {
 				s.stayHover = setTimeout(() => {
-					$(s.element).find(`.${p.hoverCss}`).removeClass(`${p.hoverCss} ${css.menuElemEdge}`);
-					$(s.element).find(`.${css.menuElemEdge}`).removeClass(css.menuElemEdge);
-					$(p.outerElem)
-						.removeClass(css.menuHovered)
+					$be(s.element).find(`.${p.hoverCss}`).rmClass(`${p.hoverCss} ${css.menuElemEdge}`);
+					$be(s.element).find(`.${css.menuElemEdge}`).rmClass(css.menuElemEdge);
+					$be(p.outerElem)
+						.rmClass(css.menuHovered)
 						.addClass(css.menuLeaving);
 
 					s.navLeaving = setTimeout(() => {
-						$(p.outerElem).removeClass(css.menuLeaving);
+						$be(p.outerElem).rmClass(css.menuLeaving);
 					}, p.navLeavingDelay);
 				},
 				p.delay);
 			});
-		});
+		},'li, ul');
 	}
 
 	edgeDetector(liOrUl: HTMLElement) {
 		const s = this;
 		const { stopWidth } = s.params;
 		const css = s.cssList;
-		const dw = $(window).width();
+		const dw = window.innerWidth
 
 		if (stopWidth < dw) {
 
-			const $uls = $(liOrUl).find('ul');
+			const $uls = $be(liOrUl).find('ul');
 
-			if ($uls.length) {
+			if ($uls.hasElems()) {
 				const 
 					ul = $uls[0],
-					l = $(ul).offset().left,
+					l = $be(ul).elemRects().left + window.pageXOffset,
 					uw = ul.scrollWidth,
 					fullyVisible = (l + uw <= dw);
 				
@@ -194,7 +201,7 @@ export default class NavDesktop {
 }
 
 declare module 'cash-dom' {
-	export interface Cash {
-		navDesktop(options?: INavDesktopOptions | StringPluginArgChoices): Cash;
+	export interface BaseElem {
+		navDesktop(options?: INavDesktopOptions | StringPluginArgChoices): BaseElem;
 	}
 }

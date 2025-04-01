@@ -1,22 +1,24 @@
-import { getDataOptions, isVisible } from "./util/helpers";
-import type { Cash, Selector } from "cash-dom";
+import { getDataOptions } from "./util/helpers";
+// import type { BaseElem, Selector } from "cash-dom";
 import type { LocationHashTracking, StringPluginArgChoices } from './types';
-import $ from 'cash-dom';
+// import $ from 'cash-dom';
+import $be, { type BaseElem, type SelectorRoot, type EventName } from "base-elem-js";
 import Store from "./core/Store";
 import UrlState from "./core/UrlState";
+
 
 export interface IScrollSpyDefaults extends LocationHashTracking {
     observerOptions: IntersectionObserverInit;
     cssPrefix: string;
     spyNavElems: 'a' | 'button';
     setActiveCssToLi: boolean,
-    spyBody: Selector;
+    spyBody: SelectorRoot | string;
     spyElems: string;
     callback?: ScrollSpyCallBack;
 }
 
 export interface IScrollSpyOptions extends Partial<IScrollSpyDefaults> {
-    spyBody: Selector;
+    spyBody: SelectorRoot | string;
 }
 
 type ScrollSpyCallBack = (topMostEntries: HTMLElement[], navEntries: HTMLElement[]) => void;
@@ -40,6 +42,7 @@ const DEFAULTS: IScrollSpyOptions = {
 	loadLocation: true
 }
 
+const { isVisible } = $be.static;
 
 
 export default class ScrollSpy {
@@ -51,7 +54,7 @@ export default class ScrollSpy {
     #observer: IntersectionObserver | null = null;
     public params: IScrollSpyOptions;
     public element: HTMLElement;
-    public $spyBody: Cash;
+    public $spyBody: BaseElem;
     public spyContents: HTMLElement[];
 
     public static defaults = DEFAULTS;
@@ -63,13 +66,13 @@ export default class ScrollSpy {
         const dataOptions = getDataOptions(element, EVENT_NAME);
         s.element = element;
 
-        s.params = $.extend({}, ScrollSpy.defaults, options, dataOptions);
-        s.$spyBody = $(s.params.spyBody);
-        s.spyContents = Array.from(s.$spyBody.find(s.params.spyElems)).filter((el) => isVisible(el) && (el as HTMLElement).id);
+        s.params = Object.assign({}, ScrollSpy.defaults, options, dataOptions);
+        s.$spyBody = $be(s.params.spyBody);
+        s.spyContents = s.$spyBody.find(s.params.spyElems, elem => isVisible(elem) && !!elem.id).toArray() as HTMLElement[];
 
 
         if (s.spyContents.length > 0) {
-            $(element).addClass(`${s.params.cssPrefix}-nav`);
+            $be(element).addClass(`${s.params.cssPrefix}-nav`);
             s.$spyBody.addClass(`${s.params.cssPrefix}-body`);
 
             s.#lastSpyElem = s.spyContents[s.spyContents.length - 1];
@@ -102,12 +105,12 @@ export default class ScrollSpy {
             s.#observer.observe(elem);
         }
 
-        $(s.element).on(`click.${EVENT_NAME}`, p.spyNavElems, function (e) {
-            const clickElem = this as HTMLElement;
-            const paramVal = (this.nodeName === 'A' ? this.hash : clickElem.dataset.hash).replace(/^\#/,'');
+        $be(s.element).on(`click.${EVENT_NAME}`, (ev, elem) =>  {
+            const clickElem = elem as (HTMLAnchorElement | HTMLButtonElement);
+            const paramVal = (clickElem.nodeName === 'A' ? (clickElem as HTMLAnchorElement).hash : clickElem.dataset.hash).replace(/^\#/,'');
             const $bodyElem = s.scrollToElement(paramVal,'smooth');
 
-            if ($bodyElem.length) {
+            if ($bodyElem.hasElems()) {
  
                 if (typeof p.urlFilterType === 'string') {
                     if (p.locationFilter) {
@@ -120,9 +123,9 @@ export default class ScrollSpy {
                     }
                 }
 
-                e.preventDefault();
+                ev.preventDefault();
             }
-        });
+        }, p.spyNavElems as EventName);
     }
 
     scrollToElement(elemId: string, behavior: ScrollOptions["behavior"]) {
@@ -130,12 +133,12 @@ export default class ScrollSpy {
         const p = s.params;
         const scrollRoot = p.observerOptions.root as HTMLElement || window;
         const observerOffsetTop = parseFloat(p.observerOptions.rootMargin.split(' ')[0]) || 0;
-        const $bodyElem = $(elemId ? '#'+ elemId : document.body);
+        const $bodyElem = $be(elemId ? '#'+ elemId : document.body);
 
-        if ($bodyElem.length) {
+        if ($bodyElem.hasElems()) {
 
             scrollRoot.scrollTo({
-                top: $bodyElem.offset().top - observerOffsetTop,
+                top: ($bodyElem.elemRects().top + window.pageYOffset) - observerOffsetTop,
                 behavior
             });
         }
@@ -180,7 +183,7 @@ export default class ScrollSpy {
         const s = this;
         const { spyNavElems, setActiveCssToLi } = s.params;
 
-        $(s.element).find(spyNavElems).each(function () {
+        $be(s.element).find(spyNavElems).each(function () {
             const clickEl = this as HTMLAnchorElement | HTMLButtonElement;
             const hash = this.nodeName === 'A' ? (clickEl as HTMLAnchorElement).hash : (clickEl as HTMLButtonElement).dataset.hash;
 
@@ -279,9 +282,9 @@ export default class ScrollSpy {
         }
     }
 
-    static remove(element: Cash, plugin?: ScrollSpy) {
+    static remove(element: BaseElem, plugin?: ScrollSpy) {
 
-        $(element).each(function () {
+        $be(element).each(function () {
             
             const s: ScrollSpy = plugin || Store(this, DATA_NAME);
             
@@ -289,18 +292,18 @@ export default class ScrollSpy {
                 s.#toggleActiveCss(elem, 'remove');
             }
 
-            $(s.element)
+            $be(s.element)
                 .off(`click.${EVENT_NAME}`)
-                .removeClass(`${s.params.cssPrefix}-nav`);
-            s.$spyBody.removeClass(`${s.params.cssPrefix}-body`);
+                .rmClass(`${s.params.cssPrefix}-nav`);
+            s.$spyBody.rmClass(`${s.params.cssPrefix}-body`);
             s.#observer.disconnect();
             Store(this, DATA_NAME, null);
         });
     }
 }
 
-declare module 'cash-dom' {
-    interface Cash {
-        scrollSpy(options?: IScrollSpyOptions | StringPluginArgChoices): Cash;
+declare module 'base-elem-js' {
+    interface BaseElem {
+        scrollSpy(options?: IScrollSpyOptions | StringPluginArgChoices): BaseElem;
     }
 }

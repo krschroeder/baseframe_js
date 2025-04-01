@@ -87,14 +87,14 @@ export default class Collapse {
 	}
 
 	static remove(element: BaseElem, plugin?: Collapse) {
-		$be(element).each(function () {
+		$be(element).each((elem) => {
 
-			const s: Collapse = plugin || Store(this, DATA_NAME);
+			const s: Collapse = plugin || Store(elem, DATA_NAME);
 
-			s.$element.off(`click.${EVENT_NAME} ${EVENT_NAME}`);
+			s.$element.off([`click.${EVENT_NAME}`,`[${EVENT_NAME}]`]);
 			$be(window).off(`popstate.${EVENT_NAME}`);
 			// delete the Store item
-			Store(this, DATA_NAME, null);
+			Store(elem, DATA_NAME, null);
 		})
 	}
 
@@ -103,7 +103,7 @@ export default class Collapse {
 		const { cssPrefix } = s.params;
  
 	 
-		s.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, function (e: Event, elem) {
+		s.$element.on([`click.${EVENT_NAME}`,`[${EVENT_NAME}]`], function (e: Event, elem) {
 			const elemId = $be(elem).attr('aria-controls') || (elem as HTMLAnchorElement).hash.substring(1);
 			 
 			s.toggleAction(elemId);
@@ -266,7 +266,7 @@ export default class Collapse {
 	}
 }
 
-declare module 'cash-dom' {
+declare module 'base-elem-js' {
     export interface BaseElem {
         collapse(options?: ICollapseOptions | StringPluginArgChoices): BaseElem;
 	}

@@ -1,7 +1,8 @@
-import type { Cash } from "cash-dom";
+// import type { BaseElem } from "cash-dom";
 import type { LocationHashTracking, PrimaryClickElems, StringPluginArgChoices } from './types';
 
-import $ from 'cash-dom';
+// import $ from 'cash-dom';
+import $be, { type BaseElem, type SelectorRoot, type EventName } from "base-elem-js";
 import { getDataOptions } from "./util/helpers";
  
 import Store from "./core/Store";
@@ -16,8 +17,8 @@ export interface ITabsDefaults extends LocationHashTracking {
 	addIDtoPanel: boolean;
 	ariaLabel: boolean;
 	defaultContent: number;
-	tabChange(tabId: string, prevTabId: string, tabsList: Cash, tabsBody: Cash): void;
-	onInit(tabsList: Cash, tabsBody: Cash): void
+	tabChange(tabId: string, prevTabId: string, tabsList: BaseElem, tabsBody: BaseElem): void;
+	onInit(tabsList: BaseElem, tabsBody: BaseElem): void
 }
 
 export interface ITabsOptions extends Partial<ITabsDefaults> {}
@@ -48,13 +49,13 @@ const getTabIDFromEl = (el:PrimaryClickElems): string => {
 export default class Tabs {
 
 	
-	public $element: Cash;
+	public $element: BaseElem;
 	public params: ITabsDefaults;
-	public $tabsNav: Cash;
-	public $tabsNavClickElems: Cash;
+	public $tabsNav: BaseElem;
+	public $tabsNavClickElems: BaseElem;
 	public tabsNavClickElems: PrimaryClickElems[];
-	public $tabsBody: Cash;
-	public $tabsBodyPanels: Cash;
+	public $tabsBody: BaseElem;
+	public $tabsBodyPanels: BaseElem;
 	public prevTabId: string;
 	public initTabId: string;
 	public initDefaultContent: tabDefaultContent;
@@ -69,23 +70,20 @@ export default class Tabs {
 		const s = this;
 		const dataOptions = getDataOptions(element, EVENT_NAME);
 		
-		s.$element = $(element);
-		s.params = $.extend({}, Tabs.defaults, options, dataOptions);
+		s.$element = $be(element);
+		s.params = Object.assign({}, Tabs.defaults, options, dataOptions);
 		
 		const p = s.params;
 
-		s.$tabsNav = s.$element.find(`.${p.cssPrefix}__nav`).first();
-		s.$tabsBody = s.$element.find(`.${p.cssPrefix}__body`).first();
+		s.$tabsNav = s.$element.find(`.${p.cssPrefix}__nav`).get(0);
+		s.$tabsBody = s.$element.find(`.${p.cssPrefix}__body`).get(0);
 		
 		const tabsBody = s.$tabsBody[0] as HTMLElement;
-		s.$tabsBodyPanels = s.$tabsBody.find(`.${p.cssPrefix}__panel`)
-			// ensure they're the children of the body
-			// must be direct child
-			.filter((i,el) => el.parentElement.isSameNode(tabsBody));
+		s.$tabsBodyPanels = s.$tabsBody.find(`.${p.cssPrefix}__panel`, elem => elem === tabsBody);
 		s.$tabsNavClickElems = s.$tabsNav.find('a, button');
-		s.tabsNavClickElems = [...s.$tabsNavClickElems] as PrimaryClickElems[];
+		s.tabsNavClickElems = s.$tabsNavClickElems.toArray() as PrimaryClickElems[];
 		s.prevTabId = null;
-		s.initDefaultContent = s.$tabsBodyPanels.eq(p.defaultContent).data('tab-id');
+		s.initDefaultContent = s.$tabsBodyPanels.get(p.defaultContent).attr('tab-id');
 		 	 
 		//init
 		s.setAriaAttrs();
@@ -122,9 +120,9 @@ export default class Tabs {
 	}
 
 	getClickElemFromTabId(tabId: string):PrimaryClickElems | null {
-		const $clickElem = this.$tabsNavClickElems.filter((i, el: PrimaryClickElems) => getTabIDFromEl(el) === tabId);
+		const $clickElem = this.$tabsNavClickElems.filter((el: PrimaryClickElems) => getTabIDFromEl(el) === tabId);
 
-		if ($clickElem.length) {
+		if ($clickElem.hasElems()) {
 			return $clickElem[0] as PrimaryClickElems;
 		}
 
@@ -138,9 +136,9 @@ export default class Tabs {
 		s.$tabsNavClickElems.each(function () {
 
 			const tabId = getTabIDFromEl(this as PrimaryClickElems);
-			const $tabBodyItem = s.$tabsBodyPanels.filter((i,el) => el.dataset.tabId === tabId);
+			const $tabBodyItem = s.$tabsBodyPanels.filter(elem => elem.dataset.tabId === tabId);
 
-			$(this).attr({
+			$be(this).attr({
 				'aria-selected': 'false',
 				'role': 'tab',
 				'aria-controls': tabId
@@ -161,16 +159,16 @@ export default class Tabs {
 	handleEvents() {
 		const s = this;
 
-		s.$tabsNav.on(`${s.params.tabsEvent}.${EVENT_NAME} ${EVENT_NAME}`, "a, button", function (e: MouseEvent) {
-			const clickElem = this as PrimaryClickElems; 
+		s.$tabsNav.on([`${s.params.tabsEvent}.${EVENT_NAME}`,`[${EVENT_NAME}]`] as EventName[], (ev: MouseEvent, elem) => {
+			const clickElem = elem as PrimaryClickElems; 
 			const tabId = getTabIDFromEl(clickElem);
 		
 			s.changeTabElements(clickElem, tabId);
-			e.preventDefault();
-		});
+			ev.preventDefault();
+		}, "a, button");
 
 
-		s.$tabsNav.on('keydown.' + EVENT_NAME, function (e:KeyboardEvent) {
+		s.$tabsNav.on(`keydown.${EVENT_NAME}`, function (e:KeyboardEvent) {
 			const target = e.target as PrimaryClickElems;
 			const index = s.tabsNavClickElems.findIndex(el => el.isSameNode(target));
 			const next = e.key === 'ArrowRight' || e.key === 'ArrowDown';
@@ -182,17 +180,17 @@ export default class Tabs {
 				const nextBtn = s.tabsNavClickElems[changeIndex];
 				
 				if (nextBtn) {
-					// $(target).attr({'tabindex': '-1'});
+					// $be(target).attr({'tabindex': '-1'});
 					const tabId = getTabIDFromEl(nextBtn);
 					s.changeTabElements(nextBtn,tabId);
-					$(nextBtn)[0].focus();
+					$be(nextBtn)[0].focus();
 				}
 
 				e.preventDefault();
 			}
 		});
 
-		$(window).on(`popstate.${EVENT_NAME} ${EVENT_NAME}`, (e) => {
+		$be(window).on(`popstate.${EVENT_NAME} ${EVENT_NAME}`, (e) => {
 			if (s.params.historyType === 'push') {
 
 				s.loadFromUrl();
@@ -221,7 +219,7 @@ export default class Tabs {
 
 				if (thisTabId === tabId) {
 					
-					$(this)
+					$be(this)
 						.addClass(`${cssToggling} ${cssOpening}`)
 						.attr({ 'aria-hidden': null, tabindex: '0'});
 
@@ -229,7 +227,7 @@ export default class Tabs {
 				} 
 				
 				if (s.prevTabId && s.prevTabId === thisTabId) {
-					$(this)
+					$be(this)
 						.addClass(`${cssToggling} ${cssClosing}`)
 						.attr({ 'aria-hidden': 'true', tabindex: '-1'});
 				}
@@ -242,11 +240,11 @@ export default class Tabs {
 				
 				s.$tabsNavClickElems
 					.attr({ 'aria-selected': 'false', tabindex: '-1' })
-					.parent('li').removeClass(`${p.cssPrefix}__nav-li--active`);
+					.find(elem => elem.closest('li')).rmClass(`${p.cssPrefix}__nav-li--active`);
 
-				$(clickElem)
+				$be(clickElem)
 					.attr({ 'aria-selected': 'true', tabindex: '0' })
-					.parent('li').addClass(`${p.cssPrefix}__nav-li--active`);
+					.find(elem => elem.closest('li')).addClass(`${p.cssPrefix}__nav-li--active`);
 		
 				if (updateUrl && p.urlFilterType !== 'none') {
 					const paramVal = s.initDefaultContent === tabId ? null : tabId;
@@ -263,30 +261,30 @@ export default class Tabs {
 			s.$tabsBodyPanels.each(function(){
 				const isTab = this.dataset.tabId === tabId;
 
-				$(this)
-					.toggleClass(cssOpen, isTab)
-					.removeClass(`${cssToggling} ${cssOpening} ${cssClosing}`)
+				$be(this)
+					.tgClass(cssOpen, isTab)
+					.rmClass(`${cssToggling} ${cssOpening} ${cssClosing}`)
 			})
 		});
 	}
 
-	static remove(element: Cash, plugin?: Tabs) {
-		$(element).each(function () {
-			const s: Tabs = plugin || Store(this, DATA_NAME);
+	static remove(element: BaseElem, plugin?: Tabs) {
+		$be(element).each((elem) => {
+			const s: Tabs = plugin || Store(elem, DATA_NAME);
 			const params = s.params;
 
-			s.$tabsNav.off(`${params.tabsEvent}.${EVENT_NAME} ${EVENT_NAME}`);
-			s.$tabsNav.off('keydown.' + EVENT_NAME);
+            
 			s.$tabsNav.find('a, button').attr({ tabndex: null })
-			$(window).off(`popstate.${EVENT_NAME} ${EVENT_NAME}`);
+			s.$tabsNav.off([`${params.tabsEvent}.${EVENT_NAME}`,`[${EVENT_NAME}]`, `keydown.${EVENT_NAME}`] as EventName[]);
+			$be(window).off([`popstate.${EVENT_NAME}`,`[${EVENT_NAME}]`]);
 
-			Store(this, DATA_NAME, null);
+			Store(elem, DATA_NAME, null);
 		})
 	}
 }
 
-declare module 'cash-dom' {
-    interface Cash {
-        tabs(options?: ITabsOptions | StringPluginArgChoices): Cash;
+declare module 'base-elem-js' {
+    interface BaseElem {
+        tabs(options?: ITabsOptions | StringPluginArgChoices): BaseElem;
     }
 }

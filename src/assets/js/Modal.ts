@@ -129,9 +129,9 @@ export default class Modal {
 
     static remove(element: BaseElem, plugin?: Modal) {
 
-        $be(element).each(function () {
+        $be(element).each((elem) => {
 
-            const s: Modal = plugin || Store(this, DATA_NAME);
+            const s: Modal = plugin || Store(elem, DATA_NAME);
             const params = s.params;
             const { $backdrop, $closeBtn } = s.modalObj;
 
@@ -139,12 +139,10 @@ export default class Modal {
             $be(s.element).off(`${s.params.enableEvent}.${s.modalEvent}` as EventName);
             $closeBtn.off(`click.${s.modalEvent}Dismiss`);
             if (params.backDropClose) $backdrop.off(`click.${s.modalEvent}Dismiss`);
-            $be(document)
-                .off(`keydown.${s.modalEvent}Dismiss`)
-                .off(`${s.modalEvent}Dismiss` as EventName);
-            $be(window).off(`popstate.${s.modalEvent} ${s.modalEvent}`);
+            $be(document).off([`keydown.${s.modalEvent}Dismiss`,`[${s.modalEvent}Dismiss]`]);
+            $be(window).off([`popstate.${s.modalEvent}`,`[${s.modalEvent}]`]);
             
-            Store(this, DATA_NAME, null);
+            Store(elem, DATA_NAME, null);
         });
     }
 
@@ -171,7 +169,7 @@ export default class Modal {
             }
         });
 
-        $be(document).on(`${s.modalEvent}Dismiss` as EventName, s.close);
+        $be(document).on(`[${s.modalEvent}Dismiss]`, s.close);
     }
 
     getModalObj() {
@@ -353,7 +351,7 @@ export default class Modal {
 }
 
 
-declare module 'cash-dom' {
+declare module 'base-elem-js' {
     export interface BaseElem {
         modal(options: IModalOptions | StringPluginArgChoices): BaseElem;
     }

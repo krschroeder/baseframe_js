@@ -1,7 +1,8 @@
 import type { StringPluginArgChoices } from './types';
-import type { Cash } from 'cash-dom';
+// import type { BaseElem } from 'cash-dom';
 
-import $ from 'cash-dom';
+// import $ from 'cash-dom';
+import $be, { type BaseElem } from "base-elem-js";
 import { isVisible, getDataOptions } from './util/helpers';
 import Store from "./core/Store";
 
@@ -79,21 +80,21 @@ export default class LazyLoad {
         
         s.element = element;
         s.lazyElemObserver;
-        s.params = $.extend({}, LazyLoad.defaults, options, dataOptions);
+        s.params = Object.assign({}, LazyLoad.defaults, options, dataOptions);
 
         s.handleEvents();
 
         return s;
     }
 
-    static remove(element: Cash, plugin?: LazyLoad) {
+    static remove(element: BaseElem, plugin?: LazyLoad) {
 
-        $(element).each(function () {
-            const s: LazyLoad = plugin || Store(this, DATA_NAME);
+        $be(element).each((elem) => {
+            const s: LazyLoad = plugin || Store(elem, DATA_NAME);
              
             lazyElemObservers.delete(s.params.observerID);
-            s.lazyElemObserver.unobserve(this);
-            Store(this, DATA_NAME, null);
+            s.lazyElemObserver.unobserve(elem);
+            Store(elem, DATA_NAME, null);
         });
     }
 
@@ -138,8 +139,8 @@ export default class LazyLoad {
     }
 }
 
-declare module 'cash-dom' {
-    export interface Cash {
-        lazyLoad(options: ILazyLoadOptions | StringPluginArgChoices): Cash;
+declare module 'base-elem-js' {
+    export interface BaseElem {
+        lazyLoad(options: ILazyLoadOptions | StringPluginArgChoices): BaseElem;
     }
 }

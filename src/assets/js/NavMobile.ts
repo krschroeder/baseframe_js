@@ -1,13 +1,14 @@
-import type { Cash, Selector } from "cash-dom";
+// import type { BaseElem, SelectorRoot } from "cash-dom";
 import type { StringPluginArgChoices } from './types';
-
-import $ from 'cash-dom';
-import { isVisible, getDataOptions, noop } from './util/helpers';
+import $be, {type BaseElem, type SelectorRoot} from "base-elem-js";
+// import $ from 'cash-dom';
+import {  getDataOptions, noop } from './util/helpers';
  
 import trapFocus, { type ITrapFocusRemove } from './fn/trapFocus';
 import transition from "./fn/transition";
 import { KEYS } from "./core/constants";
 import Store from "./core/Store";
+import type { EventName } from 'base-elem-js';
 
 type submenuBtnSkipFn = (elem: HTMLElement) => boolean;
 
@@ -22,7 +23,7 @@ interface NavMobileCssList {
 }
 
 export interface INavMobileDefaults {
-	enableBtn: Selector;
+	enableBtn: SelectorRoot;
 	ariaLabel: string;
 	subMenuText: string;
 	insertToggleBtnAfter: string;
@@ -33,18 +34,18 @@ export interface INavMobileDefaults {
 	menuBtnCss: string,
 	menuBtnSkip: submenuBtnSkipFn | boolean;
 	doTrapFocus: boolean;
-	trapFocusElem: Selector | null;
+	trapFocusElem: SelectorRoot | null;
 	stopPropagation: boolean;
 	bkptEnable: number | null;
 	animateHeight: boolean;
-	afterNavItemOpen: ($li: Cash) => void;
-	afterNavItemClose: ($li: Cash) => void;
-	afterOpen($element: Cash, outerElement: Cash, enableBtn: Cash);
-	afterClose($element: Cash, outerElement: Cash, enableBtn: Cash);
+	afterNavItemOpen: ($li: BaseElem) => void;
+	afterNavItemClose: ($li: BaseElem) => void;
+	afterOpen($element: BaseElem, outerElement: BaseElem, enableBtn: BaseElem);
+	afterClose($element: BaseElem, outerElement: BaseElem, enableBtn: BaseElem);
 }
 
 export interface INavMobileOptions extends Partial<INavMobileDefaults> {
-	enableBtn: Selector;
+	enableBtn: SelectorRoot;
 }
 
 const VERSION = "3.0.0";
@@ -72,9 +73,11 @@ const DEFAULTS = {
 	bkptEnable: null
 };
 
+const { isVisible } = $be.static;
+
 export default class NavMobile {
 
-	public $element: Cash;
+	public $element: BaseElem;
 	public params: INavMobileDefaults;
 	public menuOpened: boolean;
 	public allowClick: boolean;
@@ -90,8 +93,8 @@ export default class NavMobile {
 		const s = this;
 		const dataOptions = getDataOptions(element, EVENT_NAME);
 
-		s.$element = $(element);
-		s.params = $.extend({}, NavMobile.defaults, options, dataOptions);
+		s.$element = $be(element);
+		s.params = Object.assign({}, NavMobile.defaults, options, dataOptions) as INavMobileDefaults;
 		
 		const {cssPrefix, menuBtnCss} = s.params;
 		s.cssList = {
@@ -110,7 +113,7 @@ export default class NavMobile {
 
 		const elemID = element.id || element.className;
 
-		$(s.params.enableBtn).attr({
+		$be(s.params.enableBtn).attr({
 			'aria-controls': elemID,
 			'aria-label': s.params.ariaLabel
 		});
@@ -121,12 +124,12 @@ export default class NavMobile {
 	handleEvents() {
 		const s = this;
 		const css = s.cssList;
-		const $enableBtn = $(s.params.enableBtn);
+		const $enableBtn = $be(s.params.enableBtn);
 		
 		
 		$enableBtn
 			.attr({ 'aria-expanded': 'false' })
-			.on(`click.${EVENT_NAME} ${EVENT_NAME}`, function (e: MouseEvent) {
+			.on([`click.${EVENT_NAME}`,`[${EVENT_NAME}]`], function (e: MouseEvent) {
 
 			if (!s.allowClick) return;
 
@@ -136,12 +139,12 @@ export default class NavMobile {
 			e.preventDefault();
 		});
 
-		$(document).on(`keydown.${EVENT_NAME}`, (e: KeyboardEvent) => {
+		$be(document).on(`keydown.${EVENT_NAME}`, (e: KeyboardEvent) => {
 
 			if (e.code === KEYS.esc && s.$element.hasClass(css.menuOpen) && s.allowClick) {
 				s.#menuToggle();
 
-				if ($enableBtn.length) {
+				if ($enableBtn.hasElems()) {
 
 					($enableBtn as any)[0].focus();
 				}
@@ -158,8 +161,8 @@ export default class NavMobile {
 		const css = s.cssList;
 
 		let trappedFocus: ITrapFocusRemove | null = null;
-		const $enableBtn = $(p.enableBtn);
-		const $elemParent = s.$element.parent();
+		const $enableBtn = $be(p.enableBtn);
+		const $elemParent = s.$element.find(elem => elem.parentElement);
 		
 		const doClose = s.menuOpened;
 		const cssMenuState = `${doClose ? css.menuClosing : css.menuOpening} ${css.menuToggling}`;
@@ -168,16 +171,16 @@ export default class NavMobile {
 			s.menuOpened = !doClose;
 
 			s.$element.addClass(cssMenuState);
-			$(p.enableBtn).attr({ 'aria-expanded': !doClose + '' });
-			$(p.outerElement)
-				.toggleClass(css.menuOuterOpen, !doClose)
+			$be(p.enableBtn).attr({ 'aria-expanded': !doClose + '' });
+			$be(p.outerElement)
+				.tgClass(css.menuOuterOpen, !doClose)
 				.addClass(cssMenuState);
 
 			if (doClose) {
 
 				$elemParent
 					.find(`.${css.menuOpen}`)
-					.removeClass(css.menuOpen)
+					.rmClass(css.menuOpen)
 					.find("[style]").css({'display': null});
 				
 				trappedFocus && (trappedFocus as ITrapFocusRemove).remove();
@@ -187,14 +190,14 @@ export default class NavMobile {
 				}
 			}
 		},() => {
-			$(p.outerElement).removeClass(cssMenuState);
-			s.$element.removeClass(cssMenuState);
+			$be(p.outerElement).rmClass(cssMenuState);
+			s.$element.rmClass(cssMenuState);
 
 			if (!doClose) {
 				s.$element.addClass(css.menuOpen);
 			}
 
-			s.params[doClose ? 'afterClose' : 'afterOpen'](s.$element, $(p.outerElement), $enableBtn);
+			s.params[doClose ? 'afterClose' : 'afterOpen'](s.$element, $be(p.outerElement), $enableBtn);
 			 
 		}, p.slideDuration);
 	}
@@ -202,14 +205,14 @@ export default class NavMobile {
 	#navToggle() {
 		const s = this;
 		const css = s.cssList;
-		s.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, `.${css.menuBtnCss.replace(/\s/g, '.')}`, function (e: KeyboardEvent) {
+		s.$element.on([`click.${EVENT_NAME}`,`[${EVENT_NAME}]`], function (ev: KeyboardEvent, elem: HTMLElement) {
 
 			const p = s.params;
 			const css = s.cssList;
-
-			const $li = $(this).closest(`.${css.menuHasUL}`);
+            const hasULElem = elem.closest(`.${css.menuHasUL}`) as HTMLElement;
+			const $li = $be(hasULElem );
 			const doClose = $li.hasClass(css.menuOpen);
-			const $ul = $li.find('ul').first();
+			const $ul = $li.find('ul').get(0);
 
 			//exit because were in desktop view
 			if (!s.allowClick) { return; }
@@ -220,23 +223,23 @@ export default class NavMobile {
 
 			s.#transition(() => {
 
-				$li.addClass(cssMenuState).toggleClass(css.menuOpen, !doClose);
-				$ul.addClass(cssMenuState).toggleClass(css.menuOpen, !doClose);
+				$li.addClass(cssMenuState).tgClass(css.menuOpen, !doClose);
+				$ul.addClass(cssMenuState).tgClass(css.menuOpen, !doClose);
 
 				if (p.animateHeight) {
-					const openHeight = ($ul.length ? ($ul[0] as HTMLUListElement).scrollHeight : 0);
+					const openHeight = ($ul.hasElems() ? ($ul[0] as HTMLUListElement).scrollHeight : 0);
 					const height = doClose ? 0 : openHeight;
 					
-					$ul.css({ height: doClose ? openHeight : 0 });
+					$ul.css({ height: (doClose ? openHeight : 0) + 'px' });
 
 					setTimeout(() => {
-						$ul.css({ height });
+						$ul.css({ height: height + 'px' });
 					},0);
 				}
 			},
 			() => {
-				$li.removeClass(cssMenuState).toggleClass(css.menuOpen, !doClose);
-				$ul.removeClass(cssMenuState).toggleClass(css.menuOpen, !doClose);
+				$li.rmClass(cssMenuState).tgClass(css.menuOpen, !doClose);
+				$ul.rmClass(cssMenuState).tgClass(css.menuOpen, !doClose);
 				$ul.css({ height: null });
 
 				if (doClose) {
@@ -247,26 +250,26 @@ export default class NavMobile {
 				s.allowClick = true;
 			}, p.slideDuration);
 
-			e.stopPropagation();
+			ev.stopPropagation();
 
-		});
+		},`.${css.menuBtnCss.replace(/\s/g, '.')}`);
 
-		s.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, 'a', function (e: MouseEvent) {
+		s.$element.on([`click.${EVENT_NAME}`,`[${EVENT_NAME}]`], (ev: MouseEvent, elem) => {
 			//prohibit closing if an anchor is clicked
 			if (s.params.stopPropagation) {
 				
-				e.stopPropagation();
+				ev.stopPropagation();
 			}
-		});
+		},'a');
 	}
 
 	#outsideClickClose() {
 		const s = this;
-		$(document.body).on(`click.${EVENT_NAME}`, function (e: MouseEvent) {
+		$be(document.body).on(`click.${EVENT_NAME}`, function (e: MouseEvent) {
 			if (s.params.outsideClickClose) {
 				if (!s.menuOpened) { return; }//lets just exit then..
-				 
-				const menuClicked = e.target ?s.$element.has((e as any).target).length > 0: false;
+				const menuClicked = (s.$element.elem[0] as HTMLElement).contains(e.target as HTMLElement);
+				
 				//if the menu item is not clicked and its opened
 				//the menu button shouldn't register because propogation is prevented to the body
 				if (!menuClicked && s.menuOpened) {
@@ -281,33 +284,32 @@ export default class NavMobile {
 		const s = this;
 		const p = s.params;
 		const css = s.cssList;
-		$('li', s.$element).has('ul').each(function () {
-			const $this = $(this);
+		s.$element.find('li').each((elem: HTMLElement) => {
+			const $li = $be(elem);
+            const nextElem  = elem.nextElementSibling;
+            const hasBtn = nextElem && nextElem.tagName === 'BUTTON' && nextElem.matches(`.${css.menuBtnCss}`);
+            if (!$li.find('ul').hasElems()) return;
+
 			let skipUl = false;
 
-			if (
-				typeof p.menuBtnSkip === 'function' &&
-				// condition in function must return false
-				(p.menuBtnSkip as submenuBtnSkipFn)(this)
-			) {
+			if (typeof p.menuBtnSkip === 'function' && p.menuBtnSkip (elem)) {
 				skipUl = true;
 			}
 
-
-			if (!$this.next('button').length && !skipUl) {
-				const $el = $this.find(p.insertToggleBtnAfter).first();
+			if (!hasBtn && !skipUl) {
+				const $el = $li.find(p.insertToggleBtnAfter).get(0);
 
 				$el.addClass(css.menuHasUL);
 
-				if ($el.length) {
+				if ($el.hasElems()) {
 					if (($el as any)[0].parentNode.isSameNode(this)) {
 						// make sure the <el> is a direct child of <li>
-						$el.after(
-							$('<button>').attr({
+						$el.insert(
+							$be('<button>').attr({
 								class: css.menuBtnCss,
 								type: 'button',
 								'aria-label': p.subMenuText + ' ' + $el.text().trim()
-							})
+							}), 'after'
 						);
 					}
 				}
@@ -324,44 +326,42 @@ export default class NavMobile {
 		//we can allow the click to open the navigation
 		//this is so it doesn't clash with any other plugins
 		//and allows for the control of this click via CSS
-		$(window).on(`resize.${EVENT_NAME} ${EVENT_NAME}`, function (e) {
+		$be(window).on([`resize.${EVENT_NAME}`,`[${EVENT_NAME}]`], function (e) {
 
 			clearTimeout(resizeTimer);
 			resizeTimer = setTimeout(() => {
-				const $enableBtn: Cash = $(s.params.enableBtn);
+				const $enableBtn: BaseElem = $be(s.params.enableBtn);
 
 				s.allowClick = typeof s.params.bkptEnable === 'number' ?
-					$(window).width() <= s.params.bkptEnable :
-					($enableBtn.length ? isVisible(<any>$enableBtn[0]) : false)
+					window.innerWidth <= s.params.bkptEnable :
+					($enableBtn.hasElems() ? isVisible(<any>$enableBtn[0]) : false)
 				;
 
 			}, e.type === EVENT_NAME ? 0 : 200);
 		}).trigger(EVENT_NAME);
 	}
 
-	static remove(element: Cash, plugin?: NavMobile) {
+	static remove(element: BaseElem, plugin?: NavMobile) {
 
-		$(element).each(function () {
-			const s: NavMobile = plugin || Store(this, DATA_NAME);
+		$be(element).each((elem) => {
+			const s: NavMobile = plugin || Store(elem, DATA_NAME);
 
+			$be(document).off(`keydown.${EVENT_NAME}`);
+			$be(s.params.enableBtn).off([`click.${EVENT_NAME}`,`[${EVENT_NAME}]`] as EventName[]);
+			s.$element.off([`click.${EVENT_NAME}`,`[${EVENT_NAME}]`] as EventName[])
+				 
 
-			$(s.params.enableBtn).off(`click.${EVENT_NAME} ${EVENT_NAME}`);
-			$(document).off(`keydown.${EVENT_NAME}`);
-			s.$element
-				.off(`click.${EVENT_NAME} ${EVENT_NAME}`)
-				.off(`click.${EVENT_NAME} ${EVENT_NAME}`);
+			$be(document.body).off(`click.${EVENT_NAME}`);
+			$be(window).off([`resize.${EVENT_NAME}`,`[${EVENT_NAME}]`] as EventName[]);
 
-			$(document.body).off(`click.${EVENT_NAME}`);
-			$(window).off(`resize.${EVENT_NAME} ${EVENT_NAME}`);
-
-			Store(this, DATA_NAME, null);
+			Store(elem, DATA_NAME, null);
 		});
 	}
 
 }
 
 declare module 'cash-dom' {
-	interface Cash {
-		navMobile(options: INavMobileOptions | StringPluginArgChoices): Cash;
+	interface BaseElem {
+		navMobile(options: INavMobileOptions | StringPluginArgChoices): BaseElem;
 	}
 }

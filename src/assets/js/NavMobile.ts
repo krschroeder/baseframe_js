@@ -23,7 +23,7 @@ interface NavMobileCssList {
 }
 
 export interface INavMobileDefaults {
-	enableBtn: SelectorRoot;
+	enableBtn: SelectorRoot | string;
 	ariaLabel: string;
 	subMenuText: string;
 	insertToggleBtnAfter: string;
@@ -45,7 +45,7 @@ export interface INavMobileDefaults {
 }
 
 export interface INavMobileOptions extends Partial<INavMobileDefaults> {
-	enableBtn: SelectorRoot;
+	enableBtn: SelectorRoot | string;
 }
 
 const VERSION = "3.0.0";
@@ -73,7 +73,7 @@ const DEFAULTS = {
 	bkptEnable: null
 };
 
-const { isVisible } = $be.static;
+const { isVisible, make } = $be.static;
 
 export default class NavMobile {
 
@@ -302,15 +302,14 @@ export default class NavMobile {
 				$el.addClass(css.menuHasUL);
 
 				if ($el.hasElems()) {
-					if (($el as any)[0].parentNode.isSameNode(this)) {
+					if (($el.elem[0] as HTMLElement).parentElement === elem) {
 						// make sure the <el> is a direct child of <li>
-						$el.insert(
-							$be('<button>').attr({
-								class: css.menuBtnCss,
-								type: 'button',
-								'aria-label': p.subMenuText + ' ' + $el.text().trim()
-							}), 'after'
-						);
+                        const $btn = $be(make(`button.${css.menuBtnCss}`,{
+                            type: 'button',
+                            ariaLabel: p.subMenuText + ' ' + $el.text().trim()
+                        }));
+                        
+						$el.insert($btn,'after');
 					}
 				}
 			}
@@ -360,7 +359,7 @@ export default class NavMobile {
 
 }
 
-declare module 'cash-dom' {
+declare module 'base-elem-js' {
 	interface BaseElem {
 		navMobile(options: INavMobileOptions | StringPluginArgChoices): BaseElem;
 	}

@@ -1,7 +1,8 @@
-import type { Cash, Selector } from "cash-dom";
+// import type { BaseElem, Selector } from "cash-dom";
 import type { StringPluginArgChoices } from './types';
 
-import $ from 'cash-dom';
+// import $ from 'cash-dom';
+import $be, { type BaseElem, type SelectorRoot } from "base-elem-js";
 import { getDataOptions } from "./util/helpers";
 import Store from "./core/Store";
 
@@ -10,7 +11,7 @@ export interface IToasterDefaults {
     duration: number;
     ariaLive: 'off' | 'polite' | 'assertive';
     animationDuration: number;
-    appendTo: Selector;
+    appendTo: SelectorRoot;
     outerCss: string;
     closeIconCss: string;
     closeTextCopy: string;
@@ -24,6 +25,8 @@ export interface IToasterDefaults {
 export interface IToasterOptions extends Partial<IToasterDefaults>{
     content: string;
 }
+
+type ToastrContent = string | HTMLElement | BaseElem | (HTMLElement | BaseElem)[];
 
 const VERSION = "1.0.0";
 const DATA_NAME = 'Toastr';
@@ -45,7 +48,8 @@ const DEFAULTS: IToasterDefaults = {
     oneOnly: false
 };
 
-const toastContainers: Map<string, Cash> = new Map();
+const toastContainers: Map<string, BaseElem> = new Map();
+const { make } = $be.static;
 
 let currentlyToastingGlobal = false;
 
@@ -57,13 +61,13 @@ export default class Toastr {
     
     public static DismissedEventName = 'toastDismissed';
 
-    private toastrFinallyTimer: ReturnType<typeof setTimeout>;
+    private toastrFinallyTimer: ReturnType<typeof setTimeout>;ß
     private currentlyToasting: boolean;
     private toasterBodyBuilt: boolean;
 
-    public $element: Cash;
-    public $toastrBody: Cash;
-    public $toastrWrap: Cash;
+    public $element: BaseElem;
+    public $toastrBody: BaseElem;
+    public $toastrWrap: BaseElem;
     public params: IToasterDefaults;
 
     constructor(element: HTMLElement, options: IToasterOptions | StringPluginArgChoices) {
@@ -72,15 +76,15 @@ export default class Toastr {
         const dataOptions = getDataOptions(element, EVENT_NAME);
         
         //state
-        s.$element = $(element);
+        s.$element = $be(element);
         s.toastrFinallyTimer = null;
         s.$toastrBody = null;
         s.$toastrWrap = null;
 
         s.currentlyToasting = false;
 
-        s.params = $.extend({}, Toastr.defaults, options, dataOptions);
-        s.$element.on(`click.${EVENT_NAME} ${EVENT_NAME}`, () => s.launch());
+        s.params = Object.assign({}, Toastr.defaults, options, dataOptions);
+        s.$element.on([`click.${EVENT_NAME}`,`[${EVENT_NAME}]`], () => s.launch());
 
         return s;
     }
@@ -94,10 +98,10 @@ export default class Toastr {
 
         setTimeout(() => {
             const $toatrContainer = s.getToasterContainer();
-            s.$toastrWrap.removeClass(dismissCss).detach();
+            s.$toastrWrap.rmClass(dismissCss).remove();
 
-            if (!$toatrContainer.children('div').length) {
-                s.getToasterContainer().detach();
+            if (!$toatrContainer.find('div').hasElems()) {
+                s.getToasterContainer().remove();
             }
             s.currentlyToasting = false;
             currentlyToastingGlobal = false;
@@ -108,10 +112,10 @@ export default class Toastr {
     setContent(content, updateNow = false) {
         const s = this;
 
-        $.extend(s.params, { content });
+        Object.assign(s.params, { content });
 
         if (updateNow) {
-            s.updateContent(s.params.content)
+            s.updateContent(s.params.content);
         }
     }
 
@@ -130,12 +134,12 @@ export default class Toastr {
                 s.buildElems();
             }
 
-            s.$toastrWrap.removeClass(`${dismissCss} ${enabledCss}`);
+            s.$toastrWrap.rmClass(`${dismissCss} ${enabledCss}`);
 
             s.updateContent(content);
 
-            $(document.body).append(
-                s.getToasterContainer().append(s.$toastrWrap)
+            $be(document.body).insert(
+                s.getToasterContainer().insert(s.$toastrWrap)
             );
 
             setTimeout(() => s.$toastrWrap.addClass(enabledCss), 0);
@@ -146,16 +150,14 @@ export default class Toastr {
         }
     }
 
-    private getToasterContainer(): Cash {
+    private getToasterContainer(): BaseElem {
         const { cssGroupKey, outerCss } = this.params;
 
         const toasterWrapCss = `${outerCss}-wrap ${outerCss}-wrap--${cssGroupKey}`;
 
         if (!toastContainers.has(toasterWrapCss)) {
             toastContainers.set(toasterWrapCss,
-                $('<div/>').attr({
-                    class: toasterWrapCss
-                })
+                $be(make(`div.${toasterWrapCss}`))
             );
         }
 
@@ -165,23 +167,21 @@ export default class Toastr {
     private buildElems() {
         const s = this;
         const { ariaLive, btnDismissCss, closeIconCss, closeTextCopy, outerCss } = s.params;
-
-        s.$toastrBody = $('<div>').attr({ class: s.params.outerCss + '__body' });
-        s.$toastrWrap = $('<div>').attr({ class: outerCss, role: 'alert', 'aria-live': ariaLive }).append(
+        const $btn = $be(make(`button.${btnDismissCss}`,{ type: 'button' }));
+        const $icon = $be(make(`i.${closeIconCss}`, `<span class="sr-only">${closeTextCopy}</span>`));
+        
+        s.$toastrBody = $be(make(`div.${s.params.outerCss}__body`));
+        s.$toastrWrap = $be(make(`div.${outerCss}`,{role: 'alert', ariaLive })).insert([
             s.$toastrBody,
-            $('<button>').attr({ type: 'button', class: btnDismissCss }).append(
-                $('<i>').attr({ class: closeIconCss }).append(
-                    $('<span>').attr({ class: 'sr-only' }).text(closeTextCopy)
-                )
-            )
-        );
+            $btn.insert($icon)
+        ]);
 
         s.toasterBodyBuilt = true;
         // click event to dismiss
-        s.$toastrWrap.on('click', 'button', () => s.dismiss());
+        s.$toastrWrap.on('click.dismiss', () => s.dismiss(),'button');
     }
 
-    private updateContent(content: Selector) {
+    private updateContent(content: ToastrContent) {
         const s = this;
 
         if (s.$toastrBody) {
@@ -190,37 +190,33 @@ export default class Toastr {
 
             if ('string' === typeof content) {
                 s.$toastrBody.html(content);
-            } else {
-                s.$toastrBody.append(content);
-            }
+            } else s.$toastrBody.insert(content);
+            
         }
     }
 
-    static setContent(element: Cash, content: string, updateNow = false) {
-        $(element).each(function () {
-            const s: Toastr = Store(this, DATA_NAME);
+    static setContent(element: BaseElem, content: string, updateNow = false) {
+        $be(element).each((elem) => {
+            const s: Toastr = Store(elem, DATA_NAME);
 
-            $.extend(s.params, { content });
-
-            if (updateNow) {
-                s.updateContent(s.params.content)
-            }
+            Object.assign(s.params, { content });
+            if (updateNow) s.updateContent(s.params.content);
         });
     }
 
-    static remove(element: Cash, plugin?: Toastr) {
-        $(element).each(function () {
-            const s: Toastr = plugin || Store(this, DATA_NAME);
+    static remove(element: BaseElem, plugin?: Toastr) {
+        $be(element).each((elem) => {
+            const s: Toastr = plugin || Store(elem, DATA_NAME);
 
-            s.$element.off(`click.${EVENT_NAME} ${EVENT_NAME}`);
+            s.$element.off([`click.${EVENT_NAME}`,`[${EVENT_NAME}]`]);
 
-            Store(this, DATA_NAME, null);
+            Store(elem, DATA_NAME, null);
         })
     }
 }
 
-declare module 'cash-dom' {
-    interface Cash {
-        toastr(options?: IToasterOptions | StringPluginArgChoices): Cash;
+declare module 'base-elem-js' {
+    interface BaseElem {
+        toastr(options?: IToasterOptions | StringPluginArgChoices): BaseElem;
     }
 }

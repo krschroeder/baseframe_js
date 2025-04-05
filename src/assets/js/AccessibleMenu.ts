@@ -3,9 +3,9 @@ import type { StringPluginArgChoices } from './types';
 import $be, {type BaseElem, type EventName} from "base-elem-js";
 
 import { getDataOptions } from "./util/helpers";
-import { isVisible } from './util/helpers';
 import Store 		from "./core/Store";
 
+const { isVisible } = $be.static;
 
 const KEYS = {
 	esc: 'Escape',

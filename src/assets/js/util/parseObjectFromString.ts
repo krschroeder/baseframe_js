@@ -1,7 +1,8 @@
+import type { PlainObject } from "types";
 
-const parseObjectFromString = (options: string): Object | null => {
+const parseObjectFromString = <T>(options: string): PlainObject<T> => {
 	
-	let retObj = null;
+	let retObj = {};
 
 	if(typeof options === 'string'){
 		retObj = JSON.parse(

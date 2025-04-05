@@ -200,7 +200,7 @@ export default class NavDesktop {
 	}
 }
 
-declare module 'cash-dom' {
+declare module 'base-elem-js' {
 	export interface BaseElem {
 		navDesktop(options?: INavDesktopOptions | StringPluginArgChoices): BaseElem;
 	}

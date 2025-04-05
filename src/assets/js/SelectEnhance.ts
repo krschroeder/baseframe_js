@@ -2,10 +2,12 @@ import type { StringPluginArgChoices } from './types';
 
 // import $ from 'cash-dom';
 import $be, { type BaseElem } from "base-elem-js";
+
 import Store from "./core/Store";
 import { KEYS } from "./core/constants";
-import { isMobileOS, getDataOptions, noop } from "./util/helpers";
+import { af, isMobileOS, getDataOptions, noop, setParams } from "./util/helpers";
 import type { EventName } from 'base-elem-js';
+ 
 
 export interface ISelectEnhanceDefaults {
     cssPrefix: string;
@@ -41,13 +43,13 @@ const DEFAULTS: ISelectEnhanceDefaults = {
 };
 
 
-const { make } = $be.static;
+const { make, findBy } = $be.static;
 
 // wrap the select first
 const mobileOS = isMobileOS();
 
 // helper
-const getSelectedOptNode = ($el) => $el.find('option').filter(function () { return this.selected })[0];
+// const getSelectedOptNode = ($el) => $el.find('option').filter(elem => elem.selected).elem[0];
 
 
 let currSelectEnhance:HTMLDivElement | null = null;
@@ -83,6 +85,7 @@ export default class SelectEnhance {
 
     constructor(element: HTMLSelectElement, options: ISelectEnhanceOptions | StringPluginArgChoices, index: number) {
         const s = this;
+        const dataOptions = getDataOptions(element, EVENT_NAME);
 
         s.index = index;
         s.$select = $be(element);
@@ -107,20 +110,16 @@ export default class SelectEnhance {
         if (s.$label.hasElems()) {
             s.$label.attr({ id: s.selectId + '_lbl' });
         }
-
-        const dataOptions = getDataOptions(element, EVENT_NAME);
         
-        s.params = Object.assign({}, SelectEnhance.defaults, options, dataOptions)
-
+        s.params = setParams(SelectEnhance.defaults, options, dataOptions);
 
         s.setUpSelectHtml();
 
         if (mobileOS && s.params.mobileNative || s.isReadOnly) {
-
+           
             s.mobileOnlyIfNavite();
 
         } else {
-
             // 
             // attach events
             // 
@@ -143,7 +142,7 @@ export default class SelectEnhance {
     mobileOnlyIfNavite() {
         const s = this;
 
-        let prevElSelectedVal = getSelectedOptNode(s.$select);
+        let prevElSelectedVal = s.#getSelectedOptNode(s.$select);
 
         s.$select.on(`mouseup.${EVENT_NAME}`, (ev, elem) => {
 
@@ -154,13 +153,17 @@ export default class SelectEnhance {
         }, 'option')
         .on(`change.${EVENT_NAME}`, (ev, elem) => {
             s.params.afterChange(s.$select);
-            prevElSelectedVal = getSelectedOptNode(s.$select);
+            prevElSelectedVal = s.#getSelectedOptNode(s.$select);
         });
+    }
+
+    #getSelectedOptNode($el) {
+        return $el.find('option').filter(elem => elem.selected).elem[0];
     }
 
     showOptions() {
         const s = this;
-        if (s.select.disabled || s.optionsShown) { return }
+        if (s.select.disabled || s.optionsShown) return;
         s.optionsShown = true; 
 
         currSelectEnhance = s.selectEnhance;
@@ -177,7 +180,7 @@ export default class SelectEnhance {
         
         
         if ($selectedBtn.hasElems()) {
-            $selectedBtn[0].focus();
+            ($selectedBtn.elem[0] as HTMLElement).focus();
         }
 
         s.params.focusIn(s.$select);
@@ -203,15 +206,15 @@ export default class SelectEnhance {
         $be(document.body).off(s.bodyCloseEvt as EventName);
 
         setTimeout(() => {
-            s.$selectEnhance.rmClass(cssPrefix + '--blurring ' + cssPrefix + '--pos-above')
+            s.$selectEnhance.rmClass([`${cssPrefix}--blurring`, `${cssPrefix}--pos-above`]);
 
             s.$selectList
                 .remove()
-                .rmClass(
-                    cssPrefix + '__list--blurring ' + 
-                    cssPrefix + '__list--focused' +
-                    cssPrefix + '__list--pos-above'
-                );
+                .rmClass([
+                    `${cssPrefix}__list--blurring`,
+                    `${cssPrefix}__list--focused`,
+                    `${cssPrefix}__list--pos-above`
+                ]);
             s.params.focusOut(s.$select);
           
             if (focusBack && s.selectEnhance.isSameNode(currSelectEnhance)) {
@@ -252,25 +255,19 @@ export default class SelectEnhance {
             s.$textInput.attr({value: selectedOpt.text});
         }
 
-        if (doBlur) {
-                
-            s.closeOptions();
-        } else {
-            optionBtn.focus();
-        }
+        if (doBlur)s.closeOptions();
+        else optionBtn.focus();
     }
     
-    // Events 
+    // region Events 
 
     eventLabelClick() {
         const s = this;
 
-        s.$label.on(`click.${EVENT_NAME}`, (ev: MouseEvent, elem) => {
+        s.$label.on(`click.${EVENT_NAME}`, (ev: MouseEvent) => {
             ev.preventDefault();
-            if (!s.select.disabled) {
-                s.textInput.focus();
-            }
-        })
+            if (!s.select.disabled) s.textInput.focus();
+        });
     }
 
     eventResizeClose() {
@@ -284,33 +281,30 @@ export default class SelectEnhance {
         const s = this;
         const { cssPrefix } = s.params;
 
-        s.$selectEnhance.on(`click.${EVENT_NAME}`, (e: MouseEvent) => {
-            if (s.select.disabled) { return }
+        s.$textInput.on(`click.${EVENT_NAME}`, () => {
+            if (s.select.disabled) return;
             s.showOptions();
             
-        }, `.${cssPrefix}__enable-text`);
-
-        // Only works on keydown event
-        s.$textInput.on(`keydown.${EVENT_NAME}`, function (e: KeyboardEvent) {
-            if (e.key === KEYS.down || e.key === KEYS.up) {
+        })
+        .on(`keydown.${EVENT_NAME}`, (ev: KeyboardEvent) => {
+            // Only works on keydown event
+            if (ev.key === KEYS.down || ev.key === KEYS.up) {
                 
                 s.showOptions();
-                e.preventDefault();
+                ev.preventDefault();
             }
-        });
-
-        s.$textInput.on(`keypress.${EVENT_NAME}`, function (e: KeyboardEvent) {
-            
-            if (e.key !== KEYS.tab || e.shiftKey && e.key !== KEYS.tab) {
-                e.preventDefault();
+        }).on(`keypress.${EVENT_NAME}`, (ev: KeyboardEvent) => {
+             
+            if (ev.key !== KEYS.tab || ev.shiftKey && ev.key !== KEYS.tab) {
+                ev.preventDefault();
             }
 
             if (
-                e.key === KEYS.enter || //enter key
-                e.code === KEYS.space && s.keyedInput.trim() === '' || // space key
-                e.ctrlKey && e.altKey && e.shiftKey && KEYS.space === e.code
+                ev.key === KEYS.enter || //enter key
+                ev.code === KEYS.space && s.keyedInput.trim() === '' || // space key
+                ev.ctrlKey && ev.altKey && ev.shiftKey && KEYS.space === ev.code
             ) {
-                s.showOptions();    console.log('whha')
+                s.showOptions();
             }
         });
     }
@@ -319,25 +313,23 @@ export default class SelectEnhance {
         const s = this;
         const { cssPrefix } = s.params;
 
-        const newSelectedOption = (elem: HTMLDivElement) => {
-            s.setSelectionState(document.activeElement as HTMLDivElement);
+        const selectedOption = (elem: HTMLDivElement) => {
+            s.setSelectionState(elem);
             s.$selectEnhance.rmClass(cssPrefix + '--focused');
             setTimeout(() => s.closeOptions(), 200);
         }
         // mouse click
         s.$selectList.on(`click.${EVENT_NAME}`, (ev:MouseEvent, elem) => {
-
-            newSelectedOption(elem as HTMLDivElement);
+            selectedOption(elem as HTMLDivElement);
             ev.preventDefault();
-        }, `.${cssPrefix}__list-btn`);
-
-         // Kyeboard click
-         s.$selectList.on(`keypress.${EVENT_NAME}`, (ev:KeyboardEvent, elem) => {
+        }, `.${cssPrefix}__list-btn`)
+        // keyboard click
+        .on(`keypress.${EVENT_NAME}`, (ev:KeyboardEvent, elem) => {
             if (
                 ev.key === KEYS.enter ||
                 ev.code === KEYS.space && s.keyedInput.trim() === ''
             ) {
-                newSelectedOption(document.activeElement as HTMLDivElement);
+                selectedOption(elem as HTMLDivElement);
                 ev.preventDefault();
             }
         }, `.${cssPrefix}__list-btn`);
@@ -348,9 +340,9 @@ export default class SelectEnhance {
         setTimeout(() => {
             const bodyEvt = s.bodyCloseEvt as EventName;
             $be(document.body).off(bodyEvt).on(bodyEvt, (ev: MouseEvent, elem) => {
-                const ae = document.activeElement;
+                const activeElem= document.activeElement;
               
-                if (ae && !s.selectList.contains(ae as HTMLElement)) {
+                if (activeElem&& !s.selectList.contains(activeElem as HTMLElement)) {
                     s.closeOptions(); 
                 }
             });
@@ -399,7 +391,7 @@ export default class SelectEnhance {
     eventArrowKeys() {
 
         const s = this;
-        s.$selectEnhance.on(`keydown.navigate_${EVENT_NAME}`, (ev: KeyboardEvent, elem) => {
+        s.$selectEnhance.on(`keydown.navigate_${EVENT_NAME}`, (ev: KeyboardEvent, elem: HTMLElement) => {
             if (s.select.disabled || !s.optionsShown) { return }
 
             if (ev.key === KEYS.down) {
@@ -407,7 +399,7 @@ export default class SelectEnhance {
 
                     ev.preventDefault();
                 }
-                s.nextOptionButton('next');
+                s.traverseOptions(elem, 'next');
             }
 
             if (ev.key === KEYS.esc ) {
@@ -422,18 +414,20 @@ export default class SelectEnhance {
         s.$selectList.on(`keydown.navigate_${EVENT_NAME}`, (ev: KeyboardEvent, elem) => {
              
             if (s.select.disabled || !s.optionsShown) { return }
+            
+            const activeElem= document.activeElement as HTMLElement;
 
             if (ev.key === KEYS.down) {
-                if (!s.textInput.isSameNode(document.activeElement)) {
+                if (!s.textInput.isSameNode(activeElem)) {
 
                     ev.preventDefault();
-                }
-                s.nextOptionButton('next');
+                }  
+                s.traverseOptions(activeElem, 'next');
             }
 
             if (ev.key === KEYS.up) {
                 ev.preventDefault();
-                s.nextOptionButton('prev');
+                s.traverseOptions(activeElem, 'prev');
             }
 
             if (ev.key === KEYS.esc ) {
@@ -443,73 +437,61 @@ export default class SelectEnhance {
         });
     }
 
-    //  build the HTML for it
+    // region Build Options
 
     setUpSelectHtml() {
-        const s = this;
+        const 
+            s = this,
+            selectEnhance = make(`div.${s.params.cssPrefix}#${s.selectId}_wrap`),
+            textInput = make(`input.${s.params.cssPrefix}__enable-text`,{
+                type: 'text',
+                role: "combobox",
+                'aria-controls': s.selectId + '_listbox',
+                'aria-labelledby': s.selectId + '_lbl',
+                'aria-autocomplete': 'list',
+                'aria-expanded': 'false',
+                id: s.selectId + '_input'
+            }),
+            $selectEnhance = $be(selectEnhance),
+            $textInput = $be(textInput)
+        ;
 
+        s.$textInput = $textInput;
+        s.textInput = textInput;
+        s.$selectEnhance = $selectEnhance;
+        s.selectEnhance = selectEnhance as HTMLDivElement;
+        s.$select
+            .attr({ tabindex: '-1', 'aria-hidden': 'true' })
+            .insert($selectEnhance, 'after');
 
-        const $selectEnhance = $be(make('div',{
-            className: s.params.cssPrefix,
-            id: s.selectId + '_wrap'
-        }));
-
-        const $textInput = $be(make('input',{
-            type: 'text',
-            className: s.params.cssPrefix + '__enable-text',
-            role: "combobox",
-            'aria-controls': s.selectId + '_listbox',
-            'aria-labelledby': s.selectId + '_lbl',
-            'aria-autocomplete': 'list',
-            'aria-expanded': 'false',
-            id: s.selectId + '_input'
-        }));
-
-        s.$select.insert($selectEnhance, 'after');
         $selectEnhance.insert(s.$select);
-
-        // jQuery, elements need to be bound to the DOM before they
-        // can have events attached to them. So this is the solution
-        const $parentElem = s.$select.find(elem => elem.parentElement);
-        s.$selectEnhance = $parentElem;
-        s.selectEnhance = s.$selectEnhance[0] as HTMLDivElement;
-       
-        if (mobileOS && s.params.mobileNative || s.isReadOnly) {
-            // exit if its a mobile device after wrapping for styling
-            return;
+ 
+        if (!(mobileOS && s.params.mobileNative || s.isReadOnly)) {   
+            s.$select.insert($textInput, 'after');
+            SelectEnhance.buildOptionsList(s);
         }
-
-        $textInput.insert(s.$select, 'after');
-        s.$select.attr({ tabindex: '-1', 'aria-hidden': 'true' });
-
-        // jQuery, elements need to be bound to the DOM before they
-        // can have events attached to them. So this is the solution
-        s.$textInput = $parentElem.find('#' + s.selectId + '_input');
-        s.textInput = s.$textInput.elem[0] as HTMLInputElement;
-        SelectEnhance.buildOptionsList(s);
     }
 
     static buildOptionsList(s: SelectEnhance, $selectList?: BaseElem) {
 
-        const { cssListModifer, cssPrefix } = s.params;
-        const optGroup = s.select.getElementsByTagName('optgroup');
-        const hasOptGroup = !!optGroup.length;
-        const $optGroupWm = new WeakMap();
-        const modifierCss =  " " + (cssListModifer ? cssPrefix + '__list--' + cssListModifer : '');
+        const 
+            { cssListModifer, cssPrefix } = s.params,
+            optGroup = findBy('tag','optgroup', s.select) as HTMLOptGroupElement[],
+            hasOptGroup = !!optGroup.length,
+            $optGroupWm = new WeakMap(),
+            modifierCss =  " " + (cssListModifer ? cssPrefix + '__list--' + cssListModifer : '')
+        ;
 
         if (hasOptGroup) {
             for (let i = 0, l = optGroup.length; i < l; i++) {
                 const group = optGroup[i];
-
-                $optGroupWm.set(group, $be(make('div',{
+                const optGroupElem = make('div',{
                     className: cssPrefix + '__optgroup',
                     role: 'group',
                     ariaLabel: group.label || "",
                     textContent: group.label || ""
-                })).insert($be(make('span',{
-                    className: cssPrefix + '__optgroup-label',
-                    ariaHidden: 'true'
-                }))));
+                });
+                $optGroupWm.set(group, $be(optGroupElem));
             }
         }
 
@@ -531,28 +513,24 @@ export default class SelectEnhance {
             const id = optId + i;
 
             if (option.hidden) continue;
-
+            const isInOptGrup = option.parentElement.nodeName.toUpperCase() === 'OPTGROUP';
             const valCssStatus = option.value === '' ? ' ' + cssPrefix + '__list-btn--empty' : '';
-
-            const optionBtn: HTMLDivElement = $be(make('div',{
+            const optionBtn = make(`div.${cssPrefix}__list-btn${valCssStatus}`,{
                 tabIndex: 0,
                 role: 'option', id,
                 ariaSelected: option.selected + '',
-                disabled: option.disabled ? 'disabled' : null,
-                class: cssPrefix + '__list-btn' + valCssStatus,
+                // disabled: option.disabled ? 'disabled' : null,
                 textContent: option.textContent
-            })).elem[0] as HTMLDivElement;
-
+            });
+            optionBtn.dataset.disabled = option.disabled ? 'disabled' : null,
             optionBtn.dataset.value = option.value;
 
             s.optionSet.set(optionBtn, option);
             s.optionSet.set(option, optionBtn);
             // append to list or optgroup
 
-            hasOptGroup && option.parentElement.nodeName.toUpperCase() === 'OPTGROUP' ?
-                $optGroupWm.get(option.parentElement).append(optionBtn) :
-                s.$selectList.insert(optionBtn)
-                ;
+            if (hasOptGroup && isInOptGrup) $optGroupWm.get(option.parentElement).insert(optionBtn);
+            else s.$selectList.insert(optionBtn);
 
             if (option.selected) {
                 s.$textInput.attr({ 'aria-activedescendant': id });
@@ -561,10 +539,7 @@ export default class SelectEnhance {
                 if (s.params.emptyValAsPlaceholder && option.value.trim() === '') {
                     s.$textInput.attr({value: ''});
                     s.$textInput.attr({ placeholder: option.text });
-                } else {
-                    s.$textInput.attr({value: option.text});
-                }
-
+                } else s.$textInput.attr({value: option.text});
             }
         }
 
@@ -576,48 +551,39 @@ export default class SelectEnhance {
         }
     }
 
-    nextOptionButton(dir: 'next' | 'prev') {
-
-        const s = this;
-        const ae = document.activeElement;
-        const $btnList = s.$selectList.find('.' + s.params.cssPrefix + '__list-btn');
-        const btnLength = $btnList.elem.length;
-
-        if (btnLength && s.textInput.isSameNode(ae)) {
-            $btnList.get(dir === 'next' ? 0 : btnLength - 1)[0].focus();
-            return;
-        }
-         
-        for (let i = 0; i < btnLength; i++) {
-            const el: HTMLDivElement = $btnList[i] as HTMLDivElement;
-            let prevNextIndex = 0;
-
-            if (ae.isSameNode(el)) {
-
+    traverseOptions(elem: HTMLElement, dir: 'next' | 'prev') {
+        
+        const parentElem = elem.parentElement;
+        const nextOption = (dir === 'next' ? 
+            elem.nextElementSibling : 
+            elem.previousElementSibling
+        ) as HTMLElement;
+       
+        if (nextOption) nextOption.focus();
+        if (!nextOption && parentElem.role === 'group') {
+            const nextOptGroup = dir === 'next' ? 
+                parentElem.nextElementSibling : 
+                parentElem.previousElementSibling
+            ;
+           
+            if (nextOptGroup) {
                 if (dir === 'next') {
-                    const isLast = i === btnLength - 1;
-                    prevNextIndex = isLast ? i : i + 1;
-                } else {
-                    const isFirst = i === 0;
-                    prevNextIndex = isFirst ? i : i - 1;
-                }
-                $btnList.get(prevNextIndex)[0].focus();
-
-                break;
+                    (nextOptGroup.firstElementChild as HTMLElement)?.focus();
+                } else (nextOptGroup.lastElementChild as HTMLElement)?.focus();
             }
         }
     }
 
+    // region Mutation Observer
     selectInputMutationObserver() {
         const s = this;
-
         const selectNode = s.select;
         const config = { attributes: true, childList: true, subtree: true };
 
-        // Callback function to execute when mutations are observed
-        const callback = function (mutationsList, observer) {
+        // Create an observer instance linked to the callback function
+        s.selectboxObserver = new MutationObserver(function (mutationsList, observer) {
             // Use traditional 'for loops' for IE 11
-            for (let i = 0, l = mutationsList.hasElems(); i < l; i++) {
+            for (let i = 0, l = mutationsList.length; i < l; i++) {
                 const mutation = mutationsList[i];
                 if (mutation.type === 'childList') {
 
@@ -630,14 +596,12 @@ export default class SelectEnhance {
                     );
                 }
             }
-        };
-
-        // Create an observer instance linked to the callback function
-        s.selectboxObserver = new MutationObserver(callback);
+        });
         // Start observing the target node for configured mutations
         s.selectboxObserver.observe(selectNode, config);
     }
 
+    // region List Position
     eventScrollGetListPosition(init: boolean = true) {
         const s = this;
         const evt = `scroll.${EVENT_NAME}`;
@@ -666,24 +630,22 @@ export default class SelectEnhance {
             s.selectList && selectIntersectionObserver.observe(s.selectList);
         }
     }
-
+    
     getListPosition() {
         const s = this;
 
         if (s.optionsShown) {
+            console.log(s.$selectEnhance);
             const 
                 selWrapRects = s.$selectEnhance.elemRects(),
-                {cssPrefix} = s.params,
-                selWrapOffset = {top: selWrapRects.top + window.pageYOffset, left: selWrapRects.left + window.pageXOffset},
-                selWrapHeight = s.selectEnhance.scrollHeight,
-                selWrapPosTop = selWrapOffset.top,
-                selWrapPosBot = selWrapPosTop + selWrapHeight,
+                { cssPrefix } = s.params,
+                { innerHeight, scrollY, scrollX } = window,
+                selWrapTop = selWrapRects.top + scrollY,
+                selWrapPosBot = selWrapTop + selWrapRects.height,
                 selWrapWidth = s.selectEnhance.offsetWidth,
                 selListHeight = s.selectList.offsetHeight,
-                {innerHeight, scrollY}  = window,
                 scrollYBot = scrollY + innerHeight,
-
-                isSpaceAbove = selWrapPosTop - scrollY > selListHeight,
+                isSpaceAbove = selWrapTop - scrollY > selListHeight,
                 isSpaceBelow = scrollYBot - selWrapPosBot > selListHeight,
 
                 // If space below use that, else if no space at all prefer space below
@@ -693,8 +655,8 @@ export default class SelectEnhance {
             s.$selectEnhance.tgClass(cssPrefix + '--pos-above', !canPlaceBelow);
             s.$selectList
                 .css({ 
-                    left: selWrapOffset.left + 'px', 
-                    top: (canPlaceBelow ? selWrapPosBot : selWrapPosTop - selListHeight) + 'px', 
+                    left: (selWrapRects.left + scrollX) + 'px', 
+                    top: (canPlaceBelow ? selWrapPosBot : selWrapTop - selListHeight) + 'px', 
                     width: selWrapWidth + 'px'
                 })
                 .tgClass(cssPrefix + '__list--focused', s.optionsShown)
@@ -702,9 +664,10 @@ export default class SelectEnhance {
         }
     }
 
+    // region Static Methods
     static refreshOptions(element) {
-        $be(element).each(function () {
-            const s: SelectEnhance = Store(this, DATA_NAME);
+        $be(element).each((elem) => {
+            const s: SelectEnhance = Store(elem, DATA_NAME);
 
             if (s) {
 
@@ -734,15 +697,12 @@ export default class SelectEnhance {
             $be(document.body).off(s.bodyCloseEvt as EventName);
             $be(window).off(`resize.${EVENT_NAME}`);
             // the window event will just stay
-            s.$select.insert(s.$selectEnhance, 'after');
-            
-            s.$select
+            s.$selectEnhance
+                .insert(s.$select, 'after')
                 .attr({ tabindex: null, 'aria-hidden': null })
                 .off([`mouseup.${EVENT_NAME}`,`change.${EVENT_NAME}`]);
 
-            if (s.selectboxObserver) {
-                s.selectboxObserver.disconnect();
-            }
+            if (s.selectboxObserver) s.selectboxObserver.disconnect();
             s.$selectEnhance.remove();
 
             Store(elem, DATA_NAME, null);

@@ -3,9 +3,8 @@ import type { StringPluginArgChoices } from './types';
 
 // import $ from 'cash-dom';
 import $be, { type BaseElem } from "base-elem-js";
-import { isVisible, getDataOptions } from './util/helpers';
+import { getDataOptions } from './util/helpers';
 import Store from "./core/Store";
-
 
 export interface ILazyLoadDefaults {
     observerID: string;
@@ -22,6 +21,8 @@ export interface ILazyLoadDefaults {
 export interface ILazyLoadOptions extends Partial<ILazyLoadDefaults> {
     observerID: string;
 }
+
+const { isVisible } = $be.static;
 
 const VERSION = '2.0.1';
 const DATA_NAME = 'LazyLoad';

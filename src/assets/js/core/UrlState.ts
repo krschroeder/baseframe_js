@@ -1,6 +1,5 @@
+import $be from "base-elem-js";
 import type { UrlSearchType, StateChangeType } from "../types";
-import $ from 'cash-dom';
-
 
 type UrlPrintPattern = 'repeat' | 'normal';
 type UrlPrintOptions = { pattern: UrlPrintPattern; brackets: boolean };
@@ -94,14 +93,14 @@ export const get = (type: UrlSearchType, paramName: string): UrlParamRawValue =>
 export const refresh = (on: boolean = true): void => {
 
     if (on) {
-        $(window).off(`popstate.${EVENT_NAME}`).on(`popstate.${EVENT_NAME}`, () => {
+        $be(window).off(`popstate.${EVENT_NAME}`).on(`popstate.${EVENT_NAME}`, () => {
 
             urlStateMap.set('search', new URLSearchParams(location.search.replace('?', '')));
             urlStateMap.set('hash', new URLSearchParams(location.hash.replace('#', '')));
 
         });
     } else {
-        $(window).off(`popstate.${EVENT_NAME}`);
+        $be(window).off(`popstate.${EVENT_NAME}`);
     }
 }
 

@@ -1,6 +1,5 @@
-import $ from 'cash-dom';
+import $be from 'base-elem-js';
 import { docTop } from '../util/helpers';
-
 
 // We need to throttle the checking of the previous scroll for a bug in IOS
 // that says the previous pixel is the same as the current pixel.
@@ -33,7 +32,7 @@ export default function smoothScroll(
 
     const targetIsAbove = elemYPos < docTop();
 
-    $(window).on('wheel.smoothScroll', () => { userBreakScroll = true });
+    $be(window).on('wheel.smoothScroll', () => { userBreakScroll = true });
 
     document.body.style.scrollBehavior = 'auto';
 
@@ -43,7 +42,7 @@ export default function smoothScroll(
         }
         window.cancelAnimationFrame(animation);
         activeScroll = false;
-        $(window).off('wheel.smoothScroll');
+        $be(window).off('wheel.smoothScroll');
         document.body.style.scrollBehavior = null;
     }
 

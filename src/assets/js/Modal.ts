@@ -1,14 +1,12 @@
  
 import type { LocationHashTracking, StringPluginArgChoices } from './types';
 
-// import $ from 'cash-dom';
-import $be, {type BaseElem, type EventName, type Selector, type SelectorRoot} from "base-elem-js";
+import $be, {type BaseElem, type EventName, type SelectorRoot} from "base-elem-js";
 import Store from "./core/Store";
 import UrlState from "./core/UrlState";
 import trapFocus from './fn/trapFocus';
 import { camelCase, getDataOptions, reflow } from './util/helpers';
 import { noop } from './util/helpers';
-import h from "./fn/hyperScript";
 
 
 

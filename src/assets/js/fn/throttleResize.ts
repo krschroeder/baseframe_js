@@ -1,4 +1,6 @@
-import $ from 'cash-dom';
+// import $ from 'cash-dom';
+import type { EventName } from 'base-elem-js';
+import $be from 'base-elem-js';
 
 const throttledResize = (
     callback: (...args) => void,
@@ -16,7 +18,7 @@ const throttledResize = (
         return;
     }
 
-    $(window).on(`resize${namespace}${manualTrigger && ' ' + _namespace}`, (e) => {
+    $be(window).on([`resize${namespace}`, manualTrigger ?  _namespace : ''].filter(Boolean) as EventName[], (e) => {
 
         clearTimeout(_throttledResize);
 

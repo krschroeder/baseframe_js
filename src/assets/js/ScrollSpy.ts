@@ -183,9 +183,9 @@ export default class ScrollSpy {
         const s = this;
         const { spyNavElems, setActiveCssToLi } = s.params;
 
-        $be(s.element).find(spyNavElems).each(function () {
-            const clickEl = this as HTMLAnchorElement | HTMLButtonElement;
-            const hash = this.nodeName === 'A' ? (clickEl as HTMLAnchorElement).hash : (clickEl as HTMLButtonElement).dataset.hash;
+        $be(s.element).find(spyNavElems).each((elem) => {
+            const clickEl = elem as HTMLAnchorElement | HTMLButtonElement;
+            const hash = elem.nodeName === 'A' ? (clickEl as HTMLAnchorElement).hash : (clickEl as HTMLButtonElement).dataset.hash;
 
             if (hash) {
                 const foundElem = s.spyContents.find((el: HTMLElement) => el.id && el.id === hash.replace('#', ''))

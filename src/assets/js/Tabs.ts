@@ -3,7 +3,7 @@ import type { LocationHashTracking, PrimaryClickElems, StringPluginArgChoices } 
 
 // import $ from 'cash-dom';
 import $be, { type BaseElem, type SelectorRoot, type EventName } from "base-elem-js";
-import { getDataOptions } from "./util/helpers";
+import { getDataOptions, setParams } from "./util/helpers";
  
 import Store from "./core/Store";
 import UrlState from "./core/UrlState";
@@ -43,8 +43,7 @@ const DEFAULTS: ITabsDefaults = {
 const getTabIDFromEl = (el:PrimaryClickElems): string => {
 	return (el instanceof HTMLButtonElement ? el.dataset.href : el.hash)?.replace(/^\#/, '') || '';
 }
-
-
+ 
 
 export default class Tabs {
 
@@ -52,8 +51,8 @@ export default class Tabs {
 	public $element: BaseElem;
 	public params: ITabsDefaults;
 	public $tabsNav: BaseElem;
-	public $tabsNavClickElems: BaseElem;
-	public tabsNavClickElems: PrimaryClickElems[];
+	public $tabsNavBtns: BaseElem;
+	public tabsNavBtns: PrimaryClickElems[];
 	public $tabsBody: BaseElem;
 	public $tabsBodyPanels: BaseElem;
 	public prevTabId: string;
@@ -67,23 +66,25 @@ export default class Tabs {
 	#transition = transition();
 
 	constructor(element: HTMLElement, options: ITabsOptions | StringPluginArgChoices) {
-		const s = this;
-		const dataOptions = getDataOptions(element, EVENT_NAME);
+		const 
+            s = this,
+		    dataOptions = getDataOptions(element, EVENT_NAME),
+		    p = setParams(Tabs.defaults, options, dataOptions),
+            $element = $be(element),
+            $tabsNav = $element.find(`.${p.cssPrefix}__nav`).get(0),
+            $tabsBody = $element.find(`.${p.cssPrefix}__body`).get(0),
+		    tabsBody = $tabsBody.elem[0] as HTMLElement
+        ;
 		
-		s.$element = $be(element);
-		s.params = Object.assign({}, Tabs.defaults, options, dataOptions);
-		
-		const p = s.params;
-
-		s.$tabsNav = s.$element.find(`.${p.cssPrefix}__nav`).get(0);
-		s.$tabsBody = s.$element.find(`.${p.cssPrefix}__body`).get(0);
-		
-		const tabsBody = s.$tabsBody[0] as HTMLElement;
-		s.$tabsBodyPanels = s.$tabsBody.find(`.${p.cssPrefix}__panel`, elem => elem === tabsBody);
-		s.$tabsNavClickElems = s.$tabsNav.find('a, button');
-		s.tabsNavClickElems = s.$tabsNavClickElems.toArray() as PrimaryClickElems[];
+        s.$element = $element;
+		s.params = p; 
+		s.$tabsNav = $tabsNav;
+		s.$tabsBody = $tabsBody;
+		s.$tabsBodyPanels = s.$tabsBody.find(`.${p.cssPrefix}__panel`, elem => elem.parentElement === tabsBody);
+		s.$tabsNavBtns = s.$tabsNav.find('a, button');
+		s.tabsNavBtns = s.$tabsNavBtns.toArray() as PrimaryClickElems[];
 		s.prevTabId = null;
-		s.initDefaultContent = s.$tabsBodyPanels.get(p.defaultContent).attr('tab-id');
+		s.initDefaultContent = s.$tabsBodyPanels.get(p.defaultContent).attr('data-tab-id');
 		 	 
 		//init
 		s.setAriaAttrs();
@@ -114,18 +115,15 @@ export default class Tabs {
 			 
 			if (tabId) {
 				const clickElem = s.getClickElemFromTabId(tabId);
-				clickElem && s.changeTabElements(clickElem, tabId, false);
+				if (clickElem) s.changeTabElements(clickElem, tabId, false);
 			}
 		}
 	}
 
 	getClickElemFromTabId(tabId: string):PrimaryClickElems | null {
-		const $clickElem = this.$tabsNavClickElems.filter((el: PrimaryClickElems) => getTabIDFromEl(el) === tabId);
-
-		if ($clickElem.hasElems()) {
-			return $clickElem[0] as PrimaryClickElems;
-		}
-
+        const clickElem = this.tabsNavBtns.find((el: PrimaryClickElems) => getTabIDFromEl(el) === tabId);
+		
+        if (clickElem) return clickElem as PrimaryClickElems;
 		return null;
 	}
 
@@ -133,19 +131,19 @@ export default class Tabs {
 		const s = this;
 		const p = s.params;
 
-		s.$tabsNavClickElems.each(function () {
+		s.$tabsNavBtns.each((elem) => {
 
-			const tabId = getTabIDFromEl(this as PrimaryClickElems);
+			const tabId = getTabIDFromEl(elem as PrimaryClickElems);
 			const $tabBodyItem = s.$tabsBodyPanels.filter(elem => elem.dataset.tabId === tabId);
 
-			$be(this).attr({
+			$be(elem).attr({
 				'aria-selected': 'false',
 				'role': 'tab',
 				'aria-controls': tabId
 			});
 
 			$tabBodyItem.attr({
-				'aria-label':  p.ariaLabel ? this.textContent : null,
+				'aria-label':  p.ariaLabel ? elem.textContent : null,
 				'role': 'tabpanel',
 				tabindex: '-1'
 			});
@@ -170,14 +168,14 @@ export default class Tabs {
 
 		s.$tabsNav.on(`keydown.${EVENT_NAME}`, function (e:KeyboardEvent) {
 			const target = e.target as PrimaryClickElems;
-			const index = s.tabsNavClickElems.findIndex(el => el.isSameNode(target));
+			const index = s.tabsNavBtns.findIndex(el => el.isSameNode(target));
 			const next = e.key === 'ArrowRight' || e.key === 'ArrowDown';
 			const prev = e.key === 'ArrowLeft' || e.key === 'ArrowUp';
 			 
 			if (index !== -1 && (next || prev)) {
 				 
 				const changeIndex = next ? index + 1 : index - 1;
-				const nextBtn = s.tabsNavClickElems[changeIndex];
+				const nextBtn = s.tabsNavBtns[changeIndex];
 				
 				if (nextBtn) {
 					// $be(target).attr({'tabindex': '-1'});
@@ -201,50 +199,49 @@ export default class Tabs {
 
 	changeTabElements(clickElem: PrimaryClickElems, tabId: string, updateUrl = true) {
 
-		const s = this;
-		const p = s.params;
+		const 
+            s = this,
+		    p = s.params,
+            cssOpen 	= `${p.cssPrefix}__panel--open`,
+            cssToggling = `${p.cssPrefix}__panel--toggling`,
+            cssOpening 	= `${p.cssPrefix}__panel--opening`,
+            cssClosing 	= `${p.cssPrefix}__panel--closing`
+		;
+
 		let hasTab = false;
 		
-
-		const 
-			cssOpen 	= `${p.cssPrefix}__panel--open`,
-			cssToggling = `${p.cssPrefix}__panel--toggling`,
-			cssOpening 	= `${p.cssPrefix}__panel--opening`,
-			cssClosing 	= `${p.cssPrefix}__panel--closing`
-		;
-		
 		s.#transition(() => {
-			s.$tabsBodyPanels.each(function(){
-				const thisTabId = this.dataset.tabId;
+			s.$tabsBodyPanels.each((elem) => {
+				const thisTabId = elem.dataset.tabId;
 
 				if (thisTabId === tabId) {
 					
-					$be(this)
-						.addClass(`${cssToggling} ${cssOpening}`)
+					$be(elem)
+						.addClass([cssToggling,cssOpening])
 						.attr({ 'aria-hidden': null, tabindex: '0'});
 
 					hasTab = true;
 				} 
 				
 				if (s.prevTabId && s.prevTabId === thisTabId) {
-					$be(this)
-						.addClass(`${cssToggling} ${cssClosing}`)
+					$be(elem)
+						.addClass([cssToggling,cssClosing])
 						.attr({ 'aria-hidden': 'true', tabindex: '-1'});
 				}
 			});
 
 			if (hasTab) {
-				
+				const cssActive = `${p.cssPrefix}__nav-li--active`;
 				s.params.tabChange(tabId, s.prevTabId, s.$tabsNav, s.$tabsBody);
 				s.prevTabId = tabId;
 				
-				s.$tabsNavClickElems
+				s.$tabsNavBtns
 					.attr({ 'aria-selected': 'false', tabindex: '-1' })
-					.find(elem => elem.closest('li')).rmClass(`${p.cssPrefix}__nav-li--active`);
+					.find(elem => elem.closest('li')).rmClass(cssActive);
 
 				$be(clickElem)
 					.attr({ 'aria-selected': 'true', tabindex: '0' })
-					.find(elem => elem.closest('li')).addClass(`${p.cssPrefix}__nav-li--active`);
+					.find(elem => elem.closest('li')).addClass(cssActive);
 		
 				if (updateUrl && p.urlFilterType !== 'none') {
 					const paramVal = s.initDefaultContent === tabId ? null : tabId;
@@ -258,12 +255,12 @@ export default class Tabs {
 			}
 		},
 		() => {
-			s.$tabsBodyPanels.each(function(){
-				const isTab = this.dataset.tabId === tabId;
+			s.$tabsBodyPanels.each((elem) => {
+				const isTab = elem.dataset.tabId === tabId;
 
-				$be(this)
+				$be(elem)
 					.tgClass(cssOpen, isTab)
-					.rmClass(`${cssToggling} ${cssOpening} ${cssClosing}`)
+					.rmClass([cssToggling,cssOpening,cssClosing])
 			})
 		});
 	}

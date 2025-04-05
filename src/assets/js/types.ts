@@ -1,5 +1,5 @@
-import type { Cash } from "cash-dom";
-
+// import type { Cash } from "cash-dom";
+import type { BaseElem } from "base-elem-js";
 export type StateChangeType = 'push' | 'replace';
 export type UrlSearchType   = 'search' | 'hash' | 'hashVal';
 export type PlainObject<T> 	= Record<string, T>;
@@ -9,7 +9,7 @@ export type PrimaryClickElems = HTMLButtonElement | HTMLAnchorElement;
 export type PluginBaseClass = {
     version: string;
     pluginName: string;
-    remove: (element: Cash) => void;
+    remove: (element: BaseElem) => void;
     Constructor?: Function;
     new (...args: any[]);
 }

@@ -1,6 +1,8 @@
 // import $ from 'cash-dom';
 import $be, { type BaseElem, type SelectorRoot } from 'base-elem-js';
-import { isVisible } from "../util/helpers";
+ 
+
+const { isVisible } = $be.static;
 
 
 interface ITrapFocusProps {
@@ -21,7 +23,7 @@ export interface ITrapFocusRemove {
 
 const canFocusEls = (el:HTMLElement) => {
     
-    const baseFocusableRules = isVisible(el, true) && el.tabIndex !== -1;
+    const baseFocusableRules = isVisible(el) && el.tabIndex !== -1;
     const nodeName = el.nodeName.toUpperCase();
     
     if ((nodeName === 'BUTTON' || nodeName === 'INPUT')) {

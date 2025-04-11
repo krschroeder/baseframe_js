@@ -3,7 +3,7 @@ import type { StringPluginArgChoices } from './types';
 
 // import $ from 'cash-dom';
 import $be, { type BaseElem, type SelectorRoot } from "base-elem-js";
-import { getDataOptions } from "./util/helpers";
+import { getDataOptions, setParams } from "./util/helpers";
 import Store from "./core/Store";
 
 export interface IToasterDefaults {
@@ -83,7 +83,7 @@ export default class Toastr {
 
         s.currentlyToasting = false;
 
-        s.params = Object.assign({}, Toastr.defaults, options, dataOptions);
+        s.params = setParams(Toastr.defaults, options, dataOptions);
         s.$element.on([`click.${EVENT_NAME}`,`[${EVENT_NAME}]`], () => s.launch());
 
         return s;

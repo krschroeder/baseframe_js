@@ -44,7 +44,7 @@ export const setParams = <T>(
     dataOptions: Partial<T>
 ): T => {
     const useOptions = toType(options) === 'object' ? options: {};
-    return merge({},defaults, useOptions, dataOptions) as T;
+    return merge(true, {}, defaults, useOptions, dataOptions) as T;
 }
 export const getDataOptions = (el: HTMLElement, evtName: string) => parseObjectFromString(el.dataset[evtName + 'Options']);
 

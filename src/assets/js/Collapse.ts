@@ -4,7 +4,7 @@ import type { LocationHashTracking, StringPluginArgChoices } from './types';
 // import $ from 'cash-dom';
 import $be, {type BaseElem} from "base-elem-js";
 
-import { getDataOptions, noop } from './util/helpers';
+import { getDataOptions, noop, setParams } from './util/helpers';
 
 import smoothScroll from './fn/smoothScroll';
 import transition	from "./fn/transition";
@@ -71,7 +71,7 @@ export default class Collapse {
 
 		const dataOptions = getDataOptions(element, EVENT_NAME);
 	 
-		s.params = Object.assign({}, Collapse.defaults, options, dataOptions);
+		s.params = setParams(Collapse.defaults, options, dataOptions);
 		s.toggling = false;
 		s.$btnElems = s.$element.find(`.${s.params.cssPrefix}__btn`).attr({'aria-expanded': 'false'});
 		s.$activeItem = null;

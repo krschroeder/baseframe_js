@@ -3,7 +3,7 @@ import type { StringPluginArgChoices } from './types';
 
 // import $ from 'cash-dom';
 import $be, { type BaseElem } from "base-elem-js";
-import { getDataOptions } from './util/helpers';
+import { getDataOptions, setParams } from './util/helpers';
 import Store from "./core/Store";
 
 export interface ILazyLoadDefaults {
@@ -81,7 +81,7 @@ export default class LazyLoad {
         
         s.element = element;
         s.lazyElemObserver;
-        s.params = Object.assign({}, LazyLoad.defaults, options, dataOptions);
+        s.params = setParams(LazyLoad.defaults, options, dataOptions);
 
         s.handleEvents();
 

@@ -5,7 +5,7 @@ import $be, { type BaseElem } from "base-elem-js";
 
 import Store from "./core/Store";
 import { KEYS } from "./core/constants";
-import { af, isMobileOS, getDataOptions, noop, setParams } from "./util/helpers";
+import { d, isMobileOS, getDataOptions, noop, setParams } from "./util/helpers";
 import type { EventName } from 'base-elem-js';
  
 
@@ -170,11 +170,11 @@ export default class SelectEnhance {
         const {cssPrefix} = s.params;
         const $selectedBtn = s.$selectList.find('[aria-selected="true"]');
 
-        document.body.append(s.selectList);
+        d.body.append(s.selectList);
         s.$selectEnhance.tgClass(cssPrefix + '--focused');
         s.$textInput.attr({ 'aria-expanded': 'true' });
 
-        s.getListPosition();
+        s.listPosition();
         s.eventScrollGetListPosition(true);
         s.eventOutsideClickClose();
         
@@ -203,7 +203,7 @@ export default class SelectEnhance {
             .rmClass(cssPrefix + '__list--focused');
 
         // remove the close event on the body
-        $be(document.body).off(s.bodyCloseEvt as EventName);
+        $be(d.body).off(s.bodyCloseEvt as EventName);
 
         setTimeout(() => {
             s.$selectEnhance.rmClass([`${cssPrefix}--blurring`, `${cssPrefix}--pos-above`]);
@@ -339,8 +339,8 @@ export default class SelectEnhance {
         const s = this;
         setTimeout(() => {
             const bodyEvt = s.bodyCloseEvt as EventName;
-            $be(document.body).off(bodyEvt).on(bodyEvt, (ev: MouseEvent, elem) => {
-                const activeElem= document.activeElement;
+            $be(d.body).off(bodyEvt).on(bodyEvt, (ev: MouseEvent, elem) => {
+                const activeElem= d.activeElement;
               
                 if (activeElem&& !s.selectList.contains(activeElem as HTMLElement)) {
                     s.closeOptions(); 
@@ -395,7 +395,7 @@ export default class SelectEnhance {
             if (s.select.disabled || !s.optionsShown) { return }
 
             if (ev.key === KEYS.down) {
-                if (!s.textInput.isSameNode(document.activeElement)) {
+                if (!s.textInput.isSameNode(d.activeElement)) {
 
                     ev.preventDefault();
                 }
@@ -415,7 +415,7 @@ export default class SelectEnhance {
              
             if (s.select.disabled || !s.optionsShown) { return }
             
-            const activeElem= document.activeElement as HTMLElement;
+            const activeElem= d.activeElement as HTMLElement;
 
             if (ev.key === KEYS.down) {
                 if (!s.textInput.isSameNode(activeElem)) {
@@ -610,7 +610,7 @@ export default class SelectEnhance {
             
             $be(window).off(evt).on(evt, () => {
                 s.posTimeout && clearTimeout(s.posTimeout);
-                s.posTimeout = setTimeout(() => s.getListPosition(), 100);
+                s.posTimeout = setTimeout(() => s.listPosition(), 100);
             });
         } else {
             $be(window).off(evt);
@@ -631,7 +631,7 @@ export default class SelectEnhance {
         }
     }
     
-    getListPosition() {
+    listPosition() {
         const s = this;
 
         if (s.optionsShown) {
@@ -694,7 +694,7 @@ export default class SelectEnhance {
             ]);
 
             s.$label.off(`click.${EVENT_NAME}`);
-            $be(document.body).off(s.bodyCloseEvt as EventName);
+            $be(d.body).off(s.bodyCloseEvt as EventName);
             $be(window).off(`resize.${EVENT_NAME}`);
             // the window event will just stay
             s.$selectEnhance

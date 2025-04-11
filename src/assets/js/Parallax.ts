@@ -3,7 +3,7 @@ import type { StringPluginArgChoices } from './types';
 // import $ from 'cash-dom';
 import $be, {type BaseElem} from "base-elem-js";
 import Store from "./core/Store";
-import { getDataOptions } from "./util/helpers";
+import { getDataOptions, setParams } from "./util/helpers";
 import throttledResize from "./fn/throttleResize";
 import type { EventName } from 'base-elem-js';
 
@@ -97,7 +97,7 @@ export default class Parallax {
 		s.$window = $be(window);
 		s.$element = $be(element);
 		s.element = element;
-		s.params = Object.assign({}, Parallax.defaults, options, dataOptions)
+		s.params = setParams(Parallax.defaults, options, dataOptions);
 		s.zInitOffset = 0;
 		s.index = index;
 		s.instanceEvent = EVENT_NAME + index;

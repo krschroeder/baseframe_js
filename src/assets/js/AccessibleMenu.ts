@@ -2,7 +2,7 @@
 import type { StringPluginArgChoices } from './types';
 import $be, {type BaseElem, type EventName} from "base-elem-js";
 
-import { getDataOptions } from "./util/helpers";
+import { getDataOptions, setParams } from "./util/helpers";
 import Store 		from "./core/Store";
 
 const { isVisible } = $be.static;
@@ -20,14 +20,14 @@ const KEYS = {
 }
 
 type keyDirections = 'horizontal' | 'vertical';
-type prevNextArgs = {
-	e: KeyboardEvent,
-	$liRoot: BaseElem,
-	activeElem: Element | null,
-	focusCss: string,
-	keyDirections: keyDirections[];
-	focusInElems: string;
-};
+// type prevNextArgs = {
+// 	e: KeyboardEvent,
+// 	$liRoot: BaseElem,
+// 	activeElem: Element | null,
+// 	focusCss: string,
+// 	keyDirections: keyDirections[];
+// 	focusInElems: string;
+// };
 
 
 export interface IAccessibleMenuDefaults {
@@ -55,14 +55,18 @@ const af = Array.from;
 const visible = (i:number, el:HTMLElement) => isVisible(el);
 
 export default class AccessibleMenu {
+	
+    public static defaults = DEFAULTS;
+    public static version = VERSION;
+    public static pluginName = DATA_NAME;
 
 	public element: HTMLElement;
 	public $element: BaseElem;
 	public params: IAccessibleMenuDefaults;
+	public $liRoot: BaseElem = null;
+	public activeElem: Element | null = null;
+	public focusInElems: string = '';
 
-	public static defaults = DEFAULTS;
-    public static version = VERSION;
-    public static pluginName = DATA_NAME;
 	
 	constructor(element, options: IAccessibleMenuOptions | StringPluginArgChoices) {
 		const s = this;
@@ -70,7 +74,7 @@ export default class AccessibleMenu {
 		const dataOptions = getDataOptions(element, EVENT_NAME);
 		s.element = element;
 		s.$element = $be(element);
-		s.params = Object.assign({}, AccessibleMenu.defaults, options, dataOptions);
+		s.params = setParams(AccessibleMenu.defaults, options, dataOptions);
 
 		s.handleEvents();
 
@@ -97,56 +101,59 @@ export default class AccessibleMenu {
         return af(elem.parentElement.children).indexOf(elem);
     }
 	
-	prev(props: prevNextArgs): void {
-		const s = this;
-		const p = props;
-		const l = p.$liRoot.elem.length - 1;
-		const key = p.e.key;
+	prev(e: KeyboardEvent): void {
+		const 
+            s = this,
+		    p = s.params,
+		    l = s.$liRoot.elem.length - 1,
+		    key = e.key,
+            dirs = p.keyDirections
+        ;
 		if (
-			key === KEYS.left && p.keyDirections[l] === "horizontal" ||
-			key === KEYS.up && p.keyDirections[l] === "vertical" ||
-			key === KEYS.left && p.keyDirections[l] === "vertical" &&
-			(l > 1 && p.keyDirections[l - 1] === "vertical" && s.#getIndex(p.activeElem.closest('li')) === 0)
+			key === KEYS.left && dirs[l] === "horizontal" ||
+			key === KEYS.up && dirs[l] === "vertical" ||
+			key === KEYS.left && dirs[l] === "vertical" &&
+			(l > 1 && dirs[l - 1] === "vertical" && s.#getIndex(s.activeElem.closest('li')) === 0)
 		) {
-			s.#focusListItem(p.activeElem, p.$liRoot, p.focusCss, true, p.focusInElems);
-			p.e.preventDefault();
+			s.#focusListItem(true);
+			e.preventDefault();
 		}
 	}
 	
-	next(props: prevNextArgs): void {
+	next(e: KeyboardEvent): void {
 		const 
             s = this,
-		    p = props,
-		    l = p.$liRoot.elem.length - 1,
-		    atRootUl = p.$liRoot.elem.length === 1,
-		    key = p.e.key,
+            p = s.params,
+		    l = s.$liRoot.elem.length - 1,
+		    atRootUl = s.$liRoot.elem.length === 1,
+		    key = e.key,
             keyIsRight = key === KEYS.right && p.keyDirections[l],
-            keyIsDown = key === KEYS.down && p.keyDirections[l]
+            keyIsDown = key === KEYS.down && p.keyDirections[l],
+            activeElem = document.activeElement
         ;
         
         //go to sibling <li>
 		if (keyIsRight === "horizontal" || keyIsDown === "vertical") {
 
-            
             const 
-                activeLi = p.activeElem.closest('li'),
+                activeLi = activeElem.closest('li'),
                 isLastLi = s.#getIndex(activeLi) === l,
-                isLastAtRoolLevel = atRootUl && isLastLi;
-            // console.log('downnn yo', l, activeLi, isLastLi, isLastAtRoolLevel);
+                isLastAtRoolLevel = atRootUl && isLastLi
+            ;
 	
 			if (isLastAtRoolLevel && isLastLi) {
-				s.#escapeFromUlAtRootNext(s.params.focusLeaveElems, p.$liRoot, p.activeElem);
+				s.#escapeFromUlAtRootNext();
 				 
 			} else {
-				s.#focusListItem(p.activeElem, p.$liRoot, p.focusCss, false, p.focusInElems);
-				p.e.preventDefault();
+				s.#focusListItem(false);
+				e.preventDefault();
 			}
 		}
 	
         //go to the nestled <li>
 		if (keyIsRight === "vertical" || keyIsDown === "horizontal") {
-			s.#focusNestledListItem(p.activeElem, p.focusCss, p.focusInElems);
-			p.e.preventDefault();
+			s.#focusNestledListItem(activeElem, p.focusCss, p.focusInElems);
+			e.preventDefault();
 		}
 	}
 
@@ -166,7 +173,7 @@ export default class AccessibleMenu {
                 bes.rmClass(el as HTMLElement, 'focus')
             });
             
-		},this.params.focusInElems)
+		}, this.params.focusInElems)
         .on(`mouseleave.${EVENT_NAME}`, (ev, elem) => {
             $lis.rmClass('focus');
 			 
@@ -175,55 +182,51 @@ export default class AccessibleMenu {
 		});
 
 		s.$element.on(`keydown.${EVENT_NAME}`, (e: KeyboardEvent) => {
+			 
+			s.activeElem = document.activeElement;
+            s.$liRoot = $be(s.activeElem as HTMLElement).parents('li', s.element);
 
-			const { focusCss, keyDirections, focusInElems } = s.params;
-			const activeElem = document.activeElement;
-            const $liRoot = $be(activeElem as HTMLElement).parents('li', s.element);
-			const props: prevNextArgs = { e, $liRoot, activeElem, focusCss, keyDirections, focusInElems };
 
-			s.#escapeKey(e, $liRoot, focusCss, focusInElems);
-			s.prev(props);
-			s.next(props);
+			s.#escapeKey(e);
+			s.prev(e);
+			s.next(e);
 		});
 	}
 
-	#escapeKey(e: KeyboardEvent, $liRoot: BaseElem, focusCss: string, focusInElems: string): void {
+	#escapeKey(e: KeyboardEvent): void {
+        const s = this;
+
 		if (e.key == KEYS.esc) {
 	
-			if ($liRoot.elem.length > 1) {
-				// const $anchor = $liRoot.eq(0).closest('li').find(focusInElems).filter(visible);
-                const $anchor = $liRoot.find('a', bes.isVisible);
+			if (s.$liRoot.hasElems()) {
+                const $anchor = s.$liRoot.find('a', bes.isVisible);
 				if ($anchor.hasElems()) ($anchor.elem[0] as HTMLAnchorElement).focus();
-				$anchor.find(elem => elem.closest('li')).addClass(focusCss);
+				$anchor.find(elem => elem.closest('li')).addClass(s.params.focusCss);
 			}
 			e.preventDefault();
 		}
 	}
 	
-	#focusListItem(
-		activeElem: Element | null,
-		$liRoot: BaseElem,
-		focusCss: string,
-		prev: boolean,
-		focusInElems: string
-	): void {
-		 
-        const currLi = (activeElem as HTMLElement).closest('li');
-        const $nextLi = $be((prev ? currLi.previousElementSibling : currLi.nextElementSibling) as HTMLLIElement);
-        const $anchor = $nextLi.find('a', bes.isVisible);
-
+	#focusListItem(prev: boolean): void {
+		const 
+            s = this,
+            p = s.params,
+            currLi = (s.activeElem as HTMLElement).closest('li'),
+            $nextLi = $be((prev ? currLi.previousElementSibling : currLi.nextElementSibling) as HTMLLIElement),
+            $anchor = $nextLi.find('a', bes.isVisible)
+        ;
 
         if ($nextLi.hasElems()) {
-            $be(currLi).rmClass(focusCss);
-            $nextLi.addClass(focusCss);
+            $be(currLi).rmClass(p.focusCss);
+            $nextLi.addClass(p.focusCss);
 
             ($anchor.elem[0] as HTMLAnchorElement).focus();
 		} else {
-            if ($liRoot.hasElems()) {
-                const $anchor = $liRoot.find('a', bes.isVisible);
+            if (s.$liRoot.hasElems()) {
+                const $anchor = s.$liRoot.find('a', bes.isVisible);
                 if ($anchor.hasElems()) {
                     ($anchor.elem[0] as HTMLAnchorElement).focus();
-                    $anchor.find(elem => elem.closest('li')).addClass(focusCss);
+                    $anchor.find(elem => elem.closest('li')).addClass(p.focusCss);
                 }
             }
         }
@@ -234,32 +237,34 @@ export default class AccessibleMenu {
 		focusCss: string,
 		focusInElems: string
 	): void {
-		// const $el = $be(activeElem).parent('li').find('li').filter(visible);
+		
         const $parentActiveLi = $be(activeElem as HTMLElement).find((elem) => elem.closest('li'));
         const $li = $parentActiveLi.find('li', bes.isVisible);
 	
 		if ($li.hasElems()) {
-			// $li.addClass(focusCss).siblings('li').rmClass(focusCss);
-			// $li.find(focusInElems).filter(visible)[0].focus();
+			
             $li.rmClass(focusCss);
             $parentActiveLi.addClass(focusCss);
             ($li.find(focusInElems, bes.isVisible).elem[0] as HTMLElement).focus();
 		}
 	}
 	
-	#escapeFromUlAtRootNext(focusLeaveElems: string, $liRoot: BaseElem, activeElem: Element | null):void {
-        const s = this;
-        const { focusInElems } = s.params;
-		const $rootUl = $liRoot.get(0);
-		const focusableElems = document.querySelectorAll(focusLeaveElems);
+	#escapeFromUlAtRootNext():void {
+        const 
+            s = this,
+            { focusInElems, focusLeaveElems } = s.params,
+		    $rootUl = s.$liRoot.get(0),
+		    focusableElems = document.querySelectorAll(focusLeaveElems)
+        ;
+
 		let atCurrElem = false;
 	
 		for (let i = 0, l = focusableElems.length; i < l; i++) {
 			const currElem = focusableElems[i];
-			if (!atCurrElem && activeElem?.isSameNode(currElem)) {
+			if (!atCurrElem && s.activeElem?.isSameNode(currElem)) {
 				atCurrElem = true;
 			}
-			// if (atCurrElem && !$rootUl.has(elem).length) {
+			
             if (
                 atCurrElem && 
                 !$rootUl.find(focusInElems,(elem) => elem === currElem).hasElems()

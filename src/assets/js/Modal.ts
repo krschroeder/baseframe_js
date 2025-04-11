@@ -5,7 +5,7 @@ import $be, {type BaseElem, type EventName, type SelectorRoot} from "base-elem-j
 import Store from "./core/Store";
 import UrlState from "./core/UrlState";
 import trapFocus from './fn/trapFocus';
-import { camelCase, getDataOptions, reflow } from './util/helpers';
+import { camelCase, getDataOptions, reflow, setParams } from './util/helpers';
 import { noop } from './util/helpers';
 
 
@@ -108,7 +108,7 @@ export default class Modal {
 
         const dataOptions = getDataOptions(element, EVENT_NAME);
         
-        s.params = Object.assign({}, Modal.defaults, options, dataOptions);
+        s.params = setParams(Modal.defaults, options, dataOptions);
         s.modalID = s.params.modalID;
         s.modalObj = s.getModalObj();
         s.modalEvent = EVENT_NAME + '_' + s.modalID;

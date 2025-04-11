@@ -2,7 +2,7 @@
 import type { StringPluginArgChoices } from './types';
 import $be, {type BaseElem, type SelectorRoot} from "base-elem-js";
 // import $ from 'cash-dom';
-import {  getDataOptions, noop } from './util/helpers';
+import {  getDataOptions, noop, setParams } from './util/helpers';
  
 import trapFocus, { type ITrapFocusRemove } from './fn/trapFocus';
 import transition from "./fn/transition";
@@ -94,7 +94,7 @@ export default class NavMobile {
 		const dataOptions = getDataOptions(element, EVENT_NAME);
 
 		s.$element = $be(element);
-		s.params = Object.assign({}, NavMobile.defaults, options, dataOptions) as INavMobileDefaults;
+		s.params = setParams(NavMobile.defaults, options, dataOptions);
 		
 		const {cssPrefix, menuBtnCss} = s.params;
 		s.cssList = {

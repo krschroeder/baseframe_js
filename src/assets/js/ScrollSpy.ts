@@ -1,4 +1,4 @@
-import { getDataOptions } from "./util/helpers";
+import { d, getDataOptions, setParams } from "./util/helpers";
 // import type { BaseElem, Selector } from "cash-dom";
 import type { LocationHashTracking, StringPluginArgChoices } from './types';
 // import $ from 'cash-dom';
@@ -66,7 +66,7 @@ export default class ScrollSpy {
         const dataOptions = getDataOptions(element, EVENT_NAME);
         s.element = element;
 
-        s.params = Object.assign({}, ScrollSpy.defaults, options, dataOptions);
+        s.params = setParams(ScrollSpy.defaults, options, dataOptions);
         s.$spyBody = $be(s.params.spyBody);
         s.spyContents = s.$spyBody.find(s.params.spyElems, elem => isVisible(elem) && !!elem.id).toArray() as HTMLElement[];
 
@@ -129,11 +129,13 @@ export default class ScrollSpy {
     }
 
     scrollToElement(elemId: string, behavior: ScrollOptions["behavior"]) {
-        const s = this;
-        const p = s.params;
-        const scrollRoot = p.observerOptions.root as HTMLElement || window;
-        const observerOffsetTop = parseFloat(p.observerOptions.rootMargin.split(' ')[0]) || 0;
-        const $bodyElem = $be(elemId ? '#'+ elemId : document.body);
+        const 
+            s = this,
+            p = s.params,
+            scrollRoot = p.observerOptions.root as HTMLElement || window,
+            observerOffsetTop = parseFloat(p.observerOptions.rootMargin.split(' ')[0]) || 0,
+            $bodyElem = $be(elemId ? '#'+ elemId : d.body)
+        ;
 
         if ($bodyElem.hasElems()) {
 
@@ -250,7 +252,7 @@ export default class ScrollSpy {
                     const isLastEntry = s.#lastSpyElem.isSameNode(entry);
 
                     if (isLastEntry) {
-                        const remainingBodyScroll = document.body.scrollHeight - window.scrollY;
+                        const remainingBodyScroll = d.body.scrollHeight - window.scrollY;
                         const canScrollAmount = window.innerHeight;
                         if (canScrollAmount > remainingBodyScroll) {
                             // if we can't get to the last scroll element

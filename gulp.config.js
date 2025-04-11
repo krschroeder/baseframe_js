@@ -85,11 +85,7 @@ const config = {
             minimize: false
         },
         
-        target: ['web','es6'],
-        externals: {
-            'cash-dom': '$'
-        }
-        
+        target: ['web','es6']
     }
 }
 

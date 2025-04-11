@@ -3,9 +3,10 @@ import type { StringPluginArgChoices } from './types';
 
 // import $ from 'cash-dom';
 import $be, { type BaseElem } from "base-elem-js";
-import { getDataOptions } from "./util/helpers";
+import { getDataOptions, setParams } from "./util/helpers";
 import Store from "./core/Store";
  
+
 
 interface INavDesktopCss {
 	menuHasUL: string;
@@ -24,6 +25,8 @@ export interface INavDesktopDefaults {
 }
 
 export interface INavDesktopOptions extends Partial<INavDesktopDefaults> {}
+
+const { findOne, elemRects } = $be.static;
 
 const VERSION = "2.0.0";
 const DATA_NAME = 'NavDesktop';
@@ -58,7 +61,7 @@ export default class NavDesktop {
 
 		const dataOptions = getDataOptions(element, EVENT_NAME);
 	 
-		s.params = Object.assign({}, NavDesktop.defaults, options, dataOptions)
+		s.params = setParams(NavDesktop.defaults, options, dataOptions);
 		const { cssPrefix } = s.params;
 		 
 		s.cssList = {
@@ -111,12 +114,18 @@ export default class NavDesktop {
 
 	handleEvents() {
 		const s = this;
+        const css = s.cssList;
+		const p = s.params;
+        const $rootUl = $be(s.element).findOne('ul');
+
 		let prevEvent = null;
 
-		const evtTracker = (elem, e: MouseEvent, cb) => {
+		const evtTracker = (elem: HTMLElement, e: MouseEvent, cb) => {
 			const currEvent = e.type;
-			const containsOrISElem = elem.isSameNode(e.target) ? true : !!$be(e.target as HTMLElement).parents(elem).hasElems();
-
+            const target = e.target as HTMLElement;
+           
+			const containsOrISElem = elem.isSameNode(target) || elem.contains(target);
+            
 			if (!prevEvent || (prevEvent !== currEvent && containsOrISElem)) {
 
 				prevEvent = currEvent;
@@ -124,12 +133,10 @@ export default class NavDesktop {
 			}
 		}
 
-		$be(s.element).find('ul').on([`mouseover.${EVENT_NAME}`,`focusin.${EVENT_NAME}`], (ev: MouseEvent, elem: HTMLElement) => {
+		$rootUl.on([`mouseover.${EVENT_NAME}`,`focusin.${EVENT_NAME}`], (ev: MouseEvent, elem: HTMLElement) => {
 
 			const liOrUl = elem as HTMLElement;
-			const css = s.cssList;
-			const p = s.params;
-			
+
 			evtTracker(liOrUl, ev, () => {
 				s.edgeDetector(liOrUl);
                 const $li = $be(liOrUl);
@@ -140,8 +147,7 @@ export default class NavDesktop {
                 $be(elem).find('li').rmClass(p.hoverCss);
 				$li.find(`.${p.hoverCss}`).rmClass(p.hoverCss);
 				 
-
-				if (!$liLiParents.hasElems() ) {
+				if (!$liLiParents.hasElems()) {
 
                     $be(s.element).find(`.${p.hoverCss}`).rmClass(p.hoverCss);
                 }
@@ -153,14 +159,15 @@ export default class NavDesktop {
 
 			});
 
-		}, 'li, ul').on([`mouseout.${EVENT_NAME}`, `focusout.${EVENT_NAME}`], (ev: MouseEvent, elem: HTMLElement) => {
+		}, 'li, ul');
+
+        $rootUl.on([`mouseout.${EVENT_NAME}`, `focusout.${EVENT_NAME}`], (ev: MouseEvent, elem: HTMLElement) => {
 
 			const liOrUl = elem as HTMLElement;
-			const p = s.params;
-			const css = s.cssList;
+			 
 			evtTracker(liOrUl, ev, () => {
 				s.stayHover = setTimeout(() => {
-					$be(s.element).find(`.${p.hoverCss}`).rmClass(`${p.hoverCss} ${css.menuElemEdge}`);
+					$be(s.element).find(`.${p.hoverCss}`).rmClass([p.hoverCss, css.menuElemEdge]);
 					$be(s.element).find(`.${css.menuElemEdge}`).rmClass(css.menuElemEdge);
 					$be(p.outerElem)
 						.rmClass(css.menuHovered)
@@ -177,21 +184,21 @@ export default class NavDesktop {
 
 	edgeDetector(liOrUl: HTMLElement) {
 		const s = this;
-		const { stopWidth } = s.params;
 		const css = s.cssList;
-		const dw = window.innerWidth
+		const { innerWidth, pageXOffset } = window;
 
-		if (stopWidth < dw) {
+		if (s.params.stopWidth < innerWidth) {
 
-			const $uls = $be(liOrUl).find('ul');
+            const ul = findOne('ul', s.element);
 
-			if ($uls.hasElems()) {
+			if (ul) {
+                
 				const 
-					ul = $uls[0],
-					l = $be(ul).elemRects().left + window.pageXOffset,
-					uw = ul.scrollWidth,
-					fullyVisible = (l + uw <= dw);
-				
+                    ulRects = elemRects(ul),
+					offsetLeft = ulRects.left + pageXOffset,
+					ulWidth = ul.scrollWidth,
+					fullyVisible = (offsetLeft + ulWidth <= innerWidth);
+                   
 				if (!fullyVisible) {
 					liOrUl.classList.add(css.menuElemEdge);
 				}

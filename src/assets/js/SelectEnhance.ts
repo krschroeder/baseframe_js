@@ -446,10 +446,10 @@ export default class SelectEnhance {
             textInput = make(`input.${s.params.cssPrefix}__enable-text`,{
                 type: 'text',
                 role: "combobox",
-                'aria-controls': s.selectId + '_listbox',
-                'aria-labelledby': s.selectId + '_lbl',
-                'aria-autocomplete': 'list',
-                'aria-expanded': 'false',
+                // 'aria-controls': s.selectId + '_listbox',
+                // 'aria-labelledby': s.selectId + '_lbl',
+                // 'aria-autocomplete': 'list',
+                // 'aria-expanded': 'false',
                 id: s.selectId + '_input'
             }),
             $selectEnhance = $be(selectEnhance),

@@ -1,20 +1,16 @@
-import path             from 'path';
-import webpack 			from 'webpack';
 import yargs            from 'yargs';
+import typescript       from '@rollup/plugin-typescript';
+import resolve          from '@rollup/plugin-node-resolve';
+import  { minify }      from 'rollup-plugin-esbuild-minify';
+import commonjs         from '@rollup/plugin-commonjs';
+const 
+    VERSION       = require('./package.json').version || '1.0.0',
+    PRODUCTION    = !!yargs.argv.prod,
+    BUILD_DEMO    = !!yargs.argv.demo,
 
-const VERSION       = require('./package.json').version;
-
-const PRODUCTION    = !!yargs.argv.prod;
-const BUILD_DEMO    = !!yargs.argv.demo;
-const PROD_JS       = (PRODUCTION || BUILD_DEMO);
-const USE_JQUERY    = !!yargs.argv.jquery;
-
-// const SOURCE = alias('./src');
-const excludeRgx = /(node_modules)/;
-
-const destPath = BUILD_DEMO ? 'demo' : 'dist';
-
-const alias = (src) => path.resolve(__dirname, src);
+    destPath      = BUILD_DEMO ? 'demo' : 'dist' ,
+    rollupBasePlugins = [resolve(), typescript(), commonjs()]
+;
 
 const config = {
     version: VERSION,
@@ -25,7 +21,6 @@ const config = {
         css:    ['src/assets/scss/**/*.scss', 'src/demo/assets/scss/**/*.scss'],
         js:     BUILD_DEMO ? 'src/demo/assets/js/demo.ts' : [
                     'src/assets/js/**/*.ts',
-                    //'!src/assets/js/**/*.d.ts', 
                     PRODUCTION ? '': 'src/demo/assets/js/demo.ts'
                 ].filter(e => e),
         html:   [BUILD_DEMO ? 'src/demo/index.{html,hbs}' : 'src/demo/**/*.{html,hbs}'],
@@ -33,7 +28,6 @@ const config = {
     },
 
     dest: destPath,
-
     handlbars:  {
         config: {
             ignorePartials: true,
@@ -41,7 +35,6 @@ const config = {
             partials: null
         },
         vars: {
-            'use-jquery': USE_JQUERY,
             version: VERSION,
             path: {
                 root: BUILD_DEMO ? "./demo/" : './',
@@ -56,37 +49,30 @@ const config = {
         module: "ESNext",
         moduleResolution: "Node"
     },
- 
-    webpackConfig: {
-        mode: (PROD_JS ? 'production': 'development'),
-        resolve: {
-            extensions: ['.js', '.tsx', '.ts'],
-            alias: {
-                "@":        alias("../src/assets/js/"),
-                "@core":    alias("../src/assets/js/core/"),
-                "@fn":      alias("../src/assets/js/fn/"),
-                "@util":    alias("../src/assets/js/util/")
-            } 
+
+    rollup : {
+
+        lib: {
+            output: {
+                name: 'baseFrame',
+                format: 'iife', 
+                sourcemap: !PRODUCTION
+            },
+            plugins: [
+                ...rollupBasePlugins,
+                PRODUCTION ? minify() : null
+            ].filter(Boolean)
         },
         module: {
-            rules: [
-                {
-                    test: /\.tsx?$/,
-                    exclude: excludeRgx,
-                    loader: "ts-loader",
-                    options: {
-                        transpileOnly: true
-                    } 
-                }
-            ]
-        },
-
-        optimization: {
-            minimize: false
-        },
-        
-        target: ['web','es6']
+            output: {
+                name: 'baseFrame',
+                format: 'umd',
+                sourcemap: !PRODUCTION 
+            },
+            plugins: [...rollupBasePlugins]
+        }
     }
+
 }
 
  

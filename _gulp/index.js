@@ -18,23 +18,20 @@ import gulpSass from "gulp-sass";
 import autoprefixer from "gulp-autoprefixer";
 import cleanCss from "gulp-clean-css";
 
-import named from "vinyl-named";
-import webpack from "webpack";
-import webpackStream from "webpack-stream";
+// import named from "vinyl-named";
+// import webpack from "webpack";
+// import webpackStream from "webpack-stream";
 
-import babel from "gulp-babel";
-import ts from "typescript";
+ 
+import rollupEach               from 'gulp-rollup-each'; 
 import typescript from "gulp-typescript";
-import uglify from "gulp-uglify";
 import config from "../gulp.config";
 
 const { buildDemo, production } = config;
 // Load Handlebars helpers
 helpers({ handlebars: handlebars.Handlebars });
 
-if (!config.production) {
-    Object.assign(config.webpackConfig, {devtool: 'source-map'});
-}
+ 
 
 const sass = gulpSass(sassEngine);
 //tasks
@@ -75,43 +72,66 @@ function buildHtml(done) {
   done();
 }
 
-function buildMainJs(done) {
-  if (production) {
-    // just turn it into JS files
-    gulp
-      .src(config.src.js)
-      .pipe(
-        tap(function (file) {
-          const contents = file.contents.toString("utf-8");
-          const transpiledToJs = ts.transpile(contents, config.tsProdConfig);
-          file.contents = Buffer.from(transpiledToJs);
-        })
-      )
-      .pipe(rename({ extname: ".js" }))
-      .pipe(gulp.dest(`${config.dest}/js`));
-  } else {
-    return gulp
-      .src(config.src.js)
-      .pipe(named())
-      .pipe(webpackStream(config.webpackConfig, webpack))
-      .pipe(gulpIf(buildDemo, uglify()))
-      .pipe(gulp.dest(`${config.dest}/assets/js`));
-  }
-  done();
+
+
+const buildJS = () =>
+    gulp.src(config.src.js)
+    .pipe(sourcemaps.init())
+    .pipe(rollupEach(config.rollup.lib))
+    .pipe(rename({ extname: production ? '.min.js' : '.js' }))
+    .pipe(gulpIf(!production, sourcemaps.write('.')))
+    .pipe(gulp.dest( `${config.dest}${production ? '' : '/assets'}/js` ))
+;
+const buildModuleJS = (done) => {
+    if (production) {
+        return gulp.src(config.src.js)
+            .pipe(sourcemaps.init())
+            .pipe(rollupEach(config.rollup.module))
+            .pipe(rename({ extname: '.js' }))
+            .pipe(sourcemaps.write('.'))
+            .pipe(gulp.dest(`${config.dest}/cjs`))
+        ;
+    }
+    done();
 }
 
-const buildCJs = (done) => {
-  if (production) {
-    const tsProject = typescript.createProject("tsconfig.json");
+// function buildMainJs(done) {
+//   if (production) {
+//     // just turn it into JS files
+//     gulp
+//       .src(config.src.js)
+//       .pipe(
+//         tap(function (file) {
+//           const contents = file.contents.toString("utf-8");
+//           const transpiledToJs = ts.transpile(contents, config.tsProdConfig);
+//           file.contents = Buffer.from(transpiledToJs);
+//         })
+//       )
+//       .pipe(rename({ extname: ".js" }))
+//       .pipe(gulp.dest(`${config.dest}/js`));
+//   } else {
+//     return gulp
+//       .src(config.src.js)
+//       .pipe(named())
+//       .pipe(webpackStream(config.webpackConfig, webpack))
+//       .pipe(gulpIf(buildDemo, uglify()))
+//       .pipe(gulp.dest(`${config.dest}/assets/js`));
+//   }
+//   done();
+// }
 
-    return gulp
-      .src(config.src.js)
-      .pipe(tsProject())
-      .pipe(babel())
-      .pipe(gulp.dest(`${config.dest}/cjs`));
-  }
-  done();
-};
+// const buildCJs = (done) => {
+//   if (production) {
+//     const tsProject = typescript.createProject("tsconfig.json");
+
+//     return gulp
+//       .src(config.src.js)
+//       .pipe(tsProject())
+//       .pipe(babel())
+//       .pipe(gulp.dest(`${config.dest}/cjs`));
+//   }
+//   done();
+// };
 
 const buildJsDeclarations = (done) => {
   if (production) {
@@ -166,7 +186,7 @@ function compileReadme() {
 
 function watch(done) {
   if (!production && !buildDemo) {
-    gulp.watch(config.src.js).on("all", gulp.series(buildMainJs, reload));
+    gulp.watch(config.src.js).on("all", gulp.series(buildJS, reload));
     gulp.watch(config.src.css).on("all", gulp.series(buildCss));
     // gulp.watch('src/assets/scss/**/*.scss').on('all', gulp.series(buildCss));
     gulp.watch(config.src.img).on("all", gulp.series(copyAssets));
@@ -180,36 +200,36 @@ function watch(done) {
 // Server
 
 function server(done) {
-  if (!production && !buildDemo) {
-    // Start a server with BrowserSync to preview the site in
-    browser.init({
-      server: config.dest,
-      port: 8000,
-      extensions: ["html"], // pretty urls
-    });
-  }
-  done();
+    if (!production && !buildDemo) {
+        // Start a server with BrowserSync to preview the site in
+        browser.init({
+        server: config.dest,
+        port: 8000,
+        extensions: ["html"], // pretty urls
+        });
+    }
+    done();
 }
 
 //
 // Reload the browser with BrowserSync
 function reload(done) {
-  browser.reload();
-  done();
+    browser.reload();
+    done();
 }
 
 const BUILD = gulp.series(
-  cleanUp,
-  buildCss,
-  buildMainJs,
-  buildCJs,
-  buildJsDeclarations,
-  buildHtml,
-  copyAssets,
-  server,
-  compileReadme,
-  watch,
-  cleanUpTemp
+    cleanUp,
+    buildCss,
+    buildJS,
+    buildModuleJS,
+    buildJsDeclarations,
+    buildHtml,
+    copyAssets,
+    server,
+    compileReadme,
+    watch,
+    cleanUpTemp
 );
 
 gulp.task("default", BUILD);

@@ -35,7 +35,7 @@ $collapseGroup.on('click.collapseHeading', (ev, elem) => {
     const h2 = elem as HTMLElement;
     const $btn = $be(h2.parentElement as HTMLElement).find('button');
 
-    if ($btn.hasElems()) {
+    if ($btn.hasEls) {
         $btn.trigger('click');
     }
 },'.collapse__header h2').collapse({
@@ -130,7 +130,7 @@ $be('.lazy-highlight').lazyLoad({
 
     if ($toastr2.hasElems()) {
         // Example 2: extend perhaps in Cash then call on click
-        const toastr2 = new Toastr($toastr2[0] as HTMLElement, {
+        const toastr2 = new Toastr($toastr2.elem[0] as HTMLElement, {
             content: 'Toast is good for breakfast',
             duration: 5000
         });

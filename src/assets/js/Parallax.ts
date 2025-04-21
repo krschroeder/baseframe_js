@@ -76,7 +76,7 @@ export default class Parallax {
 	public bgFillProp: 'height' | 'width';
 	public axis: Axis;
 	public zAxis: boolean;
-	public scrollMaxPxStop: number;
+	public scrollMaxPxStop: number; 
 	public zScrollMaxPxStop: number;
 	public rootMargin:[number,number];
 	public lastZSpeed: number;

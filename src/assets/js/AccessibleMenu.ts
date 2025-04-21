@@ -1,33 +1,19 @@
 // import type { BaseElem } from 'cash-dom';
+import $be, { type BaseElem } from "base-elem-js";
+
 import type { StringPluginArgChoices } from './types';
-import $be, {type BaseElem, type EventName} from "base-elem-js";
-
-import { getDataOptions, setParams } from "./util/helpers";
 import Store 		from "./core/Store";
+import { 
+    getDataOptions, 
+    setParams 
+}                   from "./util/helpers";
+import { af }       from './util/helpers';
+import { KEYS }     from './core/constants';
 
-const { isVisible } = $be.static;
 
-const KEYS = {
-	esc: 'Escape',
-	left: 'ArrowLeft',
-	right: 'ArrowRight',
-	down: 'ArrowDown',
-	up: 'ArrowUp',
-	enter: 'Enter',
-	shift: 'Shift',
-	space: 'Space',
-	tab: 'Tab'
-}
+const { addClass, isVisible, rmClass } = $be.static;
 
 type keyDirections = 'horizontal' | 'vertical';
-// type prevNextArgs = {
-// 	e: KeyboardEvent,
-// 	$liRoot: BaseElem,
-// 	activeElem: Element | null,
-// 	focusCss: string,
-// 	keyDirections: keyDirections[];
-// 	focusInElems: string;
-// };
 
 
 export interface IAccessibleMenuDefaults {
@@ -39,20 +25,20 @@ export interface IAccessibleMenuDefaults {
 
 export interface IAccessibleMenuOptions extends Partial<IAccessibleMenuDefaults> {}
 
-const VERSION = "1.3.0";
-const DATA_NAME = 'AccessibleMenu';
-const EVENT_NAME = 'accessibleMenu';
-const DEFAULTS: IAccessibleMenuDefaults = {
-	keyDirections: ['horizontal', 'vertical', 'vertical'],
-	focusCss: 'focus',
-	focusInElems: 'a, [tabindex]',
-	focusLeaveElems: 'a, [tabindex], select, button'
-}
-
 const bes = $be.static;
-const af = Array.from;
 
-const visible = (i:number, el:HTMLElement) => isVisible(el);
+const 
+    VERSION = "1.3.0",
+    DATA_NAME = 'AccessibleMenu',
+    EVENT_NAME = 'accessibleMenu',
+    DEFAULTS: IAccessibleMenuDefaults = {
+        keyDirections: ['horizontal', 'vertical', 'vertical'],
+        focusCss: 'focus',
+        focusInElems: 'a, [tabindex]',
+        focusLeaveElems: 'a, [tabindex], select, button'
+    }
+;
+
 
 export default class AccessibleMenu {
 	
@@ -63,15 +49,15 @@ export default class AccessibleMenu {
 	public element: HTMLElement;
 	public $element: BaseElem;
 	public params: IAccessibleMenuDefaults;
-	public $liRoot: BaseElem = null;
-	public activeElem: Element | null = null;
+	public $aeLiParents: BaseElem = null;
+	public activeElem: HTMLElement | null = null;
 	public focusInElems: string = '';
 
 	
 	constructor(element, options: IAccessibleMenuOptions | StringPluginArgChoices) {
 		const s = this;
-		
 		const dataOptions = getDataOptions(element, EVENT_NAME);
+
 		s.element = element;
 		s.$element = $be(element);
 		s.params = setParams(AccessibleMenu.defaults, options, dataOptions);
@@ -105,14 +91,14 @@ export default class AccessibleMenu {
 		const 
             s = this,
 		    p = s.params,
-		    l = s.$liRoot.elem.length - 1,
+		    l = s.$aeLiParents.elem.length - 1,
 		    key = e.key,
             dirs = p.keyDirections
         ;
 		if (
-			key === KEYS.left && dirs[l] === "horizontal" ||
-			key === KEYS.up && dirs[l] === "vertical" ||
-			key === KEYS.left && dirs[l] === "vertical" &&
+			key === KEYS.left   && dirs[l] === "horizontal" ||
+			key === KEYS.up     && dirs[l] === "vertical" ||
+			key === KEYS.left   && dirs[l] === "vertical" &&
 			(l > 1 && dirs[l - 1] === "vertical" && s.#getIndex(s.activeElem.closest('li')) === 0)
 		) {
 			s.#focusListItem(true);
@@ -124,25 +110,25 @@ export default class AccessibleMenu {
 		const 
             s = this,
             p = s.params,
-		    l = s.$liRoot.elem.length - 1,
-		    atRootUl = s.$liRoot.elem.length === 1,
+		    l = s.$aeLiParents.elem.length - 1,
+		    atRootUl = s.$aeLiParents.elem.length === 1,
 		    key = e.key,
             keyIsRight = key === KEYS.right && p.keyDirections[l],
-            keyIsDown = key === KEYS.down && p.keyDirections[l],
-            activeElem = document.activeElement
+            keyIsDown = key === KEYS.down && p.keyDirections[l] 
         ;
-        
+       
         //go to sibling <li>
 		if (keyIsRight === "horizontal" || keyIsDown === "vertical") {
 
             const 
-                activeLi = activeElem.closest('li'),
+                activeLi = s.activeElem.closest('li'),
                 isLastLi = s.#getIndex(activeLi) === l,
                 isLastAtRoolLevel = atRootUl && isLastLi
             ;
 	
 			if (isLastAtRoolLevel && isLastLi) {
-				s.#escapeFromUlAtRootNext();
+
+                s.#focusFirstElem(s.$aeLiParents);
 				 
 			} else {
 				s.#focusListItem(false);
@@ -152,60 +138,77 @@ export default class AccessibleMenu {
 	
         //go to the nestled <li>
 		if (keyIsRight === "vertical" || keyIsDown === "horizontal") {
-			s.#focusNestledListItem(activeElem, p.focusCss, p.focusInElems);
-			e.preventDefault();
+            
+            const $nestledUl = $be(s.activeElem.closest('li')).findOne('ul')
+            const $focusEl = $nestledUl.findOne(p.focusInElems);
+
+            s.#focusFirstElem($nestledUl);
+
+            // if($focusEl.hasEls) {
+            //     ($focusEl.elem[0] as HTMLElement).focus();
+            //     e.preventDefault();
+            // }
+			 
 		}
 	}
 
 	handleEvents() {
-		const s = this;
-		let to: ReturnType<typeof setTimeout> | null = null;
-        
-        const $lis = s.$element.findBy('tag', 'li');
+		const 
+            s = this,
+            p = s.params,
+            $lis = s.$element.findBy('tag', 'li'),
+            lis = $lis.toArray() as HTMLLIElement[]
+        ;
+
+		let focusOutDelay: ReturnType<typeof setTimeout> | null = null;
+        let prevElem = null;
 
 		s.$element.on(`focusin.${EVENT_NAME}`, (e: KeyboardEvent, elem: HTMLAnchorElement) => {
-
-			to && clearTimeout(to);
-
-            $lis.elem.forEach(el => {
-                el === elem ? 
-                bes.addClass(el, 'focus') : 
-                bes.rmClass(el as HTMLElement, 'focus')
-            });
             
-		}, this.params.focusInElems)
-        .on(`mouseleave.${EVENT_NAME}`, (ev, elem) => {
-            $lis.rmClass('focus');
+			focusOutDelay && clearTimeout(focusOutDelay);
+            const parentEl = elem.parentElement;
+
+            if (prevElem) rmClass(prevElem, p.focusCss);
+            addClass(parentEl, p.focusCss);
+            prevElem = parentEl;
+            
+		}, lis)
+        .on(`mouseleave.${EVENT_NAME}`, () => {
+            $lis.rmClass(p.focusCss);
+		})
+        .on(`focusout.${EVENT_NAME}`, () => {
+			focusOutDelay = setTimeout(() => $lis.rmClass(p.focusCss), 200)
+		})
+        .on(`keydown.${EVENT_NAME}`, (e: KeyboardEvent) => {
 			 
-		}).on(`focusout.${EVENT_NAME}`, () => {
-			to = setTimeout(() => $lis.rmClass('focus'), 200)
-		});
+			s.activeElem = document.activeElement as HTMLElement;
+            s.$aeLiParents = $be(s.activeElem).parents('li', s.element);
 
-		s.$element.on(`keydown.${EVENT_NAME}`, (e: KeyboardEvent) => {
-			 
-			s.activeElem = document.activeElement;
-            s.$liRoot = $be(s.activeElem as HTMLElement).parents('li', s.element);
+			if (e.key == KEYS.esc) {
+                s.$aeLiParents.rmClass(p.focusCss)
+                s.#focusFirstElem(s.$aeLiParents);
+            }
 
-
-			s.#escapeKey(e);
 			s.prev(e);
 			s.next(e);
 		});
 	}
 
-	#escapeKey(e: KeyboardEvent): void {
-        const s = this;
+    #focusFirstElem($focusWrapEl: BaseElem, index: number = 0) {
+        if (!$focusWrapEl.hasEls) return;
 
-		if (e.key == KEYS.esc) {
-	
-			if (s.$liRoot.hasElems()) {
-                const $anchor = s.$liRoot.find('a', bes.isVisible);
-				if ($anchor.hasElems()) ($anchor.elem[0] as HTMLAnchorElement).focus();
-				$anchor.find(elem => elem.closest('li')).addClass(s.params.focusCss);
-			}
-			e.preventDefault();
-		}
-	}
+        const 
+            s = this,
+            p = s.params,
+            $focusEls = $focusWrapEl.find(p.focusInElems, isVisible)
+        ;
+
+        if ($focusEls.hasEls) {
+            const focusEl = $focusEls.elem[index] as HTMLElement;
+            $be(focusEl.closest('li')).addClass(p.focusCss);
+            focusEl.focus();
+        }
+    }
 	
 	#focusListItem(prev: boolean): void {
 		const 
@@ -213,69 +216,18 @@ export default class AccessibleMenu {
             p = s.params,
             currLi = (s.activeElem as HTMLElement).closest('li'),
             $nextLi = $be((prev ? currLi.previousElementSibling : currLi.nextElementSibling) as HTMLLIElement),
-            $anchor = $nextLi.find('a', bes.isVisible)
+            $focusEl = $nextLi.find(p.focusInElems, isVisible)
         ;
 
-        if ($nextLi.hasElems()) {
+        if ($nextLi.hasEls) {
             $be(currLi).rmClass(p.focusCss);
             $nextLi.addClass(p.focusCss);
 
-            ($anchor.elem[0] as HTMLAnchorElement).focus();
-		} else {
-            if (s.$liRoot.hasElems()) {
-                const $anchor = s.$liRoot.find('a', bes.isVisible);
-                if ($anchor.hasElems()) {
-                    ($anchor.elem[0] as HTMLAnchorElement).focus();
-                    $anchor.find(elem => elem.closest('li')).addClass(p.focusCss);
-                }
-            }
-        }
-	}
-	
-	#focusNestledListItem(
-		activeElem: Element | null, 
-		focusCss: string,
-		focusInElems: string
-	): void {
-		
-        const $parentActiveLi = $be(activeElem as HTMLElement).find((elem) => elem.closest('li'));
-        const $li = $parentActiveLi.find('li', bes.isVisible);
-	
-		if ($li.hasElems()) {
-			
-            $li.rmClass(focusCss);
-            $parentActiveLi.addClass(focusCss);
-            ($li.find(focusInElems, bes.isVisible).elem[0] as HTMLElement).focus();
-		}
-	}
-	
-	#escapeFromUlAtRootNext():void {
-        const 
-            s = this,
-            { focusInElems, focusLeaveElems } = s.params,
-		    $rootUl = s.$liRoot.get(0),
-		    focusableElems = document.querySelectorAll(focusLeaveElems)
-        ;
+            ($focusEl.elem[0] as HTMLAnchorElement).focus();
 
-		let atCurrElem = false;
-	
-		for (let i = 0, l = focusableElems.length; i < l; i++) {
-			const currElem = focusableElems[i];
-			if (!atCurrElem && s.activeElem?.isSameNode(currElem)) {
-				atCurrElem = true;
-			}
-			
-            if (
-                atCurrElem && 
-                !$rootUl.find(focusInElems,(elem) => elem === currElem).hasElems()
-            ) {
-				 
-				if (currElem instanceof HTMLElement) {
-					currElem.focus();
-					break;
-				}
-			}
-		}
+		} else {
+            s.#focusFirstElem(s.$aeLiParents, s.$aeLiParents.elem.length -1);
+        }
 	}
 }
 

@@ -456,6 +456,8 @@ export default class SelectEnhance {
             $textInput = $be(textInput)
         ;
 
+       
+
         s.$textInput = $textInput;
         s.textInput = textInput;
         s.$selectEnhance = $selectEnhance;

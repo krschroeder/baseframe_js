@@ -9,6 +9,7 @@ import transition from "./fn/transition";
 import { KEYS } from "./core/constants";
 import Store from "./core/Store";
 import type { EventName } from 'base-elem-js';
+import { body } from './util/helpers';
 
 type submenuBtnSkipFn = (elem: HTMLElement) => boolean;
 
@@ -23,12 +24,12 @@ interface NavMobileCssList {
 }
 
 export interface INavMobileDefaults {
-	enableBtn: SelectorRoot | string;
+	enableBtn: HTMLElement | string;
 	ariaLabel: string;
 	subMenuText: string;
 	insertToggleBtnAfter: string;
 	slideDuration: number;
-	outerElement: string;
+	outerElement: HTMLElement | string;
 	outsideClickClose: boolean;
 	cssPrefix: string;
 	menuBtnCss: string,
@@ -45,19 +46,21 @@ export interface INavMobileDefaults {
 }
 
 export interface INavMobileOptions extends Partial<INavMobileDefaults> {
-	enableBtn: SelectorRoot | string;
+	enableBtn: HTMLElement | string;
 }
+
+
 
 const VERSION = "3.0.0";
 const DATA_NAME = 'NavMobile';
 const EVENT_NAME = 'navMobile';
-const DEFAULTS = {
+const DEFAULTS: INavMobileDefaults = {
 	enableBtn: '#mobile-nav-btn',
 	ariaLabel: 'Toggle site navigation',
 	subMenuText: 'toggle menu for',
 	insertToggleBtnAfter: 'a',
 	slideDuration: 400,
-	outerElement: document.body,
+	outerElement: body,
 	outsideClickClose: true,
 	animateHeight: true,
 	cssPrefix: 'menu',
@@ -73,7 +76,7 @@ const DEFAULTS = {
 	bkptEnable: null
 };
 
-const { isVisible, make } = $be.static;
+const { findOne, isVisible, make } = $be.static;
 
 export default class NavMobile {
 
@@ -82,7 +85,8 @@ export default class NavMobile {
 	public menuOpened: boolean;
 	public allowClick: boolean;
 	public cssList: NavMobileCssList;
-
+    public $enableBtn: BaseElem;
+   
 	public static defaults = DEFAULTS;
     public static version = VERSION;
     public static pluginName = DATA_NAME;
@@ -95,6 +99,7 @@ export default class NavMobile {
 
 		s.$element = $be(element);
 		s.params = setParams(NavMobile.defaults, options, dataOptions);
+        s.$enableBtn = $be(s.params.enableBtn);
 		
 		const {cssPrefix, menuBtnCss} = s.params;
 		s.cssList = {
@@ -113,7 +118,7 @@ export default class NavMobile {
 
 		const elemID = element.id || element.className;
 
-		$be(s.params.enableBtn).attr({
+        s.$enableBtn.attr({
 			'aria-controls': elemID,
 			'aria-label': s.params.ariaLabel
 		});
@@ -165,7 +170,7 @@ export default class NavMobile {
 		const $elemParent = s.$element.find(elem => elem.parentElement);
 		
 		const doClose = s.menuOpened;
-		const cssMenuState = `${doClose ? css.menuClosing : css.menuOpening} ${css.menuToggling}`;
+		const cssMenuState = [doClose ? css.menuClosing : css.menuOpening, css.menuToggling];
 		s.#transition(() => {
 			 
 			s.menuOpened = !doClose;
@@ -197,7 +202,9 @@ export default class NavMobile {
 				s.$element.addClass(css.menuOpen);
 			}
 
-			s.params[doClose ? 'afterClose' : 'afterOpen'](s.$element, $be(p.outerElement), $enableBtn);
+            const fn = doClose ? s.params.afterClose : s.params.afterOpen;
+
+			fn(s.$element, $be(p.outerElement), $enableBtn);
 			 
 		}, p.slideDuration);
 	}
@@ -329,11 +336,10 @@ export default class NavMobile {
 
 			clearTimeout(resizeTimer);
 			resizeTimer = setTimeout(() => {
-				const $enableBtn: BaseElem = $be(s.params.enableBtn);
-
+				 
 				s.allowClick = typeof s.params.bkptEnable === 'number' ?
 					window.innerWidth <= s.params.bkptEnable :
-					($enableBtn.hasElems() ? isVisible(<any>$enableBtn[0]) : false)
+					(s.$enableBtn.hasElems() ? isVisible(s.$enableBtn.elem[0] as HTMLElement) : false)
 				;
 
 			}, e.type === EVENT_NAME ? 0 : 200);

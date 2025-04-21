@@ -21,7 +21,7 @@ export interface ILazyLoadDefaults {
 export interface ILazyLoadOptions extends Partial<ILazyLoadDefaults> {
     observerID: string;
 }
-
+ 
 const { isVisible } = $be.static;
 
 const VERSION = '2.0.1';
@@ -36,7 +36,7 @@ const DEFAULTS = {
     force: false,
     observerID: null,
     unobserve: true,
-    observerOpts: { rootMargin: '48px' }
+    observerOpts: { rootMargin: '48px' } as IntersectionObserverInit
 };
 
 const lazyElemObservers:Map<string, IntersectionObserver> = new Map();
@@ -78,7 +78,7 @@ export default class LazyLoad {
     constructor(element: HTMLElement, options: ILazyLoadOptions | StringPluginArgChoices) {
         const s = this;
         const dataOptions = getDataOptions(element, EVENT_NAME);
-        
+       
         s.element = element;
         s.lazyElemObserver;
         s.params = setParams(LazyLoad.defaults, options, dataOptions);

@@ -9,6 +9,3 @@ export const KEYS = {
 	space:  'Space',
 	tab:    'Tab'
 }
-
-
-export const PHOTO_RGX = /\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg)((#|\?).*)?$|(\?|&|&amp;)(image|ext\=\.(gif|png|jp(g|eg)|bmp|ico|webp|jxr|svg))?$/i;

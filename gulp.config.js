@@ -54,23 +54,24 @@ const config = {
 
         lib: {
             output: {
-                name: 'baseFrame',
-                format: 'iife', 
+                // format: 'cjs', 
                 sourcemap: !PRODUCTION
             },
             plugins: [
                 ...rollupBasePlugins,
                 PRODUCTION ? minify() : null
-            ].filter(Boolean)
+            ].filter(Boolean),
+            isCache: true
         },
         module: {
             output: {
                 name: 'baseFrame',
-                format: 'umd',
+                // format: 'cjs',
                 sourcemap: !PRODUCTION 
             },
-            plugins: [...rollupBasePlugins]
-        }
+            plugins: [...rollupBasePlugins],
+            isCache: true
+        }  
     }
 
 }

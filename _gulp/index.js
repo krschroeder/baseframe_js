@@ -34,7 +34,9 @@ helpers({ handlebars: handlebars.Handlebars });
  
 
 const sass = gulpSass(sassEngine);
-//tasks
+
+
+//region tasks
 
 function buildCss() {
   if (!production) {
@@ -72,16 +74,15 @@ function buildHtml(done) {
   done();
 }
 
-
-
 const buildJS = () =>
     gulp.src(config.src.js)
     .pipe(sourcemaps.init())
     .pipe(rollupEach(config.rollup.lib))
-    .pipe(rename({ extname: production ? '.min.js' : '.js' }))
+    .pipe(rename({ extname: '.js' }))
     .pipe(gulpIf(!production, sourcemaps.write('.')))
     .pipe(gulp.dest( `${config.dest}${production ? '' : '/assets'}/js` ))
 ;
+
 const buildModuleJS = (done) => {
     if (production) {
         return gulp.src(config.src.js)
@@ -94,44 +95,6 @@ const buildModuleJS = (done) => {
     }
     done();
 }
-
-// function buildMainJs(done) {
-//   if (production) {
-//     // just turn it into JS files
-//     gulp
-//       .src(config.src.js)
-//       .pipe(
-//         tap(function (file) {
-//           const contents = file.contents.toString("utf-8");
-//           const transpiledToJs = ts.transpile(contents, config.tsProdConfig);
-//           file.contents = Buffer.from(transpiledToJs);
-//         })
-//       )
-//       .pipe(rename({ extname: ".js" }))
-//       .pipe(gulp.dest(`${config.dest}/js`));
-//   } else {
-//     return gulp
-//       .src(config.src.js)
-//       .pipe(named())
-//       .pipe(webpackStream(config.webpackConfig, webpack))
-//       .pipe(gulpIf(buildDemo, uglify()))
-//       .pipe(gulp.dest(`${config.dest}/assets/js`));
-//   }
-//   done();
-// }
-
-// const buildCJs = (done) => {
-//   if (production) {
-//     const tsProject = typescript.createProject("tsconfig.json");
-
-//     return gulp
-//       .src(config.src.js)
-//       .pipe(tsProject())
-//       .pipe(babel())
-//       .pipe(gulp.dest(`${config.dest}/cjs`));
-//   }
-//   done();
-// };
 
 const buildJsDeclarations = (done) => {
   if (production) {
@@ -176,6 +139,7 @@ function cleanUpTemp() {
     .pipe(clean());
 }
 
+// region readme
 function compileReadme() {
   return gulp
     .src(config.src.readme)
@@ -183,6 +147,8 @@ function compileReadme() {
     .pipe(rename({ basename: "readme" }))
     .pipe(gulp.dest("./"));
 }
+
+//region watch
 
 function watch(done) {
   if (!production && !buildDemo) {
@@ -196,8 +162,7 @@ function watch(done) {
   done();
 }
 
-//
-// Server
+// region server
 
 function server(done) {
     if (!production && !buildDemo) {
@@ -211,13 +176,13 @@ function server(done) {
     done();
 }
 
-//
 // Reload the browser with BrowserSync
 function reload(done) {
     browser.reload();
     done();
 }
 
+// region gulp tasks
 const BUILD = gulp.series(
     cleanUp,
     buildCss,

@@ -717,3 +717,9 @@ declare module 'base-elem-js' {
         selectEnhance(options?: ISelectEnhanceOptions | StringPluginArgChoices): BaseElem;
     }
 }
+
+declare module 'cash-dom' {
+    interface Cash {
+        selectEnhance(options?: ISelectEnhanceOptions | StringPluginArgChoices): BaseElem;
+    }
+}

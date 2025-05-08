@@ -1,19 +1,20 @@
-import $be from 'base-elem-js';
- 
-import libraryExtend from '../../../assets/js/core/libraryExtend';
+import $be              from 'base-elem-js';
+import $                from 'cash-dom';
 
-import Collapse from '../../../assets/js/Collapse';
-import LazyLoad from '../../../assets/js/LazyLoad';
-import Modal from '../../../assets/js/Modal';
-import Tabs from '../../../assets/js/Tabs';
-import Toastr from '../../../assets/js/Toastr';
-import AccessibleMenu from '../../../assets/js/AccessibleMenu';
-import NavDesktop from '../../../assets/js/NavDesktop';
-import NavMobile from '../../../assets/js/NavMobile';
-import Parallax from '../../../assets/js/Parallax';
-import SelectEnhance from '../../../assets/js/SelectEnhance';
-import throttledResize from '../../../assets/js/fn/throttleResize';
-import ScrollSpy from '../../../assets/js/ScrollSpy';
+import libraryExtend    from '../../../assets/js/core/libraryExtend';
+import Collapse         from '../../../assets/js/Collapse';
+import LazyLoad         from '../../../assets/js/LazyLoad';
+import Modal            from '../../../assets/js/Modal';
+import Tabs             from '../../../assets/js/Tabs';
+import Toastr           from '../../../assets/js/Toastr';
+import AccessibleMenu   from '../../../assets/js/AccessibleMenu';
+import NavDesktop       from '../../../assets/js/NavDesktop';
+import NavMobile        from '../../../assets/js/NavMobile';
+import Parallax         from '../../../assets/js/Parallax';
+import SelectEnhance    from '../../../assets/js/SelectEnhance';
+import throttledResize  from '../../../assets/js/fn/throttleResize';
+import ScrollSpy        from '../../../assets/js/ScrollSpy';
+
 libraryExtend([
     AccessibleMenu, 
     Collapse, 
@@ -26,7 +27,9 @@ libraryExtend([
     SelectEnhance,
     Tabs,
     Toastr
-], true, $be);
+], $, true );
+
+const { make } = $be.static;
 
  
 $be('select').selectEnhance();
@@ -58,7 +61,7 @@ $be('#main-nav')
 
 $be(window).on('load',function() {
     // need to wait for images to load
-    $be('#main-nav').scrollSpy({
+    $be('#main-nav').scrollSpy({ 
         spyBody: 'main.body-content',
         locationFilter: 'spy',
         observerOptions: {
@@ -185,63 +188,44 @@ $be('.lazy-highlight').lazyLoad({
     const $picGroup = $be('.pic-group');
 
     $picGroup.each((elem, index) => {
-        // const src = $be('<img>').attr({ src: this.dataset.imgSrc || '', loading: 'lazy' });
-        const modalID = 'pic-group_' + index;
+        
         let imgIndex: number = index;
-        const imgDefaultSrc = elem.dataset.imgSrc;
+
+        const 
+            modalID = 'pic-group_' + index,
+            imgDefaultSrc = elem.dataset.imgSrc,
+            img = make('img', {loading:'lazy', src: imgDefaultSrc, alt: ''}),
+            setImgSrc = (decrement: boolean) => {
+                if (decrement)  imgIndex = imgIndex === 0 ? $picGroup.size - 1 : imgIndex - 1;
+                else            imgIndex = imgIndex === $picGroup.size - 1 ? 0 : imgIndex + 1;
+                
+                return ($picGroup.elem[imgIndex] as HTMLElement).dataset.imgSrc || '';
+            }
+        ;
 
         $be(elem).modal({
-            // src, 
             modalID,
             modalCss: 'modal--gallery', 
             locationFilter: 'gallery',
             fromDOM: false,
             onOpenOnce(modalObj) {
-                
-                const $img = modalObj.$dialogContent.find('img');
-
-                modalObj.$dialogContent.insert(`
-                    <img src="${imgDefaultSrc}" loading="lazy" />
+                modalObj.$dialogContent.insert(img).insert(`
                     <footer class="pic-group-nav">
                         <button type="button" class="prev-btn">Previous</button>
                         <button type="button" class="next-btn">Next</button>
                     </footer>
-                `);
-
-                modalObj.$dialogContent.on('click', (e, elem) => {
-                    if ((elem as HTMLButtonElement).classList.contains('prev-btn')) {
-
-                        imgIndex = imgIndex === 0 ? $picGroup.elem.length - 1 : imgIndex - 1;
-                         
-                    } else {
-                        imgIndex = imgIndex === $picGroup.elem.length - 1 ? 0 : imgIndex + 1;
-
-                    }
-                    
-                    if (imgIndex > 0 && $picGroup.elem.length) {
-                        $img.attr({src: ($picGroup as any)[imgIndex].dataset.imgSrc || ''});
-                    }
+                `).on('click', (e, elem) => {
+                    const decrement = $be(elem).hasClass('prev-btn');
+                    img.src = setImgSrc(decrement);    
                 },'button');
             },
             onOpen(modalObj) {
-                const $img = modalObj.$dialogContent.find('img');
-
                 $be(window).on('keyup.gallery', function(e:KeyboardEvent){
-                    const arrowRight = e.key === 'ArrowRight';
                     const arrowLeft = e.key === 'ArrowLeft';
-                    if (e.key === 'Escape') {
-                        modalObj.close();
-                    }
-                    if (arrowLeft) {
-                        imgIndex = imgIndex === 0 ? $picGroup.elem.length - 1 : imgIndex - 1;
-                    }
-                    if (arrowRight) {
-                        imgIndex = imgIndex === $picGroup.elem.length - 1 ? 0 : imgIndex + 1;
-                    }
-                    if (arrowLeft || arrowRight) {
-                        if (imgIndex > 0 && $picGroup.elem.length) {
-                            $img.attr({src: ($picGroup as any)[imgIndex].dataset.imgSrc || ''});
-                        }
+
+                    if (e.key === 'Escape') modalObj.close();
+                    if (e.key === 'ArrowRight' || arrowLeft) {
+                        img.src = setImgSrc(arrowLeft);
                     }
                 });
             },

@@ -3,8 +3,9 @@ import type { StringPluginArgChoices } from './types';
 
 // import $ from 'cash-dom';
 import $be, { type BaseElem, type SelectorRoot } from "base-elem-js";
-import { getDataOptions, setParams } from "./util/helpers";
+import { getDataOptions, setParams, oa } from "./util/helpers";
 import Store from "./core/Store";
+ 
 
 export interface IToasterDefaults {
     content: string;
@@ -62,7 +63,7 @@ export default class Toastr {
     public static DismissedEventName = 'toastDismissed';
 
     private toastrFinallyTimer: ReturnType<typeof setTimeout>;ß
-    private currentlyToasting: boolean;
+    private active: boolean;
     private toasterBodyBuilt: boolean;
 
     public $element: BaseElem;
@@ -80,8 +81,7 @@ export default class Toastr {
         s.toastrFinallyTimer = null;
         s.$toastrBody = null;
         s.$toastrWrap = null;
-
-        s.currentlyToasting = false;
+        s.active = false;
 
         s.params = setParams(Toastr.defaults, options, dataOptions);
         s.$element.on([`click.${EVENT_NAME}`,`[${EVENT_NAME}]`], () => s.launch());
@@ -91,28 +91,28 @@ export default class Toastr {
 
     dismiss() {
         const s = this;
-        const { animationDuration, dismissCss } = s.params;
+        const p = s.params;
 
         s.toastrFinallyTimer && clearTimeout(s.toastrFinallyTimer);
-        s.$toastrWrap.addClass(dismissCss);
+        s.$toastrWrap.addClass(p.dismissCss);
 
         setTimeout(() => {
             const $toatrContainer = s.getToasterContainer();
-            s.$toastrWrap.rmClass(dismissCss).remove();
+            s.$toastrWrap.rmClass(p.dismissCss).remove();
 
             if (!$toatrContainer.find('div').hasElems()) {
                 s.getToasterContainer().remove();
             }
-            s.currentlyToasting = false;
+            s.active = false;
             currentlyToastingGlobal = false;
 
-        }, animationDuration);
+        }, p.animationDuration);
     }
 
     setContent(content, updateNow = false) {
         const s = this;
 
-        Object.assign(s.params, { content });
+        oa(s.params, { content });
 
         if (updateNow) {
             s.updateContent(s.params.content);
@@ -121,31 +121,28 @@ export default class Toastr {
 
     launch() {
         const s = this;
+        const p = s.params;
 
-        const { content, dismissCss, duration, enabledCss, oneOnly } = s.params;
+        if (!s.active) {
 
-        if (!s.currentlyToasting) {
-
-            if (currentlyToastingGlobal && oneOnly) {
+            if (currentlyToastingGlobal && p.oneOnly) {
                 return;
             }
 
-            if (!s.toasterBodyBuilt) {
-                s.buildElems();
-            }
+            if (!s.toasterBodyBuilt) s.buildElems();
 
-            s.$toastrWrap.rmClass(`${dismissCss} ${enabledCss}`);
+            s.$toastrWrap.rmClass([p.dismissCss, p.enabledCss]);
 
-            s.updateContent(content);
+            s.updateContent(p.content);
 
             $be(document.body).insert(
                 s.getToasterContainer().insert(s.$toastrWrap)
             );
 
-            setTimeout(() => s.$toastrWrap.addClass(enabledCss), 0);
+            setTimeout(() => s.$toastrWrap.addClass(p.enabledCss), 0);
             // Auto remove if not dismissed
-            s.toastrFinallyTimer = setTimeout(() => s.dismiss(), duration);    
-            s.currentlyToasting = true;
+            s.toastrFinallyTimer = setTimeout(() => s.dismiss(), p.duration);    
+            s.active = true;
             currentlyToastingGlobal = true;
         }
     }
@@ -166,12 +163,12 @@ export default class Toastr {
 
     private buildElems() {
         const s = this;
-        const { ariaLive, btnDismissCss, closeIconCss, closeTextCopy, outerCss } = s.params;
-        const $btn = $be(make(`button.${btnDismissCss}`,{ type: 'button' }));
-        const $icon = $be(make(`i.${closeIconCss}`, `<span class="sr-only">${closeTextCopy}</span>`));
+        const p = s.params;
+        const $btn = $be(make(`button.${p.btnDismissCss}`,{ type: 'button' }));
+        const $icon = $be(make(`i.${p.closeIconCss}`, `<span class="sr-only">${p.closeTextCopy}</span>`));
         
-        s.$toastrBody = $be(make(`div.${s.params.outerCss}__body`));
-        s.$toastrWrap = $be(make(`div.${outerCss}`,{role: 'alert', ariaLive })).insert([
+        s.$toastrBody = $be(make(`div.${p.outerCss}__body`));
+        s.$toastrWrap = $be(make(`div.${p.outerCss}`,{role: 'alert', ariaLive: p.ariaLive })).insert([
             s.$toastrBody,
             $btn.insert($icon)
         ]);

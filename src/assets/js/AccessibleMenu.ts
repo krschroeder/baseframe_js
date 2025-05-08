@@ -6,13 +6,9 @@ import {
     getDataOptions, 
     setParams 
 }                   from "./util/helpers";
-import { KEYS }     from './core/constants';
 
-
-const { addClass, isVisible, rmClass } = $be.static;
 
 type keyDirections = 'horizontal' | 'vertical';
-
 
 export interface IAccessibleMenuDefaults {
 	keyDirections: keyDirections[];
@@ -23,17 +19,27 @@ export interface IAccessibleMenuDefaults {
 
 export interface IAccessibleMenuOptions extends Partial<IAccessibleMenuDefaults> {}
 
-const bes = $be.static;
-
+const { addClass, isVisible, rmClass } = $be.static;
 const 
-    VERSION = "1.3.0",
-    DATA_NAME = 'AccessibleMenu',
-    EVENT_NAME = 'accessibleMenu',
+    VERSION             = "1.3.0",
+    DATA_NAME           = 'AccessibleMenu',
+    EVENT_NAME          = 'accessibleMenu',
     DEFAULTS: IAccessibleMenuDefaults = {
-        keyDirections: ['horizontal', 'vertical', 'vertical'],
-        focusCss: 'focus',
-        focusInElems: 'a, [tabindex]',
+        keyDirections:  ['horizontal', 'vertical', 'vertical'],
+        focusCss:       'focus',
+        focusInElems:   'a, [tabindex]',
         focusLeaveElems: 'a, [tabindex], select, button'
+    },
+    KEYS = {
+        esc:            'Escape',
+        left:           'ArrowLeft',
+        right:          'ArrowRight',
+        down:           'ArrowDown',
+        up:             'ArrowUp',
+        enter:          'Enter',
+        shift:          'Shift',
+        space:          'Space',
+        tab:            'Tab'
     }
 ;
 
@@ -43,14 +49,12 @@ export default class AccessibleMenu {
     public static defaults = DEFAULTS;
     public static version = VERSION;
     public static pluginName = DATA_NAME;
-
 	public element: HTMLElement;
 	public $element: BaseElem;
 	public params: IAccessibleMenuDefaults;
 	public $aeLiParents: BaseElem = null;
 	public activeElem: HTMLElement | null = null;
 	public focusInElems: string = '';
-
 	
 	constructor(element, options: IAccessibleMenuOptions | StringPluginArgChoices) {
 		const s = this;
@@ -110,8 +114,6 @@ export default class AccessibleMenu {
             keyIsRight = key === KEYS.right && p.keyDirections[l],
             keyIsDown = key === KEYS.down && p.keyDirections[l] 
         ;
-
-        // console.log('next keys', keyIsRight, keyIsDown)
        
         //go to sibling <li>
 		if (keyIsRight === "horizontal" || keyIsDown === "vertical") {
@@ -152,27 +154,25 @@ export default class AccessibleMenu {
         ;
       
 		let focusOutDelay: ReturnType<typeof setTimeout> | null = null;
-        let prevLi = null;
-
-		// s.$element.on(`focusin.${EVENT_NAME}`, (e: KeyboardEvent, elem: HTMLLIElement) => {
+       
+		s.$element.on(`focusin.${EVENT_NAME}`, (e: KeyboardEvent, elem: HTMLLIElement) => {
+            s.activeElem = document.activeElement as HTMLElement;
+			focusOutDelay && clearTimeout(focusOutDelay);
+    
+            $be(s.activeElem.closest('li'))
+                .addClass(p.focusCss)
+                .siblings('li').rmClass(p.focusCss);
             
-		// 	focusOutDelay && clearTimeout(focusOutDelay);
-           
-        //     if (prevLi) rmClass(prevLi, p.focusCss);
-        //     addClass(elem, p.focusCss);
-        //     prevLi = elem;
-        //     console.log('prev li', prevLi)
-            
-		// }, lis)
-        // .on(`focusout.${EVENT_NAME}`, () => {
-        //     focusOutDelay = setTimeout(() => $lis.rmClass(p.focusCss), 200)
-        // })
-        // .on(`mouseleave.${EVENT_NAME}`, () => {
-        //     $lis.rmClass(p.focusCss);
-		// })
+		}, lis)
+        .on(`focusout.${EVENT_NAME}`, () => {
+            focusOutDelay = setTimeout(() => $lis.rmClass(p.focusCss), 200)
+        })
+        .on(`mouseleave.${EVENT_NAME}`, () => {
+            $lis.rmClass(p.focusCss);
+		})
         s.$element.on(`keydown.${EVENT_NAME}`, (e: KeyboardEvent) => {
 			 
-			s.activeElem = document.activeElement as HTMLElement;
+			// s.activeElem = document.activeElement as HTMLElement;
             s.$aeLiParents = $be(s.activeElem).parents('li', s.element);
 
 			if (e.key == KEYS.esc) {
@@ -184,7 +184,7 @@ export default class AccessibleMenu {
 		});
 	}
 
-    #focusFirstElem($focusWrapEl: BaseElem, index: number = 0) {
+    #focusFirstElem($focusWrapEl: BaseElem, prev: boolean = false, index: number = 0) {
         if (!$focusWrapEl.hasEls) return;
 
         const 
@@ -196,7 +196,7 @@ export default class AccessibleMenu {
         if ($focusEls.hasEls) {
             const focusEl = $focusEls.elem[index] as HTMLElement;
             // s.$aeLiParents.rmClass(p.focusCss);
-            $be(focusEl.closest('li')).addClass(p.focusCss);
+            $be(focusEl.closest('li')).tgClass(p.focusCss, !prev);
             focusEl.focus();
         }
     }
@@ -205,16 +205,17 @@ export default class AccessibleMenu {
 		const 
             s = this,
             p = s.params,
-            currLi = (s.activeElem as HTMLElement).closest('li'),
+            currLi = s.activeElem.closest('li'),
             $targetLi = $be((prev ? currLi.previousElementSibling : currLi.nextElementSibling) as HTMLLIElement)
         ;
-
+       
         if ($targetLi.hasEls) {
-            s.#focusFirstElem($targetLi);
+            s.#focusFirstElem($targetLi, prev);
             
 		} else {
-            const $prevUlEl = $be(currLi.closest('li'));
-            s.#focusFirstElem($prevUlEl);
+            const nth = s.$aeLiParents.elem.length > 2 ? -2 : 0;
+
+            s.#focusFirstElem($be(s.$aeLiParents.elem.at(nth)), prev);
         }
 	}
 }

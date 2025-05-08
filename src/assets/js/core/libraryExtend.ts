@@ -1,9 +1,55 @@
-// import $ from 'cash-dom';
-// import $be from 'base-elem-js';
-import { lowercaseFirstLetter } from '../util/helpers';
-import Store from './Store';
+import $be from 'base-elem-js';
 import type { PluginBaseClass } from '../types';
+import { isArr, isStr, lowercaseFirstLetter } from '../util/helpers';
+import Store from './Store';
  
+const { merge, toType } = $be.static;
+
+
+const libraryExtend = <T extends PluginBaseClass>(Plugins: T | T[], $lib: any, notify = false) => {
+
+    if (isArr(Plugins)) Plugins.forEach(Plugin => extendPlugin(Plugin, $lib, notify));
+    else extendPlugin(Plugins, $lib, notify);
+}
+
+const extendPlugin = <T extends PluginBaseClass>(Plugin: T, $lib: any, notify:boolean) => {
+    const DataName = Plugin.pluginName;
+    const pluginName = lowercaseFirstLetter(DataName);
+    const $libExtendTo = $lib.BaseElem ? $lib.BaseElem.prototype : $lib.fn;
+    // Plugin.Constructor = Plugin;
+    $libExtendTo[pluginName] = function (params) {
+        const s = this;
+
+        return s.each((elem, index) => {
+
+            const instance = Store(elem, DataName);
+
+            if (!instance) {
+                Store(
+                    elem, 
+                    DataName, 
+                    new Plugin(elem, params, index)
+                );
+
+            } else {
+                const canUpdate = instance.handleUpdate && toType(instance.handleUpdate) === 'function';
+
+                if (isStr(params)) {
+                    if (params === 'remove') Plugin.remove(elem);
+                    if (params === 'update' && canUpdate) instance.handleUpdate();
+
+                    return;
+                }
+                
+                checkIfParamsExist(instance.params, params, notify);
+                merge(instance.params, params);
+
+                if (canUpdate) instance.handleUpdate();
+                if (notify) console.log(`Params updated`, instance.params);
+            }
+        });
+    };
+}
 
 const checkIfParamsExist = (setParams, params, notify = true) => {
     for (let k in params) {
@@ -14,58 +60,5 @@ const checkIfParamsExist = (setParams, params, notify = true) => {
     }
     return params;
 };
-
-
-const extendPlugin = <T extends PluginBaseClass>(Plugin: T, notify:boolean, Lib) => {
-  
-    const DataName = Plugin.pluginName;
-    const pluginName = lowercaseFirstLetter(DataName);
-    const installLib = Lib.BaseElem ? Lib.BaseElem.prototype : Lib.fn;
-    Plugin.Constructor = Plugin;
-    
-    installLib[pluginName] = function (params) {
-        const s = this;
-
-        return s.each((elem, index) => {
-
-            const instance = Store(elem, DataName);
-
-            if (!instance) {
-                const plugin = new Plugin(elem, params, index);
-                Store(elem, DataName, plugin);
-
-            } else {
-                const canUpdate = instance.handleUpdate && typeof instance.handleUpdate === 'function';
-                if (typeof params === 'string') {
-                    if (params === 'remove') Plugin.remove(elem);
-                    if (params === 'update' && canUpdate) instance.handleUpdate();
-
-                    return;
-                }
-                
-                checkIfParamsExist(instance.params, params, notify);
-                Object.assign(instance.params, params);
-
-                if (canUpdate) {
-                    instance.handleUpdate();
-                }
-                
-                notify && console.log(`Params updated`, instance.params)
-            }
-        });
-    };
-}
-
-const libraryExtend = <T extends PluginBaseClass>(Plugins: T | T[], notify = false, Lib: any) => {
-
-    if (Plugins instanceof Array) {
-        for (let i = 0, l = Plugins.length; i < l; i++) {
-
-            extendPlugin(Plugins[i], notify, Lib)
-        }
-    } else {
-        extendPlugin(Plugins, notify, Lib)
-    }
-}
 
 export default libraryExtend;

@@ -17,8 +17,8 @@ export interface ITabsDefaults extends LocationHashTracking {
 	addIDtoPanel: boolean;
 	ariaLabel: boolean;
 	defaultContent: number;
-	tabChange(tabId: string, prevTabId: string, tabsList: BaseElem, tabsBody: BaseElem): void;
-	onInit(tabsList: BaseElem, tabsBody: BaseElem): void
+	tabChange(tabId: string, prevTabId: string, tabsList: HTMLElement, tabsBody: HTMLElement): void;
+	onInit(tabsList: HTMLElement, tabsBody: HTMLElement): void
 }
 
 export interface ITabsOptions extends Partial<ITabsDefaults> {}
@@ -50,9 +50,11 @@ export default class Tabs {
 	
 	public $element: BaseElem;
 	public params: ITabsDefaults;
+	public tabsNav: HTMLElement;
 	public $tabsNav: BaseElem;
 	public $tabsNavBtns: BaseElem;
 	public tabsNavBtns: PrimaryClickElems[];
+    public tabsBody: HTMLElement;
 	public $tabsBody: BaseElem;
 	public $tabsBodyPanels: BaseElem;
 	public prevTabId: string;
@@ -80,6 +82,8 @@ export default class Tabs {
 		s.params = p; 
 		s.$tabsNav = $tabsNav;
 		s.$tabsBody = $tabsBody;
+        s.tabsNav = $tabsNav.elem[0] as HTMLElement;
+		s.tabsBody = $tabsBody.elem[0] as HTMLElement;
 		s.$tabsBodyPanels = s.$tabsBody.find(`.${p.cssPrefix}__panel`, elem => elem.parentElement === tabsBody);
 		s.$tabsNavBtns = s.$tabsNav.find('a, button');
 		s.tabsNavBtns = s.$tabsNavBtns.toArray() as PrimaryClickElems[];
@@ -92,7 +96,7 @@ export default class Tabs {
 		s.loadDefaultContent();
 		s.loadFromUrl();
 	
-		s.params.onInit(s.$tabsNav, s.$tabsBody);
+		s.params.onInit(s.tabsNav, s.tabsBody);
 
 		return s;
 	}
@@ -232,7 +236,7 @@ export default class Tabs {
 
 			if (hasTab) {
 				const cssActive = `${p.cssPrefix}__nav-li--active`;
-				s.params.tabChange(tabId, s.prevTabId, s.$tabsNav, s.$tabsBody);
+				s.params.tabChange(tabId, s.prevTabId, s.tabsNav, s.tabsBody);
 				s.prevTabId = tabId;
 				
 				s.$tabsNavBtns

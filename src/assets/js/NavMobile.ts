@@ -5,7 +5,6 @@ import $be, {type BaseElem, type SelectorRoot} from "base-elem-js";
 import {  getDataOptions, noop, setParams } from './util/helpers';
  
 import trapFocus, { type ITrapFocusRemove } from './fn/trapFocus';
-import transition from "./fn/transition";
 import { KEYS } from "./core/constants";
 import Store from "./core/Store";
 import type { EventName } from 'base-elem-js';
@@ -39,10 +38,10 @@ export interface INavMobileDefaults {
 	stopPropagation: boolean;
 	bkptEnable: number | null;
 	animateHeight: boolean;
-	afterNavItemOpen: ($li: BaseElem) => void;
-	afterNavItemClose: ($li: BaseElem) => void;
-	afterOpen($element: BaseElem, outerElement: BaseElem, enableBtn: BaseElem);
-	afterClose($element: BaseElem, outerElement: BaseElem, enableBtn: BaseElem);
+	afterNavItemOpen: (li: HTMLLIElement[]) => void;
+	afterNavItemClose: (li: HTMLLIElement[]) => void;
+	afterOpen(element: HTMLElement, outerElement: HTMLElement[], enableBtn: HTMLElement);
+	afterClose(element: HTMLElement, outerElement: HTMLElement[], enableBtn: HTMLElement);
 }
 
 export interface INavMobileOptions extends Partial<INavMobileDefaults> {
@@ -76,31 +75,35 @@ const DEFAULTS: INavMobileDefaults = {
 	bkptEnable: null
 };
 
-const { findOne, isVisible, make } = $be.static;
+const { isVisible, make, useTransition } = $be.static;
 
 export default class NavMobile {
 
 	public $element: BaseElem;
+    public element: HTMLElement;
 	public params: INavMobileDefaults;
 	public menuOpened: boolean;
 	public allowClick: boolean;
 	public cssList: NavMobileCssList;
     public $enableBtn: BaseElem;
+    public enableBtn: HTMLElement;
    
 	public static defaults = DEFAULTS;
     public static version = VERSION;
     public static pluginName = DATA_NAME;
 
-	#transition = transition();
+	#transition = useTransition();
 	
 	constructor(element: HTMLElement, options: INavMobileOptions | StringPluginArgChoices) {
 		const s = this;
 		const dataOptions = getDataOptions(element, EVENT_NAME);
 
 		s.$element = $be(element);
+        s.element = element;
 		s.params = setParams(NavMobile.defaults, options, dataOptions);
         s.$enableBtn = $be(s.params.enableBtn);
-		
+		s.enableBtn = s.$enableBtn.elem[0] as HTMLElement;
+
 		const {cssPrefix, menuBtnCss} = s.params;
 		s.cssList = {
 			menuOuterOpen: `${cssPrefix}--outer-open`,
@@ -166,9 +169,7 @@ export default class NavMobile {
 		const css = s.cssList;
 
 		let trappedFocus: ITrapFocusRemove | null = null;
-		const $enableBtn = $be(p.enableBtn);
 		const $elemParent = s.$element.find(elem => elem.parentElement);
-		
 		const doClose = s.menuOpened;
 		const cssMenuState = [doClose ? css.menuClosing : css.menuOpening, css.menuToggling];
 		s.#transition(() => {
@@ -204,7 +205,7 @@ export default class NavMobile {
 
             const fn = doClose ? s.params.afterClose : s.params.afterOpen;
 
-			fn(s.$element, $be(p.outerElement), $enableBtn);
+			fn(s.element, $be(p.outerElement).toArray() as HTMLElement[], s.enableBtn);
 			 
 		}, p.slideDuration);
 	}
@@ -217,7 +218,7 @@ export default class NavMobile {
 			const p = s.params;
 			const css = s.cssList;
             const hasULElem = elem.closest(`.${css.menuHasUL}`) as HTMLElement;
-			const $li = $be(hasULElem );
+			const $li = $be(hasULElem);
 			const doClose = $li.hasClass(css.menuOpen);
 			const $ul = $li.find('ul').get(0);
 
@@ -250,9 +251,9 @@ export default class NavMobile {
 				$ul.css({ height: null });
 
 				if (doClose) {
-					s.params.afterNavItemClose($li);
+					s.params.afterNavItemClose($li.toArray() as HTMLLIElement[]);
 				} else {
-					s.params.afterNavItemOpen($li);
+					s.params.afterNavItemOpen($li.toArray() as HTMLLIElement[]);
 				}
 				s.allowClick = true;
 			}, p.slideDuration);

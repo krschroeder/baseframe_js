@@ -1,6 +1,8 @@
 import $be  from "base-elem-js";
 import type { BaseElem } from "base-elem-js";
 import type { StringPluginArgChoices } from './types';
+
+import { KEYS } from "./core/constants";
 import Store 		from "./core/Store";
 import { 
     getDataOptions, 
@@ -19,7 +21,7 @@ export interface IAccessibleMenuDefaults {
 
 export interface IAccessibleMenuOptions extends Partial<IAccessibleMenuDefaults> {}
 
-const { addClass, isVisible, rmClass } = $be.static;
+const { isVisible } = $be.static;
 const 
     VERSION             = "1.3.0",
     DATA_NAME           = 'AccessibleMenu',
@@ -29,17 +31,6 @@ const
         focusCss:       'focus',
         focusInElems:   'a, [tabindex]',
         focusLeaveElems: 'a, [tabindex], select, button'
-    },
-    KEYS = {
-        esc:            'Escape',
-        left:           'ArrowLeft',
-        right:          'ArrowRight',
-        down:           'ArrowDown',
-        up:             'ArrowUp',
-        enter:          'Enter',
-        shift:          'Shift',
-        space:          'Space',
-        tab:            'Tab'
     }
 ;
 
@@ -192,7 +183,7 @@ export default class AccessibleMenu {
             p = s.params,
             $focusEls = $focusWrapEl.find(p.focusInElems, isVisible)
         ;
-
+        
         if ($focusEls.hasEls) {
             const focusEl = $focusEls.elem[index] as HTMLElement;
             // s.$aeLiParents.rmClass(p.focusCss);

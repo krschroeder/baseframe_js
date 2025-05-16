@@ -1,4 +1,3 @@
-import $be              from 'base-elem-js';
 import $                from 'cash-dom';
 
 import libraryExtend    from '../../../assets/js/core/libraryExtend';
@@ -27,18 +26,18 @@ libraryExtend([
     SelectEnhance,
     Tabs,
     Toastr
-], $be, true );
+], $, true );
 
 const { make } = $be.static;
 
  
 console.log($be.BaseElem.prototype);
 
-$be('select').selectEnhance();
-const $collapseGroup = $be('.collapse-group-1');
+$('select').selectEnhance();
+const $collapseGroup = $('.collapse-group-1');
 $collapseGroup.on('click.collapseHeading', (ev, elem) => {
     const h2 = elem as HTMLElement;
-    const $btn = $be(h2.parentElement as HTMLElement).find('button');
+    const $btn = $(h2.parentElement as HTMLElement).find('button');
 
     if ($btn.hasEls) {
         $btn.trigger('click');
@@ -50,20 +49,20 @@ $collapseGroup.on('click.collapseHeading', (ev, elem) => {
 });
 
 throttledResize(() => {
-    const inMobile = $be('#mobile-nav-btn').elemRects().width !== 0; //hidden if zero
+    const inMobile = $('#mobile-nav-btn').elemRects().width !== 0; //hidden if zero
     $collapseGroup.collapse({
         moveToTopOnOpen:  inMobile,
     })
 },'collapse',true);
 
-$be('#main-nav')
+$('#main-nav')
     .navMobile({enableBtn: '#mobile-nav-btn'})
     .navDesktop()
     .accessibleMenu();
 
-$be(window).on('load',function() {
+$(window).on('load',function() {
     // need to wait for images to load
-    $be('#main-nav').scrollSpy({ 
+    $('#main-nav').scrollSpy({ 
         spyBody: 'main.body-content',
         locationFilter: 'spy',
         observerOptions: {
@@ -73,7 +72,7 @@ $be(window).on('load',function() {
     })
 })
 
-$be('#example-nav')
+$('#example-nav')
     .navMobile({enableBtn: '#mobile-nav-btn-example'})
     .navDesktop()
     .accessibleMenu({
@@ -81,26 +80,26 @@ $be('#example-nav')
     });
 
 // Parallax
-$be('#jsBtnSCrollHorizontal').on('click',function(){
-    $be('main').tgClass('body-content--scroll-x');
-    $be('.do-parallax--hz').parallax('update')
+$('#jsBtnSCrollHorizontal').on('click',function(){
+    $('main').tgClass('body-content--scroll-x');
+    $('.do-parallax--hz').parallax('update')
 })
-$be('.do-parallax').parallax({speed:25, bgFill:true});
+$('.do-parallax').parallax({speed:25, bgFill:true});
 
 
 // Tabs
-$be(".tabs-outer").tabs({ locationFilter: 'tabs', defaultContent: 1});
-$be(".tabs-inner").tabs({ locationFilter: 'tabs-inner'});
+$(".tabs-outer").tabs({ locationFilter: 'tabs', defaultContent: 1});
+$(".tabs-inner").tabs({ locationFilter: 'tabs-inner'});
 
 // Lazy Load
 
-$be('img[loading="lazy"]').lazyLoad({
+$('img[loading="lazy"]').lazyLoad({
     observerID: 'imgLazy',
     observerOpts: { rootMargin: '100px' }
 });
 
 //a bunch of paragraphs to style right!
-$be('.lazy-highlight').lazyLoad({
+$('.lazy-highlight').lazyLoad({
     observerID: 'p',
     loadImgs: false, 
     unobserve:false,
@@ -126,12 +125,12 @@ $be('.lazy-highlight').lazyLoad({
         return toastRandomMsgs[Math.floor(Math.random() * toastRandomMsgs.length)]
     }
     // Example 1: standard way
-    $be('#toastr-1').toastr({
+    $('#toastr-1').toastr({
         content: 'Toast is good for breakfast',
         duration: 7000
     });
 
-    const $toastr2 = $be('#toastr-2');
+    const $toastr2 = $('#toastr-2');
 
     if ($toastr2.hasElems()) {
         // Example 2: extend perhaps in Cash then call on click
@@ -148,13 +147,13 @@ $be('.lazy-highlight').lazyLoad({
     }
 
     // Example 3,4: somewhere else on the page
-    $be('#toastr-3').toastr({
+    $('#toastr-3').toastr({
         content: randomToastMsg(),
         duration: 5000,
         cssGroupKey: 'bottom'
     });
 
-    $be('#toastr-4').toastr({
+    $('#toastr-4').toastr({
         content: randomToastMsg(),
         duration: 5000,
         cssGroupKey: 'bottom'
@@ -163,12 +162,12 @@ $be('.lazy-highlight').lazyLoad({
 
 //  Modal
 {
-    $be('.btn-modal').modal({
+    $('.btn-modal').modal({
         modalID: 'from-dom'
     });
 
 
-    $be('#btn-gen-content').modal({
+    $('#btn-gen-content').modal({
         locationFilter: 'modal',
         src: '', 
         fromDOM: false,
@@ -177,7 +176,7 @@ $be('.lazy-highlight').lazyLoad({
          
             modalObj.$dialogContent.on('click', modalObj.close,'button.dismiss');
 
-            modalObj.$dialogContent.insert(`
+            modalObj.$dialogContent.append(`
             <h2>Some generated Content</h2>
             <p>Ullamco <a href="#">link</a> laboris nisi ut aliquid ex ea commodi consequat. Sed haec quis possit intrepidus aestimare tellus. Quam diu etiam furor <a href="#">iste tuus</a> nos eludet? Curabitur est gravida et libero vitae dictum.</p>
             <button type="button" class="button dismiss">Dimiss</button>
@@ -187,7 +186,7 @@ $be('.lazy-highlight').lazyLoad({
  
 
     // quick and dirty image carousel
-    const $picGroup = $be('.pic-group');
+    const $picGroup = $('.pic-group');
 
     $picGroup.each((elem, index) => {
         
@@ -205,24 +204,24 @@ $be('.lazy-highlight').lazyLoad({
             }
         ;
 
-        $be(elem).modal({
+        $(elem).modal({
             modalID,
-            modalCss: 'modal--gallery', 
+            modalCss: 'modal--gallery', ß
             locationFilter: 'gallery',
             fromDOM: false,
             onOpenOnce(modalObj) {
-                modalObj.$dialogContent.insert(img).insert(`
+                modalObj.$dialogContent.append(img).append(`
                     <footer class="pic-group-nav">
                         <button type="button" class="prev-btn">Previous</button>
                         <button type="button" class="next-btn">Next</button>
                     </footer>
                 `).on('click', (e, elem) => {
-                    const decrement = $be(elem).hasClass('prev-btn');
+                    const decrement = $(elem).hasClass('prev-btn');
                     img.src = setImgSrc(decrement);    
                 },'button');
             },
             onOpen(modalObj) {
-                $be(window).on('keyup.gallery', function(e:KeyboardEvent){
+                $(window).on('keyup.gallery', function(e:KeyboardEvent){
                     const arrowLeft = e.key === 'ArrowLeft';
 
                     if (e.key === 'Escape') modalObj.close();
@@ -232,7 +231,7 @@ $be('.lazy-highlight').lazyLoad({
                 });
             },
             onClose() {
-                $be(window).off('keyup.gallery');
+                $(window).off('keyup.gallery');
             }
         });
     })

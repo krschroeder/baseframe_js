@@ -7,8 +7,6 @@ import $be, {type BaseElem} from "base-elem-js";
 import { getDataOptions, noop, setParams } from './util/helpers';
 
 import smoothScroll from './fn/smoothScroll';
-import transition	from "./fn/transition";
-
 import UrlState 	from "./core/UrlState"; 
 import Store 		from "./core/Store";
 
@@ -20,9 +18,9 @@ export interface ICollapseDefaults extends LocationHashTracking {
 	moveToTopOnOpen: boolean;
 	moveToTopOffset: number;
 	scrollSpeed: number;
-	afterOpen($btnElems: BaseElem, $collapsibleItem: BaseElem): void;
-	afterClose($btnElems: BaseElem, $collapsibleItem: BaseElem): void;
-	afterInit($element: BaseElem): void;
+	afterOpen(btnElems: HTMLElement[], collapsibleItem: HTMLElement[]): void;
+	afterClose(btnElems: HTMLElement[], collapsibleItem: HTMLElement[]): void;
+	afterInit(element: HTMLElement): void;
 }
 
 export interface ICollapseOptions extends Partial<ICollapseDefaults> {};
@@ -54,6 +52,7 @@ export default class Collapse {
 	public params: ICollapseDefaults;
 	public toggling: boolean;
 	public $btnElems: BaseElem | null;
+    public btnElems: HTMLElement[];
 	public $activeItem: BaseElem | null;
 	public initLoaded: boolean;
 	
@@ -61,7 +60,8 @@ export default class Collapse {
     public static version = VERSION;
     public static pluginName = DATA_NAME;
 
-	#transition = transition();
+	 
+    #transition = bes.useTransition();
 
 	constructor(element: HTMLElement, options: ICollapseOptions | StringPluginArgChoices, index?: number) {
 
@@ -74,12 +74,13 @@ export default class Collapse {
 		s.params = setParams(Collapse.defaults, options, dataOptions);
 		s.toggling = false;
 		s.$btnElems = s.$element.find(`.${s.params.cssPrefix}__btn`).attr({'aria-expanded': 'false'});
+        s.btnElems  = s.$btnElems.toArray() as HTMLElement[];
 		s.$activeItem = null;
 		s.initLoaded = false;
 		// init
 		s.loadFromUrl();
 		s.handleEvents();
-		s.params.afterInit(s.$element);
+		s.params.afterInit(element);
 
 		Store(element, DATA_NAME, s);
 
@@ -169,8 +170,8 @@ export default class Collapse {
 		const p = s.params;
 
 		s.$activeItem = s.$element.find('#' + currElemID);
-		
-		if (s.$activeItem.elem.length) {
+
+		if (s.$activeItem.hasEls) {
 			
 			const 
 				cssOpen 	= `${cssPrefix}--open`,
@@ -227,9 +228,11 @@ export default class Collapse {
 					.rmClass([cssToggling,cssClosing])
 					.css({ height: null });
 				
-				s.params.afterClose(s.$btnElems, $itemsToClose);
+				s.params.afterClose(
+                    s.btnElems, 
+                    $itemsToClose.toArray() as HTMLElement[]
+                );
 				
-
 				if (!activeAlreadyOpen) {
 					s.$activeItem
 						.addClass(cssOpen)
@@ -245,7 +248,11 @@ export default class Collapse {
 					UrlState.set(p.urlFilterType, p.locationFilter, paramVal, p.historyType);
 				}
 		
-				s.params.afterOpen(s.$btnElems, s.$activeItem);
+				s.params.afterOpen(
+                    s.btnElems, 
+                    s.$activeItem.toArray() as HTMLElement[]
+                );
+
 				s.moveToTopOnOpen();
 			}, s.params.toggleDuration);			
 		}

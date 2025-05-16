@@ -7,19 +7,17 @@ import UrlState from "./core/UrlState";
 import trapFocus from './fn/trapFocus';
 import { camelCase, getDataOptions, reflow, setParams } from './util/helpers';
 import { noop } from './util/helpers';
-
-
-
+ 
 
 type ModalObj = {
-    $backdrop: BaseElem;
-    $content: BaseElem;
+    backdrop: HTMLDivElement;
+    content: HTMLElement[];
     contentAppended: boolean; //state
-    $dialog: BaseElem //modal dialog
-    $dialogContent: BaseElem // modal dialog content
-    $closeBtn: BaseElem
+    dialog: HTMLDivElement; //modal dialog
+    dialogContent: HTMLDivElement; // modal dialog content
+    closeBtn: HTMLButtonElement;
     id: string,
-    $modal: BaseElem, //outermost element
+    modal: HTMLDivElement; //outermost element
     close: () => void, //disable modal fn
     show: boolean //state
 }
@@ -131,12 +129,12 @@ export default class Modal {
 
             const s: Modal = plugin || Store(elem, DATA_NAME);
             const params = s.params;
-            const { $backdrop, $closeBtn } = s.modalObj;
+            const { backdrop, closeBtn } = s.modalObj;
 
             s.modalObj.show && s.modalObj.close();
             $be(s.element).off(`${s.params.enableEvent}.${s.modalEvent}` as EventName);
-            $closeBtn.off(`click.${s.modalEvent}Dismiss`);
-            if (params.backDropClose) $backdrop.off(`click.${s.modalEvent}Dismiss`);
+            $be(closeBtn).off(`click.${s.modalEvent}Dismiss`);
+            if (params.backDropClose) $be(backdrop).off(`click.${s.modalEvent}Dismiss`);
             $be(document).off([`keydown.${s.modalEvent}Dismiss`,`[${s.modalEvent}Dismiss]`]);
             $be(window).off([`popstate.${s.modalEvent}`,`[${s.modalEvent}]`]);
             
@@ -176,49 +174,58 @@ export default class Modal {
             s               = this,
             p               = s.params,
             rootCss         = p.cssPrefix + (p.modalCss ? ' ' + p.modalCss : ''),
-            $closeBtn       = $be(make(`button.${p.cssPrefix}__btn-dismiss`, { 
-                type: 'button', 
-                ariaLabel: p.closeBtnLabel 
-            }, `<i class="${p.closeBtnIconCss}"></i>`)),
-            $dialogContent  = $be(make(`div.${p.cssPrefix}__dialog-content`)),
-            $dialog         = $be(make(`div.${p.cssPrefix}__dialog`)).insert([$closeBtn, $dialogContent]),
-            $backdrop       = $be(make(`div.${p.cssPrefix}__backdrop`)),
-            $modal          = $be(make(`div.${rootCss}`)).attr({
-                id: s.modalID,
-                ariaLabel: (p.ariaLabel || s.element.dataset.ariaLabel) || null,
-                'aria-labelledby': (p.ariaLabelledby || s.element.dataset.ariaLabelledby) || null,
-            }).insert([$backdrop, $dialog]),
+            ariaLabelledby  = (p.ariaLabelledby || s.element.dataset.ariaLabelledby) || null,
+            modal           = make(`div.${rootCss}`, {
+                                    id: s.modalID,
+                                    ariaLabel: (p.ariaLabel || s.element.dataset.ariaLabel) || null 
+                                }),
+            closeBtn        = make(`button.${p.cssPrefix}__btn-dismiss`, { 
+                                    type: 'button', 
+                                    ariaLabel: p.closeBtnLabel 
+                                }, `<i class="${p.closeBtnIconCss}"></i>`),
+            dialogContent   = make(`div.${p.cssPrefix}__dialog-content`),
+            dialog          = make(`div.${p.cssPrefix}__dialog`),
+            backdrop        = make(`div.${p.cssPrefix}__backdrop`),
             $content        = $be(
                 s.params.src || 
                 (<HTMLAnchorElement>s.element).hash || 
                 s.element.dataset.modalSrc
             )
         ;
-            console.log('$content',$content)
-        return { 
-            $backdrop,
-            $content,
+        
+        // typescript doesn't like setting this in the object above
+        modal.setAttribute('aria-labelledby',ariaLabelledby);
+        
+        $be(dialog).insert([closeBtn, dialogContent]);
+        $be(modal).insert([backdrop, dialog]);
+
+        const modalObj: ModalObj = { 
+            backdrop,
+            content: $content.elem as HTMLElement[],
             contentAppended: false,
-            $dialog,
-            $dialogContent,
-            $closeBtn,
+            dialog,
+            dialogContent,
+            closeBtn,
             id: s.modalID, 
-            $modal,
+            modal,
             close: () => s.close(),
             show: false
         };
+
+        return modalObj;
     }
 
     enableModal() {
 
         const s = this;
-        const { $backdrop, $closeBtn, $content, $modal } = s.modalObj;
+        const { backdrop, closeBtn, content, modal } = s.modalObj;
         const p = s.params;
+        const $modal = $be(modal);
 
         s.enabledElem = document.activeElement;
         
         if (p.fromDOM) {
-            $content.insert(
+            $be(content).insert(
                 bes.make(`span.${p.cssPrefix}-content-placemarker`, {id: `${s.modalObj.id}_marker`}),
                 'after'
             );
@@ -226,15 +233,15 @@ export default class Modal {
 
         if (!s.modalObj.contentAppended) {
              
-            s.modalObj.$dialogContent.insert($content);
+            $be(s.modalObj.dialogContent).insert(content);
             Object.assign(s.modalObj, { contentAppended: true });
         } 
 
-        $be(p.appendTo).insert($modal);
+        $be(p.appendTo).insert(modal);
 
         // attach events after appended to DOM
-        $closeBtn.on(`click.${s.modalEvent}Dismiss`, () => s.close());
-        if (p.backDropClose) $backdrop.on(`click.${s.modalEvent}Dismiss`, () => s.close());
+        $be(closeBtn).on(`click.${s.modalEvent}Dismiss`, () => s.close());
+        if (p.backDropClose) $be(backdrop).on(`click.${s.modalEvent}Dismiss`, () => s.close());
 
         hasCb(p.onOpen, s.modalObj);
 
@@ -243,12 +250,12 @@ export default class Modal {
             s.openedOnce = true;
         }
 
-        $modal.attr({
+        $be(modal).attr({
             role: 'dialog',
             'aria-modal': 'true'
         })
 
-        reflow($modal.elem[0] as HTMLElement);
+        reflow(modal);
         
         setTimeout(() => {
             $modal.addClass(p.cssPrefix + '--show');
@@ -275,9 +282,11 @@ export default class Modal {
     close() {
 
         const s = this;
-        const { $backdrop, $closeBtn, $content, $modal } = s.modalObj;
-        
+        const { backdrop, closeBtn, content, modal } = s.modalObj;
         const p = s.params;
+
+        const $modal = $be(modal);
+        
         
         hasCb(p.onClose, s.modalObj);
 
@@ -285,9 +294,9 @@ export default class Modal {
         $modal.rmClass(p.cssPrefix + '--show');
 
         // detach events
-        $closeBtn.off(`click.${s.modalEvent}Dismiss`);
+        $be(closeBtn).off(`click.${s.modalEvent}Dismiss`);
 
-        if (p.backDropClose) $backdrop.off(`click.${s.modalEvent}Dismiss`);
+        if (p.backDropClose) $be(backdrop).off(`click.${s.modalEvent}Dismiss`);
         
         $be(document)
             .off([
@@ -322,7 +331,7 @@ export default class Modal {
             }
 
             if (p.fromDOM) {
-                $be('#' + s.modalObj.id + '_marker').insert($content[0], 'after').remove();
+                $be('#' + s.modalObj.id + '_marker').insert(content, 'after').remove();
                 Object.assign(s.modalObj, { contentAppended: false });
             }
 

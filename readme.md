@@ -602,96 +602,78 @@ __HTML__
 __JavaScript__
 ```javascript
 {
-    $('.btn-modal').modal({
+    $be('.btn-modal').modal({
         modalID: 'from-dom'
     });
 
-
-    $('#btn-gen-content').modal({
+    $be('#btn-gen-content').modal({
         locationFilter: 'modal',
-        src: $('<div>').attr({ class: 'gen-content' }), 
         fromDOM: false,
         modalID: 'gen-content',
         onOpenOnce(modalObj) {
          
-            modalObj.$dialogContent.on('click', '.dismiss', modalObj.close);
+            modalObj.$dialogContent.on('click', modalObj.close,'button.dismiss');
 
-            modalObj.$dialogContent.append(`
-            <h2>Some generated Content</h2>
-            <p>Ullamco <a href="#">link</a> laboris nisi ut aliquid ex ea commodi consequat. Sed haec quis possit intrepidus aestimare tellus. Quam diu etiam furor <a href="#">iste tuus</a> nos eludet? Curabitur est gravida et libero vitae dictum.</p>
-            <button type="button" class="button dismiss">Dimiss</button>
-        `);
+            modalObj.$dialogContent.insert(
+                `<h2>Some generated Content</h2>
+                <p>Ullamco <a href="#">link</a> laboris nisi ut aliquid ex ea commodi consequat. Sed haec quis possit intrepidus aestimare tellus. Quam diu etiam furor <a href="#">iste tuus</a> nos eludet? Curabitur est gravida et libero vitae dictum.</p>
+                <button type="button" class="button dismiss">Dimiss</button>`
+            );
         }
     });
+
  
 
     // quick and dirty image carousel
-    const $picGroup = $('.pic-group');
+    const $picGroup = $be('.pic-group');
 
-    $picGroup.each(function (index) {
-        const src = $('<img>').attr({ src: this.dataset.imgSrc || '', loading: 'lazy' });
-        const modalID = 'pic-group_' + index;
-        let imgIndex = index;
+    $picGroup.each((elem, index) => {
         
-        $(this).modal({
-            src, 
+        let imgIndex: number = index;
+
+        const 
+            modalID = 'pic-group_' + index,
+            imgDefaultSrc = elem.dataset.imgSrc,
+            img = make('img', {loading:'lazy', src: imgDefaultSrc, alt: ''}),
+            setImgSrc = (decrement: boolean) => {
+                if (decrement)  imgIndex = imgIndex === 0 ? $picGroup.size - 1 : imgIndex - 1;
+                else            imgIndex = imgIndex === $picGroup.size - 1 ? 0 : imgIndex + 1;
+                
+                return ($picGroup.elem[imgIndex] as HTMLElement).dataset.imgSrc || '';
+            }
+        ;
+
+        $be(elem).modal({
             modalID,
             modalCss: 'modal--gallery', 
             locationFilter: 'gallery',
             fromDOM: false,
             onOpenOnce(modalObj) {
-                
-                const $img = modalObj.$dialogContent.find('img');
-
-                modalObj.$dialogContent.append(`
+                modalObj.$dialogContent.insert(img).insert(`
                     <footer class="pic-group-nav">
                         <button type="button" class="prev-btn">Previous</button>
                         <button type="button" class="next-btn">Next</button>
                     </footer>
-                `);
-
-                modalObj.$dialogContent.on('click', 'button', function(e){
-                    if (this.classList.contains('prev-btn')) {
-
-                        imgIndex = imgIndex === 0 ? $picGroup.length - 1 : imgIndex - 1;
-                         
-                    } else {
-                        imgIndex = imgIndex === $picGroup.length - 1 ? 0 : imgIndex + 1;
-
-                    }
-                    
-                    if (imgIndex > 0 && $picGroup.length) {
-                        $img.attr({src: ($picGroup as any)[imgIndex].dataset.imgSrc || ''});
-                    }
-                });
+                `).on('click', (e, elem) => {
+                    const decrement = $be(elem).hasClass('prev-btn');
+                    img.src = setImgSrc(decrement);    
+                },'button');
             },
             onOpen(modalObj) {
-                const $img = modalObj.$dialogContent.find('img');
-
-                $(window).on('keyup.gallery', function(e:KeyboardEvent){
-                    const arrowRight = e.key === 'ArrowRight';
+                $be(window).on('keyup.gallery', function(e:KeyboardEvent){
                     const arrowLeft = e.key === 'ArrowLeft';
-                    if (e.key === 'Escape') {
-                        modalObj.close();
-                    }
-                    if (arrowLeft) {
-                        imgIndex = imgIndex === 0 ? $picGroup.length - 1 : imgIndex - 1;
-                    }
-                    if (arrowRight) {
-                        imgIndex = imgIndex === $picGroup.length - 1 ? 0 : imgIndex + 1;
-                    }
-                    if (arrowLeft || arrowRight) {
-                        if (imgIndex > 0 && $picGroup.length) {
-                            $img.attr({src: ($picGroup as any)[imgIndex].dataset.imgSrc || ''});
-                        }
+
+                    if (e.key === 'Escape') modalObj.close();
+                    if (e.key === 'ArrowRight' || arrowLeft) {
+                        img.src = setImgSrc(arrowLeft);
                     }
                 });
             },
             onClose() {
-                $(window).off('keyup.gallery');
+                $be(window).off('keyup.gallery');
             }
         });
-    })
+    });
 } 
 ```
 

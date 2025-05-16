@@ -17,10 +17,10 @@ export interface ISelectEnhanceDefaults {
     blurDuration: number;
     typeAheadDuration: number;
     observeSelectbox: boolean;
-    focusIn($select: BaseElem);
-    focusOut($select: BaseElem);
-    beforeChange($select: BaseElem);
-    afterChange($select: BaseElem);
+    focusIn(select: HTMLSelectElement);
+    focusOut(select: HTMLSelectElement);
+    beforeChange(select: HTMLSelectElement);
+    afterChange(select: HTMLSelectElement);
 }
 
 export interface ISelectEnhanceOptions extends Partial<ISelectEnhanceDefaults> {}
@@ -147,12 +147,12 @@ export default class SelectEnhance {
         s.$select.on(`mouseup.${EVENT_NAME}`, (ev, elem) => {
 
             if (!elem === prevElSelectedVal) {
-                s.params.beforeChange(s.$select);
+                s.params.beforeChange(s.select);
             }
 
         }, 'option')
         .on(`change.${EVENT_NAME}`, (ev, elem) => {
-            s.params.afterChange(s.$select);
+            s.params.afterChange(s.select);
             prevElSelectedVal = s.#getSelectedOptNode(s.$select);
         });
     }
@@ -183,7 +183,7 @@ export default class SelectEnhance {
             ($selectedBtn.elem[0] as HTMLElement).focus();
         }
 
-        s.params.focusIn(s.$select);
+        s.params.focusIn(s.select);
     }
 
     closeOptions(focusBack: boolean = true) {
@@ -215,7 +215,7 @@ export default class SelectEnhance {
                     `${cssPrefix}__list--focused`,
                     `${cssPrefix}__list--pos-above`
                 ]);
-            s.params.focusOut(s.$select);
+            s.params.focusOut(s.select);
           
             if (focusBack && s.selectEnhance.isSameNode(currSelectEnhance)) {
                 s.textInput.focus();
@@ -235,11 +235,11 @@ export default class SelectEnhance {
 
         const newSelectedState = !selectedOpt.selected;
 
-        s.params.beforeChange(s.$select);
+        s.params.beforeChange(s.select);
 
         selectedOpt.selected = true;
 
-        s.params.afterChange(s.$select); 
+        s.params.afterChange(s.select); 
         s.$selectList.find('.' + cssPrefix + '__list-btn[aria-selected]').attr({ 'aria-selected': 'false' });
 
         $be(optionBtn).attr({ 'aria-selected': newSelectedState + '' });
@@ -720,6 +720,6 @@ declare module 'base-elem-js' {
 
 declare module 'cash-dom' {
     interface Cash {
-        selectEnhance(options?: ISelectEnhanceOptions | StringPluginArgChoices): BaseElem;
+        selectEnhance(options?: ISelectEnhanceOptions | StringPluginArgChoices): Cash;
     }
 }

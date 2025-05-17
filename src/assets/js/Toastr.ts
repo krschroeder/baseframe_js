@@ -212,8 +212,10 @@ export default class Toastr {
     }
 }
 
+export interface ToastrPlugin {
+    toastr(options?: IToasterOptions | StringPluginArgChoices): BaseElem;
+}
+
 declare module 'base-elem-js' {
-    interface BaseElem {
-        toastr(options?: IToasterOptions | StringPluginArgChoices): BaseElem;
-    }
+    interface BaseElem extends ToastrPlugin {}
 }

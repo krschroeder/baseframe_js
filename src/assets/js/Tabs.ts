@@ -284,8 +284,10 @@ export default class Tabs {
 	}
 }
 
+export interface TabsPlugin {
+    tabs(options?: ITabsOptions | StringPluginArgChoices): BaseElem;
+}
+
 declare module 'base-elem-js' {
-    interface BaseElem {
-        tabs(options?: ITabsOptions | StringPluginArgChoices): BaseElem;
-    }
+    interface BaseElem extends TabsPlugin {}
 }

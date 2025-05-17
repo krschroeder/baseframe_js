@@ -211,8 +211,10 @@ export default class AccessibleMenu {
 	}
 }
 
+export interface AccessibleMenuPlugin {
+	accessibleMenu(options?: IAccessibleMenuOptions | StringPluginArgChoices): BaseElem;
+}
+ 
 declare module 'base-elem-js' {
-	export interface BaseElem {
-		accessibleMenu(options?: IAccessibleMenuOptions | StringPluginArgChoices): BaseElem;
-	}
+    interface BaseElem extends AccessibleMenuPlugin {}
 }

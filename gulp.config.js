@@ -12,6 +12,24 @@ const
     rollupBasePlugins = [resolve(), typescript(), commonjs()]
 ;
 
+const jsDemoPaths = [
+    'src/demo/assets/js/demo.ts',
+    'src/demo/assets/js/demo-cash.ts'
+]
+const jsPaths = [];
+
+if (BUILD_DEMO ) {
+    jsPaths.push(...jsDemoPaths)
+} else {
+    jsPaths.push(
+        'src/assets/js/**/*.ts'
+    );
+
+    if (!PRODUCTION) {
+        jsPaths.push(...jsDemoPaths);
+    }
+}
+
 const config = {
     version: VERSION,
     production: PRODUCTION,
@@ -19,10 +37,7 @@ const config = {
     src: {
         img:    'src/demo/assets/img/**/*.{jpg,png,webp,svg,gif}',
         css:    ['src/assets/scss/**/*.scss', 'src/demo/assets/scss/**/*.scss'],
-        js:     BUILD_DEMO ? 'src/demo/assets/js/demo.ts' : [
-                    'src/assets/js/**/*.ts',
-                    PRODUCTION ? '': 'src/demo/assets/js/demo.ts'
-                ].filter(e => e),
+        js:     jsPaths,
         html:   [BUILD_DEMO ? 'src/demo/index.{html,hbs}' : 'src/demo/**/*.{html,hbs}'],
         readme: 'src/readmes/_readme.md'
     },

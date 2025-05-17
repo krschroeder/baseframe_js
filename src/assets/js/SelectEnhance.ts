@@ -637,7 +637,7 @@ export default class SelectEnhance {
         const s = this;
 
         if (s.optionsShown) {
-            console.log(s.$selectEnhance);
+            
             const 
                 selWrapRects = s.$selectEnhance.elemRects(),
                 { cssPrefix } = s.params,
@@ -712,14 +712,12 @@ export default class SelectEnhance {
     }
 }
 
-declare module 'base-elem-js' {
-    interface BaseElem {
-        selectEnhance(options?: ISelectEnhanceOptions | StringPluginArgChoices): BaseElem;
-    }
+ 
+
+export interface SelectEnhancePlugin {
+    selectEnhance(options?: ISelectEnhanceOptions | StringPluginArgChoices): BaseElem;
 }
 
-declare module 'cash-dom' {
-    interface Cash {
-        selectEnhance(options?: ISelectEnhanceOptions | StringPluginArgChoices): Cash;
-    }
+declare module 'base-elem-js' {
+    interface BaseElem extends SelectEnhancePlugin {}
 }

@@ -273,8 +273,10 @@ export default class Collapse {
 	}
 }
 
+export interface CollapsePlugin {
+  collapse(options?: ICollapseOptions | StringPluginArgChoices): this;
+}
+ 
 declare module 'base-elem-js' {
-    export interface BaseElem {
-        collapse(options?: ICollapseOptions | StringPluginArgChoices): BaseElem;
-	}
+    interface BaseElem extends CollapsePlugin {}
 }

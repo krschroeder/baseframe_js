@@ -284,8 +284,10 @@ export default class Parallax {
 	}
 }
 
+export interface ParallaxPlugin {
+   parallax(options?: IParallaxOptions | StringPluginArgChoices): BaseElem;
+}
+ 
 declare module 'base-elem-js' {
-    interface BaseElem {
-        parallax(options?: IParallaxOptions | StringPluginArgChoices): BaseElem;
-    }
+    interface BaseElem extends ParallaxPlugin {}
 }

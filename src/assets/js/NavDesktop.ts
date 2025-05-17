@@ -207,8 +207,12 @@ export default class NavDesktop {
 	}
 }
 
+ 
+
+export interface NavDesktopPlugin {
+    navDesktop(options?: INavDesktopOptions | StringPluginArgChoices): BaseElem;
+}
+ 
 declare module 'base-elem-js' {
-	export interface BaseElem {
-		navDesktop(options?: INavDesktopOptions | StringPluginArgChoices): BaseElem;
-	}
+    interface BaseElem extends NavDesktopPlugin {}
 }

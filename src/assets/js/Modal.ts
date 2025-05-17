@@ -357,9 +357,10 @@ export default class Modal {
     }
 }
 
-
+export interface ModalPlugin {
+    modal(options: IModalOptions | StringPluginArgChoices): BaseElem;
+}
+ 
 declare module 'base-elem-js' {
-    export interface BaseElem {
-        modal(options: IModalOptions | StringPluginArgChoices): BaseElem;
-    }
+    interface BaseElem extends ModalPlugin {}
 }

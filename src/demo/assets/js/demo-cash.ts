@@ -1,21 +1,37 @@
-import $                from 'cash-dom';
+import $, { type Cash } from 'cash-dom';
 
-import libraryExtend    from '../../../assets/js/core/libraryExtend';
-import Collapse         from '../../../assets/js/Collapse';
-import LazyLoad         from '../../../assets/js/LazyLoad';
-import Modal            from '../../../assets/js/Modal';
-import Tabs             from '../../../assets/js/Tabs';
-import Toastr           from '../../../assets/js/Toastr';
-import AccessibleMenu   from '../../../assets/js/AccessibleMenu';
-import NavDesktop       from '../../../assets/js/NavDesktop';
-import NavMobile        from '../../../assets/js/NavMobile';
-import Parallax         from '../../../assets/js/Parallax';
-import SelectEnhance    from '../../../assets/js/SelectEnhance';
-import throttledResize  from '../../../assets/js/fn/throttleResize';
-import ScrollSpy        from '../../../assets/js/ScrollSpy';
+import libraryExtend, {
+    Collapse,       type CollapsePlugin,
+    LazyLoad,       type LazyLoadPlugin,
+    Modal,          type ModalPlugin,
+    Tabs,           type TabsPlugin,
+    Toastr,         type ToastrPlugin,
+    AccessibleMenu, type AccessibleMenuPlugin,
+    NavDesktop,     type NavDesktopPlugin,
+    NavMobile,      type NavMobilePlugin,
+    Parallax,       type ParallaxPlugin, 
+    SelectEnhance,  type SelectEnhancePlugin,
+    ScrollSpy,      type ScrollSpyPlugin,
+    throttledResize
+} from '../../../assets/js';
+
+declare module 'cash-dom' {
+    interface Cash extends
+        CollapsePlugin,
+        LazyLoadPlugin,
+        ModalPlugin,
+        TabsPlugin,
+        ToastrPlugin,
+        AccessibleMenuPlugin,
+        NavDesktopPlugin,
+        NavMobilePlugin,
+        ParallaxPlugin,
+        SelectEnhancePlugin,
+        ScrollSpyPlugin {}
+}
 
 libraryExtend([
-    AccessibleMenu, 
+    AccessibleMenu,
     Collapse, 
     LazyLoad,
     Modal, 
@@ -28,28 +44,24 @@ libraryExtend([
     Toastr
 ], $, true );
 
-const { make } = $be.static;
-
- 
-console.log($be.BaseElem.prototype);
-
 $('select').selectEnhance();
+
 const $collapseGroup = $('.collapse-group-1');
-$collapseGroup.on('click.collapseHeading', (ev, elem) => {
-    const h2 = elem as HTMLElement;
+$collapseGroup.on('click.collapseHeading', '.collapse__header h2', function(ev) {
+    const h2 = this as HTMLElement;
     const $btn = $(h2.parentElement as HTMLElement).find('button');
 
-    if ($btn.hasEls) {
+    if ($btn.length) {
         $btn.trigger('click');
     }
-},'.collapse__header h2').collapse({
+}).collapse({
     moveToTopOnOpen: false,
     toggleGroup: true,
     locationFilter: 'collapse'
 });
 
 throttledResize(() => {
-    const inMobile = $('#mobile-nav-btn').elemRects().width !== 0; //hidden if zero
+    const inMobile = $('#mobile-nav-btn').outerWidth() !== 0; //hidden if zero
     $collapseGroup.collapse({
         moveToTopOnOpen:  inMobile,
     })
@@ -81,7 +93,7 @@ $('#example-nav')
 
 // Parallax
 $('#jsBtnSCrollHorizontal').on('click',function(){
-    $('main').tgClass('body-content--scroll-x');
+    $('main').toggleClass('body-content--scroll-x');
     $('.do-parallax--hz').parallax('update')
 })
 $('.do-parallax').parallax({speed:25, bgFill:true});
@@ -132,9 +144,9 @@ $('.lazy-highlight').lazyLoad({
 
     const $toastr2 = $('#toastr-2');
 
-    if ($toastr2.hasElems()) {
+    if ($toastr2.length) {
         // Example 2: extend perhaps in Cash then call on click
-        const toastr2 = new Toastr($toastr2.elem[0] as HTMLElement, {
+        const toastr2 = new Toastr($toastr2[0] as HTMLElement, {
             content: 'Toast is good for breakfast',
             duration: 5000
         });
@@ -174,9 +186,9 @@ $('.lazy-highlight').lazyLoad({
         modalID: 'gen-content',
         onOpenOnce(modalObj) {
          
-            modalObj.$dialogContent.on('click', modalObj.close,'button.dismiss');
+            $(modalObj.dialogContent).on('click', 'button.dismiss', modalObj.close);
 
-            modalObj.$dialogContent.append(`
+            $(modalObj.dialogContent).append(`
             <h2>Some generated Content</h2>
             <p>Ullamco <a href="#">link</a> laboris nisi ut aliquid ex ea commodi consequat. Sed haec quis possit intrepidus aestimare tellus. Quam diu etiam furor <a href="#">iste tuus</a> nos eludet? Curabitur est gravida et libero vitae dictum.</p>
             <button type="button" class="button dismiss">Dimiss</button>
@@ -188,37 +200,37 @@ $('.lazy-highlight').lazyLoad({
     // quick and dirty image carousel
     const $picGroup = $('.pic-group');
 
-    $picGroup.each((elem, index) => {
+    $picGroup.each((index, elem) => {
         
         let imgIndex: number = index;
 
         const 
             modalID = 'pic-group_' + index,
             imgDefaultSrc = elem.dataset.imgSrc,
-            img = make('img', {loading:'lazy', src: imgDefaultSrc, alt: ''}),
+            $img = $('<img>').attr({loading:'lazy', src: imgDefaultSrc, alt: ''}),
             setImgSrc = (decrement: boolean) => {
-                if (decrement)  imgIndex = imgIndex === 0 ? $picGroup.size - 1 : imgIndex - 1;
-                else            imgIndex = imgIndex === $picGroup.size - 1 ? 0 : imgIndex + 1;
+                if (decrement)  imgIndex = imgIndex === 0 ? $picGroup.length - 1 : imgIndex - 1;
+                else            imgIndex = imgIndex === $picGroup.length - 1 ? 0 : imgIndex + 1;
                 
-                return ($picGroup.elem[imgIndex] as HTMLElement).dataset.imgSrc || '';
+                return ($picGroup[imgIndex] as HTMLElement).dataset.imgSrc || '';
             }
         ;
 
         $(elem).modal({
             modalID,
-            modalCss: 'modal--gallery', ß
+            modalCss: 'modal--gallery',
             locationFilter: 'gallery',
             fromDOM: false,
             onOpenOnce(modalObj) {
-                modalObj.$dialogContent.append(img).append(`
+                $(modalObj.dialogContent).append($img).append(`
                     <footer class="pic-group-nav">
                         <button type="button" class="prev-btn">Previous</button>
                         <button type="button" class="next-btn">Next</button>
                     </footer>
-                `).on('click', (e, elem) => {
-                    const decrement = $(elem).hasClass('prev-btn');
-                    img.src = setImgSrc(decrement);    
-                },'button');
+                `).on('click', 'button',function(ev) {
+                    const decrement = $(this).hasClass('prev-btn');
+                    $img.attr({src: setImgSrc(decrement)});
+                });
             },
             onOpen(modalObj) {
                 $(window).on('keyup.gallery', function(e:KeyboardEvent){
@@ -226,7 +238,8 @@ $('.lazy-highlight').lazyLoad({
 
                     if (e.key === 'Escape') modalObj.close();
                     if (e.key === 'ArrowRight' || arrowLeft) {
-                        img.src = setImgSrc(arrowLeft);
+                        
+                        $img.attr({src: setImgSrc(arrowLeft)});
                     }
                 });
             },

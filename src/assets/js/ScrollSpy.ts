@@ -304,8 +304,10 @@ export default class ScrollSpy {
     }
 }
 
+export interface ScrollSpyPlugin {
+   scrollSpy(options?: IScrollSpyOptions | StringPluginArgChoices): BaseElem;
+}
+ 
 declare module 'base-elem-js' {
-    interface BaseElem {
-        scrollSpy(options?: IScrollSpyOptions | StringPluginArgChoices): BaseElem;
-    }
+    interface BaseElem extends ScrollSpyPlugin {}
 }

@@ -1,19 +1,19 @@
 import $be              from 'base-elem-js';
-import $                from 'cash-dom';
 
-import libraryExtend    from '../../../assets/js/core/libraryExtend';
-import Collapse         from '../../../assets/js/Collapse';
-import LazyLoad         from '../../../assets/js/LazyLoad';
-import Modal            from '../../../assets/js/Modal';
-import Tabs             from '../../../assets/js/Tabs';
-import Toastr           from '../../../assets/js/Toastr';
-import AccessibleMenu   from '../../../assets/js/AccessibleMenu';
-import NavDesktop       from '../../../assets/js/NavDesktop';
-import NavMobile        from '../../../assets/js/NavMobile';
-import Parallax         from '../../../assets/js/Parallax';
-import SelectEnhance    from '../../../assets/js/SelectEnhance';
-import throttledResize  from '../../../assets/js/fn/throttleResize';
-import ScrollSpy        from '../../../assets/js/ScrollSpy';
+import libraryExtend, {
+    Collapse,
+    LazyLoad,
+    Modal,
+    Tabs,
+    Toastr,
+    AccessibleMenu,
+    NavDesktop,
+    NavMobile,
+    Parallax,
+    SelectEnhance,
+    throttledResize,
+    ScrollSpy
+} from '../../../assets/js';
 
 libraryExtend([
     AccessibleMenu, 
@@ -175,9 +175,9 @@ $be('.lazy-highlight').lazyLoad({
         modalID: 'gen-content',
         onOpenOnce(modalObj) {
          
-            modalObj.$dialogContent.on('click', modalObj.close,'button.dismiss');
-
-            modalObj.$dialogContent.insert(`
+            $be(modalObj.dialogContent)
+            .on('click', modalObj.close,'button.dismiss')
+            .insert(`
             <h2>Some generated Content</h2>
             <p>Ullamco <a href="#">link</a> laboris nisi ut aliquid ex ea commodi consequat. Sed haec quis possit intrepidus aestimare tellus. Quam diu etiam furor <a href="#">iste tuus</a> nos eludet? Curabitur est gravida et libero vitae dictum.</p>
             <button type="button" class="button dismiss">Dimiss</button>
@@ -211,7 +211,7 @@ $be('.lazy-highlight').lazyLoad({
             locationFilter: 'gallery',
             fromDOM: false,
             onOpenOnce(modalObj) {
-                modalObj.$dialogContent.insert(img).insert(`
+                $be(modalObj.dialogContent).insert(img).insert(`
                     <footer class="pic-group-nav">
                         <button type="button" class="prev-btn">Previous</button>
                         <button type="button" class="next-btn">Next</button>

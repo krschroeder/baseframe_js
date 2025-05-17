@@ -14,32 +14,47 @@ const libraryExtend = <T extends PluginBaseClass>(Plugins: T | T[], Library: Lib
     if (isArr(Plugins)) {
         Plugins.forEach(Plugin => libraryExtend(Plugin, Library, notify));
     } else {
-        const dataName      = Plugins.pluginName;
-        const pluginName    = lowercaseFirstLetter(dataName);
-        const $library      = (Library as Be).BaseElem ? (Library as Be).BaseElem.prototype : (Library as CashStatic).fn;
+        const 
+            dataName      = Plugins.pluginName,
+            pluginName    = lowercaseFirstLetter(dataName),
+            isBaseElem    = !!(Library as Be).BaseElem,
+            $library      = isBaseElem ? (Library as Be).BaseElem.prototype : (Library as CashStatic).fn
+        ;
+
+        const storeInstanceEach = (elem, index, params) => {
+            const Instance = Store(elem, dataName);
+
+            if (!Instance) Store( elem, dataName, new Plugins(elem, params, index));
+            else {
+                const canUpdate = Instance.handleUpdate && bes.toType(Instance.handleUpdate) === 'function';
+
+                if (isStr(params)) {
+                    if (params === 'remove') Plugins.remove(elem);
+                    if (params === 'update' && canUpdate) Instance.handleUpdate();
+                    return;
+                }
+                
+                checkIfParamsExist(Instance.params, params, notify);
+                bes.merge(Instance.params, params);
+
+                if (canUpdate) Instance.handleUpdate();
+                if (notify) console.log(`Params updated`, Instance.params);
+            }
+        }
         
         const o = { [pluginName]: function (params) {
             const s = this;
-            return s.each((elem, index) => {
-                const Instance = Store(elem, dataName);
-
-                if (!Instance) Store( elem, dataName, new Plugins(elem, params, index));
-                else {
-                    const canUpdate = Instance.handleUpdate && bes.toType(Instance.handleUpdate) === 'function';
-
-                    if (isStr(params)) {
-                        if (params === 'remove') Plugins.remove(elem);
-                        if (params === 'update' && canUpdate) Instance.handleUpdate();
-                        return;
-                    }
-                    
-                    checkIfParamsExist(Instance.params, params, notify);
-                    bes.merge(Instance.params, params);
-
-                    if (canUpdate) Instance.handleUpdate();
-                    if (notify) console.log(`Params updated`, Instance.params);
-                }
-            });
+            if (isBaseElem) {
+                return s.each((elem, index) => {
+                    storeInstanceEach(elem, index, params)
+                });
+            } else {
+                //Cash or jQuery
+                return s.each(function(index, elem){
+                    storeInstanceEach(elem, index, params);
+                })
+            }
+            
         }};
 
         $library[pluginName] = o[pluginName];

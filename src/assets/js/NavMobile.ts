@@ -366,8 +366,10 @@ export default class NavMobile {
 
 }
 
+export interface NavMobilePlugin {
+    navMobile(options: INavMobileOptions | StringPluginArgChoices): BaseElem;
+}
+ 
 declare module 'base-elem-js' {
-	interface BaseElem {
-		navMobile(options: INavMobileOptions | StringPluginArgChoices): BaseElem;
-	}
+    interface BaseElem extends NavMobilePlugin {}
 }

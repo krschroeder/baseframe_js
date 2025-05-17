@@ -140,8 +140,10 @@ export default class LazyLoad {
     }
 }
 
+export interface LazyLoadPlugin {
+    lazyLoad(options: ILazyLoadOptions | StringPluginArgChoices): BaseElem;
+}
+ 
 declare module 'base-elem-js' {
-    export interface BaseElem {
-        lazyLoad(options: ILazyLoadOptions | StringPluginArgChoices): BaseElem;
-    }
+    interface BaseElem extends LazyLoadPlugin {}
 }

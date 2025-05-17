@@ -55,6 +55,7 @@
     "@rollup/plugin-typescript": "^12.1.2",
     "babel-loader": "^9.1.3",
     "browser-sync": "^2.18.13",
+    "cash-dom": "^8.1.5",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^8.0.0",
     "gulp-babel": "^8.0.0",
@@ -85,7 +86,6 @@
     "yargs": "^8.0.2"
   },
   "dependencies": {
-    "base-elem-js": "^1.12.0",
-    "cash-dom": "^8.1.5"
+    "base-elem-js": "^1.12.0"
   }
 }

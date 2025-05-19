@@ -35,8 +35,10 @@ const { make } = $be.static;
 console.log($be.BaseElem.prototype);
 
 $be('select').selectEnhance();
-const $collapseGroup = $be('.collapse-group-1');
-$collapseGroup.on('click.collapseHeading', (ev, elem) => {
+
+const $collapseGroup1 = $be('.collapse-group-1');
+
+$collapseGroup1.on('click.collapseHeading', (ev, elem) => {
     const h2 = elem as HTMLElement;
     const $btn = $be(h2.parentElement as HTMLElement).find('button');
 
@@ -49,9 +51,15 @@ $collapseGroup.on('click.collapseHeading', (ev, elem) => {
     locationFilter: 'collapse'
 });
 
+const $collapseGroup2 = $be('.collapse-group-2');
+$collapseGroup2.collapse({
+    toggleGroup: false,
+    locationFilter: 'collapse2'
+})
+
 throttledResize(() => {
     const inMobile = $be('#mobile-nav-btn').elemRects().width !== 0; //hidden if zero
-    $collapseGroup.collapse({
+    $collapseGroup1.collapse({
         moveToTopOnOpen:  inMobile,
     })
 },'collapse',true);

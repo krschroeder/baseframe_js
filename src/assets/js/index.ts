@@ -4,7 +4,6 @@ export { default as Cookies }           from './fn/Cookies';
 export { default as UrlState }          from './core/UrlState';
 export { default as smoothScroll }      from './fn/smoothScroll';
 export { default as throttledResize }   from './fn/throttleResize';
-export { default as transition }        from './fn/transition';
 export { default as trapFocus }         from './fn/trapFocus';
 
 export { default as AccessibleMenu, type AccessibleMenuPlugin } from './AccessibleMenu';

@@ -1,10 +1,7 @@
-// import type { BaseElem } from "cash-dom";
 import type { LocationHashTracking, StringPluginArgChoices } from './types';
+import $be, { type BaseElem } from "base-elem-js";
 
-// import $ from 'cash-dom';
-import $be, {type BaseElem} from "base-elem-js";
-
-import { getDataOptions, noop, setParams } from './util/helpers';
+import { getDataOptions, noop, reflow, setParams } from './util/helpers';
 
 import smoothScroll from './fn/smoothScroll';
 import UrlState 	from "./core/UrlState"; 
@@ -25,6 +22,8 @@ export interface ICollapseDefaults extends LocationHashTracking {
 
 export interface ICollapseOptions extends Partial<ICollapseDefaults> {};
 
+const { css, findOne, useTransition } = $be.static;
+
 const VERSION = "4.0.0";
 const DATA_NAME = 'Collapse';
 const EVENT_NAME = 'collapse';
@@ -44,11 +43,11 @@ const DEFAULTS: ICollapseDefaults = {
 	afterInit: noop
 };
 
-const bes = $be.static;
 
 export default class Collapse {
 	 
 	public $element: BaseElem;
+    public element: HTMLElement;
 	public params: ICollapseDefaults;
 	public toggling: boolean;
 	public $btnElems: BaseElem | null;
@@ -61,14 +60,14 @@ export default class Collapse {
     public static pluginName = DATA_NAME;
 
 	 
-    #transition = bes.useTransition();
+    #transition = useTransition();
 
 	constructor(element: HTMLElement, options: ICollapseOptions | StringPluginArgChoices, index?: number) {
 
 		const s = this;
 
+        s.element = element;
 		s.$element = $be(element);
-
 		const dataOptions = getDataOptions(element, EVENT_NAME);
 	 
 		s.params = setParams(Collapse.defaults, options, dataOptions);
@@ -163,99 +162,95 @@ export default class Collapse {
 
 	toggleAction(currElemID: string) {
 		const s = this;
-
-		if (s.toggling || currElemID === null) return;
-		
-		const { cssPrefix } = s.params;
 		const p = s.params;
+        const activeItem = findOne('#' + currElemID, s.element)
 
-		s.$activeItem = s.$element.find('#' + currElemID);
-
-		if (s.$activeItem.hasEls) {
-			
-			const 
-				cssOpen 	= `${cssPrefix}--open`,
-				cssToggling = `${cssPrefix}--toggling`,
-				cssOpening 	= `${cssPrefix}--opening`,
-				cssClosing 	= `${cssPrefix}--closing`,
-				cssBodyOpen = `.${cssPrefix}__body.${cssOpen}`
-			;
-			const $currOpenItems = s.$element.find(cssBodyOpen);
-			const $itemsToClose = $currOpenItems.filter(el =>  p.toggleGroup || el.id === currElemID);
-			const activeAlreadyOpen = s.$activeItem.hasClass(cssOpen);
-
-
-			$itemsToClose.each((elem) => {
-				bes.css(elem, { height: elem.scrollHeight + 'px' });
-			});
-			
-			s.#transition(() => {
-				s.toggling = true;
-				
-				s.$btnElems.each((elem) => {
-					const $btn = $be(elem);
-					const isCurrent = $btn.attr('aria-controls') === currElemID;
-					const expanded = isCurrent && $btn.attr('aria-expanded') === 'false';
-					
-					if (p.toggleGroup) {
-						$btn.attr({ 'aria-expanded': expanded + '' });
-						
-					} else {
-						if (isCurrent) {
-							$btn.attr({ 'aria-expanded': expanded + '' });
-						}
-					}
-				});
-				 
-				$itemsToClose
-					.rmClass(cssOpen)
-					.addClass([cssToggling, cssClosing])
-					.css({ height: '0px' });
-			
-
-				if (!activeAlreadyOpen) {
-
-					s.$activeItem
-						.addClass([cssToggling, cssOpening])
-						.css({ height: (s.$activeItem.elem[0] as HTMLElement).scrollHeight + 'px' })
-				}
-
-			},
-			() => {
-				s.toggling = false;
-
-				$itemsToClose
-					.rmClass([cssToggling,cssClosing])
-					.css({ height: null });
-				
-				s.params.afterClose(
-                    s.btnElems, 
-                    $itemsToClose.toArray() as HTMLElement[]
-                );
-				
-				if (!activeAlreadyOpen) {
-					s.$activeItem
-						.addClass(cssOpen)
-						.rmClass([cssToggling, cssOpening])
-						.css({ height: null });
-				}
-
-				// Update History in URL
-				if ( p.urlFilterType !== 'none') {
-					const paramList = s.$element.find(cssBodyOpen).map((el:HTMLElement) => el.id) as string[];
-					const paramVal = paramList.length === 1 ? paramList[0] : paramList.length > 0 ? paramList : null;
-
-					UrlState.set(p.urlFilterType, p.locationFilter, paramVal, p.historyType);
-				}
+		if (s.toggling || currElemID === null || !activeItem) return;
 		
-				s.params.afterOpen(
-                    s.btnElems, 
-                    s.$activeItem.toArray() as HTMLElement[]
-                );
+        s.$activeItem = s.$element.find('#' + currElemID);
+        
+        const 
+            cssOpen 	        = `${p.cssPrefix}--open`,
+            cssToggling         = `${p.cssPrefix}--toggling`,
+            cssOpening 	        = `${p.cssPrefix}--opening`,
+            cssClosing 	        = `${p.cssPrefix}--closing`,
+            cssBodyOpen         = `.${p.cssPrefix}__body.${cssOpen}`,
+            $currOpenItems      = s.$element.find(cssBodyOpen),
+            $itemsToClose       = $currOpenItems.filter(el =>  p.toggleGroup || el.id === currElemID),
+            activeAlreadyOpen   = s.$activeItem.hasClass(cssOpen)
+        ;
 
-				s.moveToTopOnOpen();
-			}, s.params.toggleDuration);			
-		}
+        $itemsToClose.each((elem) => css(elem, { height: elem.scrollHeight + 'px' }));
+        
+        const startToggle = () => {
+            s.toggling = true;
+            
+            s.$btnElems.each((elem) => {
+                const $btn = $be(elem);
+                const isCurrent = $btn.attr('aria-controls') === currElemID;
+                const expanded = isCurrent && $btn.attr('aria-expanded') === 'false';
+
+                $btn.attr({ 'aria-expanded': expanded + '' });
+            });
+                
+            $itemsToClose
+                .rmClass(cssOpen)
+                .addClass([cssToggling, cssClosing])
+                .each(elem => reflow(elem))
+                .css({ height: '0px' })
+            ;
+
+            if (!activeAlreadyOpen) {
+
+                s.$activeItem
+                    .addClass([cssToggling, cssOpening])
+                    .css({ 
+                        height: activeItem.scrollHeight + 'px' 
+                    });
+            }
+
+        },
+        endToggle = () => {
+            s.toggling = false;
+
+            $itemsToClose
+                .rmClass([cssToggling,cssClosing])
+                .css({ height: null });
+            
+            s.params.afterClose(
+                s.btnElems, 
+                $itemsToClose.toArray() as HTMLElement[]
+            );
+            
+            if (!activeAlreadyOpen) {
+                s.$activeItem
+                    .addClass(cssOpen)
+                    .rmClass([cssToggling, cssOpening])
+                    .css({ height: null });
+            }
+
+            // Update History in URL
+            if ( p.urlFilterType !== 'none') {
+                const paramList = s.$element.find(cssBodyOpen).map((el:HTMLElement) => el.id) as string[];
+                const paramVal = paramList.length === 1 ? paramList[0] : paramList.length > 0 ? paramList : null;
+
+                UrlState.set(p.urlFilterType, p.locationFilter, paramVal, p.historyType);
+            }
+    
+            s.params.afterOpen(
+                s.btnElems, 
+                s.$activeItem.toArray() as HTMLElement[]
+            );
+
+            s.moveToTopOnOpen();
+        }
+        
+        s.#transition(
+            startToggle, 
+            endToggle, 
+            s.params.toggleDuration
+        );
+
 	}
 
 	moveToTopOnOpen() {
@@ -274,7 +269,7 @@ export default class Collapse {
 }
 
 export interface CollapsePlugin {
-  collapse(options?: ICollapseOptions | StringPluginArgChoices): this;
+    collapse(options?: ICollapseOptions | StringPluginArgChoices): this;
 }
  
 declare module 'base-elem-js' {

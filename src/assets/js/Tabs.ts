@@ -7,7 +7,7 @@ import { getDataOptions, setParams } from "./util/helpers";
  
 import Store from "./core/Store";
 import UrlState from "./core/UrlState";
-import transition from "./fn/transition";
+
 
 type tabDefaultContent = string;
 
@@ -21,7 +21,9 @@ export interface ITabsDefaults extends LocationHashTracking {
 	onInit(tabsList: HTMLElement, tabsBody: HTMLElement): void
 }
 
-export interface ITabsOptions extends Partial<ITabsDefaults> {}
+export interface ITabsOptions extends Partial<ITabsDefaults> {};
+
+const { findOne, useTransition } = $be.static;
 
 const VERSION = "1.5.0";
 const DATA_NAME = 'Tabs';
@@ -65,26 +67,23 @@ export default class Tabs {
     public static version = VERSION;
     public static pluginName = DATA_NAME;
 
-	#transition = transition();
+	#transition = useTransition();
 
 	constructor(element: HTMLElement, options: ITabsOptions | StringPluginArgChoices) {
 		const 
             s = this,
 		    dataOptions = getDataOptions(element, EVENT_NAME),
 		    p = setParams(Tabs.defaults, options, dataOptions),
-            $element = $be(element),
-            $tabsNav = $element.find(`.${p.cssPrefix}__nav`).get(0),
-            $tabsBody = $element.find(`.${p.cssPrefix}__body`).get(0),
-		    tabsBody = $tabsBody.elem[0] as HTMLElement
+            $element = $be(element)
         ;
 		
         s.$element = $element;
 		s.params = p; 
-		s.$tabsNav = $tabsNav;
-		s.$tabsBody = $tabsBody;
-        s.tabsNav = $tabsNav.elem[0] as HTMLElement;
-		s.tabsBody = $tabsBody.elem[0] as HTMLElement;
-		s.$tabsBodyPanels = s.$tabsBody.find(`.${p.cssPrefix}__panel`, elem => elem.parentElement === tabsBody);
+		s.tabsNav =  findOne(`.${p.cssPrefix}__nav`, element);
+		s.tabsBody = findOne(`.${p.cssPrefix}__body`, element);
+        s.$tabsNav = $be(s.tabsNav);
+		s.$tabsBody = $be(s.tabsBody);
+		s.$tabsBodyPanels = s.$tabsBody.find(`.${p.cssPrefix}__panel`, elem => elem.parentElement === s.tabsBody);
 		s.$tabsNavBtns = s.$tabsNav.find('a, button');
 		s.tabsNavBtns = s.$tabsNavBtns.toArray() as PrimaryClickElems[];
 		s.prevTabId = null;

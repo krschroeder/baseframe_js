@@ -165,8 +165,9 @@ export default class AccessibleMenu {
 			 
 			// s.activeElem = document.activeElement as HTMLElement;
             s.$aeLiParents = $be(s.activeElem).parents('li', s.element);
-
+           
 			if (e.key == KEYS.esc) {
+               
                 s.#focusFirstElem(s.$aeLiParents);
             }
 
@@ -187,6 +188,7 @@ export default class AccessibleMenu {
         if ($focusEls.hasEls) {
             const focusEl = $focusEls.elem[index] as HTMLElement;
             // s.$aeLiParents.rmClass(p.focusCss);
+            console.log(focusEl)
             $be(focusEl.closest('li')).tgClass(p.focusCss, !prev);
             focusEl.focus();
         }

@@ -94,6 +94,7 @@ export default class Modal {
     public trappedFocus: any;
     public enabledElem: Element | null;
     public openedOnce: boolean;
+    public domMarker: HTMLElement | null;
 
     public static defaults = DEFAULTS;
     public static version = VERSION;
@@ -113,7 +114,7 @@ export default class Modal {
         s.trappedFocus;
         s.enabledElem;
         s.openedOnce = false;
-        
+        s.domMarker = bes.make(`span.${s.params.cssPrefix}-content-placemarker#${s.modalID}__marker`);
         s.handleEvents();
         s.loadFromUrl();
 
@@ -225,16 +226,13 @@ export default class Modal {
         s.enabledElem = document.activeElement;
         
         if (p.fromDOM) {
-            $be(content).insert(
-                bes.make(`span.${p.cssPrefix}-content-placemarker`, {id: `${s.modalObj.id}_marker`}),
-                'after'
-            );
+            $be(content).insert(s.domMarker,'after');
         }
 
         if (!s.modalObj.contentAppended) {
              
             $be(s.modalObj.dialogContent).insert(content);
-            Object.assign(s.modalObj, { contentAppended: true });
+            bes.oa(s.modalObj, { contentAppended: true });
         } 
 
         $be(p.appendTo).insert(modal);
@@ -250,16 +248,13 @@ export default class Modal {
             s.openedOnce = true;
         }
 
-        $be(modal).attr({
-            role: 'dialog',
-            'aria-modal': 'true'
-        })
+        $be(modal).attr({ role: 'dialog', 'aria-modal': 'true'})
 
         reflow(modal);
         
         setTimeout(() => {
             $modal.addClass(p.cssPrefix + '--show');
-            Object.assign(s.modalObj, { show: true });
+            bes.oa(s.modalObj, { show: true });
         },0);
 
         if (p.focusInDelay !== null) {
@@ -276,22 +271,20 @@ export default class Modal {
         if (p.urlFilterType !== 'none') {
             UrlState.set(p.urlFilterType, p.locationFilter, s.modalID, p.historyType);
         }
-       
     }
 
     close() {
 
         const s = this;
-        const { backdrop, closeBtn, content, modal } = s.modalObj;
         const p = s.params;
-
+        const { backdrop, closeBtn, content, modal } = s.modalObj;
         const $modal = $be(modal);
-        
         
         hasCb(p.onClose, s.modalObj);
 
-        $modal.addClass(p.cssPrefix + '--dismissing');
-        $modal.rmClass(p.cssPrefix + '--show');
+        $modal
+            .addClass(p.cssPrefix + '--dismissing')
+            .rmClass(p.cssPrefix + '--show');
 
         // detach events
         $be(closeBtn).off(`click.${s.modalEvent}Dismiss`);
@@ -331,13 +324,13 @@ export default class Modal {
             }
 
             if (p.fromDOM) {
-                $be('#' + s.modalObj.id + '_marker').insert(content, 'after').remove();
-                Object.assign(s.modalObj, { contentAppended: false });
+                $be(s.domMarker).insert(content, 'after').remove();
+                bes.oa(s.modalObj, { contentAppended: false });
             }
 
             hasCb(p.afterClose, s.modalObj);
             $modal.remove();
-            Object.assign(s.modalObj, { show: false });
+            bes.oa(s.modalObj, { show: false });
 
         }, p.closeOutDelay);
     }

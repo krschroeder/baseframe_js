@@ -85,7 +85,7 @@ $be('#example-nav')
     .navMobile({enableBtn: '#mobile-nav-btn-example'})
     .navDesktop()
     .accessibleMenu({
-        keyDirections: ['horizontal','vertical','vertical']
+        keyDirections: ['horizontal','vertical','vertical', 'vertical']
     });
 
 // Parallax
@@ -172,7 +172,8 @@ $be('.lazy-highlight').lazyLoad({
 //  Modal
 {
     $be('.btn-modal').modal({
-        modalID: 'from-dom'
+        modalID: 'from-dom',
+        fromDOM: true
     });
 
 

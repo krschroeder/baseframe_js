@@ -1,5 +1,5 @@
 // import type { BaseElem } from 'cash-dom';
-import type { StringPluginArgChoices } from './types';
+import type { SetTimeout, StringPluginArgChoices } from './types';
 
 // import $ from 'cash-dom';
 import $be, { type BaseElem } from "base-elem-js";
@@ -45,8 +45,8 @@ export default class NavDesktop {
 	public element: HTMLElement;
 	public params: INavDesktopDefaults;
 	public cssList: INavDesktopCss;
-	public stayHover: ReturnType<typeof setTimeout>;
-	public navLeaving: ReturnType<typeof setTimeout>;
+	public stayHover: SetTimeout;
+	public navLeaving: SetTimeout;
 
 	public static defaults = DEFAULTS;
     public static version = VERSION;

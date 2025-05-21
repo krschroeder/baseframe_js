@@ -1,6 +1,6 @@
 import $be  from "base-elem-js";
 import type { BaseElem } from "base-elem-js";
-import type { StringPluginArgChoices } from './types';
+import type { SetTimeout, StringPluginArgChoices } from './types';
 
 import { KEYS } from "./core/constants";
 import Store 		from "./core/Store";
@@ -144,7 +144,7 @@ export default class AccessibleMenu {
             lis = $lis.toArray() as HTMLLIElement[]
         ;
       
-		let focusOutDelay: ReturnType<typeof setTimeout> | null = null;
+		let focusOutDelay: SetTimeout = null;
        
 		s.$element.on(`focusin.${EVENT_NAME}`, (e: KeyboardEvent, elem: HTMLLIElement) => {
             s.activeElem = document.activeElement as HTMLElement;
@@ -162,15 +162,10 @@ export default class AccessibleMenu {
             $lis.rmClass(p.focusCss);
 		})
         s.$element.on(`keydown.${EVENT_NAME}`, (e: KeyboardEvent) => {
-			 
-			// s.activeElem = document.activeElement as HTMLElement;
             s.$aeLiParents = $be(s.activeElem).parents('li', s.element);
            
-			if (e.key == KEYS.esc) {
-               
-                s.#focusFirstElem(s.$aeLiParents);
-            }
-
+			if (e.key == KEYS.esc) s.#focusFirstElem(s.$aeLiParents);
+        
 			s.prev(e);
 			s.next(e);
 		});
@@ -187,8 +182,7 @@ export default class AccessibleMenu {
         
         if ($focusEls.hasEls) {
             const focusEl = $focusEls.elem[index] as HTMLElement;
-            // s.$aeLiParents.rmClass(p.focusCss);
-            console.log(focusEl)
+             
             $be(focusEl.closest('li')).tgClass(p.focusCss, !prev);
             focusEl.focus();
         }
@@ -199,15 +193,18 @@ export default class AccessibleMenu {
             s = this,
             p = s.params,
             currLi = s.activeElem.closest('li'),
-            $targetLi = $be((prev ? currLi.previousElementSibling : currLi.nextElementSibling) as HTMLLIElement)
+            siblingLi = (prev ? currLi.previousElementSibling : currLi.nextElementSibling) as HTMLLIElement,
+            $currLi = $be(currLi),
+            $siblingLi = $be(siblingLi)
         ;
        
-        if ($targetLi.hasEls) {
-            s.#focusFirstElem($targetLi, prev);
+        if ($siblingLi.hasEls) {
+            s.#focusFirstElem($siblingLi, prev);
             
 		} else {
-            const nth = s.$aeLiParents.elem.length > 2 ? -2 : 0;
-
+            // go to the parent <li> if there is no sibling <li>
+            const nth = s.$aeLiParents.size > 2 ? -2 : 0;
+            $currLi.rmClass(p.focusCss);
             s.#focusFirstElem($be(s.$aeLiParents.elem.at(nth)), prev);
         }
 	}

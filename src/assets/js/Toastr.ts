@@ -1,5 +1,5 @@
 // import type { BaseElem, Selector } from "cash-dom";
-import type { SetTimeout, StringPluginArgChoices } from './types';
+import type { WinSetTimeout, StringPluginArgChoices } from './types';
 
 // import $ from 'cash-dom';
 import $be, { type BaseElem, type SelectorRoot } from "base-elem-js";
@@ -62,7 +62,7 @@ export default class Toastr {
     
     public static DismissedEventName = 'toastDismissed';
 
-    private toastrFinallyTimer: SetTimeout;
+    private toastrFinallyTimer: WinSetTimeout;
     private active: boolean;
     private toasterBodyBuilt: boolean;
 

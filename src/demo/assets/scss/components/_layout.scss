@@ -19,12 +19,26 @@ code {
 	color: $white;
 	background: $brand-dark-gray;
 	display: block;
-	padding: 1.5rem;
+	padding: 1.25rem;
 	margin: 1.5rem 0;
+}
+
+code.code--inline {
+    width: auto;
+    display: inline-block;
+    min-width: 18rem;
 }
 
 .intro-copy {
 	font-size: clamp(1.25rem, 2vw, 1.5rem);
 	text-align: center;
 
+}
+
+
+.display {
+    &--flex {
+        display: flex;
+        gap: 1rem
+    }
 }

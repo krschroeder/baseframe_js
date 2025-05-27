@@ -12,7 +12,7 @@ import libraryExtend, {
     Parallax,       type ParallaxPlugin, 
     SelectEnhance,  type SelectEnhancePlugin,
     ScrollSpy,      type ScrollSpyPlugin,
-    throttledResize
+    debounceResize
 } from '../../../assets/js';
 
 declare module 'cash-dom' {
@@ -60,7 +60,7 @@ $collapseGroup.on('click.collapseHeading', '.collapse__header h2', function(ev) 
     locationFilter: 'collapse'
 });
 
-throttledResize(() => {
+debounceResize(() => {
     const inMobile = $('#mobile-nav-btn').outerWidth() !== 0; //hidden if zero
     $collapseGroup.collapse({
         moveToTopOnOpen:  inMobile,

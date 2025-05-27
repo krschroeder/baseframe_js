@@ -11,7 +11,8 @@ import libraryExtend, {
     NavMobile,
     Parallax,
     SelectEnhance,
-    throttledResize,
+    debounceResize,
+    debounce,
     ScrollSpy
 } from '../../../assets/js';
 
@@ -29,10 +30,34 @@ libraryExtend([
     Toastr
 ], $be, true );
 
-const { make } = $be.static;
-
+const { findBy, make } = $be.static;
  
-console.log($be.BaseElem.prototype);
+
+{
+    const btnDebounceTest = findBy('id', 'btn-debounce-test') as HTMLButtonElement;
+    const codeMsg = btnDebounceTest.nextElementSibling;
+    const codeMstDefText = codeMsg.textContent;
+    const codeMsgText = 'Button Clicked!';
+
+    let textTimer = null;
+
+    debounce(btnDebounceTest,'click.debounce',(ev, elem) => {
+        codeMsg.textContent = codeMsgText;
+        clearTimeout(textTimer);
+        textTimer = setTimeout(() => codeMsg.textContent = codeMstDefText, 2000);
+    }, {delay: 500})
+}
+ 
+// {
+//     let timer = null;
+//     const fn = (who = 'buddy') => {
+//         console.log('yeah ' + who)
+//     }
+//     $be('#btn-debounce-test').on('click.debounce', (ev, elem) => {
+//         clearTimeout(timer);
+//         timer = setTimeout(fn, 500, 'boiii')
+//     })
+// }
 
 $be('select').selectEnhance();
 
@@ -40,10 +65,10 @@ const $collapseGroup1 = $be('.collapse-group-1');
 
 $collapseGroup1.on('click.collapseHeading', (ev, elem) => {
     const h2 = elem as HTMLElement;
-    const $btn = $be(h2.parentElement as HTMLElement).find('button');
+    const btn = h2.nextElementSibling as HTMLButtonElement;
 
-    if ($btn.hasEls) {
-        $btn.trigger('click');
+    if (btn) { console.log(btn); 
+        $be(btn).trigger('click');
     }
 },'.collapse__header h2').collapse({
     moveToTopOnOpen: false,
@@ -57,7 +82,8 @@ $collapseGroup2.collapse({
     locationFilter: 'collapse2'
 })
 
-throttledResize(() => {
+debounceResize((ev, elem) => {
+    console.log('fudggeee')
     const inMobile = $be('#mobile-nav-btn').elemRects().width !== 0; //hidden if zero
     $collapseGroup1.collapse({
         moveToTopOnOpen:  inMobile,

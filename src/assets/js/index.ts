@@ -3,8 +3,11 @@ import libraryExtend                    from './core/libraryExtend';
 export { default as Cookies }           from './fn/Cookies';
 export { default as UrlState }          from './core/UrlState';
 export { default as smoothScroll }      from './fn/smoothScroll';
-export { default as throttledResize }   from './fn/throttleResize';
-export { default as trapFocus }         from './fn/trapFocus';
+export { 
+    default as debounce, 
+    debounceResize 
+}                                       from './fn/debounce';
+export { default as focusTrap }         from './fn/focusTrap';
 
 export { default as AccessibleMenu, type AccessibleMenuPlugin } from './AccessibleMenu';
 export { default as Collapse, type CollapsePlugin }             from './Collapse';

@@ -1,7 +1,7 @@
 import $be from 'base-elem-js';
 import { docTop } from '../util/helpers';
 
-// We need to throttle the checking of the previous scroll for a bug in IOS
+// We need to debounce the checking of the previous scroll for a bug in IOS
 // that says the previous pixel is the same as the current pixel.
 // Q: Why do we need to check if the current pixel is the same as the previous?
 // A: Because it could indicate that the element cannot be completely scrolled to

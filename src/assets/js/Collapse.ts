@@ -77,8 +77,8 @@ export default class Collapse {
 		s.$activeItem = null;
 		s.initLoaded = false;
 		// init
-		s.loadFromUrl();
-		s.handleEvents();
+		s.#loadFromUrl();
+		s.#handleEvents();
 		s.params.afterInit(element);
 
 		Store(element, DATA_NAME, s);
@@ -98,7 +98,7 @@ export default class Collapse {
 		})
 	}
 
-	handleEvents() {
+	#handleEvents() {
 		const s = this;
 		const { cssPrefix } = s.params;
  
@@ -113,14 +113,14 @@ export default class Collapse {
 
 		$be(window).on(`popstate.${EVENT_NAME}`, (e: Event) => {
 			if (s.params.historyType === 'push') {
-				s.loadFromUrl(); 
+				s.#loadFromUrl(); 
 				s.initLoaded = true;
 				e.preventDefault();
 			}
 		})
 	}
 
-	loadFromUrl() {
+	#loadFromUrl() {
 		const s = this;
 		const p = s.params;
 
@@ -160,6 +160,20 @@ export default class Collapse {
 		}
 	}
 
+    #moveToTopOnOpen() {
+		const s = this;
+		const { cssPrefix, moveToTopOffset, moveToTopOnOpen, scrollSpeed } = s.params;
+		
+		if (s.$activeItem) {
+			const item: HTMLElement[] = s.$activeItem.map(el => el.closest(`.${cssPrefix}__item`));
+
+			if (item.length && moveToTopOnOpen) {
+			 
+				smoothScroll(item[0].offsetTop - moveToTopOffset, scrollSpeed)
+			}
+		}
+	}
+
 	toggleAction(currElemID: string) {
 		const s = this;
 		const p = s.params;
@@ -170,10 +184,11 @@ export default class Collapse {
         s.$activeItem = s.$element.find('#' + currElemID);
         
         const 
-            cssOpen 	        = `${p.cssPrefix}--open`,
-            cssToggling         = `${p.cssPrefix}--toggling`,
-            cssOpening 	        = `${p.cssPrefix}--opening`,
-            cssClosing 	        = `${p.cssPrefix}--closing`,
+            cssPrefix 	        = `${p.cssPrefix}--`,
+            cssOpen 	        = `${cssPrefix}open`,
+            cssToggling         = `${cssPrefix}toggling`,
+            cssOpening 	        = `${cssPrefix}opening`,
+            cssClosing 	        = `${cssPrefix}closing`,
             cssBodyOpen         = `.${p.cssPrefix}__body.${cssOpen}`,
             $currOpenItems      = s.$element.find(cssBodyOpen),
             $itemsToClose       = $currOpenItems.filter(el =>  p.toggleGroup || el.id === currElemID),
@@ -182,15 +197,19 @@ export default class Collapse {
 
         $itemsToClose.each((elem) => css(elem, { height: elem.scrollHeight + 'px' }));
         
-        const startToggle = () => {
+        const start = () => {
             s.toggling = true;
             
             s.$btnElems.each((elem) => {
                 const $btn = $be(elem);
-                const isCurrent = $btn.attr('aria-controls') === currElemID;
-                const expanded = isCurrent && $btn.attr('aria-expanded') === 'false';
-
-                $btn.attr({ 'aria-expanded': expanded + '' });
+                const current = $btn.attr('aria-controls') === currElemID;
+                const expanded = $btn.attr('aria-expanded') === 'false';
+        
+                if (p.toggleGroup) {
+                    $btn.attr({ 'aria-expanded': (current && expanded) + '' }); 
+                } else if (current) {
+                    $btn.attr({ 'aria-expanded': expanded + '' });
+                }
             });
                 
             $itemsToClose
@@ -201,16 +220,16 @@ export default class Collapse {
             ;
 
             if (!activeAlreadyOpen) {
+                const height = activeItem.scrollHeight + 'px';
 
                 s.$activeItem
                     .addClass([cssToggling, cssOpening])
-                    .css({ 
-                        height: activeItem.scrollHeight + 'px' 
-                    });
+                    .css({ height })
+                ;
             }
 
         },
-        endToggle = () => {
+        end = () => {
             s.toggling = false;
 
             $itemsToClose
@@ -242,29 +261,11 @@ export default class Collapse {
                 s.$activeItem.toArray() as HTMLElement[]
             );
 
-            s.moveToTopOnOpen();
+            s.#moveToTopOnOpen();
         }
         
-        s.#transition(
-            startToggle, 
-            endToggle, 
-            s.params.toggleDuration
-        );
+        s.#transition( start, end, s.params.toggleDuration);
 
-	}
-
-	moveToTopOnOpen() {
-		const s = this;
-		const { cssPrefix, moveToTopOffset, moveToTopOnOpen, scrollSpeed } = s.params;
-		
-		if (s.$activeItem) {
-			const item: HTMLElement[] = s.$activeItem.map(el => el.closest(`.${cssPrefix}__item`));
-
-			if (item.length && moveToTopOnOpen) {
-			 
-				smoothScroll(item[0].offsetTop - moveToTopOffset, scrollSpeed)
-			}
-		}
 	}
 }
 

@@ -1,5 +1,5 @@
 // import type { BaseElem } from 'cash-dom';
-import type { SetTimeout, StringPluginArgChoices } from './types';
+import type { WinSetTimeout, StringPluginArgChoices } from './types';
 
 // import $ from 'cash-dom';
 import $be, { type BaseElem } from "base-elem-js";
@@ -45,8 +45,8 @@ export default class NavDesktop {
 	public element: HTMLElement;
 	public params: INavDesktopDefaults;
 	public cssList: INavDesktopCss;
-	public stayHover: SetTimeout;
-	public navLeaving: SetTimeout;
+	public stayHover: WinSetTimeout;
+	public navLeaving: WinSetTimeout;
 
 	public static defaults = DEFAULTS;
     public static version = VERSION;
@@ -73,8 +73,8 @@ export default class NavDesktop {
 			menuLeaving: `${cssPrefix}--leaving`,
 		};
 
-		s.addCssToElems();
-		s.handleEvents();
+		s.#addCssToElems();
+		s.#handleEvents();
 
 		return s;
 	}
@@ -92,27 +92,20 @@ export default class NavDesktop {
 		});
 	}
 
-	addCssToElems() {
+	#addCssToElems() {
 		const s = this;
 		const css = s.cssList;
         const $li = $be('li', s.element);
-        const $ul = $li.find('ul');
-		
-        $li.addClass(css.menuNoUl);
-
-        if ($ul.hasElems()) {
-            $li.find('ul').each((elem) => {
-                const $elem = $be(elem);
-                $elem.rmClass(css.menuNoUl);
-
-                if (!$elem.hasClass(css.menuHasUL)) {
-                    $elem.addClass(css.menuHasUL);
-                }
-            });
-        }
+        
+        $li.each((elem, i) => {
+            const $uls = $li.find('ul');
+            const ulCss = $uls.hasEls ? css.menuHasUL : css.menuNoUl;
+            
+            $be(elem).addClass(ulCss);
+        })
 	}
 
-	handleEvents() {
+	#handleEvents() {
 		const s = this;
         const css = s.cssList;
 		const p = s.params;
@@ -138,7 +131,7 @@ export default class NavDesktop {
 			const liOrUl = elem as HTMLElement;
 
 			evtTracker(liOrUl, ev, () => {
-				s.edgeDetector(liOrUl);
+				s.#edgeDetector(liOrUl);
                 const $li = $be(liOrUl);
 				const $liLiParents = $be(liOrUl).parents('li');
 
@@ -182,7 +175,7 @@ export default class NavDesktop {
 		},'li, ul');
 	}
 
-	edgeDetector(liOrUl: HTMLElement) {
+	#edgeDetector(liOrUl: HTMLElement) {
 		const s = this;
 		const css = s.cssList;
 		const { innerWidth, pageXOffset } = window;

@@ -42,6 +42,17 @@ const lowercaseFirstLetter = (str: string): string => str.charAt(0).toLowerCase(
 const isMobileOS = (): boolean => /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
 
 
+ const cssOpenStates = (cssPrefix: string, cssNames: string[]) => {
+    const cssObj = {};
+
+    for (const cssName of cssNames) {
+        oa(cssObj, {[cssName]: `${cssPrefix}--${cssName}`});
+    }
+    
+    return cssObj;
+}
+
+
 export {
     d, 
     body,

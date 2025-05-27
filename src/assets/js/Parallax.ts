@@ -4,7 +4,7 @@ import type { StringPluginArgChoices } from './types';
 import $be, {type BaseElem} from "base-elem-js";
 import Store from "./core/Store";
 import { getDataOptions, setParams } from "./util/helpers";
-import throttledResize from "./fn/throttleResize";
+import { debounceResize } from "./fn/debounce";
 import type { EventName } from 'base-elem-js';
 
 type Axis =  'x' | 'y';
@@ -113,7 +113,7 @@ export default class Parallax {
 	handleEvents() {
 		const s = this;
 		 
-		throttledResize(() => { 
+		debounceResize(() => { 
 			s.updatableProps();
 			// $be(window).trigger(s.instanceEvent);
 			s.parallax(s);

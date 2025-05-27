@@ -6,8 +6,7 @@ import sourcemaps from "gulp-sourcemaps";
 import gulpIf from "gulp-if";
 import clean from "gulp-clean";
 import fileinclude from "gulp-file-include";
-import tap from "gulp-tap";
-
+ 
 // html
 import handlebars from "gulp-compile-handlebars";
 import helpers from "handlebars-helpers";
@@ -18,23 +17,22 @@ import gulpSass from "gulp-sass";
 import autoprefixer from "gulp-autoprefixer";
 import cleanCss from "gulp-clean-css";
 
-// import named from "vinyl-named";
-// import webpack from "webpack";
-// import webpackStream from "webpack-stream";
+// Development JS plugins
+import named from "vinyl-named";
+import webpack from "webpack";
+import webpackStream from "webpack-stream";
 
- 
+// Production JS plugins
 import rollupEach               from 'gulp-rollup-each'; 
 import typescript from "gulp-typescript";
+
 import config from "../gulp.config";
 
 const { buildDemo, production } = config;
 // Load Handlebars helpers
 helpers({ handlebars: handlebars.Handlebars });
 
- 
-
 const sass = gulpSass(sassEngine);
-
 
 //region tasks
 
@@ -74,14 +72,29 @@ function buildHtml(done) {
   done();
 }
 
-const buildJS = () =>
-    gulp.src(config.src.js)
-    .pipe(sourcemaps.init())
-    .pipe(rollupEach(config.rollup.lib))
-    .pipe(rename({ extname: '.js' }))
-    .pipe(gulpIf(!production, sourcemaps.write('.')))
-    .pipe(gulp.dest( `${config.dest}${production ? '' : '/assets'}/js` ))
-;
+
+
+const buildDevJs = (done) => {
+    if (!production) {
+
+        return gulp.src(config.src.js)
+        .pipe(named())
+        .pipe(webpackStream(config.webpackConfig, webpack))
+        .pipe(gulp.dest( `${config.dest}${production ? '' : '/assets'}/js` ));
+    } else done();
+}
+
+const buildProdJs = (done) => {
+    if (production) {
+
+        return gulp.src(config.src.js)
+        .pipe(sourcemaps.init())
+        .pipe(rollupEach(config.rollup.lib))
+        .pipe(rename({ extname: '.js' }))
+        .pipe(gulpIf(!production, sourcemaps.write('.')))
+        .pipe(gulp.dest( `${config.dest}${production ? '' : '/assets'}/js` ));
+    } else done();
+}
 
 const buildModuleJS = (done) => {
     if (production) {
@@ -152,7 +165,7 @@ function compileReadme() {
 
 function watch(done) {
   if (!production && !buildDemo) {
-    gulp.watch(config.src.js).on("all", gulp.series(buildJS, reload));
+    gulp.watch(config.src.js).on("all", gulp.series(buildDevJs, reload));
     gulp.watch(config.src.css).on("all", gulp.series(buildCss));
     // gulp.watch('src/assets/scss/**/*.scss').on('all', gulp.series(buildCss));
     gulp.watch(config.src.img).on("all", gulp.series(copyAssets));
@@ -186,7 +199,8 @@ function reload(done) {
 const BUILD = gulp.series(
     cleanUp,
     buildCss,
-    buildJS,
+    buildDevJs,
+    buildProdJs,
     buildModuleJS,
     buildJsDeclarations,
     buildHtml,

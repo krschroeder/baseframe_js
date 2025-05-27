@@ -5,7 +5,7 @@ export type UrlSearchType   = 'search' | 'hash' | 'hashVal';
 export type PlainObject<T> 	= Record<string, T>;
 export type StringPluginArgChoices = 'remove' | 'update';
 export type PrimaryClickElems = HTMLButtonElement | HTMLAnchorElement;
-export type SetTimeout = ReturnType<typeof window.setTimeout>;
+export type WinSetTimeout = ReturnType<typeof window.setTimeout> | null;
 
 export type PluginBaseClass = {
     version: string;

@@ -33,10 +33,12 @@ const canFocusEls = (el:HTMLElement) => {
     return baseFocusableRules && el.style.pointerEvents !== 'none';
 }
 
-const trapFocus = (modalEl: SelectorRoot | BaseElem, props?: ITrapFocusProps): ITrapFocusRemove => {
+const focusTrap = (elem: SelectorRoot | BaseElem, props?: ITrapFocusProps): ITrapFocusRemove => {
+    const d = document;
+    const body = d.body;
+    const { focusFirst, focusable, nameSpace } = {...defaultProps, ...props};
 
-    const { focusFirst, focusable, nameSpace } = Object.assign({}, defaultProps, props);
-    const $trapElem = $be(modalEl);  
+    const $trapElem = $be(elem);  
     const focusableJoined = typeof focusable === 'string' ? focusable : focusable.join(',');
     const $firstFocusable = $trapElem.find(focusableJoined).filter(canFocusEls);
 
@@ -47,12 +49,12 @@ const trapFocus = (modalEl: SelectorRoot | BaseElem, props?: ITrapFocusProps): I
         firstFocusable.focus();
     }
     
-    $be(document.body).on(`keydown.${nameSpace}`, function (e:KeyboardEvent) {
+    $be(body).on(`keydown.${nameSpace}`, function (e:KeyboardEvent) {
          
         const $focusable = $trapElem.find(focusableJoined).filter(canFocusEls);
         
         if (!$focusable.elem.length) return;
-        const activeEl = document.activeElement;
+        const activeEl = d.activeElement;
         const lastFocusable = $focusable.elem[$focusable.elem.length - 1] as HTMLElement;
         const isTabPressed = e.key === 'Tab';
 
@@ -74,7 +76,7 @@ const trapFocus = (modalEl: SelectorRoot | BaseElem, props?: ITrapFocusProps): I
             // if shift key pressed for shift + tab combination
             if (activeEl && 
                 firstFocusable && 
-                document.activeElement.isSameNode(firstFocusable)
+                d.activeElement === firstFocusable
             ) {
                 lastFocusable && lastFocusable.focus(); 
                 e.preventDefault();
@@ -83,7 +85,7 @@ const trapFocus = (modalEl: SelectorRoot | BaseElem, props?: ITrapFocusProps): I
             // if tab key is pressed
             if (activeEl && 
                 lastFocusable && 
-                activeEl.isSameNode(lastFocusable)
+                activeEl === lastFocusable
             ) { 
                 firstFocusable && firstFocusable.focus(); 
                 e.preventDefault();
@@ -93,9 +95,9 @@ const trapFocus = (modalEl: SelectorRoot | BaseElem, props?: ITrapFocusProps): I
 
     return {
         remove: () => {
-            $be(document.body).off(`keydown.${nameSpace}`);
+            $be(body).off(`keydown.${nameSpace}`);
         }
     }
 }
 
-export default trapFocus;
+export default focusTrap;

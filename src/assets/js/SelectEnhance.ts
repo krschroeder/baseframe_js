@@ -1,4 +1,4 @@
-import type { SetTimeout, StringPluginArgChoices } from './types';
+import type { WinSetTimeout, StringPluginArgChoices } from './types';
 
 // import $ from 'cash-dom';
 import $be, { type BaseElem } from "base-elem-js";
@@ -76,7 +76,7 @@ export default class SelectEnhance {
     public selectboxObserver: MutationObserver;
     public selectListBoxInFullView: boolean;
     private keyedInput: string;
-    private posTimeout: SetTimeout;
+    private posTimeout: WinSetTimeout;
     private bodyCloseEvt: string
     public static defaults = DEFAULTS;
     public static version = VERSION;
@@ -352,8 +352,8 @@ export default class SelectEnhance {
     eventKeyboardSearch() {
         const s = this;
 
-        let keyInputTo: SetTimeout | null = null;
-        let changedTo: SetTimeout | null = null;
+        let keyInputTo: WinSetTimeout | null = null;
+        let changedTo: WinSetTimeout | null = null;
         let keyedFound: HTMLOptionElement;
 
         function keyboardSearch (e:KeyboardEvent) {

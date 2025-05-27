@@ -181,10 +181,11 @@ export default class Tabs {
 				const nextBtn = s.tabsNavBtns[changeIndex];
 				
 				if (nextBtn) {
-					// $be(target).attr({'tabindex': '-1'});
+					 
 					const tabId = getTabIDFromEl(nextBtn);
 					s.changeTabElements(nextBtn,tabId);
-					$be(nextBtn)[0].focus();
+					 
+                    nextBtn.focus();
 				}
 
 				e.preventDefault();
@@ -201,19 +202,23 @@ export default class Tabs {
 	}
 
 	changeTabElements(clickElem: PrimaryClickElems, tabId: string, updateUrl = true) {
+        
+        const s = this;
 
-		const 
-            s = this,
+        if (tabId === s.prevTabId) return;
+
+        const
 		    p = s.params,
-            cssOpen 	= `${p.cssPrefix}__panel--open`,
-            cssToggling = `${p.cssPrefix}__panel--toggling`,
-            cssOpening 	= `${p.cssPrefix}__panel--opening`,
-            cssClosing 	= `${p.cssPrefix}__panel--closing`
+            cssPrefix 	= `${p.cssPrefix}__panel--`,
+            cssOpen 	= `${cssPrefix}open`,
+            cssToggling = `${cssPrefix}toggling`,
+            cssOpening 	= `${cssPrefix}opening`,
+            cssClosing 	= `${cssPrefix}closing`
 		;
 
 		let hasTab = false;
 		
-		s.#transition(() => {
+		const start = () => {
 			s.$tabsBodyPanels.each((elem) => {
 				const thisTabId = elem.dataset.tabId;
 
@@ -257,7 +262,7 @@ export default class Tabs {
 				}
 			}
 		},
-		() => {
+		end =() => {
 			s.$tabsBodyPanels.each((elem) => {
 				const isTab = elem.dataset.tabId === tabId;
 
@@ -265,7 +270,9 @@ export default class Tabs {
 					.tgClass(cssOpen, isTab)
 					.rmClass([cssToggling,cssOpening,cssClosing])
 			})
-		});
+		};
+
+        s.#transition(start, end);
 	}
 
 	static remove(element: BaseElem, plugin?: Tabs) {

@@ -1,6 +1,6 @@
 import $be  from "base-elem-js";
 import type { BaseElem } from "base-elem-js";
-import type { SetTimeout, StringPluginArgChoices } from './types';
+import type { WinSetTimeout, StringPluginArgChoices } from './types';
 
 import { KEYS } from "./core/constants";
 import Store 		from "./core/Store";
@@ -55,7 +55,7 @@ export default class AccessibleMenu {
 		s.$element = $be(element);
 		s.params = setParams(AccessibleMenu.defaults, options, dataOptions);
 
-		s.handleEvents();
+		s.#handleEvents();
 
 		return s;
 	}
@@ -76,7 +76,7 @@ export default class AccessibleMenu {
 		});
 	}
 	
-	prev(e: KeyboardEvent): void {
+	#prev(e: KeyboardEvent): void {
 		const 
             s = this,
 		    p = s.params,
@@ -95,7 +95,7 @@ export default class AccessibleMenu {
 		}
 	}
 	
-	next(e: KeyboardEvent): void {
+	#next(e: KeyboardEvent): void {
 		const 
             s = this,
             p = s.params,
@@ -136,7 +136,7 @@ export default class AccessibleMenu {
 		}
 	}
 
-	handleEvents() {
+	#handleEvents() {
 		const 
             s = this,
             p = s.params,
@@ -144,7 +144,7 @@ export default class AccessibleMenu {
             lis = $lis.toArray() as HTMLLIElement[]
         ;
       
-		let focusOutDelay: SetTimeout = null;
+		let focusOutDelay: WinSetTimeout = null;
        
 		s.$element.on(`focusin.${EVENT_NAME}`, (e: KeyboardEvent, elem: HTMLLIElement) => {
             s.activeElem = document.activeElement as HTMLElement;
@@ -166,8 +166,8 @@ export default class AccessibleMenu {
            
 			if (e.key == KEYS.esc) s.#focusFirstElem(s.$aeLiParents);
         
-			s.prev(e);
-			s.next(e);
+			s.#prev(e);
+			s.#next(e);
 		});
 	}
 

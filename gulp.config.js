@@ -1,8 +1,12 @@
 import yargs            from 'yargs';
+import webpack          from "webpack";
+
 import typescript       from '@rollup/plugin-typescript';
 import resolve          from '@rollup/plugin-node-resolve';
 import  { minify }      from 'rollup-plugin-esbuild-minify';
 import commonjs         from '@rollup/plugin-commonjs';
+
+
 const 
     VERSION       = require('./package.json').version || '1.0.0',
     PRODUCTION    = !!yargs.argv.prod,
@@ -29,6 +33,8 @@ if (BUILD_DEMO ) {
         jsPaths.push(...jsDemoPaths);
     }
 }
+
+ 
 
 const config = {
     version: VERSION,
@@ -87,6 +93,31 @@ const config = {
             plugins: [...rollupBasePlugins],
             isCache: true
         }  
+    },
+
+    webpackConfig: {
+        // devtool: (PRODUCTION ? false : "eval"),
+        mode: (PRODUCTION ? "production" : "development"),
+        target: ["web", "es6"],
+        resolve: {
+            extensions: [".js", ".tsx", ".ts"]
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.(ts|js)x?$/,
+                    exclude: /(node_modules\/(?!(@hilemangroup)))/,
+                    loader: "babel-loader"
+                }
+            ]
+        },
+        plugins: [
+            new webpack.DefinePlugin({
+                ENV_CONFIG: {
+                    production: false,
+                }
+            })
+        ]
     }
 
 }

@@ -2,9 +2,9 @@
 import type { StringPluginArgChoices } from './types';
 import $be, {type BaseElem, type SelectorRoot} from "base-elem-js";
 // import $ from 'cash-dom';
-import {  getDataOptions, noop, setParams } from './util/helpers';
+import {  getDataOptions, noop, reflow, setParams } from './util/helpers';
  
-import trapFocus, { type ITrapFocusRemove } from './fn/trapFocus';
+import focusTrap, { type ITrapFocusRemove } from './fn/focusTrap';
 import { KEYS } from "./core/constants";
 import Store from "./core/Store";
 import type { EventName } from 'base-elem-js';
@@ -13,13 +13,13 @@ import { body } from './util/helpers';
 type submenuBtnSkipFn = (elem: HTMLElement) => boolean;
 
 interface NavMobileCssList {
-	menuOuterOpen: string;
-	menuHasUL: string;
-	menuOpen: string;
-	menuOpening: string;
-	menuClosing: string;
-	menuToggling: string;
-	menuBtnCss: string;
+	outerOpen: string;
+	hasUl: string;
+	open: string;
+	opening: string;
+	closing: string;
+	toggling: string;
+	btn: string;
 }
 
 export interface INavMobileDefaults {
@@ -75,6 +75,7 @@ const DEFAULTS: INavMobileDefaults = {
 	bkptEnable: null
 };
 
+
 const { isVisible, make, useTransition } = $be.static;
 
 export default class NavMobile {
@@ -106,13 +107,13 @@ export default class NavMobile {
 
 		const {cssPrefix, menuBtnCss} = s.params;
 		s.cssList = {
-			menuOuterOpen: `${cssPrefix}--outer-open`,
-			menuHasUL: `${cssPrefix}__has-ul`,
-			menuOpen: `${cssPrefix}--open`,
-			menuOpening: `${cssPrefix}--is-opening`,
-			menuClosing: `${cssPrefix}--is-closing`,
-			menuToggling: `${cssPrefix}--toggling`,
-			menuBtnCss:  `${cssPrefix}__btn-nav ${menuBtnCss}`
+			outerOpen:  `${cssPrefix}--outer-open`,
+			open:       `${cssPrefix}--open`,
+            opening:    `${cssPrefix}--is-opening`,
+			closing:    `${cssPrefix}--is-closing`,
+			toggling:   `${cssPrefix}--toggling`,
+			hasUl:      `${cssPrefix}__has-ul`,
+			btn:     `${cssPrefix}__btn-nav ${menuBtnCss}`
 		};
 		//run the methods
 		s.addChildNavCss();
@@ -131,8 +132,9 @@ export default class NavMobile {
 
 	handleEvents() {
 		const s = this;
+        const p = s.params;
 		const css = s.cssList;
-		const $enableBtn = $be(s.params.enableBtn);
+		const $enableBtn = $be(p.enableBtn);
 		
 		
 		$enableBtn
@@ -149,12 +151,15 @@ export default class NavMobile {
 
 		$be(document).on(`keydown.${EVENT_NAME}`, (e: KeyboardEvent) => {
 
-			if (e.code === KEYS.esc && s.$element.hasClass(css.menuOpen) && s.allowClick) {
+			if (
+                e.code === KEYS.esc && 
+                s.$element.hasClass(css.open) && 
+                s.allowClick
+            ) {
 				s.#menuToggle();
-
-				if ($enableBtn.hasElems()) {
-
-					($enableBtn as any)[0].focus();
+                 
+				if ($enableBtn.hasEls) {
+					($enableBtn.elem[0] as HTMLElement).focus();
 				}
 			}
 		});
@@ -171,7 +176,7 @@ export default class NavMobile {
 		let trappedFocus: ITrapFocusRemove | null = null;
 		const $elemParent = s.$element.find(elem => elem.parentElement);
 		const doClose = s.menuOpened;
-		const cssMenuState = [doClose ? css.menuClosing : css.menuOpening, css.menuToggling];
+		const cssMenuState = [doClose ? css.closing : css.opening, css.toggling];
 		s.#transition(() => {
 			 
 			s.menuOpened = !doClose;
@@ -179,20 +184,20 @@ export default class NavMobile {
 			s.$element.addClass(cssMenuState);
 			$be(p.enableBtn).attr({ 'aria-expanded': !doClose + '' });
 			$be(p.outerElement)
-				.tgClass(css.menuOuterOpen, !doClose)
+				.tgClass(css.outerOpen, !doClose)
 				.addClass(cssMenuState);
 
 			if (doClose) {
 
 				$elemParent
-					.find(`.${css.menuOpen}`)
-					.rmClass(css.menuOpen)
+					.find(`.${css.open}`)
+					.rmClass(css.open)
 					.find("[style]").css({'display': null});
 				
 				trappedFocus && (trappedFocus as ITrapFocusRemove).remove();
 			} else {
 				if (p.doTrapFocus) {
-					trappedFocus = trapFocus(p.trapFocusElem || s.$element, { nameSpace: EVENT_NAME });
+					trappedFocus = focusTrap(p.trapFocusElem || s.$element, { nameSpace: EVENT_NAME });
 				}
 			}
 		},() => {
@@ -200,7 +205,7 @@ export default class NavMobile {
 			s.$element.rmClass(cssMenuState);
 
 			if (!doClose) {
-				s.$element.addClass(css.menuOpen);
+				s.$element.addClass(css.open);
 			}
 
             const fn = doClose ? s.params.afterClose : s.params.afterOpen;
@@ -212,55 +217,55 @@ export default class NavMobile {
 
 	#navToggle() {
 		const s = this;
+        const p = s.params;
 		const css = s.cssList;
+
 		s.$element.on([`click.${EVENT_NAME}`,`[${EVENT_NAME}]`], function (ev: KeyboardEvent, elem: HTMLElement) {
 
-			const p = s.params;
-			const css = s.cssList;
-            const hasULElem = elem.closest(`.${css.menuHasUL}`) as HTMLElement;
-			const $li = $be(hasULElem);
-			const doClose = $li.hasClass(css.menuOpen);
-			const $ul = $li.find('ul').get(0);
+            const ulElem = elem.closest(`.${css.hasUl}`) as HTMLElement;
 
 			//exit because were in desktop view
-			if (!s.allowClick) { return; }
+			if (!s.allowClick || !ulElem) return;
+            
+			const $li = $be(ulElem);
+			const $ul = $li.find('ul').get(0);
+			const close = $li.hasClass(css.open);
 		
-			const cssMenuState = `${css.menuToggling} ${doClose ? css.menuClosing : css.menuOpening}`;
+			const cssMenuState = [css.toggling, close ? css.closing : css.opening];
 			
-			s.allowClick = doClose;
+			s.allowClick = close;
 
 			s.#transition(() => {
 
-				$li.addClass(cssMenuState).tgClass(css.menuOpen, !doClose);
-				$ul.addClass(cssMenuState).tgClass(css.menuOpen, !doClose);
+				$li.addClass(cssMenuState).tgClass(css.open, !close);
+				$ul.addClass(cssMenuState).tgClass(css.open, !close);
 
 				if (p.animateHeight) {
-					const openHeight = ($ul.hasElems() ? ($ul[0] as HTMLUListElement).scrollHeight : 0);
-					const height = doClose ? 0 : openHeight;
+					const openHeight = ($ul.hasEls ? ($ul.elem[0] as HTMLUListElement).scrollHeight : 0);
+					const height = close ? 0 : openHeight;
 					
-					$ul.css({ height: (doClose ? openHeight : 0) + 'px' });
-
-					setTimeout(() => {
-						$ul.css({ height: height + 'px' });
-					},0);
+					$ul.css({ height: (close ? openHeight : 0) + 'px' })
+                        .each(elem => reflow(elem))
+                        .css({ height: height + 'px' });
 				}
 			},
 			() => {
-				$li.rmClass(cssMenuState).tgClass(css.menuOpen, !doClose);
-				$ul.rmClass(cssMenuState).tgClass(css.menuOpen, !doClose);
-				$ul.css({ height: null });
+				$li.rmClass(cssMenuState).tgClass(css.open, !close);
+				$ul.rmClass(cssMenuState)
+                    .tgClass(css.open, !close)
+                    .css({ height: null });
 
-				if (doClose) {
-					s.params.afterNavItemClose($li.toArray() as HTMLLIElement[]);
-				} else {
-					s.params.afterNavItemOpen($li.toArray() as HTMLLIElement[]);
-				}
+                const li = $li.toArray() as HTMLLIElement[];
+
+				if (close) p.afterNavItemClose(li);
+				else p.afterNavItemOpen(li);
+				
 				s.allowClick = true;
 			}, p.slideDuration);
 
 			ev.stopPropagation();
 
-		},`.${css.menuBtnCss.replace(/\s/g, '.')}`);
+		},`.${css.btn.replace(/\s/g, '.')}`);
 
 		s.$element.on([`click.${EVENT_NAME}`,`[${EVENT_NAME}]`], (ev: MouseEvent, elem) => {
 			//prohibit closing if an anchor is clicked
@@ -273,19 +278,16 @@ export default class NavMobile {
 
 	#outsideClickClose() {
 		const s = this;
-		$be(document.body).on(`click.${EVENT_NAME}`, function (e: MouseEvent) {
+		$be(document.body).on(`click.${EVENT_NAME}`, (e: MouseEvent) => {
 			if (s.params.outsideClickClose) {
-				if (!s.menuOpened) { return; }//lets just exit then..
+				if (!s.menuOpened) return
 				const menuClicked = (s.$element.elem[0] as HTMLElement).contains(e.target as HTMLElement);
-				
-				//if the menu item is not clicked and its opened
-				//the menu button shouldn't register because propogation is prevented to the body
+			
 				if (!menuClicked && s.menuOpened) {
 					s.#menuToggle();
 				}
 			}
 		});
-
 	}
 
 	addChildNavCss() {
@@ -295,7 +297,7 @@ export default class NavMobile {
 		s.$element.find('li').each((elem: HTMLElement) => {
 			const $li = $be(elem);
             const nextElem  = elem.nextElementSibling;
-            const hasBtn = nextElem && nextElem.tagName === 'BUTTON' && nextElem.matches(`.${css.menuBtnCss}`);
+            const hasBtn = nextElem && nextElem.tagName === 'BUTTON' && nextElem.matches(`.${css.btn}`);
             if (!$li.find('ul').hasElems()) return;
 
 			let skipUl = false;
@@ -307,12 +309,12 @@ export default class NavMobile {
 			if (!hasBtn && !skipUl) {
 				const $el = $li.find(p.insertToggleBtnAfter).get(0);
 
-				$el.addClass(css.menuHasUL);
+				$el.addClass(css.hasUl);
 
 				if ($el.hasElems()) {
 					if (($el.elem[0] as HTMLElement).parentElement === elem) {
 						// make sure the <el> is a direct child of <li>
-                        const $btn = $be(make(`button.${css.menuBtnCss}`,{
+                        const $btn = $be(make(`button.${css.btn}`,{
                             type: 'button',
                             ariaLabel: p.subMenuText + ' ' + $el.text().trim()
                         }));

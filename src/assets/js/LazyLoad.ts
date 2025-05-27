@@ -41,28 +41,7 @@ const DEFAULTS = {
 
 const lazyElemObservers:Map<string, IntersectionObserver> = new Map();
 
-const lazyElemObserver = (s) => {
-
-    const { observerOpts } = s.params;
-    return new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-            const { inEvt, outEvt, force, unobserve, loadImgs } = s.params;
-
-            const lazyElem = entry.target;
-            if (lazyElem instanceof HTMLElement) {
-                if (entry.isIntersecting && isVisible(lazyElem) || force) {
-
-                    loadImgs && s.imgAndBg(s, lazyElem);
-                    typeof inEvt === 'function' && inEvt(lazyElem, entry);
-                    unobserve && s.lazyElemObserver.unobserve(lazyElem);
-
-                } else {
-                    typeof outEvt === 'function' && outEvt(lazyElem, entry);
-                }
-            }
-        });
-    }, observerOpts);
-}
+ 
 
 
 export default class LazyLoad {
@@ -83,7 +62,7 @@ export default class LazyLoad {
         s.lazyElemObserver;
         s.params = setParams(LazyLoad.defaults, options, dataOptions);
 
-        s.handleEvents();
+        s.#handleEvents();
 
         return s;
     }
@@ -99,7 +78,7 @@ export default class LazyLoad {
         });
     }
 
-    imgAndBg(s, lazyElem) {
+    #handleImgOrBg(s, lazyElem) {
 
         const { imgSrcName, bgSrcName } = s.params;
         const src = lazyElem.dataset[imgSrcName];
@@ -120,23 +99,46 @@ export default class LazyLoad {
 
     }
 
-    handleEvents() {
+    #handleEvents() {
         const s = this;
         const { observerID } = s.params;
 
         if (observerID && !lazyElemObservers.has(observerID)) {
-            lazyElemObservers.set(observerID, lazyElemObserver(s));
+            lazyElemObservers.set(observerID, s.#lazyElemObserverFactory());
             s.lazyElemObserver = lazyElemObservers.get(observerID);
 
         } else {
-            s.lazyElemObserver = lazyElemObserver(s);
+            s.lazyElemObserver = s.#lazyElemObserverFactory();
         }
 
         if (!observerID) {
-            console.warn(`It recommended to set an 'observerID', so the element group can leverage the same one.`, s.element);
+            console.warn(`Its recommended to set an 'observerID', so the element group can leverage the same one.`, s.element);
         }
 
         s.lazyElemObserver.observe(s.element);
+    }
+
+    #lazyElemObserverFactory() {
+        const s = this;
+        const { observerOpts } = s.params;
+        return new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                const { inEvt, outEvt, force, unobserve, loadImgs } = s.params;
+
+                const lazyElem = entry.target;
+                if (lazyElem instanceof HTMLElement) {
+                    if (entry.isIntersecting && isVisible(lazyElem) || force) {
+
+                        loadImgs && s.#handleImgOrBg(s, lazyElem);
+                        typeof inEvt === 'function' && inEvt(lazyElem, entry);
+                        unobserve && s.lazyElemObserver.unobserve(lazyElem);
+
+                    } else {
+                        typeof outEvt === 'function' && outEvt(lazyElem, entry);
+                    }
+                }
+            });
+        }, observerOpts);
     }
 }
 

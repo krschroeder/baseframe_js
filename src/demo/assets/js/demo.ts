@@ -13,7 +13,8 @@ import libraryExtend, {
     SelectEnhance,
     debounceResize,
     debounce,
-    ScrollSpy
+    ScrollSpy,
+    smoothScroll
 } from '../../../assets/js';
 
 libraryExtend([
@@ -30,7 +31,7 @@ libraryExtend([
     Toastr
 ], $be, true );
 
-const { findBy, make } = $be.static;
+const { findOne, findBy, make } = $be.static;
  
 
 {
@@ -48,16 +49,14 @@ const { findBy, make } = $be.static;
     }, {delay: 500})
 }
  
-// {
-//     let timer = null;
-//     const fn = (who = 'buddy') => {
-//         console.log('yeah ' + who)
-//     }
-//     $be('#btn-debounce-test').on('click.debounce', (ev, elem) => {
-//         clearTimeout(timer);
-//         timer = setTimeout(fn, 500, 'boiii')
-//     })
-// }
+
+$be('.plugins-list-inline').find('a').on('click.smoothScroll', (ev, elem: HTMLAnchorElement) => {
+    const hash = elem.hash;
+
+    if (hash) {
+        smoothScroll((findOne(hash) as HTMLElement).offsetTop, 2000)
+    }
+})
 
 $be('select').selectEnhance();
 
@@ -72,6 +71,7 @@ $collapseGroup1.on('click.collapseHeading', (ev, elem) => {
     }
 },'.collapse__header h2').collapse({
     moveToTopOnOpen: false,
+    moveToTopOffset: $be('.site-header').elemRects().height,
     toggleGroup: true,
     locationFilter: 'collapse'
 });
@@ -83,7 +83,6 @@ $collapseGroup2.collapse({
 })
 
 debounceResize((ev, elem) => {
-    console.log('fudggeee')
     const inMobile = $be('#mobile-nav-btn').elemRects().width !== 0; //hidden if zero
     $collapseGroup1.collapse({
         moveToTopOnOpen:  inMobile,
@@ -106,6 +105,7 @@ $be(window).on('load',function() {
         }
     })
 })
+
 
 $be('#example-nav')
     .navMobile({enableBtn: '#mobile-nav-btn-example'})

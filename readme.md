@@ -1,9 +1,6 @@
 # Baseframe JS #
 A suite of useful JavaScript plugins and functions for front-end development. Instead of searching for unconnected plugins that may not work together well, this suite does. The package features plugins for collapsible sections, modals, parallaxing elements, tabs and more. It features utilities for setting and getting cookies, smooth scrolling, debounced resizing, querystring parameter filtering and more. The plugin's are meant to be configurable and consistent with each other.
 
-## Runs with [Cash](https://github.com/fabiospampinato/cash) (or JQuery if you wish) ##
-These are made to work with [Cash](https://github.com/fabiospampinato/cash) (with jQuery still an option) as the only dependency. Cash is a small jQuery alternative that give developers DOM traversing and manipulation.
-
 ## Features ##
 
 ### Pass in parameter options with a `data-` attribute
@@ -71,8 +68,8 @@ import smoothScroll from 'baseframe-js/dist/js/fn/smoothScroll';
 import trapFocus from 'baseframe-js/dist/js/fn/trapFocus';
 ```
 
-### Extending into the Library ###
-By default the plugins don't extend into the __Cash Dom__ library, rather they need to be explicitly extended. This applies the same if using jQuery of course as well.
+### Extending into a Library ###
+These plugins are designed to be installed into jQuery or Cash-Dom library should you choose to use one fo those external library's.
 
 ```typescript
 // not necessary for the plugin's to work,

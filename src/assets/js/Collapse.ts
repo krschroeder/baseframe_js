@@ -1,11 +1,13 @@
 import type { LocationHashTracking, StringPluginArgChoices } from './types';
 import $be, { type BaseElem } from "base-elem-js";
 
-import { getDataOptions, noop, reflow, setParams } from './util/helpers';
+import { getDataOptions, isFunc, noop, reflow, setParams } from './util/helpers';
 
 import smoothScroll from './fn/smoothScroll';
 import UrlState 	from "./core/UrlState"; 
 import Store 		from "./core/Store";
+ 
+const { oa } = $be.static;
 
  
 export interface ICollapseDefaults extends LocationHashTracking {
@@ -14,6 +16,7 @@ export interface ICollapseDefaults extends LocationHashTracking {
 	toggleGroup: boolean;
 	moveToTopOnOpen: boolean;
 	moveToTopOffset: number;
+    easingFn?: (pct: number) => number;
 	scrollSpeed: number;
 	afterOpen(btnElems: HTMLElement[], collapsibleItem: HTMLElement[]): void;
 	afterClose(btnElems: HTMLElement[], collapsibleItem: HTMLElement[]): void;
@@ -162,14 +165,19 @@ export default class Collapse {
 
     #moveToTopOnOpen() {
 		const s = this;
-		const { cssPrefix, moveToTopOffset, moveToTopOnOpen, scrollSpeed } = s.params;
+		const p = s.params; 
 		
 		if (s.$activeItem) {
-			const item: HTMLElement[] = s.$activeItem.map(el => el.closest(`.${cssPrefix}__item`));
+			const item: HTMLElement[] = s.$activeItem.map(el => el.closest(`.${p.cssPrefix}__item`));
 
-			if (item.length && moveToTopOnOpen) {
-			 
-				smoothScroll(item[0].offsetTop - moveToTopOffset, scrollSpeed)
+			if (item.length && p.moveToTopOnOpen) {
+                const top = item[0].offsetTop - p.moveToTopOffset;
+
+                scrollTo({
+                    top,
+                    left: 0,
+                    behavior: 'smooth'
+                });
 			}
 		}
 	}
@@ -194,7 +202,7 @@ export default class Collapse {
             $itemsToClose       = $currOpenItems.filter(el =>  p.toggleGroup || el.id === currElemID),
             activeAlreadyOpen   = s.$activeItem.hasClass(cssOpen)
         ;
-
+        
         $itemsToClose.each((elem) => css(elem, { height: elem.scrollHeight + 'px' }));
         
         const start = () => {

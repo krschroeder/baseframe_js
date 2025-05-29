@@ -42,3 +42,16 @@ code.code--inline {
         gap: 1rem
     }
 }
+
+.plugins-list-inline {
+    ul {
+        display: flex;
+        gap: 1rem;
+        list-style: none;
+        
+        > li {
+            list-style: inherit;
+            display: block;
+        }
+    }
+}

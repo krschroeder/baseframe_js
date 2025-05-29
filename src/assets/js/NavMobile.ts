@@ -9,6 +9,7 @@ import { KEYS } from "./core/constants";
 import Store from "./core/Store";
 import type { EventName } from 'base-elem-js';
 import { body } from './util/helpers';
+import { debounceResize } from './fn/debounce';
 
 type submenuBtnSkipFn = (elem: HTMLElement) => boolean;
 
@@ -116,9 +117,9 @@ export default class NavMobile {
 			btn:     `${cssPrefix}__btn-nav ${menuBtnCss}`
 		};
 		//run the methods
-		s.addChildNavCss();
+		s.#addCssToElems();
 		s.handleEvents();
-		s.checkIfEnabled();
+		s.#checkIfEnabled();
 
 		const elemID = element.id || element.className;
 
@@ -251,9 +252,7 @@ export default class NavMobile {
 			},
 			() => {
 				$li.rmClass(cssMenuState).tgClass(css.open, !close);
-				$ul.rmClass(cssMenuState)
-                    .tgClass(css.open, !close)
-                    .css({ height: null });
+				$ul.rmClass(cssMenuState).tgClass(css.open, !close).css({ height: null });
 
                 const li = $li.toArray() as HTMLLIElement[];
 
@@ -290,19 +289,20 @@ export default class NavMobile {
 		});
 	}
 
-	addChildNavCss() {
+	#addCssToElems() {
 		const s = this;
 		const p = s.params;
 		const css = s.cssList;
+
 		s.$element.find('li').each((elem: HTMLElement) => {
 			const $li = $be(elem);
             const nextElem  = elem.nextElementSibling;
-            const hasBtn = nextElem && nextElem.tagName === 'BUTTON' && nextElem.matches(`.${css.btn}`);
-            if (!$li.find('ul').hasElems()) return;
+            const hasBtn = nextElem?.tagName === 'BUTTON' && nextElem.matches(`.${css.btn}`);
+            if (!$li.find('ul').hasEls) return;
 
 			let skipUl = false;
 
-			if (typeof p.menuBtnSkip === 'function' && p.menuBtnSkip (elem)) {
+			if (typeof p.menuBtnSkip === 'function' && p.menuBtnSkip(elem)) {
 				skipUl = true;
 			}
 
@@ -311,42 +311,39 @@ export default class NavMobile {
 
 				$el.addClass(css.hasUl);
 
-				if ($el.hasElems()) {
+				if ($el.hasEls) {
 					if (($el.elem[0] as HTMLElement).parentElement === elem) {
 						// make sure the <el> is a direct child of <li>
-                        const $btn = $be(make(`button.${css.btn}`,{
+                        const btn = make(`button.${css.btn}`,{
                             type: 'button',
                             ariaLabel: p.subMenuText + ' ' + $el.text().trim()
-                        }));
+                        });
                         
-						$el.insert($btn,'after');
+						$el.insert(btn,'after');
 					}
 				}
 			}
 		});
 	}
 
-	checkIfEnabled() {
+	#checkIfEnabled() {
 		const s = this;
-
-		let resizeTimer;
-
-		//basically if the navigational button is visible then
+        const p = s.params;
+        //basically if the navigational button is visible then
 		//we can allow the click to open the navigation
 		//this is so it doesn't clash with any other plugins
 		//and allows for the control of this click via CSS
-		$be(window).on([`resize.${EVENT_NAME}`,`[${EVENT_NAME}]`], function (e) {
 
-			clearTimeout(resizeTimer);
-			resizeTimer = setTimeout(() => {
-				 
-				s.allowClick = typeof s.params.bkptEnable === 'number' ?
-					window.innerWidth <= s.params.bkptEnable :
-					(s.$enableBtn.hasElems() ? isVisible(s.$enableBtn.elem[0] as HTMLElement) : false)
-				;
+        debounceResize(() => {
+            const bkptEnIsNum = typeof p.bkptEnable === 'number';
 
-			}, e.type === EVENT_NAME ? 0 : 200);
-		}).trigger(EVENT_NAME);
+            s.allowClick = bkptEnIsNum ?
+                window.innerWidth <= p.bkptEnable :
+                s.$enableBtn.hasEls ? 
+                    isVisible(s.$enableBtn.elem[0] as HTMLElement) : 
+                    false
+            ;
+        }, EVENT_NAME, true, 200);
 	}
 
 	static remove(element: BaseElem, plugin?: NavMobile) {

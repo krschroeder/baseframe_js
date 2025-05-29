@@ -13,6 +13,8 @@
 
 - Update readme's
     - Note how to resolve discrepancies with Cash and jQuery
+    - Update smoothScroll readme
 - Further test jQuery and Cash
+- Do something about Smooth Scroll (which doesn't work in IOS)
 - Do a few Dry runs
 - Think about other optimizations?

@@ -1,77 +1,92 @@
-import $be from 'base-elem-js';
-import { docTop } from '../util/helpers';
+import $be, { type EventName} from 'base-elem-js';
+import { body, docTop, isFunc } from '../util/helpers';
+import debounce from './debounce';
+ 
+const EVENT_NAME = 'smoothScroll';
 
-// We need to debounce the checking of the previous scroll for a bug in IOS
-// that says the previous pixel is the same as the current pixel.
-// Q: Why do we need to check if the current pixel is the same as the previous?
-// A: Because it could indicate that the element cannot be completely scrolled to
-//    and as a result we need to break this JS scroll 
-const checkIterationAmt = 3;
+const userBreakEvents = [`wheel.${EVENT_NAME}`, `touchstart.${EVENT_NAME}`] as EventName[];
 
 let activeScroll = false;
 
+
 export default function smoothScroll(
-    elemYPos: number,
-    _speed = 100,
-    afterScroll?: (...args) => void,
-    afterScrollArgs: any[] = []
+    scrollTargetY: number,
+    duration = 1000,
+    easingFn?: (pct: number) => number,
+    afterScroll?: (...args) => void
 ): void {
-
-    // If an active scroll is going exit until it's done
     if (activeScroll) return;
-
-    const speed = _speed / 1000;
-    
     activeScroll = true;
-    let 
-        prevScroll = null,
-        animation = null,
-        userBreakScroll = false,
-        pxToCheckIteration = 0
+     
+    let msPrev = window.performance.now();
+
+    const 
+        startScrollY    = window.scrollY,
+        scrollDistance  = Math.abs(startScrollY - scrollTargetY),
+        scrollDir       = startScrollY < scrollTargetY ? 1 : -1,
+        useEasing       = isFunc(easingFn),
+        msPerFrame      = 1000 / 60,
+        frames          = duration / msPerFrame,
+        progressSize    = scrollDistance / frames
     ;
 
-    const targetIsAbove = elemYPos < docTop();
+  
+    console.log('scroll to:', scrollTargetY)
+    console.log('progress size:', progressSize)
+    // state
+    let 
+        animation = null,
+        breakScroll = false,
+        progress = 0
+    ;
 
-    $be(window).on('wheel.smoothScroll', () => { userBreakScroll = true });
+    const doBreakScroll = () => breakScroll = true;
 
-    document.body.style.scrollBehavior = 'auto';
+    $be(window).on(userBreakEvents, doBreakScroll);
+    debounce(window,`scroll.${EVENT_NAME}`, doBreakScroll);
 
-    const scrollDone = () => {
-        if (typeof afterScroll === 'function') {
-            afterScroll.apply(null, afterScrollArgs);
-        }
-        window.cancelAnimationFrame(animation);
+    body.style.scrollBehavior = 'auto';
+   
+    console.time('smoothScroll');
+
+    const cleanUpScroll = () => {
+        if (isFunc(afterScroll)) afterScroll();
+        cancelAnimationFrame(animation);
+        console.timeEnd('smoothScroll');
+        
+        $be(window).off([...userBreakEvents, `scroll.${EVENT_NAME}`]);
+        body.style.scrollBehavior = null;
+        
         activeScroll = false;
-        $be(window).off('wheel.smoothScroll');
-        document.body.style.scrollBehavior = null;
     }
 
-    (function smoothScrollInner() {
-        const currentScroll = docTop();
-
-        if (prevScroll === currentScroll || userBreakScroll) {
-            scrollDone();
+    
+    const scrollFn = () => {
+        if (breakScroll) {
+            cleanUpScroll();
+            
             return;
         }
 
-        if (pxToCheckIteration === checkIterationAmt) {
-            prevScroll = currentScroll;
-            pxToCheckIteration = 0;
+        animation = requestAnimationFrame(scrollFn);
 
-        } else {
-            pxToCheckIteration++;
-        }
+        const msNow = window.performance.now();
+        const msPassed = msNow - msPrev;
 
-        const isAtTarget = Math.floor(currentScroll - elemYPos) === 0;
-        const isPastTarget = targetIsAbove ? prevScroll < currentScroll : prevScroll > currentScroll;
+        if (msPassed < msPerFrame) return;
 
-        if (!isAtTarget || !isPastTarget) {
+        const excessTime = msPassed % msPerFrame;
+        msPrev = msNow - excessTime;
+        
+        progress += progressSize;
 
-            animation = window.requestAnimationFrame(smoothScrollInner);
-            window.scroll(0, currentScroll + ((elemYPos - currentScroll) * speed));
-        } else {
-            scrollDone();
-            return;
-        }
-    })();
+        const scrollProgress = useEasing ? (progress * easingFn(progress / scrollDistance)) : progress;
+        const yPos = startScrollY + scrollProgress * scrollDir;
+        
+        window.scroll(0, yPos);
+        
+        if (progress > scrollDistance) cleanUpScroll();
+    };
+
+    scrollFn();
 }

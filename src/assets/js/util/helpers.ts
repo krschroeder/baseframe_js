@@ -2,17 +2,14 @@ import type { StringPluginArgChoices } from '../types';
 import $be from 'base-elem-js';
 import parseObjectFromString from './parseObjectFromString';
 
-const { merge, toType } = $be.static;
+const { merge, toType, isArr, isStr, oa, af } = $be.static;
 
 // region DOM shortcuts
 const 
     d       = document,
     body    = d.body,
     root    = d.documentElement,
-    oa      = Object.assign,
-    af      = Array.from,
-    isArr   = Array.isArray,
-    isStr = (str: any) => typeof str === 'string',
+    isFunc = (fn: unknown) => toType(fn) === 'function',
     reflow = (elem: HTMLElement) => elem.offsetHeight,
     docTop = () => document.documentElement.scrollTop || document.body.scrollTop || 0,
     noop = () => {}
@@ -42,16 +39,6 @@ const lowercaseFirstLetter = (str: string): string => str.charAt(0).toLowerCase(
 const isMobileOS = (): boolean => /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
 
 
- const cssOpenStates = (cssPrefix: string, cssNames: string[]) => {
-    const cssObj = {};
-
-    for (const cssName of cssNames) {
-        oa(cssObj, {[cssName]: `${cssPrefix}--${cssName}`});
-    }
-    
-    return cssObj;
-}
-
 
 export {
     d, 
@@ -60,6 +47,7 @@ export {
     oa, 
     af, 
     isArr, 
+    isFunc,
     isStr,
     reflow,
     docTop,

@@ -95,10 +95,10 @@ export default class NavDesktop {
 	#addCssToElems() {
 		const s = this;
 		const css = s.cssList;
-        const $li = $be('li', s.element);
+        const $els = $be('li, ul', s.element);
         
-        $li.each((elem, i) => {
-            const $uls = $li.find('ul');
+        $els.each((elem, i) => {
+            const $uls = $els.find('ul');
             const ulCss = $uls.hasEls ? css.menuHasUL : css.menuNoUl;
             
             $be(elem).addClass(ulCss);

@@ -72,8 +72,6 @@ function buildHtml(done) {
   done();
 }
 
-
-
 const buildDevJs = (done) => {
     if (!production) {
 

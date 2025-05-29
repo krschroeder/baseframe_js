@@ -21,21 +21,9 @@ export const debounceResize = (
 ): void => {
     const nm = namespace !== '' ? `.${namespace}` : '';
     const events = [`resize${nm}`] as EventName[];
-    if (immediate) events.push(namespace as EventName);
-
+   
     debounce(window, events, cb, {immediate, delay});
 }
-
-// {
-//     let timer = null;
-
-//     $be('#btn-debounce-test').on('click', (ev, elem) => {
-//         clearTimeout(timer);
-//         timer = setTimeout(() => {
-//             console.log('yeah buddy')
-//         }, 500)
-//     })
-// }
 
 const debounce = (
     elem: SelectorElem | string,

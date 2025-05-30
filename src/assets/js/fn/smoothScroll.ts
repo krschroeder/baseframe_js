@@ -1,92 +1,62 @@
 import $be, { type EventName} from 'base-elem-js';
-import { body, docTop, isFunc } from '../util/helpers';
+import { body, isFunc } from '../util/helpers';
+import animate from '../util/animate';
 import debounce from './debounce';
- 
-const EVENT_NAME = 'smoothScroll';
 
+import Easing, {type Easings, type EasingFn} from '../util/Easing';
+
+const EVENT_NAME = 'smoothScroll';
 const userBreakEvents = [`wheel.${EVENT_NAME}`, `touchstart.${EVENT_NAME}`] as EventName[];
 
 let activeScroll = false;
 
-
 export default function smoothScroll(
     scrollTargetY: number,
-    duration = 1000,
-    easingFn?: (pct: number) => number,
+    duration = 400,
+    easing: EasingFn | Easings = 'easeOutQuint',
     afterScroll?: (...args) => void
 ): void {
     if (activeScroll) return;
     activeScroll = true;
-     
-    let msPrev = window.performance.now();
 
+    let progress = 0;
     const 
         startScrollY    = window.scrollY,
         scrollDistance  = Math.abs(startScrollY - scrollTargetY),
         scrollDir       = startScrollY < scrollTargetY ? 1 : -1,
-        useEasing       = isFunc(easingFn),
         msPerFrame      = 1000 / 60,
         frames          = duration / msPerFrame,
         progressSize    = scrollDistance / frames
     ;
+    
+    body.style.scrollBehavior = 'auto';
 
-  
-    console.log('scroll to:', scrollTargetY)
-    console.log('progress size:', progressSize)
-    // state
-    let 
-        animation = null,
-        breakScroll = false,
-        progress = 0
+    const easingFn: EasingFn = isFunc(easing)
+        ? easing as EasingFn
+        : Easing[easing as Easings]
     ;
 
-    const doBreakScroll = () => breakScroll = true;
+    const cancelAnimation = animate(() => {
+        progress += progressSize;
 
-    $be(window).on(userBreakEvents, doBreakScroll);
-    debounce(window,`scroll.${EVENT_NAME}`, doBreakScroll);
+        const scrollProgress = scrollDistance * easingFn(progress / scrollDistance);
+        const yPos = startScrollY + scrollProgress * scrollDir;
 
-    body.style.scrollBehavior = 'auto';
-   
-    console.time('smoothScroll');
+        window.scroll(0, yPos);
+        
+        if (progress > scrollDistance) cancel();
+    });
 
-    const cleanUpScroll = () => {
+    const cancel = () => {
         if (isFunc(afterScroll)) afterScroll();
-        cancelAnimationFrame(animation);
-        console.timeEnd('smoothScroll');
+        cancelAnimation();
         
         $be(window).off([...userBreakEvents, `scroll.${EVENT_NAME}`]);
         body.style.scrollBehavior = null;
         
         activeScroll = false;
     }
-
-    
-    const scrollFn = () => {
-        if (breakScroll) {
-            cleanUpScroll();
-            
-            return;
-        }
-
-        animation = requestAnimationFrame(scrollFn);
-
-        const msNow = window.performance.now();
-        const msPassed = msNow - msPrev;
-
-        if (msPassed < msPerFrame) return;
-
-        const excessTime = msPassed % msPerFrame;
-        msPrev = msNow - excessTime;
-        
-        progress += progressSize;
-
-        const scrollProgress = useEasing ? (progress * easingFn(progress / scrollDistance)) : progress;
-        const yPos = startScrollY + scrollProgress * scrollDir;
-        
-        window.scroll(0, yPos);
-        
-        if (progress > scrollDistance) cleanUpScroll();
-    };
-
-    scrollFn();
+     
+    $be(window).on(userBreakEvents, cancel);
+    debounce(window,`scroll.${EVENT_NAME}`, cancel);
 }

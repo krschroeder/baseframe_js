@@ -50,11 +50,14 @@ const { findOne, findBy, make } = $be.static;
 }
  
 
-$be('.plugins-list-inline').find('a').on('click.smoothScroll', (ev, elem: HTMLAnchorElement) => {
+ 
+$be('.plugins-list-inline').find('a').on('click.smoothScroll', (ev: MouseEvent, elem: HTMLAnchorElement) => {
     const hash = elem.hash;
 
     if (hash) {
-        smoothScroll((findOne(hash) as HTMLElement).offsetTop, 2000)
+        const yPos = (findOne(hash) as HTMLElement).offsetTop - $be('.site-header').elemRects().height;
+        smoothScroll(yPos, 400,'easeInOutQuart');
+        ev.preventDefault();
     }
 })
 
@@ -66,7 +69,7 @@ $collapseGroup1.on('click.collapseHeading', (ev, elem) => {
     const h2 = elem as HTMLElement;
     const btn = h2.nextElementSibling as HTMLButtonElement;
 
-    if (btn) { console.log(btn); 
+    if (btn) {
         $be(btn).trigger('click');
     }
 },'.collapse__header h2').collapse({

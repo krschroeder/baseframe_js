@@ -12,9 +12,9 @@ let activeScroll = false;
 
 export default function smoothScroll(
     scrollTargetY: number,
-    duration = 400,
+    duration = 500,
     easing: EasingFn | Easings = 'easeOutQuint',
-    afterScroll?: (...args) => void
+    scrollEndFn?: (...args) => void
 ): void {
     if (activeScroll) return;
     activeScroll = true;
@@ -48,7 +48,7 @@ export default function smoothScroll(
     });
 
     const cancel = () => {
-        if (isFunc(afterScroll)) afterScroll();
+        if (isFunc(scrollEndFn)) scrollEndFn();
         cancelAnimation();
         
         $be(window).off([...userBreakEvents, `scroll.${EVENT_NAME}`]);
@@ -60,3 +60,4 @@ export default function smoothScroll(
     $be(window).on(userBreakEvents, cancel);
     debounce(window,`scroll.${EVENT_NAME}`, cancel);
 }
+

@@ -107,17 +107,17 @@ export default class SelectEnhance {
             console.warn(`The SelectEnhance plugin doesn't support multiple selections.`)
         }
 
-        if (s.$label.hasElems()) {
+        if (s.$label.hasEls) {
             s.$label.attr({ id: s.selectId + '_lbl' });
         }
         
         s.params = setParams(SelectEnhance.defaults, options, dataOptions);
 
-        s.setUpSelectHtml();
+        s.#setUpSelectHtml();
 
         if (mobileOS && s.params.mobileNative || s.isReadOnly) {
            
-            s.mobileOnlyIfNavite();
+            s.#mobileOnlyIfNavite();
 
         } else {
             // 
@@ -127,19 +127,19 @@ export default class SelectEnhance {
             if (s.params.observeSelectbox) {
                 s.selectInputMutationObserver();
             }
-            s.eventLabelClick();
-            s.eventKeyboardSearch();
-            s.eventShowOptions();
-            s.eventOptionClick();
-            s.eventArrowKeys();
-            s.eventResizeClose();
-            s.observeSelectListBoxInFullView();
+            s.#eventLabelClick();
+            s.#eventKeyboardSearch();
+            s.#eventShowOptions();
+            s.#eventOptionClick();
+            s.#eventArrowKeys();
+            s.#eventResizeClose();
+            s.#inFullView();
         }
 
         return s;
     }
 
-    mobileOnlyIfNavite() {
+    #mobileOnlyIfNavite() {
         const s = this;
 
         let prevElSelectedVal = s.#getSelectedOptNode(s.$select);
@@ -179,7 +179,7 @@ export default class SelectEnhance {
         s.eventOutsideClickClose();
         
         
-        if ($selectedBtn.hasElems()) {
+        if ($selectedBtn.hasEls) {
             ($selectedBtn.elem[0] as HTMLElement).focus();
         }
 
@@ -261,7 +261,7 @@ export default class SelectEnhance {
     
     // region Events 
 
-    eventLabelClick() {
+    #eventLabelClick() {
         const s = this;
 
         s.$label.on(`click.${EVENT_NAME}`, (ev: MouseEvent) => {
@@ -270,14 +270,14 @@ export default class SelectEnhance {
         });
     }
 
-    eventResizeClose() {
+    #eventResizeClose() {
         const s = this;
         $be(window).on(`resize.${EVENT_NAME}`, () => {
             if (s.optionsShown) s.closeOptions();
         });
     }
 
-    eventShowOptions() {
+    #eventShowOptions() {
         const s = this;
         const { cssPrefix } = s.params;
 
@@ -309,7 +309,7 @@ export default class SelectEnhance {
         });
     }
 
-    eventOptionClick() {
+    #eventOptionClick() {
         const s = this;
         const { cssPrefix } = s.params;
 
@@ -349,7 +349,7 @@ export default class SelectEnhance {
         }, 100);
     }
 
-    eventKeyboardSearch() {
+    #eventKeyboardSearch() {
         const s = this;
 
         let keyInputTo: WinSetTimeout | null = null;
@@ -388,7 +388,7 @@ export default class SelectEnhance {
         s.$selectList.on(`keypress.${EVENT_NAME}`, keyboardSearch);
     }
 
-    eventArrowKeys() {
+    #eventArrowKeys() {
 
         const s = this;
         s.$selectEnhance.on(`keydown.navigate_${EVENT_NAME}`, (ev: KeyboardEvent, elem: HTMLElement) => {
@@ -439,7 +439,7 @@ export default class SelectEnhance {
 
     // region Build Options
 
-    setUpSelectHtml() {
+    #setUpSelectHtml() {
         const 
             s = this,
             selectEnhance = make(`div.${s.params.cssPrefix}#${s.selectId}_wrap`),
@@ -619,7 +619,7 @@ export default class SelectEnhance {
         }
     }
 
-    observeSelectListBoxInFullView() {
+    #inFullView() {
         const s = this;
 
         if (window.IntersectionObserver) {

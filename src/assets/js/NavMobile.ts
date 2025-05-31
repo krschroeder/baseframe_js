@@ -2,7 +2,7 @@
 import type { StringPluginArgChoices } from './types';
 import $be, {type BaseElem, type SelectorRoot} from "base-elem-js";
 // import $ from 'cash-dom';
-import {  getDataOptions, noop, reflow, setParams } from './util/helpers';
+import {  getDataOptions, isFunc, noop, reflow, setParams } from './util/helpers';
  
 import focusTrap, { type ITrapFocusRemove } from './fn/focusTrap';
 import { KEYS } from "./core/constants";
@@ -11,11 +11,12 @@ import type { EventName } from 'base-elem-js';
 import { body } from './util/helpers';
 import { debounceResize } from './fn/debounce';
 
-type submenuBtnSkipFn = (elem: HTMLElement) => boolean;
+type SubmenuBtnSkipFn = (elem: HTMLElement) => boolean;
 
 interface NavMobileCssList {
 	outerOpen: string;
 	hasUl: string;
+    noUl: string;
 	open: string;
 	opening: string;
 	closing: string;
@@ -26,14 +27,14 @@ interface NavMobileCssList {
 export interface INavMobileDefaults {
 	enableBtn: HTMLElement | string;
 	ariaLabel: string;
-	subMenuText: string;
-	insertToggleBtnAfter: string;
+	tgBtnText: string;
+	insertBtnAfter: string;
 	slideDuration: number;
 	outerElement: HTMLElement | string;
 	outsideClickClose: boolean;
 	cssPrefix: string;
 	menuBtnCss: string,
-	menuBtnSkip: submenuBtnSkipFn | boolean;
+	menuBtnSkip: SubmenuBtnSkipFn | boolean;
 	doTrapFocus: boolean;
 	trapFocusElem: SelectorRoot | null;
 	stopPropagation: boolean;
@@ -49,16 +50,14 @@ export interface INavMobileOptions extends Partial<INavMobileDefaults> {
 	enableBtn: HTMLElement | string;
 }
 
-
-
 const VERSION = "3.0.0";
 const DATA_NAME = 'NavMobile';
 const EVENT_NAME = 'navMobile';
 const DEFAULTS: INavMobileDefaults = {
 	enableBtn: '#mobile-nav-btn',
 	ariaLabel: 'Toggle site navigation',
-	subMenuText: 'toggle menu for',
-	insertToggleBtnAfter: 'a',
+	tgBtnText: 'toggle menu for',
+	insertBtnAfter: 'a',
 	slideDuration: 400,
 	outerElement: body,
 	outsideClickClose: true,
@@ -75,7 +74,6 @@ const DEFAULTS: INavMobileDefaults = {
 	stopPropagation: true,
 	bkptEnable: null
 };
-
 
 const { isVisible, make, useTransition } = $be.static;
 
@@ -108,17 +106,18 @@ export default class NavMobile {
 
 		const {cssPrefix, menuBtnCss} = s.params;
 		s.cssList = {
-			outerOpen:  `${cssPrefix}--outer-open`,
-			open:       `${cssPrefix}--open`,
-            opening:    `${cssPrefix}--is-opening`,
-			closing:    `${cssPrefix}--is-closing`,
+			outerOpen:  `${cssPrefix}--outer-active`,
+			open:       `${cssPrefix}--active`,
+            opening:    `${cssPrefix}--starting`,
+			closing:    `${cssPrefix}--ending`,
 			toggling:   `${cssPrefix}--toggling`,
 			hasUl:      `${cssPrefix}__has-ul`,
-			btn:     `${cssPrefix}__btn-nav ${menuBtnCss}`
+            noUl:       `${cssPrefix}__no-ul`,
+			btn:        `${cssPrefix}__btn-tg ${menuBtnCss}`
 		};
 		//run the methods
-		s.#addCssToElems();
-		s.handleEvents();
+		s.#addCssAndBtn();
+		s.#handleEvents();
 		s.#checkIfEnabled();
 
 		const elemID = element.id || element.className;
@@ -131,7 +130,7 @@ export default class NavMobile {
 		return s;
 	}
 
-	handleEvents() {
+	#handleEvents() {
 		const s = this;
         const p = s.params;
 		const css = s.cssList;
@@ -178,13 +177,16 @@ export default class NavMobile {
 		const $elemParent = s.$element.find(elem => elem.parentElement);
 		const doClose = s.menuOpened;
 		const cssMenuState = [doClose ? css.closing : css.opening, css.toggling];
+
+        const $outerElem = $be(p.outerElement);
+
 		s.#transition(() => {
 			 
 			s.menuOpened = !doClose;
 
 			s.$element.addClass(cssMenuState);
 			$be(p.enableBtn).attr({ 'aria-expanded': !doClose + '' });
-			$be(p.outerElement)
+			$outerElem
 				.tgClass(css.outerOpen, !doClose)
 				.addClass(cssMenuState);
 
@@ -202,16 +204,16 @@ export default class NavMobile {
 				}
 			}
 		},() => {
-			$be(p.outerElement).rmClass(cssMenuState);
+			$outerElem.rmClass(cssMenuState);
 			s.$element.rmClass(cssMenuState);
 
 			if (!doClose) {
 				s.$element.addClass(css.open);
 			}
 
-            const fn = doClose ? s.params.afterClose : s.params.afterOpen;
+            const fn = doClose ? p.afterClose : p.afterOpen;
 
-			fn(s.element, $be(p.outerElement).toArray() as HTMLElement[], s.enableBtn);
+			fn(s.element, $outerElem.toArray() as HTMLElement[], s.enableBtn);
 			 
 		}, p.slideDuration);
 	}
@@ -289,41 +291,41 @@ export default class NavMobile {
 		});
 	}
 
-	#addCssToElems() {
+    #addCssAndBtn() {
 		const s = this;
-		const p = s.params;
+        const p = s.params;
 		const css = s.cssList;
+        const $lis = $be('li', s.element);
+        
+        $lis.each((elem, i) => {
+            const $li = $be(elem);
+            const $uls = $li.findBy('tag','ul');
+            const ulCss = $uls.hasEls ? css.hasUl : css.noUl;
+            const nextElem = elem.nextElementSibling as HTMLElement;
+             
+            $li.addClass(ulCss);
+            
+            if (!$uls.hasEls) return;
 
-		s.$element.find('li').each((elem: HTMLElement) => {
-			const $li = $be(elem);
-            const nextElem  = elem.nextElementSibling;
-            const hasBtn = nextElem?.tagName === 'BUTTON' && nextElem.matches(`.${css.btn}`);
-            if (!$li.find('ul').hasEls) return;
+            const menuBtnSkip = isFunc(p.menuBtnSkip) ? 
+                (p.menuBtnSkip as SubmenuBtnSkipFn)(elem) : 
+                p.menuBtnSkip
+            ;
 
-			let skipUl = false;
+            if (!menuBtnSkip) {
+                const $afterEl = $li.find(p.insertBtnAfter).get(0);
+                const btnAlreadySet = nextElem ? $be(nextElem).hasClass(css.btn): false;
 
-			if (typeof p.menuBtnSkip === 'function' && p.menuBtnSkip(elem)) {
-				skipUl = true;
+                if (!btnAlreadySet) {
+                    const btn = make(`button.${css.btn}`,{
+                        type: 'button',
+                        ariaLabel: p.tgBtnText
+                    });
+                    
+                    $afterEl.insert(btn,'after');
+                }
 			}
-
-			if (!hasBtn && !skipUl) {
-				const $el = $li.find(p.insertToggleBtnAfter).get(0);
-
-				$el.addClass(css.hasUl);
-
-				if ($el.hasEls) {
-					if (($el.elem[0] as HTMLElement).parentElement === elem) {
-						// make sure the <el> is a direct child of <li>
-                        const btn = make(`button.${css.btn}`,{
-                            type: 'button',
-                            ariaLabel: p.subMenuText + ' ' + $el.text().trim()
-                        });
-                        
-						$el.insert(btn,'after');
-					}
-				}
-			}
-		});
+        });
 	}
 
 	#checkIfEnabled() {

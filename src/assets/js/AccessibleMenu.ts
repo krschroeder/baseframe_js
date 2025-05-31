@@ -99,37 +99,35 @@ export default class AccessibleMenu {
 		const 
             s = this,
             p = s.params,
-		    l = s.$aeLiParents.elem.length - 1,
-		    atRootUl = s.$aeLiParents.elem.length === 1,
+		    l = s.$aeLiParents.size - 1,
+		    atRootUl = s.$aeLiParents.size === 1,
 		    key = e.key,
             keyIsRight = key === KEYS.right && p.keyDirections[l],
-            keyIsDown = key === KEYS.down && p.keyDirections[l] 
+            keyIsDown = key === KEYS.down && p.keyDirections[l] ,
+            activeLi = s.activeElem.closest('li'),
+            $sliblingLis = $be(activeLi).siblings('li',true),
+            isLastLi = $sliblingLis.elem.at(-1) === activeLi,
+            isLastAtRoolLevel = atRootUl && isLastLi
         ;
-       
+
         //go to sibling <li>
 		if (keyIsRight === "horizontal" || keyIsDown === "vertical") {
 
-            const 
-                activeLi = s.activeElem.closest('li'),
-                $sliblingLis = $be(activeLi).siblings('li',true),
-                isLastLi = $sliblingLis.elem.at(-1) === activeLi,
-                isLastAtRoolLevel = atRootUl && isLastLi
-            ;
-	
-			if (isLastAtRoolLevel && isLastLi) {
-               
-                s.#focusFirstElem(s.$aeLiParents);
-				 
-			} else {
-               
+			if (!isLastAtRoolLevel) { 
 				s.#focusListItem(false);
 				e.preventDefault();
 			}
 		}
+
+        if (key === KEYS.esc && isLastAtRoolLevel) {
+            
+            $be(s.activeElem.closest('li')).rmClass(p.focusCss)
+                 
+        }
 	
         //go to the nestled <li>
 		if (keyIsRight === "vertical" || keyIsDown === "horizontal") {
-            const $nestledUl = $be(s.activeElem.closest('li')).findOne('ul')
+            const $nestledUl = $be(s.activeElem.closest('li')).findOne('ul');
             
             s.#focusFirstElem($nestledUl);
             e.preventDefault();
@@ -146,10 +144,10 @@ export default class AccessibleMenu {
       
 		let focusOutDelay: WinSetTimeout = null;
        
-		s.$element.on(`focusin.${EVENT_NAME}`, (e: KeyboardEvent, elem: HTMLLIElement) => {
+		s.$element.on(`focusin.${EVENT_NAME}`, () => {
             s.activeElem = document.activeElement as HTMLElement;
 			focusOutDelay && clearTimeout(focusOutDelay);
-    
+            
             $be(s.activeElem.closest('li'))
                 .addClass(p.focusCss)
                 .siblings('li').rmClass(p.focusCss);
@@ -161,7 +159,7 @@ export default class AccessibleMenu {
         .on(`mouseleave.${EVENT_NAME}`, () => {
             $lis.rmClass(p.focusCss);
 		})
-        s.$element.on(`keydown.${EVENT_NAME}`, (e: KeyboardEvent) => {
+        .on(`keydown.${EVENT_NAME}`, (e: KeyboardEvent) => {
             s.$aeLiParents = $be(s.activeElem).parents('li', s.element);
            
 			if (e.key == KEYS.esc) s.#focusFirstElem(s.$aeLiParents);

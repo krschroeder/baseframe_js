@@ -1,5 +1,5 @@
 // import type { BaseElem } from "cash-dom";
-import type { LocationHashTracking, PrimaryClickElems, StringPluginArgChoices } from './types';
+import type { LocationTracking, PrimaryClickElems, StringPluginArgChoices } from './types';
 
 // import $ from 'cash-dom';
 import $be, { type BaseElem, type SelectorRoot, type EventName } from "base-elem-js";
@@ -7,11 +7,12 @@ import { getDataOptions, setParams } from "./util/helpers";
  
 import Store from "./core/Store";
 import UrlState from "./core/UrlState";
+import loadFromUrl from './util/loadfromUrl';
 
 
 type tabDefaultContent = string;
 
-export interface ITabsDefaults extends LocationHashTracking {
+export interface ITabsDefaults extends LocationTracking {
 	tabsEvent: string;
 	cssPrefix: string;	 
 	addIDtoPanel: boolean;
@@ -90,47 +91,44 @@ export default class Tabs {
 		s.initDefaultContent = s.$tabsBodyPanels.get(p.defaultContent).attr('data-tab-id');
 		 	 
 		//init
-		s.setAriaAttrs();
-		s.handleEvents();
-		s.loadDefaultContent();
-		s.loadFromUrl();
+		s.#setAriaAttrs();
+		s.#handleEvents();
+		s.#defaultContent();
+        s.#loadFromUrl();
 	
 		s.params.onInit(s.tabsNav, s.tabsBody);
 
 		return s;
 	}
 
-	loadDefaultContent() {
+    #loadFromUrl() {
+        const s = this;
+        const p = s.params;
+
+        loadFromUrl(p as LocationTracking, (id) => {
+            if (id) {
+				const clickElem = s.#findTabButtonById(id);
+				if (clickElem) s.changeTabElements(clickElem, id, false);
+			}
+        });
+    }
+
+	#defaultContent() {
 		const s = this;
 		const tabId = s.initDefaultContent; 
-		const clickElem = s.getClickElemFromTabId(tabId);
+		const clickElem = s.#findTabButtonById(tabId);
 
 		s.changeTabElements(clickElem, tabId, false);
 	}
 
-	loadFromUrl() {
-		const s = this;
-		const p = s.params;
-
-		if (p.locationFilter !== null && p.loadLocation && p.urlFilterType !== 'none') {
-		
-			const tabId = UrlState.get(p.urlFilterType, p.locationFilter) as string;
-			 
-			if (tabId) {
-				const clickElem = s.getClickElemFromTabId(tabId);
-				if (clickElem) s.changeTabElements(clickElem, tabId, false);
-			}
-		}
-	}
-
-	getClickElemFromTabId(tabId: string):PrimaryClickElems | null {
+	#findTabButtonById(tabId: string):PrimaryClickElems | null {
         const clickElem = this.tabsNavBtns.find((el: PrimaryClickElems) => getTabIDFromEl(el) === tabId);
 		
         if (clickElem) return clickElem as PrimaryClickElems;
 		return null;
 	}
 
-	setAriaAttrs() {
+	#setAriaAttrs() {
 		const s = this;
 		const p = s.params;
 
@@ -157,7 +155,7 @@ export default class Tabs {
 		});
 	}
 
-	handleEvents() {
+	#handleEvents() {
 		const s = this;
 
 		s.$tabsNav.on([`${s.params.tabsEvent}.${EVENT_NAME}`,`[${EVENT_NAME}]`] as EventName[], (ev: MouseEvent, elem) => {
@@ -195,7 +193,7 @@ export default class Tabs {
 		$be(window).on(`popstate.${EVENT_NAME} ${EVENT_NAME}`, (e) => {
 			if (s.params.historyType === 'push') {
 
-				s.loadFromUrl();
+				s.#loadFromUrl();
 				e.preventDefault();
 			}
 		})

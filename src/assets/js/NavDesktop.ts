@@ -9,11 +9,11 @@ import Store from "./core/Store";
 
 
 interface INavDesktopCss {
-	menuHasUL: string;
-	menuNoUl: string;
-	menuElemEdge: string;
-	menuHovered: string;
-	menuLeaving: string;
+	hasUL: string;
+	noUl: string;
+	elemEdge: string;
+	hovered: string;
+	leaving: string;
 }
 export interface INavDesktopDefaults {
 	stopWidth: number;
@@ -28,17 +28,19 @@ export interface INavDesktopOptions extends Partial<INavDesktopDefaults> {}
 
 const { findOne, elemRects } = $be.static;
 
-const VERSION = "2.0.0";
-const DATA_NAME = 'NavDesktop';
-const EVENT_NAME = 'navDesktop';
-const DEFAULTS: INavDesktopDefaults = {
-	stopWidth: 768,
-	delay: 800,
-	navLeavingDelay: 800,
-	outerElem: document.body,
-	cssPrefix: 'menu',
-	hoverCss: 'hover' 
-};
+const 
+    VERSION = "2.0.0",
+    DATA_NAME = 'NavDesktop',
+    EVENT_NAME = 'navDesktop',
+    DEFAULTS: INavDesktopDefaults = {
+        stopWidth: 768,
+        delay: 800,
+        navLeavingDelay: 800,
+        outerElem: document.body,
+        cssPrefix: 'menu',
+        hoverCss: 'hover' 
+    }
+;
 
 export default class NavDesktop {
 
@@ -65,12 +67,11 @@ export default class NavDesktop {
 		const { cssPrefix } = s.params;
 		 
 		s.cssList = {
-			// menuOuterOpen: `${cssPrefix}--outer-open`,
-			menuHasUL: `${cssPrefix}__has-ul`,
-			menuNoUl: `${cssPrefix}__no-ul`,
-			menuElemEdge: `${cssPrefix}__elem-on-edge`,
-			menuHovered: `${cssPrefix}--hover`,
-			menuLeaving: `${cssPrefix}--leaving`,
+			hasUL:      `${cssPrefix}__has-ul`,
+			noUl:       `${cssPrefix}__no-ul`,
+			elemEdge:   `${cssPrefix}__elem-on-edge`,
+			hovered:    `${cssPrefix}--hover`,
+			leaving:    `${cssPrefix}--leaving`,
 		};
 
 		s.#addCssToElems();
@@ -98,18 +99,25 @@ export default class NavDesktop {
         const $els = $be('li, ul', s.element);
         
         $els.each((elem, i) => {
-            const $uls = $els.find('ul');
-            const ulCss = $uls.hasEls ? css.menuHasUL : css.menuNoUl;
+            const $el = $be(elem);
+            const $uls = $el.find('ul');
+            const ulCss = $uls.hasEls ? css.hasUL : css.noUl;
             
-            $be(elem).addClass(ulCss);
+            $el.addClass(ulCss);
         })
 	}
 
 	#handleEvents() {
-		const s = this;
-        const css = s.cssList;
-		const p = s.params;
-        const $rootUl = $be(s.element).findOne('ul');
+		const 
+            s = this,
+            css = s.cssList,
+		    p = s.params,
+            $rootUl = $be(s.element).findOne('ul'),
+            $outerElem = $be(p.outerElem),
+            $element = $be(s.element),
+            $allEls = $element.find('li, ul'),
+            allEls = $allEls.toArray() as HTMLElement[]
+        ;
 
 		let prevEvent = null;
 
@@ -125,59 +133,50 @@ export default class NavDesktop {
 				cb();
 			}
 		}
-
+     
 		$rootUl.on([`mouseover.${EVENT_NAME}`,`focusin.${EVENT_NAME}`], (ev: MouseEvent, elem: HTMLElement) => {
-
-			const liOrUl = elem as HTMLElement;
-
-			evtTracker(liOrUl, ev, () => {
-				s.#edgeDetector(liOrUl);
-                const $li = $be(liOrUl);
-				const $liLiParents = $be(liOrUl).parents('li');
-
-				liOrUl.classList.add(p.hoverCss);
-				$liLiParents.addClass(p.hoverCss);
-                $be(elem).find('li').rmClass(p.hoverCss);
-				$li.find(`.${p.hoverCss}`).rmClass(p.hoverCss);
-				 
-				if (!$liLiParents.hasElems()) {
-
-                    $be(s.element).find(`.${p.hoverCss}`).rmClass(p.hoverCss);
-                }
+            console.log(elem, ev.target)
+			evtTracker(elem, ev, () => {
+                const $li = $be(elem); 
+				const $liParents = $li.parents('li'); 
+                
+                $allEls.rmClass([p.hoverCss, css.elemEdge]);
+				$liParents.addClass(p.hoverCss);
+				$li.addClass(p.hoverCss);
+				s.#edgeDetector(ev.target as HTMLElement); 
                 
 				s.navLeaving && clearTimeout(s.navLeaving);
 				s.stayHover && clearTimeout(s.stayHover);
 
-				$be(p.outerElem).addClass(css.menuHovered).rmClass(css.menuLeaving)
+				$outerElem.addClass(css.hovered).rmClass(css.leaving);
 
 			});
 
-		}, 'li, ul');
+		}, allEls);
 
         $rootUl.on([`mouseout.${EVENT_NAME}`, `focusout.${EVENT_NAME}`], (ev: MouseEvent, elem: HTMLElement) => {
-
-			const liOrUl = elem as HTMLElement;
 			 
-			evtTracker(liOrUl, ev, () => {
+			evtTracker(elem, ev, () => {
 				s.stayHover = setTimeout(() => {
-					$be(s.element).find(`.${p.hoverCss}`).rmClass([p.hoverCss, css.menuElemEdge]);
-					$be(s.element).find(`.${css.menuElemEdge}`).rmClass(css.menuElemEdge);
-					$be(p.outerElem)
-						.rmClass(css.menuHovered)
-						.addClass(css.menuLeaving);
+					$element.find(`.${p.hoverCss}`).rmClass([p.hoverCss, css.elemEdge]);
+					$element.find(`.${css.elemEdge}`).rmClass(css.elemEdge);
+					$outerElem
+						.rmClass(css.hovered)
+						.addClass(css.leaving);
 
 					s.navLeaving = setTimeout(() => {
-						$be(p.outerElem).rmClass(css.menuLeaving);
+						$outerElem.rmClass(css.leaving);
 					}, p.navLeavingDelay);
 				},
 				p.delay);
 			});
-		},'li, ul');
+		}, allEls);
 	}
 
-	#edgeDetector(liOrUl: HTMLElement) {
+	#edgeDetector(elem: HTMLElement) {
 		const s = this;
 		const css = s.cssList;
+        const li = elem.closest('li');
 		const { innerWidth, pageXOffset } = window;
 
 		if (s.params.stopWidth < innerWidth) {
@@ -190,10 +189,12 @@ export default class NavDesktop {
                     ulRects = elemRects(ul),
 					offsetLeft = ulRects.left + pageXOffset,
 					ulWidth = ul.scrollWidth,
-					fullyVisible = (offsetLeft + ulWidth <= innerWidth);
+					fullyVisible = (offsetLeft + ulWidth <= innerWidth)
+                ;
                    
 				if (!fullyVisible) {
-					liOrUl.classList.add(css.menuElemEdge);
+                    
+					li.classList.add(css.elemEdge);
 				}
 			}
 		}

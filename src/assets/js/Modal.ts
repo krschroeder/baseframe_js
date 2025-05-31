@@ -1,5 +1,5 @@
  
-import type { LocationHashTracking, StringPluginArgChoices } from './types';
+import type { LocationTracking, StringPluginArgChoices } from './types';
 
 import $be, {type BaseElem, type EventName, type SelectorRoot} from "base-elem-js";
 import Store from "./core/Store";
@@ -7,6 +7,7 @@ import UrlState from "./core/UrlState";
 import focusTrap from './fn/focusTrap';
 import { camelCase, getDataOptions, reflow, setParams } from './util/helpers';
 import { noop } from './util/helpers';
+import loadFromUrl from './util/loadfromUrl';
  
 
 type ModalObj = {
@@ -22,7 +23,18 @@ type ModalObj = {
     show: boolean //state
 }
 
-export interface IModalDefaults extends LocationHashTracking {
+export interface IModalCss {
+    show: string;
+    dismissing: string;
+    open: string;
+    btnDismiss: string;
+    dialog: string;
+    dialogContent: string;
+    backdrop: string;
+    marker: string;
+}
+
+export interface IModalDefaults extends LocationTracking {
     src: SelectorRoot | string;
     modalID: string | null;
     enableEvent: string;
@@ -95,7 +107,7 @@ export default class Modal {
     public enabledElem: Element | null;
     public openedOnce: boolean;
     public domMarker: HTMLElement | null;
-
+    public cssList: IModalCss;
     public static defaults = DEFAULTS;
     public static version = VERSION;
     public static pluginName = DATA_NAME;
@@ -106,18 +118,36 @@ export default class Modal {
         s.element = element;
 
         const dataOptions = getDataOptions(element, EVENT_NAME);
-        
-        s.params = setParams(Modal.defaults, options, dataOptions);
+        const params = setParams(Modal.defaults, options, dataOptions);
+        const { cssPrefix } = params;
+
+        s.params = params;
         s.modalID = s.params.modalID;
-        s.components = s.#createComponents();
         s.modalEvent = EVENT_NAME + '_' + s.modalID;
         s.focusTrapped;
         s.enabledElem;
         s.openedOnce = false;
-        s.domMarker = bes.make(`span.${s.params.cssPrefix}-content-placemarker#${s.modalID}__marker`);
+        s.cssList = {
+            show:           cssPrefix + '--show',
+            dismissing:     cssPrefix + '--dismissing',
+            open:           cssPrefix + '-open',
+            btnDismiss:     cssPrefix + '__btn-dismiss',
+            dialog:         cssPrefix + '__dialog',
+            dialogContent:  cssPrefix + '__dialog-content',
+            backdrop:       cssPrefix + '__backdrop',
+            marker:         cssPrefix + '-content-placemarker'
+        };
+        s.components = s.#createComponents();
+        s.domMarker = bes.make(`span.${s.cssList.marker}-content-placemarker#${s.modalID}__marker`);
+        
         s.#handleEvents();
-        s.#loadFromUrl();
-
+        
+        loadFromUrl(s.params as LocationTracking, (id) => {
+            if (id === s.modalID) {
+                s.components.show ? s.close() : s.#setDisplayAndEvents();
+            }
+        })
+        
         Store(element, DATA_NAME, s);
 
 		return s;
@@ -172,24 +202,25 @@ export default class Modal {
         const 
             s               = this,
             p               = s.params,
+            css             = s.cssList,
             rootCss         = p.cssPrefix + (p.modalCss ? ' ' + p.modalCss : ''),
             ariaLabelledby  = (p.ariaLabelledby || s.element.dataset.ariaLabelledby) || null,
             modal           = make(`div.${rootCss}`, {
                                 id: s.modalID,
                                 ariaLabel: (p.ariaLabel || s.element.dataset.ariaLabel) || null 
                             }),
-            closeBtn        = make(`button.${p.cssPrefix}__btn-dismiss`, { 
+            closeBtn        = make(`button.${css.btnDismiss}`, { 
                                 type: 'button', 
                                 ariaLabel: p.closeBtnLabel 
                             }, `<i class="${p.closeBtnIconCss}"></i>`),
-            dialogContent   = make(`div.${p.cssPrefix}__dialog-content`),
-            dialog          = make(`div.${p.cssPrefix}__dialog`),
-            backdrop        = make(`div.${p.cssPrefix}__backdrop`),
+            dialogContent   = make(`div.${css.dialogContent}`),
+            dialog          = make(`div.${css.dialog}`),
+            backdrop        = make(`div.${css.backdrop}`),
             $content        = $be(
                 s.params.src || 
                 (<HTMLAnchorElement>s.element).hash || 
                 s.element.dataset.modalSrc
-            )
+            );
         ;
         
         // typescript doesn't like setting this in the object above
@@ -244,14 +275,12 @@ export default class Modal {
             s.openedOnce = true;
         }
 
-        $be(modal).attr({ role: 'dialog', 'aria-modal': 'true'})
-
-        reflow(modal);
-        
-        setTimeout(() => {
-            $modal.addClass(p.cssPrefix + '--show');
-            bes.oa(s.components, { show: true });
-        },0);
+        $modal
+            .attr({ role: 'dialog', 'aria-modal': 'true'})
+            .each(elem => reflow(elem))
+            .addClass(s.cssList.show)
+        ;
+        bes.oa(s.components, { show: true });
 
         if (p.focusInDelay !== null) {
             setTimeout(() => {
@@ -259,7 +288,7 @@ export default class Modal {
             }, p.focusInDelay);
         }
 
-        $be(p.appendTo).addClass(p.cssPrefix + '-open').css({
+        $be(p.appendTo).addClass(s.cssList.open).css({
             overflow: 'hidden',
             paddingRight: '0px'
         });
@@ -279,8 +308,8 @@ export default class Modal {
         hasCb(p.onClose, s.components);
 
         $modal
-            .addClass(p.cssPrefix + '--dismissing')
-            .rmClass(p.cssPrefix + '--show');
+            .addClass(s.cssList.dismissing)
+            .rmClass(s.cssList.show);
 
         // detach events
         $be(closeBtn).off(`click.${s.modalEvent}Dismiss`);
@@ -301,11 +330,11 @@ export default class Modal {
             $modal.attr({
                 role: 'dialog',
                 'aria-modal': ''
-            }).rmClass(p.cssPrefix + '--dismissing').css({
+            }).rmClass(s.cssList.dismissing).css({
                 display: ''
             });
 
-            $be(p.appendTo).rmClass(p.cssPrefix + '-open').css({
+            $be(p.appendTo).rmClass(s.cssList.open).css({
                 overflow: null,
                 paddingRight: null
             });
@@ -328,20 +357,6 @@ export default class Modal {
             bes.oa(s.components, { show: false });
 
         }, p.closeOutDelay);
-    }
-
-    #loadFromUrl() {
-        const s = this;
-        const p = s.params;
-
-        if (p.locationFilter !== null && p.loadLocation && p.urlFilterType !== 'none') {
-			 
-            const filterEl = UrlState.get(p.urlFilterType, p.locationFilter);
-
-            if (filterEl === s.modalID) {
-                s.components.show ? s.close() : s.#setDisplayAndEvents();
-            }
-        }
     }
 }
 

@@ -33,6 +33,8 @@ libraryExtend([
 
 const { findOne, findBy, make } = $be.static;
  
+const siteHeader = findOne('.site-header');
+const $siteHeader = $be(siteHeader);
 
 {
     const btnDebounceTest = findBy('id', 'btn-debounce-test') as HTMLButtonElement;
@@ -55,8 +57,11 @@ $be('.plugins-list-inline').find('a').on('click.smoothScroll', (ev: MouseEvent, 
     const hash = elem.hash;
 
     if (hash) {
-        const yPos = (findOne(hash) as HTMLElement).offsetTop - $be('.site-header').elemRects().height;
-        smoothScroll(yPos, 400,'easeInOutQuart');
+        const hashElem = (findOne(hash) as HTMLElement);
+        if (!hashElem) return;
+
+        const yPos = hashElem.offsetTop - siteHeader.offsetHeight;
+        smoothScroll(yPos, 500,'easeOutQuint');
         ev.preventDefault();
     }
 })
@@ -94,7 +99,7 @@ debounceResize((ev, elem) => {
 
 $be('#main-nav')
     .navMobile({enableBtn: '#mobile-nav-btn'})
-    .navDesktop()
+    // .navDesktop()
     .accessibleMenu();
 
 $be(window).on('load',function() {

@@ -1,17 +1,18 @@
 import { d, getDataOptions, setParams } from "./util/helpers";
-// import type { BaseElem, Selector } from "cash-dom";
-import type { LocationHashTracking, StringPluginArgChoices } from './types';
-// import $ from 'cash-dom';
+import type { LocationTracking , StringPluginArgChoices } from './types';
 import $be, { type BaseElem, type SelectorRoot, type EventName } from "base-elem-js";
 import Store from "./core/Store";
 import UrlState from "./core/UrlState";
+import smoothScroll from "./fn/smoothScroll";
+import loadFromUrl from "./util/loadfromUrl";
 
 
-export interface IScrollSpyDefaults extends LocationHashTracking {
+export interface IScrollSpyDefaults extends LocationTracking {
     observerOptions: IntersectionObserverInit;
     cssPrefix: string;
     spyNavElems: 'a' | 'button';
     setActiveCssToLi: boolean,
+    scrollBehavior: ScrollOptions["behavior"];
     spyBody: SelectorRoot | string;
     spyElems: string;
     callback?: ScrollSpyCallBack;
@@ -35,6 +36,7 @@ const DEFAULTS: IScrollSpyOptions = {
     spyNavElems: 'a',
     spyBody: '.scroll-spy-body',
     spyElems: 'h2',
+    scrollBehavior: 'smooth',
     setActiveCssToLi: true,
     locationFilter: null,
 	urlFilterType: 'hash',
@@ -98,7 +100,10 @@ export default class ScrollSpy {
             s.#setInViewEntries(entries);
             s.#spyElements();
         }
-        s.loadFromUrl();
+        loadFromUrl(p as LocationTracking, (id) => {
+            s.scrollToElement(id, 'instant');
+        })
+        // s.loadFromUrl();
         s.#observer = new IntersectionObserver(observerProcess, p.observerOptions);
 
         for (const elem of s.spyContents) {
@@ -108,9 +113,9 @@ export default class ScrollSpy {
         $be(s.element).on(`click.${EVENT_NAME}`, (ev, elem) =>  {
             const clickElem = elem as (HTMLAnchorElement | HTMLButtonElement);
             const paramVal = (clickElem.nodeName === 'A' ? (clickElem as HTMLAnchorElement).hash : clickElem.dataset.hash).replace(/^\#/,'');
-            const $bodyElem = s.scrollToElement(paramVal,'smooth');
+            const $bodyElem = s.scrollToElement(paramVal, p.scrollBehavior);
 
-            if ($bodyElem.hasElems()) {
+            if ($bodyElem.hasEls) {
  
                 if (typeof p.urlFilterType === 'string') {
                     if (p.locationFilter) {
@@ -137,30 +142,35 @@ export default class ScrollSpy {
             $bodyElem = $be(elemId ? '#'+ elemId : d.body)
         ;
 
-        if ($bodyElem.hasElems()) {
-
-            scrollRoot.scrollTo({
-                top: ($bodyElem.elemRects().top + window.pageYOffset) - observerOffsetTop,
-                behavior
-            });
+        if ($bodyElem.hasEls) {
+            const top = ($bodyElem.elemRects().top + window.pageYOffset) - observerOffsetTop;
+            
+            if (behavior === 'smooth') {
+                smoothScroll(top);
+            } else {
+                scrollRoot.scrollTo({
+                    top,
+                    behavior
+                });
+            }
         }
 
         return $bodyElem;
     }
 
-    loadFromUrl() {
-		const s = this;
-		const p = s.params;
+    // loadFromUrl() {
+	// 	const s = this;
+	// 	const p = s.params;
 
-		if (p.locationFilter !== null && p.loadLocation && p.urlFilterType !== 'none') {
+	// 	if (p.locationFilter !== null && p.loadLocation && p.urlFilterType !== 'none') {
 		
-			const spyId = UrlState.get(p.urlFilterType, p.locationFilter) as string;
+	// 		const spyId = UrlState.get(p.urlFilterType, p.locationFilter) as string;
 			 
-			if (spyId) {
-                s.scrollToElement(spyId, 'instant');
-			}
-		}
-	}
+	// 		if (spyId) {
+    //             s.scrollToElement(spyId, 'instant');
+	// 		}
+	// 	}
+	// }
 
     #getInitialBackUpInViewEntry() {
         const s = this;

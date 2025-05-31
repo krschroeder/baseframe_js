@@ -97,11 +97,11 @@ export default class Toastr {
         s.$toastrWrap.addClass(p.dismissCss);
 
         setTimeout(() => {
-            const $toatrContainer = s.getToasterContainer();
+            const $toatrContainer = s.#getToasterContainer();
             s.$toastrWrap.rmClass(p.dismissCss).remove();
 
             if (!$toatrContainer.find('div').hasElems()) {
-                s.getToasterContainer().remove();
+                s.#getToasterContainer().remove();
             }
             s.active = false;
             currentlyToastingGlobal = false;
@@ -115,7 +115,7 @@ export default class Toastr {
         oa(s.params, { content });
 
         if (updateNow) {
-            s.updateContent(s.params.content);
+            s.#updateContent(s.params.content);
         }
     }
 
@@ -129,14 +129,14 @@ export default class Toastr {
                 return;
             }
 
-            if (!s.toasterBodyBuilt) s.buildElems();
+            if (!s.toasterBodyBuilt) s.#buildElems();
 
             s.$toastrWrap.rmClass([p.dismissCss, p.enabledCss]);
 
-            s.updateContent(p.content);
+            s.#updateContent(p.content);
 
             $be(document.body).insert(
-                s.getToasterContainer().insert(s.$toastrWrap)
+                s.#getToasterContainer().insert(s.$toastrWrap)
             );
 
             setTimeout(() => s.$toastrWrap.addClass(p.enabledCss), 0);
@@ -147,7 +147,7 @@ export default class Toastr {
         }
     }
 
-    private getToasterContainer(): BaseElem {
+    #getToasterContainer(): BaseElem {
         const { cssGroupKey, outerCss } = this.params;
 
         const toasterWrapCss = `${outerCss}-wrap ${outerCss}-wrap--${cssGroupKey}`;
@@ -161,7 +161,7 @@ export default class Toastr {
         return toastContainers.get(toasterWrapCss);
     }
 
-    private buildElems() {
+    #buildElems() {
         const s = this;
         const p = s.params;
         const $btn = $be(make(`button.${p.btnDismissCss}`,{ type: 'button' }));
@@ -178,7 +178,7 @@ export default class Toastr {
         s.$toastrWrap.on('click.dismiss', () => s.dismiss(),'button');
     }
 
-    private updateContent(content: ToastrContent) {
+    #updateContent(content: ToastrContent) {
         const s = this;
 
         if (s.$toastrBody) {
@@ -197,7 +197,7 @@ export default class Toastr {
             const s: Toastr = Store(elem, DATA_NAME);
 
             Object.assign(s.params, { content });
-            if (updateNow) s.updateContent(s.params.content);
+            if (updateNow) s.#updateContent(s.params.content);
         });
     }
 

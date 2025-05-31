@@ -104,17 +104,17 @@ export default class Parallax {
 		s.$relElem = s.#relElem;
 		s.cssPrevDir = [];
 		//props to get updated on resize
-		s.updatableProps();
-		s.handleEvents();
+		s.#updatableProps();
+		s.#handleEvents();
 
 		return s;
 	}
 
-	handleEvents() {
+	#handleEvents() {
 		const s = this;
 		 
 		debounceResize(() => { 
-			s.updatableProps();
+			s.#updatableProps();
 			// $be(window).trigger(s.instanceEvent);
 			s.parallax(s);
 		},`[${s.instanceEvent}_resize]`,true);
@@ -126,13 +126,7 @@ export default class Parallax {
 		}).trigger(s.instanceEvent);
 	}
 
-	handleUpdate() {
-		const s = this;
-		s.updatableProps();
-		$be(window).trigger(s.instanceEvent);
-	}
-
-	updatableProps() {
+	#updatableProps() {
 		const s = this;
 		const speed = s.#speed,
 			zSpeed = s.#zSpeed,

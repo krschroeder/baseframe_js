@@ -1,4 +1,4 @@
-import type { LocationHashTracking, StringPluginArgChoices } from './types';
+import type { LocationTracking, StringPluginArgChoices } from './types';
 import $be, { type BaseElem } from "base-elem-js";
 
 import { getDataOptions, isFunc, noop, reflow, setParams } from './util/helpers';
@@ -10,7 +10,7 @@ import Store 		from "./core/Store";
 const { oa } = $be.static;
 
  
-export interface ICollapseDefaults extends LocationHashTracking {
+export interface ICollapseDefaults extends LocationTracking {
 	cssPrefix: string;
 	toggleDuration: number;
 	toggleGroup: boolean;
@@ -27,24 +27,26 @@ export interface ICollapseOptions extends Partial<ICollapseDefaults> {};
 
 const { css, findOne, useTransition } = $be.static;
 
-const VERSION = "4.0.0";
-const DATA_NAME = 'Collapse';
-const EVENT_NAME = 'collapse';
-const DEFAULTS: ICollapseDefaults = {
-	cssPrefix: 'collapse',
-	toggleDuration: 500,
-	toggleGroup: false,
-	moveToTopOnOpen: false,
-	moveToTopOffset: 0,
-	scrollSpeed: 100,
-	urlFilterType: 'hash',
-	historyType: 'replace',
-	locationFilter: null,
-	loadLocation: true,
-	afterOpen: noop,
-	afterClose: noop,
-	afterInit: noop
-};
+const 
+    VERSION = "4.0.0",
+    DATA_NAME = 'Collapse',
+    EVENT_NAME = 'collapse',
+    DEFAULTS: ICollapseDefaults = {
+        cssPrefix: 'collapse',
+        toggleDuration: 500,
+        toggleGroup: false,
+        moveToTopOnOpen: false,
+        moveToTopOffset: 0,
+        scrollSpeed: 100,
+        urlFilterType: 'hash',
+        historyType: 'replace',
+        locationFilter: null,
+        loadLocation: true,
+        afterOpen: noop,
+        afterClose: noop,
+        afterInit: noop
+    }
+;
 
 
 export default class Collapse {

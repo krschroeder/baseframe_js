@@ -24,20 +24,22 @@ export interface ILazyLoadOptions extends Partial<ILazyLoadDefaults> {
  
 const { isVisible } = $be.static;
 
-const VERSION = '2.0.1';
-const DATA_NAME = 'LazyLoad';
-const EVENT_NAME = 'lazyLoad';
-const DEFAULTS = {
-    imgSrcName: 'src',
-    bgSrcName: 'bgSrc',
-    loadImgs: true,
-    inEvt: null,
-    outEvt: null,
-    force: false,
-    observerID: null,
-    unobserve: true,
-    observerOpts: { rootMargin: '48px' } as IntersectionObserverInit
-};
+const 
+    VERSION = '2.0.1',
+    DATA_NAME = 'LazyLoad',
+    EVENT_NAME = 'lazyLoad',
+    DEFAULTS = {
+        imgSrcName: 'src',
+        bgSrcName: 'bgSrc',
+        loadImgs: true,
+        inEvt: null,
+        outEvt: null,
+        force: false,
+        observerID: null,
+        unobserve: true,
+        observerOpts: { rootMargin: '48px' } as IntersectionObserverInit
+    }
+;
 
 const lazyElemObservers:Map<string, IntersectionObserver> = new Map();
 

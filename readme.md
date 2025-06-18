@@ -516,15 +516,15 @@ This is an object with the following props/elements that is the first (and only)
 
 ```javascript
 {
-    $backdrop,
-    $content,// in the params this would be the src. If not specifying a source and using generated content use $dialogContent instead
+    backdrop,
+    content,// in the params this would be the src. If not specifying a source and using generated content use dialogContent instead
     contentAppended: false, //state
-    $dialog, //modal dialog
-    $dialogContent, // modal dialog content
-    $closeBtn,
+    dialog, //modal dialog
+    dialogContent, // modal dialog content
+    closeBtn,
     id: modalID,
-    $modal, //outermost element
-    close: () => _.close(), //disable modal fn
+    modal, //outermost element
+    close: () => this.close(), //disable modal fn
     show: false //state
 }
 ```

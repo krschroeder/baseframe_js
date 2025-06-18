@@ -17,3 +17,10 @@
 - Further test jQuery and Cash
 - Do a few Dry runs
 - Think about other optimizations?
+
+
+## Compiled Output 
+- dist/js
+  - [file-name-plugin].js // fully expanded
+  - index.min.js //
+  - index.js // fully expanded for use

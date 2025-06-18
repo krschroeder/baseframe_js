@@ -59,3 +59,5 @@ export {
     lowercaseFirstLetter,
     isMobileOS
 }
+
+export default {};

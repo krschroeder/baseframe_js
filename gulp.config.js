@@ -44,6 +44,7 @@ const config = {
         img:    'src/demo/assets/img/**/*.{jpg,png,webp,svg,gif}',
         css:    ['src/assets/scss/**/*.scss', 'src/demo/assets/scss/**/*.scss'],
         js:     jsPaths,
+        jsMain: 'src/assets/js/index.ts',
         html:   [BUILD_DEMO ? 'src/demo/index.{html,hbs}' : 'src/demo/**/*.{html,hbs}'],
         readme: 'src/readmes/_readme.md'
     },
@@ -73,7 +74,7 @@ const config = {
 
     rollup : {
 
-        lib: {
+        minified: {
             output: {
                 // format: 'cjs', 
                 sourcemap: !PRODUCTION
@@ -84,15 +85,26 @@ const config = {
             ].filter(Boolean),
             isCache: true
         },
-        module: {
+        es: {
             output: {
-                name: 'baseFrame',
-                // format: 'cjs',
-                sourcemap: !PRODUCTION 
+                // name: 'baseFrame',
+                format: 'es',
+                sourcemap: true,
+                generatedCode: 'es2015'
             },
             plugins: [...rollupBasePlugins],
             isCache: true
-        }  
+        },
+        umd: {
+            output: {
+                name: 'baseFrame',
+                format: 'umd',
+                sourcemap: true,
+                generatedCode: 'es2015'
+            },
+            plugins: [...rollupBasePlugins],
+            isCache: true
+        } 
     },
 
     webpackConfig: {

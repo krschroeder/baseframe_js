@@ -69,7 +69,7 @@ export default class NavDesktop {
 		s.cssList = {
 			hasUL:      `${cssPrefix}__has-ul`,
 			noUl:       `${cssPrefix}__no-ul`,
-			elemEdge:   `${cssPrefix}__elem-on-edge`,
+			elemEdge:   `${cssPrefix}__on-edge`,
 			hovered:    `${cssPrefix}--hover`,
 			leaving:    `${cssPrefix}--leaving`,
 		};
@@ -96,7 +96,7 @@ export default class NavDesktop {
 	#addCssToElems() {
 		const s = this;
 		const css = s.cssList;
-        const $els = $be('li, ul', s.element);
+        const $els = $be('li', s.element);
         
         $els.each((elem, i) => {
             const $el = $be(elem);
@@ -135,7 +135,7 @@ export default class NavDesktop {
 		}
      
 		$rootUl.on([`mouseover.${EVENT_NAME}`,`focusin.${EVENT_NAME}`], (ev: MouseEvent, elem: HTMLElement) => {
-            console.log(elem, ev.target)
+         
 			evtTracker(elem, ev, () => {
                 const $li = $be(elem); 
 				const $liParents = $li.parents('li'); 

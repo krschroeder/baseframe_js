@@ -14,8 +14,10 @@ import libraryExtend, {
     debounceResize,
     debounce,
     ScrollSpy,
-    smoothScroll
+    smoothScroll,
+    Store
 } from '../../../assets/js';
+ 
 
 libraryExtend([
     AccessibleMenu, 
@@ -84,11 +86,20 @@ $collapseGroup1.on('click.collapseHeading', (ev, elem) => {
     locationFilter: 'collapse'
 });
 
-const $collapseGroup2 = $be('.collapse-group-2');
-$collapseGroup2.collapse({
-    toggleGroup: false,
-    locationFilter: 'collapse2'
-})
+{
+
+    const $collapseGroup2 = $be('.collapse-group-2');
+    $collapseGroup2.collapse({
+        toggleGroup: false,
+        locationFilter: 'collapse2'
+    });
+    // $collapseGroup2.each(elem => {
+
+    //     const collapseInst = Store(elem, Collapse.pluginName);
+    //    collapseInst.toggle('item-1-2', true);
+    //    collapseInst.toggle('item-2-2', true);
+    // })
+}
 
 debounceResize((ev, elem) => {
     const inMobile = $be('#mobile-nav-btn').elemRects().width !== 0; //hidden if zero

@@ -3,9 +3,9 @@ import type { PluginBaseClass } from '../types';
 import { isArr, isStr, lowercaseFirstLetter } from '../util/helpers';
 import Store from './Store';
 import type { CashStatic } from 'cash-dom';
- 
+
 type Be = typeof $be;
-type LibType = Be | CashStatic;
+type LibType = Be | CashStatic | JQueryStatic;
 
 const bes = $be.static;
 
@@ -18,7 +18,7 @@ const libraryExtend = <T extends PluginBaseClass>(Plugins: T | T[], Library: Lib
             dataName      = Plugins.pluginName,
             pluginName    = lowercaseFirstLetter(dataName),
             isBaseElem    = !!(Library as Be).BaseElem,
-            $library      = isBaseElem ? (Library as Be).BaseElem.prototype : (Library as CashStatic).fn
+            $library      = isBaseElem ? (Library as Be).BaseElem.prototype : (Library as CashStatic | JQueryStatic).fn
         ;
 
         const storeInstanceEach = (elem, index, params) => {
@@ -40,21 +40,22 @@ const libraryExtend = <T extends PluginBaseClass>(Plugins: T | T[], Library: Lib
                 if (canUpdate) Instance.handleUpdate();
                 if (notify) console.log(`Params updated`, Instance.params);
             }
+
+            return Instance;
         }
         
         const o = { [pluginName]: function (params) {
             const s = this;
             if (isBaseElem) {
                 return s.each((elem, index) => {
-                    storeInstanceEach(elem, index, params)
+                    return storeInstanceEach(elem, index, params)
                 });
             } else {
                 //Cash or jQuery
                 return s.each(function(index, elem){
-                    storeInstanceEach(elem, index, params);
+                    return storeInstanceEach(elem, index, params);
                 })
-            }
-            
+            }    
         }};
 
         $library[pluginName] = o[pluginName];

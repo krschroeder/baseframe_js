@@ -111,7 +111,7 @@ export default class Collapse {
 		s.$element.on([`click.${EVENT_NAME}`,`[${EVENT_NAME}]`], function (e: Event, elem) {
 			const elemId = $be(elem).attr('aria-controls') || (elem as HTMLAnchorElement).hash.substring(1);
 			 
-			s.toggleAction(elemId);
+			s.toggle(elemId);
 
 			e.preventDefault();
 		},`.${cssPrefix}__btn`);
@@ -184,12 +184,12 @@ export default class Collapse {
 		}
 	}
 
-	toggleAction(currElemID: string) {
+	toggle(currElemID: string, allAtOnce: boolean = false) {
 		const s = this;
 		const p = s.params;
         const activeItem = findOne('#' + currElemID, s.element)
 
-		if (s.toggling || currElemID === null || !activeItem) return;
+		if ((s.toggling && !allAtOnce) || currElemID === null || !activeItem) return;
 		
         s.$activeItem = s.$element.find('#' + currElemID);
         

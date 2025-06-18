@@ -116,7 +116,7 @@ $arrow-color: #efefef;
 							}
 
 							//if we're on the edge position it to the left of it
-							&.menu__elem-on-edge {
+							&.menu__on-edge {
 								@include nav-focus {
 									> ul {
 										left: auto;
@@ -145,7 +145,7 @@ $arrow-color: #efefef;
 				&:last-child { margin-right: 0;}
 			}
 
-			li.menu__elem-on-edge {
+			li.menu__on-edge {
 				> ul {
 					transform: translateX(0%);
 					right: 0;

@@ -56,7 +56,7 @@ const EVENT_NAME = 'navMobile';
 const DEFAULTS: INavMobileDefaults = {
 	enableBtn: '#mobile-nav-btn',
 	ariaLabel: 'Toggle site navigation',
-	tgBtnText: 'toggle menu for',
+	tgBtnText: 'toggle menu',
 	insertBtnAfter: 'a',
 	slideDuration: 400,
 	outerElement: body,

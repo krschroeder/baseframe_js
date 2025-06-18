@@ -1,32 +1,34 @@
-import gulp from "gulp";
+import gulp           from "gulp";
 // general
-import browser from "browser-sync";
-import rename from "gulp-rename";
-import sourcemaps from "gulp-sourcemaps";
-import gulpIf from "gulp-if";
-import clean from "gulp-clean";
-import fileinclude from "gulp-file-include";
- 
+import browser        from "browser-sync";
+import rename         from "gulp-rename";
+import sourcemaps     from "gulp-sourcemaps";
+import gulpIf         from "gulp-if";
+import clean          from "gulp-clean";
+import fileinclude    from "gulp-file-include";
+import tap            from "gulp-tap";
+
 // html
-import handlebars from "gulp-compile-handlebars";
-import helpers from "handlebars-helpers";
+import handlebars     from "gulp-compile-handlebars";
+import helpers        from "handlebars-helpers";
 
 // css
-import sassEngine from "sass";
-import gulpSass from "gulp-sass";
-import autoprefixer from "gulp-autoprefixer";
-import cleanCss from "gulp-clean-css";
+import sassEngine     from "sass";
+import gulpSass       from "gulp-sass";
+import autoprefixer   from "gulp-autoprefixer";
+import cleanCss       from "gulp-clean-css";
 
 // Development JS plugins
-import named from "vinyl-named";
-import webpack from "webpack";
-import webpackStream from "webpack-stream";
+import named          from "vinyl-named";
+import webpack        from "webpack";
+import webpackStream  from "webpack-stream";
 
 // Production JS plugins
-import rollupEach               from 'gulp-rollup-each'; 
-import typescript from "gulp-typescript";
-
-import config from "../gulp.config";
+import rollupEach     from 'gulp-rollup-each'; 
+import typescript     from "gulp-typescript";
+import ts 				    from 'typescript';
+import config         from "../gulp.config";
+import  { minify }    from 'rollup-plugin-esbuild-minify';
 
 const { buildDemo, production } = config;
 // Load Handlebars helpers
@@ -82,30 +84,68 @@ const buildDevJs = (done) => {
     } else done();
 }
 
-const buildProdJs = (done) => {
+const buildProdJsMin = (done) => {
     if (production) {
 
-        return gulp.src(config.src.js)
+        return gulp.src(config.src.jsMain)
         .pipe(sourcemaps.init())
-        .pipe(rollupEach(config.rollup.lib))
-        .pipe(rename({ extname: '.js' }))
-        .pipe(gulpIf(!production, sourcemaps.write('.')))
+        .pipe(rollupEach(config.rollup.minified))
+        .pipe(rename({ extname: '.js', suffix: '.min' }))
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest( `${config.dest}${production ? '' : '/assets'}/js` ));
     } else done();
 }
 
-const buildModuleJS = (done) => {
+const buildProdJs = (done) => {
     if (production) {
-        return gulp.src(config.src.js)
+
+        return gulp.src(config.src.js).pipe(tap(function (file) {	 
+            const contents = file.contents.toString('utf-8');
+            const transpiledToJs = ts.transpile(contents, config.tsProdConfig);
+            file.contents = Buffer.from(transpiledToJs);
+        }))
+        .pipe(rename({ extname: '.js'}))
+        .pipe(gulp.dest(`${config.dest}/js`));
+    } else done();
+}
+
+const buildTypeJs = (type, min = false) => {
+    const rollupBundle = config.rollup[type];
+    const suffix = '.' + type + (min ? '.min' : '');
+    // not creating a deep clone so minify last
+    if (min) rollupBundle.plugins.push(minify());
+
+    if (production) {
+        return gulp.src(config.src.jsMain)
             .pipe(sourcemaps.init())
-            .pipe(rollupEach(config.rollup.module))
-            .pipe(rename({ extname: '.js' }))
+            .pipe(rollupEach(rollupBundle))
+            .pipe(rename({ extname: '.js', suffix }))
             .pipe(sourcemaps.write('.'))
-            .pipe(gulp.dest(`${config.dest}/cjs`))
+            .pipe(gulp.dest(`${config.dest}/js`))
         ;
     }
     done();
 }
+const buildUmdJs = (done) => {
+    if(production) return buildTypeJs('umd');
+    done();
+}
+
+const buildEsmJs = (done) => {
+    if(production) return buildTypeJs('es');
+    done();
+}
+
+const buildUmdJsMin = (done) => {
+    if(production) return buildTypeJs('umd', true);
+    done();
+}
+
+const buildEsmJsMin = (done) => {
+    if(production) return buildTypeJs('es', true);
+    done();
+}
+
 
 const buildJsDeclarations = (done) => {
   if (production) {
@@ -118,7 +158,6 @@ const buildJsDeclarations = (done) => {
       .src(config.src.js)
       .pipe(tsProject())
       .pipe(gulp.dest(`${config.dest}/js`))
-      .pipe(gulp.dest(`${config.dest}/cjs`));
   }
   done();
 };
@@ -199,7 +238,11 @@ const BUILD = gulp.series(
     buildCss,
     buildDevJs,
     buildProdJs,
-    buildModuleJS,
+    buildProdJsMin,
+    buildUmdJs,
+    buildEsmJs,
+    buildEsmJsMin,
+    buildUmdJsMin,
     buildJsDeclarations,
     buildHtml,
     copyAssets,

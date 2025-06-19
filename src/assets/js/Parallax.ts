@@ -1,6 +1,5 @@
  
 import type { StringPluginArgChoices } from './types';
-// import $ from 'cash-dom';
 import $be, {type BaseElem} from "base-elem-js";
 import Store from "./core/Store";
 import { getDataOptions, setParams } from "./util/helpers";

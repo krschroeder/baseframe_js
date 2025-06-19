@@ -1,8 +1,6 @@
-// import type { BaseElem } from "cash-dom";
-import type { LocationTracking, PrimaryClickElems, StringPluginArgChoices } from './types';
 
-// import $ from 'cash-dom';
-import $be, { type BaseElem, type SelectorRoot, type EventName } from "base-elem-js";
+import type { LocationTracking, PrimaryClickElems, StringPluginArgChoices } from './types';
+import $be, { type BaseElem, type EventName } from "base-elem-js";
 import { getDataOptions, setParams } from "./util/helpers";
  
 import Store from "./core/Store";

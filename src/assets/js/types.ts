@@ -1,4 +1,3 @@
-// import type { Cash } from "cash-dom";
 import type { BaseElem } from "base-elem-js";
 export type StateChangeType = 'push' | 'replace';
 export type UrlSearchType   = 'search' | 'hash' | 'hashVal';

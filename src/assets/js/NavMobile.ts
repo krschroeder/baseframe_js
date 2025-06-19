@@ -1,7 +1,5 @@
-// import type { BaseElem, SelectorRoot } from "cash-dom";
 import type { StringPluginArgChoices } from './types';
 import $be, {type BaseElem, type SelectorRoot} from "base-elem-js";
-// import $ from 'cash-dom';
 import {  getDataOptions, isFunc, noop, reflow, setParams } from './util/helpers';
  
 import focusTrap, { type ITrapFocusRemove } from './fn/focusTrap';

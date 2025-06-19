@@ -205,10 +205,31 @@ libraryExtend(plugins:Array<Plugin> | Plugin, notify?:boolean, Lib: Cash | jQuer
 
 #### smoothScroll
 
-First parameter is the `HTMLElement`'s top to scroll to position top, the second is the speed. Default speed is 100. This uses the `window.scroll` so should work cross-browser. This stops scrolling if the previous pixel is the same as the next, if the scroll tries to get broken, or if it can't scroll to anymore. Third argument is a callback function to run after the scrolling is done. The 4th parameter is the arguments for that function if necessary.
+The `smoothScroll` function enables smooth, animated scrolling to a specific element or position within a web page. This enhances user experience by providing a visually appealing transition rather than an abrupt jump. This function supports easing functions, and out the gate comes with 
 
 ```typescript
-smoothScroll(scrollToTop :number ,speed?: number , afterScroll?:(...args:any) => void, afterScrollArgs?:Array<any>);
+smoothScroll(
+    scrollTargetY: number,
+    duration: number = 500,
+    easing: EasingFn | Easings = 'easeOutQuint',
+    scrollEndFn?: (...args) => void
+);
+```
+
+### Parameters
+
+- **scrollTargetY** :  
+  The destination to scroll to. pass in the Y position of the element you want to scroll to.
+- **duration** (`number`, optional):  
+  The time in milliseconds over which the scroll animation occurs. Defaults to 400ms if not specified.
+- **easing** (`Easings | EasingFn`, optional):  
+  accepts a custom easing function or the following string values: 'linear', 'easeInOutCubic', 'easeInOutQuart', 'easeOutQuint'
+
+
+### Example Usage
+
+```typescript
+smoothScroll(500, 400, 'easeInOutQuart');
 ```
 
 #### focusTrap

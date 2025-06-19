@@ -1,7 +1,5 @@
 import type { StringPluginArgChoices } from './types';
-// import type { BaseElem } from 'cash-dom';
-
-// import $ from 'cash-dom';
+ 
 import $be, { type BaseElem } from "base-elem-js";
 import { getDataOptions, setParams } from './util/helpers';
 import Store from "./core/Store";
@@ -42,8 +40,6 @@ const
 ;
 
 const lazyElemObservers:Map<string, IntersectionObserver> = new Map();
-
- 
 
 
 export default class LazyLoad {

@@ -1,7 +1,4 @@
-// import type { BaseElem, Selector } from "cash-dom";
 import type { WinSetTimeout, StringPluginArgChoices } from './types';
-
-// import $ from 'cash-dom';
 import $be, { type BaseElem, type SelectorRoot } from "base-elem-js";
 import { getDataOptions, setParams, oa } from "./util/helpers";
 import Store from "./core/Store";

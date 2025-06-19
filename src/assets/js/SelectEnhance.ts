@@ -1,6 +1,4 @@
 import type { WinSetTimeout, StringPluginArgChoices } from './types';
-
-// import $ from 'cash-dom';
 import $be, { type BaseElem } from "base-elem-js";
 
 import Store from "./core/Store";

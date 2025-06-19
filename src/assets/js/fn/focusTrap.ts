@@ -1,9 +1,6 @@
-// import $ from 'cash-dom';
 import $be, { type BaseElem, type SelectorRoot } from 'base-elem-js';
  
-
 const { isVisible } = $be.static;
-
 
 interface ITrapFocusProps {
     focusFirst?: boolean,

@@ -13,7 +13,7 @@ interface ITrapFocusProps {
 
 const defaultProps: ITrapFocusProps = {
     focusFirst: true,
-    nameSpace: 'trapFocus',
+    nameSpace: 'focusTrap',
     focusable: ['button', 'a', 'input', 'select', 'textarea', '[tabindex]']
 };
 

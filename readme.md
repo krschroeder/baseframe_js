@@ -43,29 +43,16 @@ import libraryExtend, {
     Toastr,
     UrlState,
     smoothScroll,
+    debounce,
     debounceResize,
-    trapFocus
+    focusTrap
 } from 'baseframe-js';
-```
 
-### Individual Imports (Recommended)
-
-This is the recommended way to bring everything in. Not a 'neat' as the use of the barrel file, but this will reliably tree-shake anything unused in the project. 
-
-```javascript
-// Will install to either Cash Dom or jQuery (details below)
+// if tree-shaking out unused code just do individual imports
 import libraryExtend from 'baseframe-js/dist/js/core/libraryExtend';
-
-// Plugins individually (best for TS type support)
 import AccessibleMenu from 'baseframe-js/dist/js/AccessibleMenu';
 import Collapse from 'baseframe-js/dist/js/Collapse';
-//... and the other plugins
-
-
-// some of the utility functions in the project...
-import debounceResize from 'baseframe-js/dist/js/fn/debounceResize';
-import smoothScroll from 'baseframe-js/dist/js/fn/smoothScroll';
-import trapFocus from 'baseframe-js/dist/js/fn/trapFocus';
+// ...etc
 ```
 
 ### Extending into a Library ###
@@ -85,7 +72,46 @@ libraryExtend([
     SelectEnhance,
     Tabs,
     Toastr
-]); 
+],$libary); 
+```
+
+#### Typescript Support with Extending into a Library
+
+To get these to work in [jQuery](https://jquery.com/) or [Cash Dom](https://github.com/fabiospampinato/cash#readme) adding the following in project should resolve any TypeScript errors.
+
+```typescript
+// To extend into the jQuery library (with the use of the '@types/jquery' package)
+declare global {
+    interface JQuery<TElement = HTMLElement> extends
+        CollapsePlugin,
+        LazyLoadPlugin,
+        ModalPlugin,
+        TabsPlugin,
+        ToastrPlugin,
+        AccessibleMenuPlugin,
+        NavDesktopPlugin,
+        NavMobilePlugin,
+        ParallaxPlugin,
+        SelectEnhancePlugin,
+        ScrollSpyPlugin {}
+}
+
+// To extend into the 'Cash Dom' Libary
+declare module 'cash-dom' {
+    interface Cash extends
+        CollapsePlugin,
+        LazyLoadPlugin,
+        ModalPlugin,
+        TabsPlugin,
+        ToastrPlugin,
+        AccessibleMenuPlugin,
+        NavDesktopPlugin,
+        NavMobilePlugin,
+        ParallaxPlugin,
+        SelectEnhancePlugin,
+        ScrollSpyPlugin {}
+}
+
 ```
 
 ### Removing the plugin ###
@@ -149,30 +175,6 @@ __[View Tabs](#toastr-plugin)__
 
 ------
 
-### Class Set-up for using `LibraryExtend` ###
-
-Each Plugin class has the following properties set on it.
-
-```javascript
-    class YourClass {
-       static get version() {
-            return VERSION;
-        }
-
-        static remove() {
-            //... remove operations ridding of data stored
-            //    and any associated events
-        }
-        
-        constructor(element, options, index) {
-            //... constructor code
-        }
-    }
-
-```
-
-------
-
 ### Essential Functions ###
 
 #### libraryExtend ####
@@ -181,7 +183,7 @@ First parameter can be one Plugin, or an array of them. Pass in the second param
 ```typescript
 // the third option 'Lib' allows a user to pass in either 
 // jQuery or Cash library to extend the plugin's to. 
-libraryExtend(plugins:Array<Plugin> | Plugin, notify?:boolean, Lib: Cash | jQuery);
+libraryExtend(plugins:Array<Plugin> | Plugin, notify?:boolean, Lib: Cash | jQuery | BaseElem);
 ```
 
 ### Functions
@@ -194,7 +196,7 @@ First parameter is the `HTMLElement`'s top to scroll to position top, the second
 smoothScroll(scrollToTop :number ,speed?: number , afterScroll?:(...args:any) => void, afterScrollArgs?:Array<any>);
 ```
 
-#### trapFocus
+#### focusTrap
 This is used in the `Modal` plugin to trap the focus of tabbing events to just the available focusable elements. Each tab keypress it re-takes inventory on what is available to tab to, this way any dynamic changes can be accounted for.
 
 __params__
@@ -203,11 +205,11 @@ The parameters that make the `ITrapFocusProps` interface.
 Option | Type | Default | Description
 ------ | ---- | ------- | -------
 focusFirst | boolean | true | Focus's the first element
-nameSpace | string | 'trapFocus' | Unique namespace for the tabbing keydown event.
+nameSpace | string | 'focusTrap' | Unique namespace for the tabbing keydown event.
 focusableElements | string or array | ['button', 'a', 'input', 'select', 'textarea', '[tabindex]'] | A listing of focusable elements.
 
 ```typescript
-const trappedFocus = trapFocus(element:Cash | HTMLElement, params?: ITrapFocusProps);
+const trappedFocus = focusTrap(element:Cash | HTMLElement, params?: ITrapFocusProps);
 // to remove later on
 trappedFocus.remove();
 
@@ -238,7 +240,53 @@ Cookies.remove('cookieName',{path:'/path/to-your/cookie'});
 //maybe you want to extend $ ?
 $.extend({cookies: Cookies});
 ```
+#### debounce
 
+Debounces an event handler, ensuring the callback only fires after a specified delay since the last event. Useful for limiting how often a function runs, such as during rapid events like clicks or window resizing.
+
+```typescript
+debounce(
+  elem: SelectorElem | string,
+  event: EventName | EventName[],
+  cb: EventFn,
+  config?: { immediate?: boolean; delay?: number }
+): void
+```
+
+- **elem**: The element(s) or selector to bind the event to.
+- **event**: The event name(s) to listen for (e.g., `'click'`, `'input'`).
+- **cb**: The callback function to run after the debounce delay.
+- **config**: Optional configuration object:
+  - `immediate` (boolean): If `true`, the callback fires immediately on the first event, then debounces subsequent calls. Default: `false`.
+  - `delay` (number): The debounce delay in milliseconds. Default: `100`.
+
+**Example:**
+```typescript
+debounce('#my-button', 'click', (ev, elem) => {
+  console.log('Button clicked (debounced)');
+}, { delay: 300 });
+```
+
+#### debounceResize
+
+Debounces the window resize event, ensuring the provided callback is only executed after the user has stopped resizing the window for a specified delay. This helps prevent performance issues caused by rapid firing of the resize event.
+
+```typescript
+debounceResize(
+  cb: () => void,
+  delay?: number
+): void
+```
+
+- **cb**: The callback function to execute after resizing has stopped.
+- **delay**: Optional debounce delay in milliseconds. Default is `100`.
+
+**Example:**
+```typescript
+debounceResize(() => {
+  console.log('Window resize finished!');
+}, 200);
+```
 
 #### UrlState
 Static class to set, get URL hash and search parameters. Easiest way to explain is to just show the types.
@@ -347,6 +395,7 @@ toggleDuration | number |  500 |  The speed at which the items will open, should
 toggleGroup | boolean |  false |  More or less toggles the other opened element(s) closed, and make it behave like an accordion.
 moveToTopOnOpen | boolean |  false |  After the element is opened, the item will move to the top of it. Good for mobile.
 moveToTopOffset | number |  0 |  Should we need to offset the move to the top if the __moveToTopOnOpen__ is set to `true`.
+moveToTopDuration | number | 500 | duration to move to the top if the `moveToTopOnOpen` setting is being used.
 scrollSpeed | number |  100 |  The speed of the scroll if __moveToTopOnOpen__ is set to `true`.
 urlFilterType | 'hash'\|'search' | 'hash' | The filtering type to use (either `location.hash` or `location.search`) to track the status of an open modal.
 historyType | 'replace'\|'push'| 'replace' | The history state update. Either `history.pushState` or `history.replaceState`.
@@ -736,8 +785,8 @@ Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 enableBtn | string | '#mobile-nav-btn' | The selector to the mobile nav button to turn show the navigation.
 ariaLabel | string | 'Toggle site navigation' | The arial label for the `enable` button.
-subMenuText | string | 'toggle menu for' | Copy to prefix the button that toggles the sub-menu of a list item.
-insertToggleBtnAfter | string | 'a' | the element selector name for inserting the toggle button after.
+tgBtnText | string | 'toggle menu' | Copy to prefix the button that toggles the sub-menu of a list item.
+insertBtnAfter | string | 'a' | the element selector name for inserting the toggle button after.
 slideDuration | number | 400 | Duration for showing a sub menu item, CSS transistion should correspond.
 outerElement | string or HTMLElement | document.body | Element to attach `menuOpenCss` class to.
 cssPrefix | string | 'menu' | The primary CSS class and prefix for all other derived elements. The BEM CSS naming convention is used for all derived elements.
@@ -895,6 +944,7 @@ Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 cssPrefix  | string | 'scroll-spy' | CSS class name for styling purposes
 observerOptions | IntersectionObserverInit | `{rootMargin: "0px", threshold: 1}` | Intersection observer options. By default this is set-up to work with an `<h2 id="the-id">` with a `threshold` of `1` is most appropriate. This should be adjusted if your spying an entire section instead.
+scrollBehavior | 'auto' \| 'instant' \| 'smooth' | the type of scroll to move to a section with the scroll spy.
 spyNavElems| 'a' \| 'button' | `a` | Elements to look at and highlight in the navigation that is being spied.
 setActiveCssToLi | boolean | true | If the spied element resides in a `<li>` attach the active class to that instead of the element
 spyBody | Selector | '.scroll-spy-body' | A selector to identify the section of the hightlighted elements that pair with the 'spyNavElems'

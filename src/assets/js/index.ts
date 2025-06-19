@@ -2,7 +2,6 @@ import libraryExtend                    from './core/libraryExtend';
 
 // Core
 export { default as UrlState }          from './core/UrlState';
-export { default as Store}              from "./core/Store";
 export default libraryExtend;
 
 // Functions

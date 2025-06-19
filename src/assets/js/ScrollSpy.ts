@@ -13,6 +13,7 @@ export interface IScrollSpyDefaults extends LocationTracking {
     spyNavElems: 'a' | 'button';
     setActiveCssToLi: boolean,
     scrollBehavior: ScrollOptions["behavior"];
+    scrollDuration: number;
     spyBody: SelectorRoot | string;
     spyElems: string;
     callback?: ScrollSpyCallBack;
@@ -37,6 +38,7 @@ const DEFAULTS: IScrollSpyOptions = {
     spyBody: '.scroll-spy-body',
     spyElems: 'h2',
     scrollBehavior: 'smooth',
+    scrollDuration: 500,
     setActiveCssToLi: true,
     locationFilter: null,
 	urlFilterType: 'hash',
@@ -80,7 +82,7 @@ export default class ScrollSpy {
             s.#lastSpyElem = s.spyContents[s.spyContents.length - 1];
             s.backUpInViewEntry = s.#getInitialBackUpInViewEntry();
             s.#pairElementsToNavEls();
-            s.handleEvents();
+            s.#handleEvents();
 
         } else {
             console.warn(
@@ -92,7 +94,7 @@ export default class ScrollSpy {
         return s;
     }
 
-    handleEvents() {
+    #handleEvents() {
         const s = this;
         const p = s.params;
 
@@ -146,7 +148,7 @@ export default class ScrollSpy {
             const top = ($bodyElem.elemRects().top + window.pageYOffset) - observerOffsetTop;
             
             if (behavior === 'smooth') {
-                smoothScroll(top);
+                smoothScroll(top, p.scrollDuration);
             } else {
                 scrollRoot.scrollTo({
                     top,
@@ -157,20 +159,6 @@ export default class ScrollSpy {
 
         return $bodyElem;
     }
-
-    // loadFromUrl() {
-	// 	const s = this;
-	// 	const p = s.params;
-
-	// 	if (p.locationFilter !== null && p.loadLocation && p.urlFilterType !== 'none') {
-		
-	// 		const spyId = UrlState.get(p.urlFilterType, p.locationFilter) as string;
-			 
-	// 		if (spyId) {
-    //             s.scrollToElement(spyId, 'instant');
-	// 		}
-	// 	}
-	// }
 
     #getInitialBackUpInViewEntry() {
         const s = this;

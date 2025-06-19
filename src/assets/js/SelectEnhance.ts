@@ -178,7 +178,6 @@ export default class SelectEnhance {
         s.eventScrollGetListPosition(true);
         s.eventOutsideClickClose();
         
-        
         if ($selectedBtn.hasEls) {
             ($selectedBtn.elem[0] as HTMLElement).focus();
         }

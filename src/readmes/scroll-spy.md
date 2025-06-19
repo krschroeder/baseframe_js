@@ -10,6 +10,7 @@ Option | Type | Default | Description
 ------ | ---- | ------- | -----------
 cssPrefix  | string | 'scroll-spy' | CSS class name for styling purposes
 observerOptions | IntersectionObserverInit | `{rootMargin: "0px", threshold: 1}` | Intersection observer options. By default this is set-up to work with an `<h2 id="the-id">` with a `threshold` of `1` is most appropriate. This should be adjusted if your spying an entire section instead.
+scrollBehavior | 'auto' \| 'instant' \| 'smooth' | the type of scroll to move to a section with the scroll spy.
 spyNavElems| 'a' \| 'button' | `a` | Elements to look at and highlight in the navigation that is being spied.
 setActiveCssToLi | boolean | true | If the spied element resides in a `<li>` attach the active class to that instead of the element
 spyBody | Selector | '.scroll-spy-body' | A selector to identify the section of the hightlighted elements that pair with the 'spyNavElems'

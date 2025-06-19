@@ -6,8 +6,6 @@ import { getDataOptions, isFunc, noop, reflow, setParams } from './util/helpers'
 import smoothScroll from './fn/smoothScroll';
 import UrlState 	from "./core/UrlState"; 
 import Store 		from "./core/Store";
- 
-const { oa } = $be.static;
 
  
 export interface ICollapseDefaults extends LocationTracking {
@@ -16,8 +14,7 @@ export interface ICollapseDefaults extends LocationTracking {
 	toggleGroup: boolean;
 	moveToTopOnOpen: boolean;
 	moveToTopOffset: number;
-    easingFn?: (pct: number) => number;
-	scrollSpeed: number;
+    moveToTopDuration: number;
 	afterOpen(btnElems: HTMLElement[], collapsibleItem: HTMLElement[]): void;
 	afterClose(btnElems: HTMLElement[], collapsibleItem: HTMLElement[]): void;
 	afterInit(element: HTMLElement): void;
@@ -37,7 +34,7 @@ const
         toggleGroup: false,
         moveToTopOnOpen: false,
         moveToTopOffset: 0,
-        scrollSpeed: 100,
+        moveToTopDuration: 500,
         urlFilterType: 'hash',
         historyType: 'replace',
         locationFilter: null,
@@ -174,12 +171,9 @@ export default class Collapse {
 
 			if (item.length && p.moveToTopOnOpen) {
                 const top = item[0].offsetTop - p.moveToTopOffset;
-
-                scrollTo({
-                    top,
-                    left: 0,
-                    behavior: 'smooth'
-                });
+               
+                smoothScroll(top, p.moveToTopDuration)
+                
 			}
 		}
 	}

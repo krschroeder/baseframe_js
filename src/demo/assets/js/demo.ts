@@ -14,8 +14,7 @@ import libraryExtend, {
     debounceResize,
     debounce,
     ScrollSpy,
-    smoothScroll,
-    Store
+    smoothScroll
 } from '../../../assets/js';
  
 
@@ -36,7 +35,7 @@ libraryExtend([
 const { findOne, findBy, make } = $be.static;
  
 const siteHeader = findOne('.site-header');
-const $siteHeader = $be(siteHeader);
+ 
 
 {
     const btnDebounceTest = findBy('id', 'btn-debounce-test') as HTMLButtonElement;
@@ -53,7 +52,7 @@ const $siteHeader = $be(siteHeader);
     }, {delay: 500})
 }
  
-
+console.log($be)
  
 $be('.plugins-list-inline').find('a').on('click.smoothScroll', (ev: MouseEvent, elem: HTMLAnchorElement) => {
     const hash = elem.hash;

@@ -17,7 +17,6 @@ export default function smoothScroll(
     scrollEndFn?: (...args) => void
 ): void {
     if (activeScroll) return;
-    activeScroll = true;
 
     let progress = 0;
     const 
@@ -28,7 +27,10 @@ export default function smoothScroll(
         frames          = duration / msPerFrame,
         progressSize    = scrollDistance / frames
     ;
-    
+
+    if (scrollDistance === 0) return;
+    activeScroll = true;
+
     body.style.scrollBehavior = 'auto';
 
     const easingFn: EasingFn = isFunc(easing)

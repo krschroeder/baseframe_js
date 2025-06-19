@@ -108,7 +108,7 @@ export default class Tabs {
         loadFromUrl(p as LocationTracking, (id) => {
             if (id) {
 				const clickElem = s.#findTabButtonById(id);
-				if (clickElem) s.changeTabElements(clickElem, id, false);
+				if (clickElem) s.changeTab(clickElem, id, false);
 			}
         });
     }
@@ -118,7 +118,7 @@ export default class Tabs {
 		const tabId = s.initDefaultContent; 
 		const clickElem = s.#findTabButtonById(tabId);
 
-		s.changeTabElements(clickElem, tabId, false);
+		s.changeTab(clickElem, tabId, false);
 	}
 
 	#findTabButtonById(tabId: string):PrimaryClickElems | null {
@@ -162,7 +162,7 @@ export default class Tabs {
 			const clickElem = elem as PrimaryClickElems; 
 			const tabId = getTabIDFromEl(clickElem);
 		
-			s.changeTabElements(clickElem, tabId);
+			s.changeTab(clickElem, tabId);
 			ev.preventDefault();
 		}, "a, button");
 
@@ -181,7 +181,7 @@ export default class Tabs {
 				if (nextBtn) {
 					 
 					const tabId = getTabIDFromEl(nextBtn);
-					s.changeTabElements(nextBtn,tabId);
+					s.changeTab(nextBtn,tabId);
 					 
                     nextBtn.focus();
 				}
@@ -199,7 +199,7 @@ export default class Tabs {
 		})
 	}
 
-	changeTabElements(clickElem: PrimaryClickElems, tabId: string, updateUrl = true) {
+	changeTab(clickElem: PrimaryClickElems, tabId: string, updateUrl = true) {
         
         const s = this;
 

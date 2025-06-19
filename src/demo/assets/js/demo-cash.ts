@@ -1,4 +1,6 @@
-import $, { type Cash } from 'cash-dom';
+// import $, { type Cash } from 'cash-dom';
+import $  from 'jquery';
+import type JQueryStatic from 'jquery';
 
 import libraryExtend, {
     Collapse,       type CollapsePlugin,
@@ -12,11 +14,29 @@ import libraryExtend, {
     Parallax,       type ParallaxPlugin, 
     SelectEnhance,  type SelectEnhancePlugin,
     ScrollSpy,      type ScrollSpyPlugin,
-    debounceResize
+    debounceResize,
+    debounce,
+    smoothScroll
 } from '../../../assets/js';
 
-declare module 'cash-dom' {
-    interface Cash extends
+// declare module 'cash-dom' {
+//     interface Cash extends
+//         CollapsePlugin,
+//         LazyLoadPlugin,
+//         ModalPlugin,
+//         TabsPlugin,
+//         ToastrPlugin,
+//         AccessibleMenuPlugin,
+//         NavDesktopPlugin,
+//         NavMobilePlugin,
+//         ParallaxPlugin,
+//         SelectEnhancePlugin,
+//         ScrollSpyPlugin {}
+// }
+
+
+declare global {
+    interface JQuery<TElement = HTMLElement> extends
         CollapsePlugin,
         LazyLoadPlugin,
         ModalPlugin,
@@ -29,6 +49,8 @@ declare module 'cash-dom' {
         SelectEnhancePlugin,
         ScrollSpyPlugin {}
 }
+
+ 
 
 libraryExtend([
     AccessibleMenu,
@@ -44,7 +66,38 @@ libraryExtend([
     Toastr
 ], $, true );
 
+console.log($);
+
 $('select').selectEnhance();
+
+
+$('.plugins-list-inline').find('a').on('click.smoothScroll' as any, function(ev: MouseEvent) {
+    const hash = this.hash;
+
+    if (hash) {
+        const hashElem = (document.querySelector(hash) as HTMLElement);
+        if (!hashElem) return;
+
+        const yPos = hashElem.offsetTop - (document.querySelector('.site-header') as HTMLElement).offsetHeight;
+        smoothScroll(yPos, 500,'easeOutQuint');
+        ev.preventDefault();
+    }
+})
+
+{
+    const btnDebounceTest = document.querySelector('#btn-debounce-test') as HTMLButtonElement;
+    const codeMsg = btnDebounceTest.nextElementSibling;
+    const codeMstDefText = codeMsg.textContent;
+    const codeMsgText = 'Button Clicked!';
+
+    let textTimer = null;
+
+    debounce(btnDebounceTest,'click.debounce',(ev, elem) => {
+        codeMsg.textContent = codeMsgText;
+        clearTimeout(textTimer);
+        textTimer = setTimeout(() => codeMsg.textContent = codeMstDefText, 2000);
+    }, {delay: 500})
+}
 
 const $collapseGroup = $('.collapse-group-1');
 $collapseGroup.on('click.collapseHeading', '.collapse__header h2', function(ev) {
@@ -233,7 +286,7 @@ $('.lazy-highlight').lazyLoad({
                 });
             },
             onOpen(modalObj) {
-                $(window).on('keyup.gallery', function(e:KeyboardEvent){
+                $(window).on('keyup.gallery' as any, function(e:KeyboardEvent){
                     const arrowLeft = e.key === 'ArrowLeft';
 
                     if (e.key === 'Escape') modalObj.close();

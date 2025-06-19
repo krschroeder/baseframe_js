@@ -36,7 +36,6 @@ const debounce = (
     const p = {...defaultConfig, ...config};
 
     let timer = null;
-    if (elem !== window) console.log(elem,p)
    
     $elem.on(event, (ev, elem) => {
         clearTimeout(timer);

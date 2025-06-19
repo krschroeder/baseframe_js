@@ -45,11 +45,27 @@
 			<a class="btn btn--primary" href="https://www.npmjs.com/package/baseframe-js" target="_baseframe">View Readme</a>
 		</footer>
 	</section>
+    <section class="container intro-copy">
+
+        <div class="plugins-list-inline">
+            <h2>Plugin Jump-to Section</h2>
+            <ul>
+                <li><a href="#section-parallax">Parallax</a></li>
+                <li><a href="#section-tabs">Tabs</a></li>
+                <li><a href="#section-collapse">Collapse</a></li>
+                <li><a href="#section-toastr">Toastr</a></li>
+                <li><a href="#section-modal">Modal</a></li>
+                <li><a href="#section-selectEnhance">Select Box Enhance</a></li>
+                <li><a href="#section-nav">Accessible Menu / Mobile and Desktop Nav</a></li>
+                <li><a href="#section-lazyLoad">Lazy Load</a></li>
+            </ul>        </div>
+    </section>
+    
 	<section class="container">
-	    <div>
-	        <h2 id="section-parallax">
-	            <a href="https://github.com/krschroeder/baseframe_js#parallax-plugin" target="_baseframe">Parallax</a></h2>
-	    </div>
+	     
+	    <h2 id="section-parallax">
+	        <a href="https://github.com/krschroeder/baseframe_js#parallax-plugin" target="_baseframe">Parallax</a></h2>
+	    
 	    <div class="parallax-area">
 	        <img class="parallax-area__bg parallax do-parallax"
 	            data-parallax-options="{speed: 20, bgFill: true, zAxis: true, rootMargin: 100}"
@@ -277,27 +293,17 @@
 	            </div>
 	        </div>
 	    </div>
-	</section>	<section class="container">
-	    <h2 id="section-toastr">
-	        <a href="https://github.com/krschroeder/baseframe_js#toastr-plugin" target="_baseframe">Toastr</a></h2>
-	    <div>
-	        <ul>
-	            <li><button id="toastr-1">Launch a Toastr</button></li>
-	            <li><button id="toastr-2">Launch a Toastr Two</button></li>
-	            <li><button id="toastr-3">Launch a Toastr Three</button></li>
-	            <li><button id="toastr-4">Launch a Toastr Four</button></li>
-	        </ul>
-	    </div>
-	</section>	<section class="container">
-	    <div>
-	        <h2 id="section-collapse">
-	            <a href="https://github.com/krschroeder/baseframe_js#collapse-plugin" target="_baseframe">Collapse</a></h2>
-	    </div>
 	    
-	    <div class="collapse collapse-group collapse-group-1" >
+	</section>	<section class="container">
+	    
+	    <h2 id="section-collapse">
+	        <a href="https://github.com/krschroeder/baseframe_js#collapse-plugin" target="_baseframe">Collapse</a></h2>
+	    
+	    <h3>As an Accordion</h3>
+	    <div class="collapse collapse-group collapse-group-1">
 	        <div class="collapse__item">
 	            <div class="collapse__header">
-	                <h2>Collapse Item 1</h2>
+	                <h2>Collapse/Accordion Item 1</h2>
 	                <button class="collapse__btn" aria-controls="item-1" aria-label="toggle section"></button>
 	            </div>
 	            <div class="collapse__body" id="item-1">
@@ -309,7 +315,7 @@
 	        </div>
 	        <div class="collapse__item">
 	            <div class="collapse__header">
-	                <h2>Collapse Item 2</h2>
+	                <h2>Collapse/Accordion Item 2</h2>
 	                <button class="collapse__btn" aria-controls="item-2" aria-label="toggle section"></button>
 	            </div>
 	            <div class="collapse__body" id="item-2">
@@ -323,7 +329,7 @@
 	        </div>
 	        <div class="collapse__item">
 	            <div class="collapse__header">
-	                <h2>Collapse Item 3</h2>
+	                <h2>Collapse/Accordion Item 3</h2>
 	                <button class="collapse__btn" aria-controls="item-3" aria-label="toggle section"></button>
 	            </div>
 	            <div class="collapse__body" id="item-3">
@@ -333,114 +339,58 @@
 	            </div>
 	        </div>
 	    </div>
-	</section>	<section class="container">
-	    <h2 id="section-selectEnhance">
-	        <a href="https://github.com/krschroeder/baseframe_js#select-enhance-plugin" target="_baseframe">Selectbox Enhance</a></h2>
-	    <div>
-	         <label for="select-1">Famous Rock Bands</label><br>
-	        <select id="select-1">
-	            <optgroup label="Classic Rockers">
-	                <option value="The Doors">The Doors</option>
-	                <option value="Led Zeppelin">Led Zeppelin</option>
-	                <option value="Jimi Hendrix">Jimi Hendrix</option>
-	                <option value="The Who">The Who</option>
-	                <option value="The Rolling Stones">The Rolling Stones</option>
-	                <option value="Warren Zevon">Warren Zevon</option>
-	            </optgroup>
-	            <optgroup label="90's + Rockers">
-	                <option value="Nirvana">Nirvana</option>
-	                <option value="RHCP">Red Hot Chili Peppers</option>
-	                <option value="Soundgarden">Soundgarden</option>
-	                <option value="Incubus">Incubus</option>
-	                <option value="The White Stripes">The White Stripes</option>
-	                <option value="The Strokes">The Strokes</option>
-	            </optgroup>
-	        </select>
-	        <br>
-	        <br>
-	        <label for="another-select">Famous Guitarists</label><br>
-	        <select id="another-select">
-	            <option value="Jimmy Page">Jimmy Page</option>
-	            <option value="Eric Clapton">Eric Clapton</option>
-	            <option value="Jeff Beck">Jeff Beck</option>
-	            <option value="Jimmy Hendrix">Jimmy Hendrix</option>
-	            <option value="Stevie Ray Vaughan">Stevie Ray Vaughan</option>
-	            <option value="Joe Walsh">Joe Walsh</option>
-	            <option value="Django Reinhardt">Django Reinhardt</option>
-	            <option value="Robert Johnson">Robert Johnson</option>
-	            <option value="Joe Pass">Joe Pass</option>
-	        </select>
+	</section>
+	<section class="container">
+	    <h3>No Toggling Between Collapse Items</h3>
+	    <div class="collapse collapse-group collapse-group-2" >
+	        <div class="collapse__item">
+	            <div class="collapse__header">
+	                <h2>Collapse Item 1</h2>
+	                <button class="collapse__btn" aria-controls="item-1-2" aria-label="toggle section"></button>
+	            </div>
+	            <div class="collapse__body" id="item-1-2">
+	                <div class="collapse__body-inner">
+	                    <p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
+	                   
+	                </div>
+	            </div>
+	        </div>
+	        <div class="collapse__item">
+	            <div class="collapse__header">
+	                <h2>Collapse Item 2</h2>
+	                <button class="collapse__btn" aria-controls="item-2-2" aria-label="toggle section"></button>
+	            </div>
+	            <div class="collapse__body" id="item-2-2">
+	                <div class="collapse__body-inner">
+	                    <p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
+	                    <p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
+	
+	                    <p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
+	                </div>
+	            </div>
+	        </div>
+	        <div class="collapse__item">
+	            <div class="collapse__header">
+	                <h2>Collapse Item 3</h2>
+	                <button class="collapse__btn" aria-controls="item-3-2" aria-label="toggle section"></button>
+	            </div>
+	            <div class="collapse__body" id="item-3-2">
+	                <div class="collapse__body-inner">
+	                    <p>Ut enim ad minim veniam, quis nostrud exercitation. Gallia est omnis divisa in partes tres, quarum. Contra legem facit qui pastrami id facit quod lex prohibet. Quis aute iure reprehenderit in voluptate velit esse. Cum ceteris in veneratione tui montes, nascetur mus.</p>
+	                </div>
+	            </div>
+	        </div>
 	    </div>
 	</section>	<section class="container">
-		<div>
-			<h2 id="section-nav">Navigation 
-				<a href="https://github.com/krschroeder/baseframe_js#nav-mobile-plugin" target="_baseframe">Mobile</a> / 
-				<a href="https://github.com/krschroeder/baseframe_js#nav-desktop-plugin" target="_baseframe">Desktop</a> /
-				<a href="https://github.com/krschroeder/baseframe_js#accessible-menu-plugin" target="_baseframe">Accessible Menu</a>
-	
-			</h2>
-			<p>Navigation below features some edge detection on the fly-out nav elements, also little hover delay. Then all the links can be navigated with the arrow keys (on desktop).</p>
-		</div>
-	    <div class="section-nav">
-			<a href="/" class="logo">
-				<span class="sr-only">Baseframe, navigate home</span>
-			</a>
-			<button class="mobile-nav-btn" id="mobile-nav-btn-example">
-				<span></span>
-			</button>
-	        <nav id="example-nav" class="main-nav">
-				<ul>
-					<li><a href="#">About</a></li>
-	                <li><a href="#">News</a></li>
-					<li><a href="#">Cool Cars</a>
-						<ul>
-							<li><a href="#">Lamborghini</a>
-	                            <ul>
-	                                <li><a href="#">Muira</a></li>
-	                                <li><a href="#">Countach</a></li>
-	                                <li><a href="#">Diablo</a></li>
-	                                <li><a href="#">Aventador</a></li>
-	                            </ul>
-	                        </li>
-							<li><a href="#">Ferrari</a>
-								<ul>
-									<li><a href="#">Testarosa</a></li>
-									<li><a href="#">F40</a>
-										<ul>
-											<li><a href="#">Cool facts</a></li>
-											<li><a href="#">History behind it</a></li>
-										</ul>
-									</li>
-								</ul>
-							</li>
-							<li><a href="#">Porche</a>
-	                            <ul>
-	                                <li><a href="#">959</a></li>
-	                                <li><a href="#">911</a></li>
-	                                <li><a href="#">Carerra GT</a></li>
-	                            </ul>
-	                        </li>
-							<li><a href="#">Ford</a>
-	                            <ul>
-	                                <li><a href="#">GT</a></li>
-	                                <li><a href="#">Shelby Mustang</a></li>
-	                            </ul>
-	                        </li>
-						</ul>
-					</li>
-					<li><a href="#">Cool JS Plugins</a>
-						<ul>
-						    <li><a href="#section-parallax">Parallax</a></li>
-						    <li><a href="#section-tabs">Tabs</a></li>
-						    <li><a href="#section-collapse">Collapse</a></li>
-						    <li><a href="#section-toastr">Toastr</a></li>
-						    <li><a href="#section-modal">Modal</a></li>
-						    <li><a href="#section-selectEnhance">Select Box Enhance</a></li>
-						    <li><a href="#section-nav">Accessible Menu / Mobile and Desktop Nav</a></li>
-						    <li><a href="#section-lazyLoad">Lazy Load</a></li>
-						</ul>				</li>
-				</ul>
-			</nav>
+	    <h2 id="section-toastr">
+	        <a href="https://github.com/krschroeder/baseframe_js#toastr-plugin" target="_baseframe">Toastr</a></h2>
+	    <div>
+	        <ul>
+	            <li><button id="toastr-1">Launch a Toastr</button></li>
+	            <li><button id="toastr-2">Launch a Toastr Two</button></li>
+	            <li><button id="toastr-3">Launch a Toastr Three</button></li>
+	            <li><button id="toastr-4">Launch a Toastr Four</button></li>
+	        </ul>
 	    </div>
 	</section>	<section class="modal-section container">
 	    <h2 id="section-modal">
@@ -504,6 +454,118 @@
 	    </div>
 	</section>
 	 	<section class="container">
+	    <h2 id="section-selectEnhance">
+	        <a href="https://github.com/krschroeder/baseframe_js#select-enhance-plugin" target="_baseframe">Selectbox Enhance</a></h2>
+	    <div>
+	
+	        <div style="position: relative" >
+	            <label for="select-1">Famous Rock Bands</label><br>
+	            <select id="select-1">
+	                <optgroup label="Classic Rockers">
+	                    <option value="The Doors">The Doors</option>
+	                    <option value="Led Zeppelin">Led Zeppelin</option>
+	                    <option value="Jimi Hendrix">Jimi Hendrix</option>
+	                    <option value="The Who">The Who</option>
+	                    <option value="The Rolling Stones">The Rolling Stones</option>
+	                    <option value="Warren Zevon">Warren Zevon</option>
+	                </optgroup>
+	                <optgroup label="90's + Rockers">
+	                    <option value="Nirvana">Nirvana</option>
+	                    <option value="RHCP">Red Hot Chili Peppers</option>
+	                    <option value="Soundgarden">Soundgarden</option>
+	                    <option value="Incubus">Incubus</option>
+	                    <option value="The White Stripes">The White Stripes</option>
+	                    <option value="The Strokes">The Strokes</option>
+	                </optgroup>
+	            </select>
+	        </div>
+	        <br>
+	        <br>
+	        <label for="another-select">Famous Guitarists</label><br>
+	        <select id="another-select">
+	            <option value="Jimmy Page">Jimmy Page</option>
+	            <option value="Eric Clapton">Eric Clapton</option>
+	            <option value="Jeff Beck">Jeff Beck</option>
+	            <option value="Jimmy Hendrix">Jimmy Hendrix</option>
+	            <option value="Stevie Ray Vaughan">Stevie Ray Vaughan</option>
+	            <option value="Joe Walsh">Joe Walsh</option>
+	            <option value="Django Reinhardt">Django Reinhardt</option>
+	            <option value="Robert Johnson">Robert Johnson</option>
+	            <option value="Joe Pass">Joe Pass</option>
+	        </select>
+	    </div>
+	</section>	<section class="container">
+		 
+		<h2 id="section-nav">Navigation 
+			<a href="https://github.com/krschroeder/baseframe_js#nav-mobile-plugin" target="_baseframe">Mobile</a> / 
+			<a href="https://github.com/krschroeder/baseframe_js#nav-desktop-plugin" target="_baseframe">Desktop</a> /
+			<a href="https://github.com/krschroeder/baseframe_js#accessible-menu-plugin" target="_baseframe">Accessible Menu</a>
+	
+		</h2>
+		<p>Navigation below features some edge detection on the fly-out nav elements, also little hover delay. Then all the links can be navigated with the arrow keys (on desktop).</p>
+		 
+	    <div class="section-nav">
+			<a href="/" class="logo">
+				<span class="sr-only">Baseframe, navigate home</span>
+			</a>
+			<button class="mobile-nav-btn" id="mobile-nav-btn-example">
+				<span></span>
+			</button>
+	        <nav id="example-nav" class="main-nav">
+				<ul>
+					<li><a href="#">About</a></li>
+	                <li><a href="#">News</a></li>
+					<li><a href="#">Cool Cars</a>
+						<ul>
+							<li><a href="#">Lamborghini</a>
+	                            <ul>
+	                                <li><a href="#">Muira</a></li>
+	                                <li><a href="#">Countach</a></li>
+	                                <li><a href="#">Diablo</a></li>
+	                                <li><a href="#">Aventador</a></li>
+	                            </ul>
+	                        </li>
+							<li><a href="#">Ferrari</a>
+								<ul>
+									<li><a href="#">Testarosa</a></li>
+									<li><a href="#">F40</a>
+										<ul>
+											<li><a href="#">Cool facts</a></li>
+											<li><a href="#">History behind it</a></li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+							<li><a href="#">Porche</a>
+	                            <ul>
+	                                <li><a href="#">959</a></li>
+	                                <li><a href="#">911</a></li>
+	                                <li><a href="#">Carerra GT</a></li>
+	                            </ul>
+	                        </li>
+							<li><a href="#">Ford</a>
+	                            <ul>
+	                                <li><a href="#">GT</a></li>
+	                                <li><a href="#">Shelby Mustang</a></li>
+	                            </ul>
+	                        </li>
+						</ul>
+					</li>
+					<li><a href="#">Cool JS Plugins</a>
+						<ul>
+						    <li><a href="#section-parallax">Parallax</a></li>
+						    <li><a href="#section-tabs">Tabs</a></li>
+						    <li><a href="#section-collapse">Collapse</a></li>
+						    <li><a href="#section-toastr">Toastr</a></li>
+						    <li><a href="#section-modal">Modal</a></li>
+						    <li><a href="#section-selectEnhance">Select Box Enhance</a></li>
+						    <li><a href="#section-nav">Accessible Menu / Mobile and Desktop Nav</a></li>
+						    <li><a href="#section-lazyLoad">Lazy Load</a></li>
+						</ul>				</li>
+				</ul>
+			</nav>
+	    </div>
+	</section>	<section class="container">
 	    <h2 id="section-lazyLoad">
 	        <a href="https://github.com/krschroeder/baseframe_js#plugin-lazy-load" target="_baseframe">Lazy Load</a></h2>
 	    <p class="lazy-highlight">Open up your console to see the loading of these images 100px before they ennter the screen. Look at your page to see the highlighting of the copy in this section with the hex value of #ccc. Side-note: if your scrolling fast on a slow network, may not help, but if slow/normal scrolling on a normal network, you shouldn't see a loading blip.</p>
@@ -524,18 +586,30 @@
 	
 	        <p class="lazy-highlight"><strong>For Example:</strong> all have options that can be plugged in as a data attribute, in JSON format (loosely written somehat)</p>
 	    </div>
-	</section></main>
+	</section>    <section class="container">
+        
+        <h2 id="section-collapse">
+            <a href="https://github.com/krschroeder/baseframe_js#other" target="_baseframe">Other</a></h2>
+        <div>
+            <h3>Debounce</h3>
+            <p>Button will display clicked status after 500ms.</p>
+            <div>
+                <button class="btn" id="btn-debounce-test">Debounce Click</button>
+                <code class="code--inline">Not Clicked :-(.</code>
+            </div>
+        </div>
+    </section> 
+
+</main>
 
 <footer class="site-footer" id="site-footer" role="contentinfo">
 	<h2 class="sr-only">Footer Information</h2>
 	<div class="container">
-			<p><small><strong>Baseframe JS</strong> 5.0.2<br>
+			<p><small><strong>Baseframe JS</strong> 7.0.0<br>
 				MIT License (or use/modify as needed, and at your own risk)</small></p>
 		</div>
 	</div>
 </footer>
- 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cash/8.1.0/cash.min.js"></script>
 
 <script src="./demo/assets/js/demo.js"></script> 
 </body>

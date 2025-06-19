@@ -431,8 +431,7 @@ toggleDuration | number |  500 |  The speed at which the items will open, should
 toggleGroup | boolean |  false |  More or less toggles the other opened element(s) closed, and make it behave like an accordion.
 moveToTopOnOpen | boolean |  false |  After the element is opened, the item will move to the top of it. Good for mobile.
 moveToTopOffset | number |  0 |  Should we need to offset the move to the top if the __moveToTopOnOpen__ is set to `true`.
-moveToTopDuration | number | 500 | duration to move to the top if the `moveToTopOnOpen` setting is being used.
-scrollSpeed | number |  100 |  The speed of the scroll if __moveToTopOnOpen__ is set to `true`.
+moveToTopDuration | number | 500 | duration to move to the top if the __moveToTopOnOpen__ setting is being used.
 urlFilterType | 'hash'\|'search' | 'hash' | The filtering type to use (either `location.hash` or `location.search`) to track the status of an open modal.
 historyType | 'replace'\|'push'| 'replace' | The history state update. Either `history.pushState` or `history.replaceState`.
 locationFilter | string |  null | Key name of the param to be captured in the location URL. Example: `YOUR_URL#collapse=the-item-id`, where `the-item-id` is the ID property and `collapse` is our `locationFilter`.

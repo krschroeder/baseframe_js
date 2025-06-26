@@ -1,10 +1,10 @@
 # Baseframe JS #
-A suite of useful JavaScript plugins and functions for front-end development. Instead of searching for unconnected plugins that may not work together well, this suite does. The package features plugins for collapsible sections, modals, parallaxing elements, tabs and more. It features utilities for setting and getting cookies, smooth scrolling, debounced resizing, querystring parameter filtering and more. The plugin's are meant to be configurable and consistent with each other.
+Baseframe JS is a suite of useful, connected plugins and scripting for Front-end development. The package features plugins for collapsible sections, modals, parallaxing elements, tabs and more. It has functionality for setting and getting cookies, smooth scrolling, debouncing, querystring parameter filtering and more. The plugin's are meant to be configurable and consistent with each other so you can just build.
 
 ## Features ##
 
 ### Pass in parameter options with a `data-` attribute
-The data attribute is always the `data-` (of course) and then the plugin name `pluginName` followed by `-options`.
+The data attribute is always the `data-` and then the plugin name `pluginName` followed by `-options`.
 
 __For Example:__ all have options that can be plugged in as a data attribute, in object literal format.
 
@@ -12,22 +12,18 @@ __For Example:__ all have options that can be plugged in as a data attribute, in
 <div id="your-plugin-elem" data-pluginName-options="{option:'text',option2: true, etc: 'you get the idea'}"></div>
 ```
 
-### Update Parameters After Initialization! ###
-Once initialized, each plugin when re-accessed (when not 'removed') will only get updates to their parameters. Handy for instance when you have an accordion (or collapsible section) and on mobile you want it to scroll to the top on of the item on open, but not on desktop. This works for the vast majority of params, but not all FYI. For example, I can specify a 'click' event and that can only be set on 'init'. However, each plugin can be 'removed' and then re-installed as well.
+### Update Parameters After Initialization ###
+Once initialized, each plugin when re-accessed (when not 'removed') will only get updates to their parameters. This is good for instance when you have a collapsible section and on mobile you want it to scroll to the top after a section opens. This works for the vast majority of params, but not all depending on which ones. For example, I can specify a 'click' event and that can only be set on 'init'. However, each plugin can be 'removed' and then re-installed as well.
     
 ```javascript
-$('.your-plugin-elem').plugin({change:'yep', height: 1e6})
+$('.your-plugin-elem').plugin({change:'changed', height: 1e6})
 ```
 
 ### Callbacks after events ###
+Each plugin features various callback functions to run after and before events.
 
-Lots of callback functions to run after and before events and such that may help you out when you need it most.
-
-## Example Script of Importing Everything In ##
-
-### Barrel File ###
- 
-This project is set-up with a __barrel file__ or a single reference to everything in the project. This is the neater syntax, but the drawback may have issues tree-shaking the unused imports.
+## Usage ##
+You can bring in all the scripting the following way:
 
 ```javascript
 import libraryExtend, {
@@ -55,8 +51,8 @@ import Collapse from 'baseframe-js/dist/js/Collapse';
 // ...etc
 ```
 
-### Extending into a Library ###
-These plugins are designed to be installed into jQuery or Cash-Dom library should you choose to use one fo those external library's.
+### Extending into the jQuery, Cash or Base Elem Js Library ###
+These plugins are designed to be installed into jQuery, [Cash-Dom](https://www.npmjs.com/package/cash-dom), or the [Base Elem Js](https://www.npmjs.com/package/base-elem-js) libraries. Base Elem Js is used as this projects only dependency.
 
 ```typescript
 // not necessary for the plugin's to work,
@@ -75,9 +71,9 @@ libraryExtend([
 ],$libary); 
 ```
 
-#### Typescript Support with Extending into a Library
+#### Typescript Support with jQuery or Cash
 
-To get these to work in [jQuery](https://jquery.com/) or [Cash Dom](https://github.com/fabiospampinato/cash#readme) adding the following in project should resolve any TypeScript errors.
+To get these to work in [jQuery](https://jquery.com/) or [Cash Dom](https://github.com/fabiospampinato/cash#readme) adding the following in project should get it to work with TypeScript.
 
 ```typescript
 
@@ -95,6 +91,7 @@ import libraryExtend, {
     SelectEnhance,  type SelectEnhancePlugin,
     ScrollSpy,      type ScrollSpyPlugin
 } from 'baseframe-js';
+
 // To extend into the jQuery library (with the use of the '@types/jquery' package)
 declare global {
     interface JQuery<TElement = HTMLElement> extends
@@ -137,23 +134,23 @@ Each plugin can be removed by calling `$('.element').plugin('remove')`, and it'l
 Styles are located in the `src/assets/scss/` directory, and all can be grabbed that way and added on in. The SCSS is minimal and generic to do what you want with it.
 
 
-## Plugin Names and What They Do. ##
+## Available Plugins ##
 
 ### Accessible Menu ###
-Adds tabbing, allows the use of arrows for toggling around the navigation, which is configurable depending on the menu design. Also adds functionality so the use of the escape key to go up a level.<br>
+Adds tabbing, allows the use of arrows for toggling around the navigation, which is configurable depending on the menu design. Also adds functionality so the use of the escape key to close a menu dropdown.<br>
 __[View Accessible Menu](#accessible-menu-plugin)__
 
 ### Collapse ###
-It's for toggling collapsible sections. Can be used like an accordion and etc.<br>
+It's for toggling collapsible sections. Can be used for an accordion and more.<br>
 __[View Collapse](#collapse-plugin)__
 
 
 ### Lazy Load ###
-Load background images and images lazily once they appear in the viewport. Also, run custom functions, by hooking into callbacks as well to hook into elements appearing (or disappearing) as well. This plugin uses `window.IntersectionObserver` API underneath the hood.<br>
+Run functions as they enter and exit the viewport. Also, by default this loads backgrounds and images a before appear in the viewport--not when the first pixel enters in with the 'loading' attribute. This plugin uses `window.IntersectionObserver` API underneath the hood.<br>
 __[View Lazy Load](#plugin-lazy-load)__
 
 ### Modal ###
-A modal, that will give you flexibility to do various things. Nice bit of flexibility do things like image carousels, confirm prompts, alerts and such with just a little configuration and CSS styling.<br>
+A modal, that will give you flexibility to do various things. Features a focus-trap to ensure the focus of the keyboard cannot leave the modal, for ADA. It features a nice amount of flexibility with configurable options to do things like: confirm prompts, alerts, carousels (with additional scripting) and more.<br>
 __[View Modal](#modal-plugin)__
 
 ### Navigation Desktop ###
@@ -161,11 +158,11 @@ This plugin allows a user to refocus their mouse over a dropdown in the navigati
 __[View Navigation Desktop](#nav-desktop-plugin)__
 
 ### Navigation Mobile ###
-Neat little mobile navigation plugin to enable the menu and toggle sub-sections.<br> 
+A mobile navigation plugin to enable the menu and toggle sub-sections.<br> 
 __[View Navigation Mobile](#nav-mobile-plugin)__
 
 ### Parallax Elements ###
-For making a parallaxing elements on the page, parallax horizontally, vertically and zoom-in or out. Lots of configurable options.<br>
+For parallaxing elements on the page, parallax horizontally, vertically and zoom-in or out. Features a fill option for sections that you want to appear as background images.<br>
 __[View Parallax Elements](#parallax-plugin)__
 
 ### Scroll Spy ###
@@ -177,7 +174,7 @@ Enhance a `<select>` element and it's options. Unlike a radio button or checkbox
 __[View Select Enhance](#select-enhance-plugin)__
 
 ### Tabs ###
-For tab sections. A user can add tabs inside another tabs section. Also, track the state of the tabs using history push or replace states.<br>
+Supports tabs inside tab sections. Keyboard support with arrow keys working with ADA accessibility to ensure only one tab can be accessed at a time. Also, track the state of the tabs using history push or replace states.<br>
 __[View Tabs](#tabs-plugin)__
 
 
@@ -190,22 +187,29 @@ __[View Tabs](#toastr-plugin)__
 
 ------
 
-### Essential Functions ###
+### Functions ###
 
 #### libraryExtend ####
-First parameter can be one Plugin, or an array of them. Pass in the second param which will notify the user of updated parameters (good for development). Third options if you just want to specify the library your extending it into.
+This function allows for the consistent implementation of the plugins, into a DOM manipulation library.  
 
 ```typescript
-// the third option 'Lib' allows a user to pass in either 
-// jQuery or Cash library to extend the plugin's to. 
-libraryExtend(plugins:Array<Plugin> | Plugin, notify?:boolean, Lib: Cash | jQuery | BaseElem);
+// the second option '$library' allows a user to pass in either 
+// jQuery, Cash or the BaseElem library to extend the plugin's into. 
+libraryExtend(
+  plugins: Array<Plugin> | Plugin, 
+  Library: Cash | jQuery | BaseElem,
+  notify?: boolean
+);
 ```
 
-### Functions
+**Parameters**
+- **plugins**: can be one Plugin, or an array of them. 
+- **Library**:  second parameter is the library to extend into. Currently can plug into __jQuery__, __Cash__, or the __Base Elem__ which is used in the package.
+- **notify**: this final parameter console logs each udpated parameter when they get updated. Really meant only for development purposes to help debugging.
 
 #### smoothScroll
 
-The `smoothScroll` function enables smooth, animated scrolling to a specific element or position within a web page. This enhances user experience by providing a visually appealing transition rather than an abrupt jump. This function supports easing functions, and out the gate comes with 
+The `smoothScroll` function enables smooth, animated scrolling to a specific element or position within a web page. This enhances user experience by providing a visually appealing transition rather than an abrupt jump. This function supports easing functions, and out the gate comes with some easing functions.
 
 ```typescript
 smoothScroll(
@@ -216,24 +220,35 @@ smoothScroll(
 );
 ```
 
-### Parameters
+**Parameters**
 
 - **scrollTargetY** :  
   The destination to scroll to. pass in the Y position of the element you want to scroll to.
 - **duration** (`number`, optional):  
   The time in milliseconds over which the scroll animation occurs. Defaults to 400ms if not specified.
 - **easing** (`Easings | EasingFn`, optional):  
-  accepts a custom easing function or the following string values: 'linear', 'easeInOutCubic', 'easeInOutQuart', 'easeOutQuint'
+  accepts a custom easing function or the following string values: 'linear', 'easeInOutCubic', 'easeInOutQuart', 'easeOutQuint'.  
 
 
 ### Example Usage
 
 ```typescript
-smoothScroll(500, 400, 'easeInOutQuart');
+//Example using Base Elem Js
+const $anchorNav = $be('.anchor-nav');
+
+$anchorNav.on('click', (elem, e) => {
+  const $target = $be(elem.hash);
+  if ($target.hasEls) {
+    const top = ($target.elem[0] as HTMLElement).offsetTop;
+
+    smoothScroll(top, 400, 'easeInOutQuart');
+  }
+),'a');
+
 ```
 
 #### focusTrap
-This is used in the `Modal` plugin to trap the focus of tabbing events to just the available focusable elements. Each tab keypress it re-takes inventory on what is available to tab to, this way any dynamic changes can be accounted for.
+To trap the focus of tabbing events to just the available focusable elements. Each tab keypress it re-takes inventory on what is available to tab to, this way any dynamic changes can be accounted for. This is used with the `Modal` plugin.
 
 __params__
 The parameters that make the `ITrapFocusProps` interface.
@@ -258,7 +273,12 @@ Static class for or getting, setting and deleting cookies.
 //setting a cookie
 Cookies.set('cookieName','your cookie value',{path:'/',expires: 60, secure: true, sameSite: 'Lax'});
 ```
-__Cookies Set Params__
+
+**Parameters**
+- **cookieName**: the cookie name
+- **cookieValue**: the value of the cookie
+
+__Cookies Set Configurable Options__
 Option | Description
 ------ | -------
 path | Path to the cookie, default is the current `location.pathname`.
@@ -288,7 +308,7 @@ debounce(
   config?: { immediate?: boolean; delay?: number }
 ): void
 ```
-
+**Parameters**
 - **elem**: The element(s) or selector to bind the event to.
 - **event**: The event name(s) to listen for (e.g., `'click'`, `'input'`).
 - **cb**: The callback function to run after the debounce delay.
@@ -313,7 +333,7 @@ debounceResize(
   delay?: number
 ): void
 ```
-
+**Parameters**
 - **cb**: The callback function to execute after resizing has stopped.
 - **delay**: Optional debounce delay in milliseconds. Default is `100`.
 

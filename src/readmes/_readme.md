@@ -130,8 +130,8 @@ declare module 'cash-dom' {
 Each plugin can be removed by calling `$('.element').plugin('remove')`, and it'll call the static method to remove it and all its components. Or if you want it can be stored as a method `$.plugin.remove($('.element').eq(1))` or `$.plugin.remove('.element')` and done that way.
 
 
-## Using Styles For Plugins ##
-Styles are located in the `src/assets/scss/` directory, and all can be grabbed that way and added on in. The SCSS is minimal and generic to do what you want with it.
+### Bring in base styling for the Plugins ###
+Styles are located in the `dist/scss/` directory, and all can be grabbed that way and added on in. The SCSS is minimal and generic to do what you want with it.
 
 
 ## Available Plugins ##
@@ -180,7 +180,7 @@ __[View Tabs](#tabs-plugin)__
 
 ### Toastr ###
 Toastr for little dissmisable message to notify a user! Enable several at once, customize their positions and more.<br>
-__[View Tabs](#toastr-plugin)__
+__[View Toaster](#toastr-plugin)__
 
 <br>
 <br>
@@ -193,7 +193,7 @@ __[View Tabs](#toastr-plugin)__
 This function allows for the consistent implementation of the plugins, into a DOM manipulation library.  
 
 ```typescript
-// the second option '$library' allows a user to pass in either 
+// the second option 'Library' allows a user to pass in either 
 // jQuery, Cash or the BaseElem library to extend the plugin's into. 
 libraryExtend(
   plugins: Array<Plugin> | Plugin, 
@@ -203,9 +203,9 @@ libraryExtend(
 ```
 
 **Parameters**
-- **plugins**: can be one Plugin, or an array of them. 
-- **Library**:  second parameter is the library to extend into. Currently can plug into __jQuery__, __Cash__, or the __Base Elem__ which is used in the package.
-- **notify**: this final parameter console logs each udpated parameter when they get updated. Really meant only for development purposes to help debugging.
+- **plugins**: Can be one Plugin, or an array of them. 
+- **Library** :  second parameter is the library to extend into. Currently can plug into __jQuery__, __Cash__, or the __Base Elem__ which is used in the package.
+- **notify** (optional): The final parameter console logs each udpated parameter when they get updated. Really meant only for development purposes to help debugging.
 
 #### smoothScroll
 
@@ -222,12 +222,9 @@ smoothScroll(
 
 **Parameters**
 
-- **scrollTargetY** :  
-  The destination to scroll to. pass in the Y position of the element you want to scroll to.
-- **duration** (`number`, optional):  
-  The time in milliseconds over which the scroll animation occurs. Defaults to 400ms if not specified.
-- **easing** (`Easings | EasingFn`, optional):  
-  accepts a custom easing function or the following string values: 'linear', 'easeInOutCubic', 'easeInOutQuart', 'easeOutQuint'.  
+- **scrollTargetY**: The destination to scroll to. pass in the Y position of the element you want to scroll to.
+- **duration** (optional): The time in milliseconds over which the scroll animation occurs. Defaults to 400ms if not specified.
+- **easing** (optional): Accepts a custom easing function or the following string values: 'linear', 'easeInOutCubic', 'easeInOutQuart', 'easeOutQuint'.  
 
 
 ### Example Usage
@@ -275,8 +272,9 @@ Cookies.set('cookieName','your cookie value',{path:'/',expires: 60, secure: true
 ```
 
 **Parameters**
-- **cookieName**: the cookie name
-- **cookieValue**: the value of the cookie
+- **cookieName**: The cookie name
+- **cookieValue**: The value of the cookie
+- **config** (optional): The configuration of the cookies being set
 
 __Cookies Set Configurable Options__
 Option | Description
@@ -312,7 +310,7 @@ debounce(
 - **elem**: The element(s) or selector to bind the event to.
 - **event**: The event name(s) to listen for (e.g., `'click'`, `'input'`).
 - **cb**: The callback function to run after the debounce delay.
-- **config**: Optional configuration object:
+- **config** (optional): 
   - `immediate` (boolean): If `true`, the callback fires immediately on the first event, then debounces subsequent calls. Default: `false`.
   - `delay` (number): The debounce delay in milliseconds. Default: `100`.
 
@@ -335,7 +333,7 @@ debounceResize(
 ```
 **Parameters**
 - **cb**: The callback function to execute after resizing has stopped.
-- **delay**: Optional debounce delay in milliseconds. Default is `100`.
+- **delay** (optional): Debounce delay in milliseconds. Default is `100`.
 
 **Example:**
 ```typescript

@@ -8,7 +8,6 @@ This plugin is for parallaxing page elements (and yes background images). Use th
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-
 speed | number |  7 | Speed of the scroll. A negative amount will move it in the opposite direction.
 zSpeed | number |  5 | Speed of the z-axis. A negative amount will move it in the opposite direction.
 axis | string | 'y' | Axis of movement, it can be 'y','x'.

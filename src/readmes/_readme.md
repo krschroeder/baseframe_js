@@ -1,6 +1,6 @@
 # Baseframe JS
 
-Baseframe JS is a comprehensive suite of modular plugins and utilities designed for front-end development. It provides solutions for common UI needs supplying solutions for: modals, collapsible sections, parallax effects, tabs. Additionally it has utility functions for cookies, smooth scrolling, debouncing, and URL state management. All plugins are highly configurable and follow consistent patterns, making it easy to integrate and extend them in your projects.
+Baseframe JS is a comprehensive suite of modular plugins and utilities designed for front-end development. It provides solutions for common UI needs supplying solutions for: modals, collapsible sections, parallax effects, tabs and more. Additionally it has utility functions for cookies, smooth scrolling, debouncing, and URL state management. All plugins are highly configurable and follow consistent patterns, making it easy to integrate and extend them in your projects.
 
 ---
 

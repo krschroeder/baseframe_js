@@ -14,7 +14,8 @@ import libraryExtend, {
     debounceResize,
     debounce,
     ScrollSpy,
-    smoothScroll
+    smoothScroll,
+    UrlState
 } from '../../../assets/js';
  
 
@@ -51,8 +52,6 @@ const siteHeader = findOne('.site-header');
         textTimer = setTimeout(() => codeMsg.textContent = codeMstDefText, 2000);
     }, {delay: 500})
 }
- 
-console.log($be)
  
 $be('.plugins-list-inline').find('a').on('click.smoothScroll', (ev: MouseEvent, elem: HTMLAnchorElement) => {
     const hash = elem.hash;

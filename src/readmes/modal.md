@@ -115,79 +115,79 @@ __HTML__
 </section>
 ```
 __JavaScript__
-```javascript
-{
-    $be('.btn-modal').modal({
-        modalID: 'from-dom'
-    });
+```typescript
+// Note: Examples all use the Base Elem Js DOM Library which is used internally in this package
+import $be from 'base-elem-js';
 
-    $be('#btn-gen-content').modal({
-        locationFilter: 'modal',
+$be('.btn-modal').modal({
+    modalID: 'from-dom'
+});
+
+$be('#btn-gen-content').modal({
+    locationFilter: 'modal',
+    fromDOM: false,
+    modalID: 'gen-content',
+    onOpenOnce(modalObj) {
+        
+        modalObj.$dialogContent.on('click', modalObj.close,'button.dismiss');
+
+        modalObj.$dialogContent.insert(
+            `<h2>Some generated Content</h2>
+            <p>Ullamco <a href="#">link</a> laboris nisi ut aliquid ex ea commodi consequat. Sed haec quis possit intrepidus aestimare tellus. Quam diu etiam furor <a href="#">iste tuus</a> nos eludet? Curabitur est gravida et libero vitae dictum.</p>
+            <button type="button" class="button dismiss">Dimiss</button>`
+        );
+    }
+});
+
+// quick and dirty image carousel
+const $picGroup = $be('.pic-group');
+
+$picGroup.each((elem, index) => {
+    
+    let imgIndex: number = index;
+
+    const 
+        modalID = 'pic-group_' + index,
+        imgDefaultSrc = elem.dataset.imgSrc,
+        img = make('img', {loading:'lazy', src: imgDefaultSrc, alt: ''}),
+        setImgSrc = (decrement: boolean) => {
+            if (decrement)  imgIndex = imgIndex === 0 ? $picGroup.size - 1 : imgIndex - 1;
+            else            imgIndex = imgIndex === $picGroup.size - 1 ? 0 : imgIndex + 1;
+            
+            return ($picGroup.elem[imgIndex] as HTMLElement).dataset.imgSrc || '';
+        }
+    ;
+
+    $be(elem).modal({
+        modalID,
+        modalCss: 'modal--gallery', 
+        locationFilter: 'gallery',
         fromDOM: false,
-        modalID: 'gen-content',
         onOpenOnce(modalObj) {
-         
-            modalObj.$dialogContent.on('click', modalObj.close,'button.dismiss');
+            modalObj.$dialogContent.insert(img).insert(`
+                <footer class="pic-group-nav">
+                    <button type="button" class="prev-btn">Previous</button>
+                    <button type="button" class="next-btn">Next</button>
+                </footer>
+            `).on('click', (e, elem) => {
+                const decrement = $be(elem).hasClass('prev-btn');
+                img.src = setImgSrc(decrement);    
+            },'button');
+        },
+        onOpen(modalObj) {
+            $be(window).on('keyup.gallery', function(e:KeyboardEvent){
+                const arrowLeft = e.key === 'ArrowLeft';
 
-            modalObj.$dialogContent.insert(
-                `<h2>Some generated Content</h2>
-                <p>Ullamco <a href="#">link</a> laboris nisi ut aliquid ex ea commodi consequat. Sed haec quis possit intrepidus aestimare tellus. Quam diu etiam furor <a href="#">iste tuus</a> nos eludet? Curabitur est gravida et libero vitae dictum.</p>
-                <button type="button" class="button dismiss">Dimiss</button>`
-            );
+                if (e.key === 'Escape') modalObj.close();
+                if (e.key === 'ArrowRight' || arrowLeft) {
+                    img.src = setImgSrc(arrowLeft);
+                }
+            });
+        },
+        onClose() {
+            $be(window).off('keyup.gallery');
         }
     });
+});
 
- 
-
-    // quick and dirty image carousel
-    const $picGroup = $be('.pic-group');
-
-    $picGroup.each((elem, index) => {
-        
-        let imgIndex: number = index;
-
-        const 
-            modalID = 'pic-group_' + index,
-            imgDefaultSrc = elem.dataset.imgSrc,
-            img = make('img', {loading:'lazy', src: imgDefaultSrc, alt: ''}),
-            setImgSrc = (decrement: boolean) => {
-                if (decrement)  imgIndex = imgIndex === 0 ? $picGroup.size - 1 : imgIndex - 1;
-                else            imgIndex = imgIndex === $picGroup.size - 1 ? 0 : imgIndex + 1;
-                
-                return ($picGroup.elem[imgIndex] as HTMLElement).dataset.imgSrc || '';
-            }
-        ;
-
-        $be(elem).modal({
-            modalID,
-            modalCss: 'modal--gallery', 
-            locationFilter: 'gallery',
-            fromDOM: false,
-            onOpenOnce(modalObj) {
-                modalObj.$dialogContent.insert(img).insert(`
-                    <footer class="pic-group-nav">
-                        <button type="button" class="prev-btn">Previous</button>
-                        <button type="button" class="next-btn">Next</button>
-                    </footer>
-                `).on('click', (e, elem) => {
-                    const decrement = $be(elem).hasClass('prev-btn');
-                    img.src = setImgSrc(decrement);    
-                },'button');
-            },
-            onOpen(modalObj) {
-                $be(window).on('keyup.gallery', function(e:KeyboardEvent){
-                    const arrowLeft = e.key === 'ArrowLeft';
-
-                    if (e.key === 'Escape') modalObj.close();
-                    if (e.key === 'ArrowRight' || arrowLeft) {
-                        img.src = setImgSrc(arrowLeft);
-                    }
-                });
-            },
-            onClose() {
-                $be(window).off('keyup.gallery');
-            }
-        });
-    });
-} 
 ```

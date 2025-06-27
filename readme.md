@@ -1,36 +1,33 @@
-# Baseframe JS #
-Baseframe JS is a suite of useful, connected plugins and scripting for front-end development. The package features plugins for collapsible sections, modals, parallax elements, tabs, and more. It has functionality for setting and getting cookies, smooth scrolling, debouncing, query string parameter filtering, and more. The plugins are meant to be configurable and consistent with each other so you can just build.
+# Baseframe JS
 
-## Features ##
+Baseframe JS is a comprehensive suite of modular plugins and utilities designed for front-end development. It provides solutions for common UI needs supplying solutions for: modals, collapsible sections, parallax effects, tabs. Additionally it has utility functions for cookies, smooth scrolling, debouncing, and URL state management. All plugins are highly configurable and follow consistent patterns, making it easy to integrate and extend them in your projects.
 
-### Pass in parameter options with a `data-` attribute
-The data attribute is always `data-` and then the plugin name `pluginName` followed by `-options`.
+---
 
-__For Example:__ All have options that can be plugged in as a data attribute, in object literal format.
+## Features
 
-```html
-<div id="your-plugin-elem" data-pluginName-options="{option:'text',option2: true, etc: 'you get the idea'}"></div>
-```
+- **Consistent Plugin Architecture:** All plugins share a unified API and configuration approach, simplifying usage and customization.
+- **Data Attribute Configuration:** Easily configure plugins via `data-` attributes using object literal syntax.
+- **Dynamic Parameter Updates:** Update most plugin parameters after initialization without re-instantiating.
+- **Event Callbacks:** Register callbacks for key plugin events (e.g., open, close, update).
+- **TypeScript Support:** Full type definitions for seamless integration with TypeScript projects.
+- **Flexible DOM Library Integration:** Extend plugins into jQuery, Cash-Dom, or Base Elem JS.
+- **Minimal, Customizable SCSS:** Base styles provided for all plugins, easily extended or overridden.
 
-### Update Parameters After Initialization ###
-Once initialized, each plugin when re-accessed (when not 'removed') will only get updates to their parameters. This is good, for instance, when you have a collapsible section and on mobile you want it to scroll to the top after a section opens. This works for the vast majority of params, but not all, depending on which ones. For example, you can specify a 'click' event, and that can only be set on 'init'. However, each plugin can be 'removed' and then re-installed as well.
-    
-```javascript
-$('.your-plugin-elem').plugin({change:'changed', height: 1e6})
-```
+---
 
-### Callbacks after events ###
-Each plugin features various callback functions to run after and before events.
+## Usage
 
-## Usage ##
-You can bring in all the scripting the following way:
+### Importing Plugins
+
+You can import all plugins and utilities at once, or selectively import only what you need for optimal bundle size:
 
 ```javascript
 import libraryExtend, {
     AccessibleMenu,
     Collapse,
     Cookies,
-    LazyLoad, 
+    LazyLoad,
     NavDesktop,
     NavMobile,
     Parallax,
@@ -44,159 +41,129 @@ import libraryExtend, {
     focusTrap
 } from 'baseframe-js';
 
-// if tree-shaking out unused code just do individual imports
-import libraryExtend from 'baseframe-js/dist/js/core/libraryExtend';
-import AccessibleMenu from 'baseframe-js/dist/js/AccessibleMenu';
+// For tree-shaking, import individual modules:
 import Collapse from 'baseframe-js/dist/js/Collapse';
-// ...etc
 ```
 
-### Extending into the jQuery, Cash, or Base Elem JS Library ###
-These plugins are designed to be installed into jQuery, [Cash-Dom](https://www.npmjs.com/package/cash-dom), or the [Base Elem JS](https://www.npmjs.com/package/base-elem-js) libraries. Base Elem JS is used as this project's only dependency.
+### Extending a DOM Library
+
+Baseframe JS plugins can be installed into [jQuery](https://jquery.com/), [Cash-Dom](https://www.npmjs.com/package/cash-dom), or [Base Elem JS](https://www.npmjs.com/package/base-elem-js):
 
 ```typescript
-// not necessary for the plugins to work,
-// but it's recommended that we do extend to the library
 libraryExtend([
     Collapse,
-    EqualizeContent,
     LazyLoad,
+    Modal,
     NavDesktop,
     NavMobile,
-    Modal,
     Parallax,
     SelectEnhance,
     Tabs,
     Toastr
-], $library); 
+], $library);
 ```
 
-#### TypeScript Support with jQuery or Cash
+### TypeScript Integration
 
-To get these to work in [jQuery](https://jquery.com/) or [Cash Dom](https://github.com/fabiospampinato/cash#readme), adding the following in your project should get it to work with TypeScript.
+To enable full type support with jQuery or Cash-Dom, extend their interfaces with the provided plugin types:
 
 ```typescript
-
-import libraryExtend, {
-    // Bring in the 'type' as well
-    Collapse,       type CollapsePlugin,
-    LazyLoad,       type LazyLoadPlugin,
-    Modal,          type ModalPlugin,
-    Tabs,           type TabsPlugin,
-    Toastr,         type ToastrPlugin,
-    AccessibleMenu, type AccessibleMenuPlugin,
-    NavDesktop,     type NavDesktopPlugin,
-    NavMobile,      type NavMobilePlugin,
-    Parallax,       type ParallaxPlugin, 
-    SelectEnhance,  type SelectEnhancePlugin,
-    ScrollSpy,      type ScrollSpyPlugin
+import {
+    Collapse, type CollapsePlugin,
+    Modal, type ModalPlugin,
+    // ...other plugins: 
+    // All plugins types are named the following way: [Plugin Name]Plugin
 } from 'baseframe-js';
 
-// To extend into the jQuery library (with the use of the '@types/jquery' package)
 declare global {
-    interface JQuery<TElement = HTMLElement> extends
-        CollapsePlugin,
-        LazyLoadPlugin,
-        ModalPlugin,
-        TabsPlugin,
-        ToastrPlugin,
-        AccessibleMenuPlugin,
-        NavDesktopPlugin,
-        NavMobilePlugin,
-        ParallaxPlugin,
-        SelectEnhancePlugin,
-        ScrollSpyPlugin {}
+    interface JQuery<TElement = HTMLElement> extends CollapsePlugin, ModalPlugin {}
 }
 
-// To extend into the 'Cash Dom' Library
 declare module 'cash-dom' {
-    interface Cash extends
-        CollapsePlugin,
-        LazyLoadPlugin,
-        ModalPlugin,
-        TabsPlugin,
-        ToastrPlugin,
-        AccessibleMenuPlugin,
-        NavDesktopPlugin,
-        NavMobilePlugin,
-        ParallaxPlugin,
-        SelectEnhancePlugin,
-        ScrollSpyPlugin {}
+    interface Cash extends CollapsePlugin, ModalPlugin {}
 }
-
 ```
 
-### Removing a Plugin Instance ###
-Each plugin can be removed by calling `$('.element').plugin('remove')`, and it'll call the static method to remove it and all its components. Or, if you want, it can be stored as a method: `$.plugin.remove($('.element').eq(1))` or `$.plugin.remove('.element')` and done that way.
+### Configuring Plugins via Data Attributes
 
+All plugins accept configuration via a `data-pluginName-options` attribute in object literal format:
 
-### Bring in Base Styling for the Plugins ###
-Styles are located in the `dist/scss/` directory, and all can be grabbed that way and added in. The SCSS is minimal and generic so you can do what you want with it.
+```html
+<div id="your-plugin-elem" data-pluginName-options="{ option: 'value', anotherOption: true }"></div>
+```
 
+### Updating Plugin Parameters
 
-## Available Plugins ##
+Most plugin parameters can be updated after initialization by calling the plugin method again with new options:
 
-### Accessible Menu ###
-Adds tabbing, allows the use of arrows for toggling around the navigation, which is configurable depending on the menu design. Also adds functionality so the use of the escape key closes a menu dropdown.<br>
-__[View Accessible Menu](#accessible-menu-plugin)__
+```javascript
+$('.your-plugin-elem').plugin({ option: 'newValue', height: 1000 });
+```
 
-### Collapse ###
-It's for toggling collapsible sections. Can be used for an accordion and more.<br>
-__[View Collapse](#collapse-plugin)__
+### Removing a Plugin Instance
 
+Remove a plugin and its components by calling:
 
-### Lazy Load ###
-Run functions as they enter and exit the viewport. Also, by default, this loads backgrounds and images before they appear in the viewport—not when the first pixel enters in with the 'loading' attribute. This plugin uses the `window.IntersectionObserver` API under the hood.<br>
-__[View Lazy Load](#plugin-lazy-load)__
+```javascript
+$('.element').plugin('remove');
+```
+Or, using the static method:
+```javascript
+$.plugin.remove($('.element').eq(1));
+```
 
-### Modal ###
-A modal that will give you flexibility to do various things. Features a focus-trap to ensure the focus of the keyboard cannot leave the modal, for ADA. It features a nice amount of flexibility with configurable options to do things like: confirm prompts, alerts, carousels (with additional scripting), and more.<br>
-__[View Modal](#modal-plugin)__
+### Including Base Styles
 
-### Navigation Desktop ###
-This plugin allows a user to refocus their mouse over a dropdown in the navigation if they accidentally hover off. Also, features an edge detection on the drop-downs `<ul>`, and uses corresponding CSS to position, so it stays on the page.<br>
-__[View Navigation Desktop](#nav-desktop-plugin)__
+All base SCSS styles are located in the `dist/scss/` directory. Import and customize as needed for your project.
 
-### Navigation Mobile ###
-A mobile navigation plugin to enable the menu and toggle sub-sections.<br> 
-__[View Navigation Mobile](#nav-mobile-plugin)__
+---
 
-### Parallax Elements ###
-For parallaxing elements on the page, parallax horizontally, vertically, and zoom in or out. Features a fill option for sections that you want to appear as background images.<br>
-__[View Parallax Elements](#parallax-plugin)__
+## Available Plugins
 
-### Scroll Spy ###
-For doing a scroll spy that will highlight navigational elements to their body anchor id elements.<br>
-__[View Scroll Spy](#scroll-spy-plugin)__
+- **Accessible Menu:** Keyboard-friendly navigation with arrow key support and escape-to-close.  
+  [View Accessible Menu](#accessible-menu-plugin)
 
-### Select Enhance ###
-Enhance a `<select>` element and its options. Unlike a radio button or checkbox, a select element can't fully be styled without further HTML enhancement.<br>
-__[View Select Enhance](#select-enhance-plugin)__
+- **Collapse:** Expandable/collapsible sections, suitable for accordions and more.  
+  [View Collapse](#collapse-plugin)
 
-### Tabs ###
-Supports tabs inside tab sections. Keyboard support with arrow keys working with ADA accessibility to ensure only one tab can be accessed at a time. Also, track the state of the tabs using history push or replace states.<br>
-__[View Tabs](#tabs-plugin)__
+- **Lazy Load:** Run custom code for elements as they enter and exit the viewport. Also, loads images and backgrounds as they approach the viewport using IntersectionObserver.  
+  [View Lazy Load](#plugin-lazy-load)
 
+- **Modal:** Flexible modal dialogs with focus trapping, customizable content, and event hooks.  
+  [View Modal](#modal-plugin)
 
-### Toastr ###
-Toastr for little dismissable messages to notify a user! Enable several at once, customize their positions, and more.<br>
-__[View Toastr](#toastr-plugin)__
+- **Navigation Desktop:** Enhanced desktop navigation with edge detection and mouse refocus.  
+  [View Navigation Desktop](#nav-desktop-plugin)
 
-<br>
-<br>
+- **Navigation Mobile:** Mobile-first navigation with toggleable sub-sections.  
+  [View Navigation Mobile](#nav-mobile-plugin)
 
-------
+- **Parallax Elements:** Horizontal, vertical, and zoom parallax effects with background fill options.  
+  [View Parallax Elements](#parallax-plugin)
 
-### Functions ###
+- **Scroll Spy:** Highlights navigation elements based on scroll position and anchor targets.  
+  [View Scroll Spy](#scroll-spy-plugin)
 
-#### libraryExtend ####
-This function allows for the consistent implementation of the plugins into a DOM manipulation library.  
+- **Select Enhance:** Fully stylable `<select>` elements with enhanced dropdowns. Supports the `<optgroup>` option grouping.
+  [View Select Enhance](#select-enhance-plugin)
+
+- **Tabs:** Accessible tabbed interfaces with keyboard navigation and history tracking.  
+  [View Tabs](#tabs-plugin)
+
+- **Toastr:** Dismissible notification messages with customizable positions and stacking.  
+  [View Toastr](#toastr-plugin)
+
+---
+
+## Utility Functions
+
+### `libraryExtend`
+
+Integrates plugins into a DOM manipulation library (jQuery, Cash, or Base Elem JS):
 
 ```typescript
-// the second option 'Library' allows a user to pass in either 
-// jQuery, Cash, or the BaseElem library to extend the plugins into. 
 libraryExtend(
-  plugins: Array<Plugin> | Plugin, 
+  plugins: Array<Plugin> | Plugin,
   Library: Cash | jQuery | BaseElem,
   notify?: boolean
 );
@@ -207,67 +174,42 @@ libraryExtend(
 - **Library**: The second parameter is the library to extend into. Currently can plug into __jQuery__, __Cash__, or the __Base Elem__ which is used in the package.
 - **notify** (optional): The final parameter console logs each updated parameter when they get updated. Really meant only for development purposes to help debugging.
 
-#### smoothScroll
+### `smoothScroll`
 
-The `smoothScroll` function enables smooth, animated scrolling to a specific element or position within a web page. This enhances user experience by providing a visually appealing transition rather than an abrupt jump. This function supports easing functions, and out of the gate comes with some easing functions.
+Smoothly scrolls to a target Y position with optional easing and callback:
 
 ```typescript
 smoothScroll(
     scrollTargetY: number,
-    duration: number = 500,
-    easing: EasingFn | Easings = 'easeOutQuint',
+    duration?: number,
+    easing?: EasingFn | Easings,
     scrollEndFn?: (...args) => void
 );
 ```
 
 **Parameters**
-
 - **scrollTargetY**: The destination to scroll to. Pass in the Y position of the element you want to scroll to.
 - **duration** (optional): The time in milliseconds over which the scroll animation occurs. Defaults to 400ms if not specified.
 - **easing** (optional): Accepts a custom easing function or the following string values: 'linear', 'easeInOutCubic', 'easeInOutQuart', 'easeOutQuint'.  
 
+### `focusTrap`
 
-### Example Usage
-
-```typescript
-// Example using Base Elem JS
-const $anchorNav = $be('.anchor-nav');
-
-$anchorNav.on('click', (elem, e) => {
-  const $target = $be(elem.hash);
-  if ($target.hasEls) {
-    const top = ($target.elem[0] as HTMLElement).offsetTop;
-
-    smoothScroll(top, 400, 'easeInOutQuart');
-  }
-}, 'a');
-```
-
-#### focusTrap
-To trap the focus of tabbing events to just the available focusable elements. Each tab keypress retakes inventory on what is available to tab to, this way any dynamic changes can be accounted for. This is used with the `Modal` plugin.
-
-__params__
-The parameters that make up the `ITrapFocusProps` interface.
-
-Option | Type | Default | Description
------- | ---- | ------- | -------
-focusFirst | boolean | true | Focuses the first element
-nameSpace | string | 'focusTrap' | Unique namespace for the tabbing keydown event.
-focusableElements | string or array | ['button', 'a', 'input', 'select', 'textarea', '[tabindex]'] | A listing of focusable elements.
+Traps keyboard focus within a container (used by Modal):
 
 ```typescript
 const trappedFocus = focusTrap(element: Cash | HTMLElement, params?: ITrapFocusProps);
-// to remove later on
+// Remove later:
 trappedFocus.remove();
-
 ```
 
-#### Cookies
-Static class for getting, setting, and deleting cookies.
+### `Cookies`
+
+Static class for managing browser cookies:
 
 ```javascript
-// setting a cookie
-Cookies.set('cookieName', 'your cookie value', {path: '/', expires: 60, secure: true, sameSite: 'Lax'});
+Cookies.set('cookieName', 'value', { path: '/', expires: 60 });
+Cookies.get('cookieName');
+Cookies.remove('cookieName', { path: '/' });
 ```
 
 **Parameters**
@@ -275,7 +217,7 @@ Cookies.set('cookieName', 'your cookie value', {path: '/', expires: 60, secure: 
 - **cookieValue**: The value of the cookie
 - **config** (optional): The configuration of the cookies being set
 
-__Cookies Set Configurable Options__
+__Cookie Configation Options__
 Option | Description
 ------ | -------
 path | Path to the cookie, default is the current `location.pathname`.
@@ -283,29 +225,16 @@ expires | Set in minutes. Time the cookie will expire.
 secure | Sets the cookie so it can only be accessed via https protocol. This gets set automatically when `sameSite` is set to `None`.
 sameSite | `Lax`, `Strict`, or `None` are the options.
 
-```javascript
-// getting a cookie
-Cookies.get('cookieName', {path: '/'});
+### `debounce` and `debounceResize`
 
-// removing a cookie
-Cookies.remove('cookieName', {path: '/path/to-your/cookie'});
-
-// maybe you want to extend $ ?
-$.extend({cookies: Cookies});
-```
-#### debounce
-
-Debounces an event handler, ensuring the callback only fires after a specified delay since the last event. Useful for limiting how often a function runs, such as during rapid events like clicks or window resizing.
+Debounce event handlers or window resize events to improve performance:
 
 ```typescript
-debounce(
-  elem: SelectorElem | string,
-  event: EventName | EventName[],
-  cb: EventFn,
-  config?: { immediate?: boolean; delay?: number }
-): void
+debounce('#my-button', 'click', (ev, elem) => { ... }, { delay: 300 });
+debounceResize(() => { ... }, 200);
 ```
-**Parameters**
+
+**`debounce` Parameters**
 - **elem**: The element(s) or selector to bind the event to.
 - **event**: The event name(s) to listen for (e.g., `'click'`, `'input'`).
 - **cb**: The callback function to run after the debounce delay.
@@ -313,46 +242,18 @@ debounce(
   - `immediate` (boolean): If `true`, the callback fires immediately on the first event, then debounces subsequent calls. Default: `false`.
   - `delay` (number): The debounce delay in milliseconds. Default: `100`.
 
-**Example:**
-```typescript
-debounce('#my-button', 'click', (ev, elem) => {
-  console.log('Button clicked (debounced)');
-}, { delay: 300 });
-```
+### `UrlState`
 
-#### debounceResize
-
-Debounces the window resize event, ensuring the provided callback is only executed after the user has stopped resizing the window for a specified delay. This helps prevent performance issues caused by rapid firing of the resize event.
+Static class for managing URL hash and search parameters:
 
 ```typescript
-debounceResize(
-  cb: () => void,
-  delay?: number
-): void
-```
-**Parameters**
-- **cb**: The callback function to execute after resizing has stopped.
-- **delay** (optional): Debounce delay in milliseconds. Default is `100`.
+UrlState.set('search', 'param', 'value');
+UrlState.get('hash', 'section');
 
-**Example:**
-```typescript
-debounceResize(() => {
-  console.log('Window resize finished!');
-}, 200);
-```
+// by default the UrlState static class tracks 'popstate' updates. 
+// Setting to false removes that tracking.
+UrlState.refresh(true);
 
-#### UrlState
-Static class to set and get URL hash and search parameters. Easiest way to explain is to just show the types.
-```typescript
-type StateChangeType = 'push' | 'replace';
-type UrlSearchType   = 'search' | 'hash' | 'hashVal';
-type UrlPrintPattern = 'repeat' | 'normal';
-type UrlPrintOptions = { pattern: UrlPrintPattern; brackets: boolean };
-type UrlParamRawValue = string | (number | string)[] | null;
- 
-// 'on' set to true, sets the window popstate event
-// 'on' set to false removes the event
-UrlState.refresh(on: boolean): void;
  
 // prints the values, 'brackets' option will add the [] to any
 // key that contains an array value, as back-end needs or doesn't
@@ -370,16 +271,18 @@ UrlState.set(
 ): void;
  
 // sets a hash value, ex: 'https://your-website.com/some-page#your-hash-val'
-// passing in null removes the value
-UrlState.setHashVal(value: string | null, state?: StateChangeType): void;
+UrlState.setHashVal(null, 'push'): void; 
+// updates to: https://your-website.com/some-page and pushes to the history
+
+UrlState.setHashVal('new-hash-value', 'replace'): void; 
+// updates to: https://your-website.com/some-page#new-hash-value and replaces to the history
  
-// returns the 'search', 'hash', 'hashVal' values
-UrlState.get(type: UrlSearchType, paramName: string);
 ```
 
+---
 
-### Plugins ###
-<br>
+## Plugins
+
 <br>
 <br>
 <h2 id="accessible-menu-plugin">Accessible Menu</h2>
@@ -430,7 +333,6 @@ $('#main-menu').accessibleMenu({
 });
 ```
 
-<br>
 <br>
 <br>
 <h2 id="collapse-plugin">Collapse</h2>
@@ -513,10 +415,9 @@ $('.collapse-group').collapse();
 
 <br>
 <br>
-<br>
 <h2 id="plugin-lazy-load">Lazy Load</h2>
 
-By default it will load background images and images lazily once they appear in the viewport. But also run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses [window.IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API). This plugin works to load images with the `loading="lazy"` attribute (yes it would work by itself!). It loads the image/iframe before the first pixel enters the viewport--see settings as we can pad so it can appear loaded once scrolled to. The `loading="lazy"` attribute only works once the first pixel enters the viewport, which may cause a blank space before the image loads.
+By default it will load background images and images lazily slightly before they appear in the viewport. But also run custom fuctions as well to hook into elements appearing (or disappearing) as well. This plugin uses [window.IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API). This plugin works to load images with the `loading="lazy"` attribute (yes it would work by itself!). It loads the image/iframe before the first pixel enters the viewport--see settings as we can pad so it can appear loaded once scrolled to. The `loading="lazy"` attribute only works once the first pixel enters the viewport, which may cause a blank space before the image loads.
 
 
 Option | Type | Default | Description
@@ -578,7 +479,6 @@ $('p.highlight').lazyLoad({
     }
 });
 ```
-<br>
 <br>
 <br>
 <h2 id="modal-plugin">Modal</h2>
@@ -698,84 +598,83 @@ __HTML__
 </section>
 ```
 __JavaScript__
-```javascript
-{
-    $be('.btn-modal').modal({
-        modalID: 'from-dom'
-    });
+```typescript
+// Note: Examples all use the Base Elem Js DOM Library which is used internally in this package
+import $be from 'base-elem-js';
 
-    $be('#btn-gen-content').modal({
-        locationFilter: 'modal',
+$be('.btn-modal').modal({
+    modalID: 'from-dom'
+});
+
+$be('#btn-gen-content').modal({
+    locationFilter: 'modal',
+    fromDOM: false,
+    modalID: 'gen-content',
+    onOpenOnce(modalObj) {
+        
+        modalObj.$dialogContent.on('click', modalObj.close,'button.dismiss');
+
+        modalObj.$dialogContent.insert(
+            `<h2>Some generated Content</h2>
+            <p>Ullamco <a href="#">link</a> laboris nisi ut aliquid ex ea commodi consequat. Sed haec quis possit intrepidus aestimare tellus. Quam diu etiam furor <a href="#">iste tuus</a> nos eludet? Curabitur est gravida et libero vitae dictum.</p>
+            <button type="button" class="button dismiss">Dimiss</button>`
+        );
+    }
+});
+
+// quick and dirty image carousel
+const $picGroup = $be('.pic-group');
+
+$picGroup.each((elem, index) => {
+    
+    let imgIndex: number = index;
+
+    const 
+        modalID = 'pic-group_' + index,
+        imgDefaultSrc = elem.dataset.imgSrc,
+        img = make('img', {loading:'lazy', src: imgDefaultSrc, alt: ''}),
+        setImgSrc = (decrement: boolean) => {
+            if (decrement)  imgIndex = imgIndex === 0 ? $picGroup.size - 1 : imgIndex - 1;
+            else            imgIndex = imgIndex === $picGroup.size - 1 ? 0 : imgIndex + 1;
+            
+            return ($picGroup.elem[imgIndex] as HTMLElement).dataset.imgSrc || '';
+        }
+    ;
+
+    $be(elem).modal({
+        modalID,
+        modalCss: 'modal--gallery', 
+        locationFilter: 'gallery',
         fromDOM: false,
-        modalID: 'gen-content',
         onOpenOnce(modalObj) {
-         
-            modalObj.$dialogContent.on('click', modalObj.close,'button.dismiss');
+            modalObj.$dialogContent.insert(img).insert(`
+                <footer class="pic-group-nav">
+                    <button type="button" class="prev-btn">Previous</button>
+                    <button type="button" class="next-btn">Next</button>
+                </footer>
+            `).on('click', (e, elem) => {
+                const decrement = $be(elem).hasClass('prev-btn');
+                img.src = setImgSrc(decrement);    
+            },'button');
+        },
+        onOpen(modalObj) {
+            $be(window).on('keyup.gallery', function(e:KeyboardEvent){
+                const arrowLeft = e.key === 'ArrowLeft';
 
-            modalObj.$dialogContent.insert(
-                `<h2>Some generated Content</h2>
-                <p>Ullamco <a href="#">link</a> laboris nisi ut aliquid ex ea commodi consequat. Sed haec quis possit intrepidus aestimare tellus. Quam diu etiam furor <a href="#">iste tuus</a> nos eludet? Curabitur est gravida et libero vitae dictum.</p>
-                <button type="button" class="button dismiss">Dimiss</button>`
-            );
+                if (e.key === 'Escape') modalObj.close();
+                if (e.key === 'ArrowRight' || arrowLeft) {
+                    img.src = setImgSrc(arrowLeft);
+                }
+            });
+        },
+        onClose() {
+            $be(window).off('keyup.gallery');
         }
     });
+});
 
- 
-
-    // quick and dirty image carousel
-    const $picGroup = $be('.pic-group');
-
-    $picGroup.each((elem, index) => {
-        
-        let imgIndex: number = index;
-
-        const 
-            modalID = 'pic-group_' + index,
-            imgDefaultSrc = elem.dataset.imgSrc,
-            img = make('img', {loading:'lazy', src: imgDefaultSrc, alt: ''}),
-            setImgSrc = (decrement: boolean) => {
-                if (decrement)  imgIndex = imgIndex === 0 ? $picGroup.size - 1 : imgIndex - 1;
-                else            imgIndex = imgIndex === $picGroup.size - 1 ? 0 : imgIndex + 1;
-                
-                return ($picGroup.elem[imgIndex] as HTMLElement).dataset.imgSrc || '';
-            }
-        ;
-
-        $be(elem).modal({
-            modalID,
-            modalCss: 'modal--gallery', 
-            locationFilter: 'gallery',
-            fromDOM: false,
-            onOpenOnce(modalObj) {
-                modalObj.$dialogContent.insert(img).insert(`
-                    <footer class="pic-group-nav">
-                        <button type="button" class="prev-btn">Previous</button>
-                        <button type="button" class="next-btn">Next</button>
-                    </footer>
-                `).on('click', (e, elem) => {
-                    const decrement = $be(elem).hasClass('prev-btn');
-                    img.src = setImgSrc(decrement);    
-                },'button');
-            },
-            onOpen(modalObj) {
-                $be(window).on('keyup.gallery', function(e:KeyboardEvent){
-                    const arrowLeft = e.key === 'ArrowLeft';
-
-                    if (e.key === 'Escape') modalObj.close();
-                    if (e.key === 'ArrowRight' || arrowLeft) {
-                        img.src = setImgSrc(arrowLeft);
-                    }
-                });
-            },
-            onClose() {
-                $be(window).off('keyup.gallery');
-            }
-        });
-    });
-} 
 ```
 
-<br>
 <br>
 <br>
 <h2 id="nav-desktop-plugin">Desktop Navigation (Enhanced)</h2>
@@ -822,7 +721,6 @@ __JavaScript__
 $('#main-nav').navDesktop();
 ```
 
-<br>
 <br>
 <br>
 <h2 id="nav-mobile-plugin">Mobile Navigation</h2>
@@ -880,7 +778,6 @@ __JavaScript__
 $('#main-nav').navMobile()
 ```
 
-<br>
 <br>
 <br>
 <h2 id="parallax-plugin">Parallax</h2>
@@ -983,7 +880,6 @@ $('.parallax-bg').parallax({
 
 <br>
 <br>
-<br>
 <h2 id="scroll-spy-plugin">Scroll Spy</h2>
 
 
@@ -1056,7 +952,6 @@ __JavaScript__
 ```
 <br>
 <br>
-<br>
 <h2 id="select-enhance-plugin">Select Enhance</h2>
 
 
@@ -1111,7 +1006,6 @@ __JavaScript__
 $('select').selectEnhance();
 ```
 
-<br>
 <br>
 <br>
 <h2 id="tabs-plugin">Tabs Plugin About</h2>
@@ -1232,7 +1126,6 @@ $(".tabs__container").tabs({
 
 <br>
 <br>
-<br>
 <h2 id="toastr-plugin">Toastr</h2>
 Little toastr messages for everyone, side of marmalade optional.
 
@@ -1320,11 +1213,15 @@ __JavaScript__
     });
 ```
 
+---
 
 ## Release Notes
 
 ### __Version 6.0.0__
-Major changes to the `SelectEnhance` plugin so the dropdown is appended to the body, which resolves issues with anything overflow hidden. Will not work with current CSS in Version 5, which is why this is bumped up a major version. Also, fixed a bug in `Parallax` which occurs when jQuery is used.
+- Major changes to the `SelectEnhance` plugin: dropdown now appends to the body, resolving overflow issues. Not compatible with v5 CSS.
+- Fixed a bug in `Parallax` when used with jQuery.
 
-### __Version 7.0.0
-Major update migrating away from Cash Dom as the DOM manipulation library and using custom one in separate package. Update to smooth scrolling functionality and other naming updates and other refactoring. Other breaking edits to various plugin's which is why it had a major version jump.
+### __Version 7.0.0__
+- Migrated away from Cash Dom to a custom DOM library.
+- Updated smooth scrolling and naming conventions.
+- Refactored and introduced breaking changes to several plugins, warranting a major version bump.

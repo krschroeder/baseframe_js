@@ -1,6 +1,6 @@
 # Baseframe JS
 
-Baseframe JS is a comprehensive suite of modular plugins and utilities designed for front-end development. It provides solutions for common UI needs supplying solutions for: modals, collapsible sections, parallax effects, tabs. Additionally it has utility functions for cookies, smooth scrolling, debouncing, and URL state management. All plugins are highly configurable and follow consistent patterns, making it easy to integrate and extend them in your projects.
+Baseframe JS is a comprehensive suite of modular plugins and utilities designed for front-end development. It provides solutions for common UI needs supplying solutions for: modals, collapsible sections, parallax effects, tabs and more. Additionally it has utility functions for cookies, smooth scrolling, debouncing, and URL state management. All plugins are highly configurable and follow consistent patterns, making it easy to integrate and extend them in your projects.
 
 ---
 
@@ -677,7 +677,7 @@ $picGroup.each((elem, index) => {
 
 <br>
 <br>
-<h2 id="nav-desktop-plugin">Desktop Navigation (Enhanced)</h2>
+<h2 id="nav-desktop-plugin">Desktop Navigation</h2>
 
 
 ### Features
@@ -690,12 +690,11 @@ stopWidth | number | 768 | the width in which the navigaiton will stop for mobil
 delay | number | 800 | The delay in time you can hover off a sub menu item.
 edgeCss | string | 'ul-on-edge' | The CSS class that moves the nav when if goes over the egde of the page.
 outerElem | string | document.body | Element to attach the `navHoveredCss` option.
-ulHasCss | string | 'has-ul' | CSS class for `<li>` that have a `<ul>` nestled.
-ulNotCss | string | 'no-ul' | CSS class for `<li>` that don't have a `<ul>` nestled.
-navHoveredCss | string | 'desktop-nav-hovered' | The CSS class added to the `outerElem` (defaulted to the `<body>`).
-navLeavingCss | string | 'desktop-nav-leaving' | The CSS class added to the `outerElem` as the nav is leaving. An opportunity to add styling to fade away any open navigations.
+cssPrefix | string | 'menu' | CSS class for `<li>` that have a `<ul>` nestled.
 navLeavingDelay | number | 800 | delay in milliseconds in which the `navLeavingCss` gets added to the `outerElem`
 hoverCss | string | 'hover' | The hover class to work in conjuction with the `delay` option to keep the item on the page when hovered off.
+
+
 
 ### Example
 
@@ -790,7 +789,6 @@ This plugin is for parallaxing page elements (and yes background images). Use th
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-
 speed | number |  7 | Speed of the scroll. A negative amount will move it in the opposite direction.
 zSpeed | number |  5 | Speed of the z-axis. A negative amount will move it in the opposite direction.
 axis | string | 'y' | Axis of movement, it can be 'y','x'.

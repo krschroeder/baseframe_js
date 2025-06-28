@@ -1,6 +1,5 @@
 import $be, { type BaseElem, type SelectorRoot } from 'base-elem-js';
  
-const { isVisible } = $be.static;
 
 interface ITrapFocusProps {
     focusFirst?: boolean,
@@ -20,7 +19,7 @@ export interface ITrapFocusRemove {
 
 const canFocusEls = (el:HTMLElement) => {
     
-    const baseFocusableRules = isVisible(el) && el.tabIndex !== -1;
+    const baseFocusableRules = $be.isVisible(el) && el.tabIndex !== -1;
     const nodeName = el.nodeName.toUpperCase();
     
     if ((nodeName === 'BUTTON' || nodeName === 'INPUT')) {

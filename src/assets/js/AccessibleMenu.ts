@@ -21,7 +21,7 @@ export interface IAccessibleMenuDefaults {
 
 export interface IAccessibleMenuOptions extends Partial<IAccessibleMenuDefaults> {}
 
-const { isVisible } = $be.static;
+
 const 
     VERSION             = "1.3.0",
     DATA_NAME           = 'AccessibleMenu',
@@ -175,7 +175,7 @@ export default class AccessibleMenu {
         const 
             s = this,
             p = s.params,
-            $focusEls = $focusWrapEl.find(p.focusInElems, isVisible)
+            $focusEls = $focusWrapEl.find(p.focusInElems, $be.isVisible)
         ;
         
         if ($focusEls.hasEls) {

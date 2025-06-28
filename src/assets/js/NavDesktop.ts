@@ -24,8 +24,6 @@ export interface INavDesktopDefaults {
 
 export interface INavDesktopOptions extends Partial<INavDesktopDefaults> {}
 
-const { findOne, elemRects } = $be.static;
-
 const 
     VERSION = "2.0.0",
     DATA_NAME = 'NavDesktop',
@@ -179,12 +177,12 @@ export default class NavDesktop {
 
 		if (s.params.stopWidth < innerWidth) {
 
-            const ul = findOne('ul', s.element);
+            const ul = $be.findOne('ul', s.element);
 
 			if (ul) {
                 
 				const 
-                    ulRects = elemRects(ul),
+                    ulRects = $be.elemRects(ul),
 					offsetLeft = ulRects.left + pageXOffset,
 					ulWidth = ul.scrollWidth,
 					fullyVisible = (offsetLeft + ulWidth <= innerWidth)

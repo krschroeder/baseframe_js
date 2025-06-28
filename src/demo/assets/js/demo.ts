@@ -33,7 +33,7 @@ libraryExtend([
     Toastr
 ], $be, true );
 
-const { findOne, findBy, make } = $be.static;
+const { findOne, findBy, make } = $be;
  
 const siteHeader = findOne('.site-header');
  
@@ -184,7 +184,7 @@ $be('.lazy-highlight').lazyLoad({
 
     const $toastr2 = $be('#toastr-2');
 
-    if ($toastr2.hasElems()) {
+    if ($toastr2.hasEls) {
         // Example 2: extend perhaps in Cash then call on click
         const toastr2 = new Toastr($toastr2.elem[0] as HTMLElement, {
             content: 'Toast is good for breakfast',

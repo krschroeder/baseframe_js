@@ -59,8 +59,6 @@ export interface IModalOptions extends Partial<IModalDefaults> {
     modalID: string | null;
 }
 
-const bes = $be.static;
-
 const VERSION = '1.2.0';
 const EVENT_NAME = 'modal';
 const DATA_NAME = 'Modal';
@@ -138,7 +136,7 @@ export default class Modal {
             marker:         cssPrefix + '-content-placemarker'
         };
         s.components = s.#createComponents();
-        s.domMarker = bes.make(`span.${s.cssList.marker}-content-placemarker#${s.modalID}__marker`);
+        s.domMarker = $be.make(`span.${s.cssList.marker}-content-placemarker#${s.modalID}__marker`);
         
         s.#handleEvents();
         
@@ -198,7 +196,7 @@ export default class Modal {
     }
 
     #createComponents() {
-        const { make } = bes;
+        const { make } = $be;
         const 
             s               = this,
             p               = s.params,
@@ -259,7 +257,7 @@ export default class Modal {
         if (!s.components.contentAppended) {
              
             $be(s.components.dialogContent).insert(content);
-            bes.oa(s.components, { contentAppended: true });
+            $be.oa(s.components, { contentAppended: true });
         } 
 
         $be(p.appendTo).insert(modal);
@@ -280,7 +278,7 @@ export default class Modal {
             .each(elem => reflow(elem))
             .addClass(s.cssList.show)
         ;
-        bes.oa(s.components, { show: true });
+        $be.oa(s.components, { show: true });
 
         if (p.focusInDelay !== null) {
             setTimeout(() => {
@@ -349,12 +347,12 @@ export default class Modal {
 
             if (p.fromDOM) {
                 $be(s.domMarker).insert(content, 'after').remove();
-                bes.oa(s.components, { contentAppended: false });
+                $be.oa(s.components, { contentAppended: false });
             }
 
             hasCb(p.afterClose, s.components);
             $modal.remove();
-            bes.oa(s.components, { show: false });
+            $be.oa(s.components, { show: false });
 
         }, p.closeOutDelay);
     }

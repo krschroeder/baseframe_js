@@ -22,7 +22,7 @@ export interface ITabsDefaults extends LocationTracking {
 
 export interface ITabsOptions extends Partial<ITabsDefaults> {};
 
-const { findOne, useTransition } = $be.static;
+// const { findOne, useTransition } = $be.static;
 
 const VERSION = "1.5.0";
 const DATA_NAME = 'Tabs';
@@ -66,7 +66,7 @@ export default class Tabs {
     public static version = VERSION;
     public static pluginName = DATA_NAME;
 
-	#transition = useTransition();
+	#transition = $be.useTransition();
 
 	constructor(element: HTMLElement, options: ITabsOptions | StringPluginArgChoices) {
 		const 
@@ -78,8 +78,8 @@ export default class Tabs {
 		
         s.$element = $element;
 		s.params = p; 
-		s.tabsNav =  findOne(`.${p.cssPrefix}__nav`, element);
-		s.tabsBody = findOne(`.${p.cssPrefix}__body`, element);
+		s.tabsNav =  $be.findOne(`.${p.cssPrefix}__nav`, element);
+		s.tabsBody = $be.findOne(`.${p.cssPrefix}__body`, element);
         s.$tabsNav = $be(s.tabsNav);
 		s.$tabsBody = $be(s.tabsBody);
 		s.$tabsBodyPanels = s.$tabsBody.find(`.${p.cssPrefix}__panel`, elem => elem.parentElement === s.tabsBody);

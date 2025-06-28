@@ -1,5 +1,4 @@
 import type { EventFn, EventName, SelectorElem  } from 'base-elem-js';
-import type { WinSetTimeout } from '../types';
 
 import $be from 'base-elem-js';
 

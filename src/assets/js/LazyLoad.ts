@@ -20,7 +20,6 @@ export interface ILazyLoadOptions extends Partial<ILazyLoadDefaults> {
     observerID: string;
 }
  
-const { isVisible } = $be.static;
 
 const 
     VERSION = '2.0.1',
@@ -125,7 +124,7 @@ export default class LazyLoad {
 
                 const lazyElem = entry.target;
                 if (lazyElem instanceof HTMLElement) {
-                    if (entry.isIntersecting && isVisible(lazyElem) || force) {
+                    if (entry.isIntersecting && $be.isVisible(lazyElem) || force) {
 
                         loadImgs && s.#handleImgOrBg(s, lazyElem);
                         typeof inEvt === 'function' && inEvt(lazyElem, entry);

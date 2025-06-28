@@ -7,15 +7,14 @@ import type { CashStatic } from 'cash-dom';
 type Be = typeof $be;
 type LibType = Be | CashStatic | JQueryStatic;
 
-const bes = $be.static;
 
 const libraryExtend = <T extends PluginBaseClass>(Plugins: T | T[], Library: LibType = $be, notify = false) => {
 
     if (isArr(Plugins)) {
-        Plugins.forEach(Plugin => libraryExtend(Plugin, Library, notify));
+        (Plugins as T[]).forEach(Plugin => libraryExtend(Plugin, Library, notify));
     } else {
         const 
-            dataName      = Plugins.pluginName,
+            dataName      = (Plugins as PluginBaseClass).pluginName,
             pluginName    = lowercaseFirstLetter(dataName),
             isBaseElem    = !!(Library as Be).BaseElem,
             $library      = isBaseElem ? (Library as Be).BaseElem.prototype : (Library as CashStatic | JQueryStatic).fn
@@ -24,18 +23,18 @@ const libraryExtend = <T extends PluginBaseClass>(Plugins: T | T[], Library: Lib
         const storeInstanceEach = (elem, index, params) => {
             const Instance = Store(elem, dataName);
 
-            if (!Instance) Store( elem, dataName, new Plugins(elem, params, index));
+            if (!Instance) Store( elem, dataName, new (Plugins as T)(elem, params, index));
             else {
-                const canUpdate = Instance.handleUpdate && bes.toType(Instance.handleUpdate) === 'function';
+                const canUpdate = Instance.handleUpdate && $be.toType(Instance.handleUpdate) === 'function';
 
                 if (isStr(params)) {
-                    if (params === 'remove') Plugins.remove(elem);
+                    if (params === 'remove') (Plugins as T).remove(elem);
                     if (params === 'update' && canUpdate) Instance.handleUpdate();
                     return;
                 }
                 
                 checkIfParamsExist(Instance.params, params, notify);
-                bes.merge(Instance.params, params);
+                $be.merge(Instance.params, params);
 
                 if (canUpdate) Instance.handleUpdate();
             }

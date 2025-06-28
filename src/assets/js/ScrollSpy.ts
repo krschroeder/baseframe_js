@@ -46,9 +46,6 @@ const DEFAULTS: IScrollSpyOptions = {
 	loadLocation: true
 }
 
-const { isVisible } = $be.static;
-
-
 export default class ScrollSpy {
 
     #pairedElems: Map<HTMLElement, HTMLElement> = new Map();
@@ -72,7 +69,7 @@ export default class ScrollSpy {
 
         s.params = setParams(ScrollSpy.defaults, options, dataOptions);
         s.$spyBody = $be(s.params.spyBody);
-        s.spyContents = s.$spyBody.find(s.params.spyElems, elem => isVisible(elem) && !!elem.id).toArray() as HTMLElement[];
+        s.spyContents = s.$spyBody.find(s.params.spyElems, elem => $be.isVisible(elem) && !!elem.id).toArray() as HTMLElement[];
 
 
         if (s.spyContents.length > 0) {

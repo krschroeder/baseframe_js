@@ -1,6 +1,6 @@
 {
   "name": "baseframe-js",
-  "version": "7.0.1",
+  "version": "7.1.0",
   "description": "Baseframe JS is a comprehensive suite of modular plugins and utilities designed for front-end development",
   "repository": {
     "type": "git",
@@ -84,6 +84,6 @@
     "yargs": "^8.0.2"
   },
   "dependencies": {
-    "base-elem-js": "^1.12.0"
+    "base-elem-js": "^2.0.0"
   }
 }

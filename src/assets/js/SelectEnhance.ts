@@ -41,7 +41,7 @@ const DEFAULTS: ISelectEnhanceDefaults = {
 };
 
 
-const { make, findBy } = $be.static;
+const { make, findBy } = $be;
 
 // wrap the select first
 const mobileOS = isMobileOS();

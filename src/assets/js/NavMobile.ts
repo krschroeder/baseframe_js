@@ -73,8 +73,6 @@ const DEFAULTS: INavMobileDefaults = {
 	bkptEnable: null
 };
 
-const { isVisible, make, useTransition } = $be.static;
-
 export default class NavMobile {
 
 	public $element: BaseElem;
@@ -90,7 +88,7 @@ export default class NavMobile {
     public static version = VERSION;
     public static pluginName = DATA_NAME;
 
-	#transition = useTransition();
+	#transition = $be.useTransition();
 	
 	constructor(element: HTMLElement, options: INavMobileOptions | StringPluginArgChoices) {
 		const s = this;
@@ -315,7 +313,7 @@ export default class NavMobile {
                 const btnAlreadySet = nextElem ? $be(nextElem).hasClass(css.btn): false;
 
                 if (!btnAlreadySet) {
-                    const btn = make(`button.${css.btn}`,{
+                    const btn = $be.make(`button.${css.btn}`,{
                         type: 'button',
                         ariaLabel: p.tgBtnText
                     });
@@ -340,7 +338,7 @@ export default class NavMobile {
             s.allowClick = bkptEnIsNum ?
                 window.innerWidth <= p.bkptEnable :
                 s.$enableBtn.hasEls ? 
-                    isVisible(s.$enableBtn.elem[0] as HTMLElement) : 
+                    $be.isVisible(s.$enableBtn.elem[0] as HTMLElement) : 
                     false
             ;
         }, EVENT_NAME, true, 200);

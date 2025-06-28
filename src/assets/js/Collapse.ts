@@ -22,7 +22,6 @@ export interface ICollapseDefaults extends LocationTracking {
 
 export interface ICollapseOptions extends Partial<ICollapseDefaults> {};
 
-const { css, findOne, useTransition } = $be.static;
 
 const 
     VERSION = "4.0.0",
@@ -62,7 +61,7 @@ export default class Collapse {
     public static pluginName = DATA_NAME;
 
 	 
-    #transition = useTransition();
+    #transition = $be.useTransition();
 
 	constructor(element: HTMLElement, options: ICollapseOptions | StringPluginArgChoices, index?: number) {
 
@@ -181,7 +180,7 @@ export default class Collapse {
 	toggle(currElemID: string, allAtOnce: boolean = false) {
 		const s = this;
 		const p = s.params;
-        const activeItem = findOne('#' + currElemID, s.element)
+        const activeItem = $be.findOne('#' + currElemID, s.element)
 
 		if ((s.toggling && !allAtOnce) || currElemID === null || !activeItem) return;
 		
@@ -199,7 +198,7 @@ export default class Collapse {
             activeAlreadyOpen   = s.$activeItem.hasClass(cssOpen)
         ;
         
-        $itemsToClose.each((elem) => css(elem, { height: elem.scrollHeight + 'px' }));
+        $itemsToClose.each((elem) => $be.css(elem, { height: elem.scrollHeight + 'px' }));
         
         const start = () => {
             s.toggling = true;

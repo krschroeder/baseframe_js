@@ -114,7 +114,6 @@ export default class Parallax {
 		 
 		debounceResize(() => { 
 			s.#updatableProps();
-			// $be(window).trigger(s.instanceEvent);
 			s.parallax(s);
 		},`[${s.instanceEvent}_resize]`,true);
 

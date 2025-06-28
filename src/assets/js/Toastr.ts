@@ -47,7 +47,7 @@ const DEFAULTS: IToasterDefaults = {
 };
 
 const toastContainers: Map<string, BaseElem> = new Map();
-const { make } = $be.static;
+const { make } = $be;
 
 let currentlyToastingGlobal = false;
 
@@ -97,7 +97,7 @@ export default class Toastr {
             const $toatrContainer = s.#getToasterContainer();
             s.$toastrWrap.rmClass(p.dismissCss).remove();
 
-            if (!$toatrContainer.find('div').hasElems()) {
+            if (!$toatrContainer.find('div').hasEls) {
                 s.#getToasterContainer().remove();
             }
             s.active = false;

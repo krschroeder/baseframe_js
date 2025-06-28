@@ -2,7 +2,7 @@ import type { StringPluginArgChoices } from '../types';
 import $be from 'base-elem-js';
 import parseObjectFromString from './parseObjectFromString';
 
-const { merge, toType, isArr, isStr, oa, af } = $be.static;
+const { merge, toType, isArr, isStr, oa, af } = $be;
 
 // region DOM shortcuts
 const 

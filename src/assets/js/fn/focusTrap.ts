@@ -38,7 +38,7 @@ const focusTrap = (elem: SelectorRoot | BaseElem, props?: ITrapFocusProps): ITra
     const focusableJoined = typeof focusable === 'string' ? focusable : focusable.join(',');
     const $firstFocusable = $trapElem.find(focusableJoined).filter(canFocusEls);
 
-    let firstFocusable = $firstFocusable.elem.length ? $firstFocusable[0] : null;
+    let firstFocusable = $firstFocusable.hasEls ? $firstFocusable.elem[0] as HTMLElement : null;
 
     if (focusFirst && firstFocusable) {
 
@@ -49,12 +49,12 @@ const focusTrap = (elem: SelectorRoot | BaseElem, props?: ITrapFocusProps): ITra
          
         const $focusable = $trapElem.find(focusableJoined).filter(canFocusEls);
         
-        if (!$focusable.elem.length) return;
+        if (!$focusable.hasEls) return;
         const activeEl = d.activeElement;
-        const lastFocusable = $focusable.elem[$focusable.elem.length - 1] as HTMLElement;
+        const lastFocusable = $focusable.elem[$focusable.size - 1] as HTMLElement;
         const isTabPressed = e.key === 'Tab';
 
-        firstFocusable = $focusable[0]; 
+        firstFocusable = $focusable.elem[0] as HTMLElement; 
         
         if (!isTabPressed) {
             return;

@@ -7,6 +7,11 @@ import type { CashStatic } from 'cash-dom';
 type Be = typeof $be;
 type LibType = Be | CashStatic | JQueryStatic;
 
+// Add this interface
+interface PluginFunction<T extends PluginBaseClass> {
+    (params?: any): any;
+    getInstance(elem: HTMLElement): T | undefined;
+}
 
 const libraryExtend = <T extends PluginBaseClass>(Plugins: T | T[], Library: LibType = $be, notify = false) => {
 
@@ -42,7 +47,7 @@ const libraryExtend = <T extends PluginBaseClass>(Plugins: T | T[], Library: Lib
             return Instance;
         }
 
-        const pluginFn = function (params) {
+        const pluginFn: PluginFunction<T> = function (params) {
             const s = this;
             if (isBaseElem) {
                 return s.each((elem, index) => {
@@ -55,7 +60,6 @@ const libraryExtend = <T extends PluginBaseClass>(Plugins: T | T[], Library: Lib
                 })
             }    
         }
-        
         
         pluginFn.getInstance = (elem: HTMLElement): typeof Plugins => {
             return Store(elem, dataName);

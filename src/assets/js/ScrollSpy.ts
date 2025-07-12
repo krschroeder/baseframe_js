@@ -142,7 +142,7 @@ export default class ScrollSpy {
         ;
 
         if ($bodyElem.hasEls) {
-            const top = ($bodyElem.elemRects().top + window.pageYOffset) - observerOffsetTop;
+            const top = $bodyElem.offset().top - observerOffsetTop;
             
             if (behavior === 'smooth') {
                 smoothScroll(top, p.scrollDuration);

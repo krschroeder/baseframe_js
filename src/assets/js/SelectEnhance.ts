@@ -167,7 +167,7 @@ export default class SelectEnhance {
         currSelectEnhance = s.selectEnhance;
         const {cssPrefix} = s.params;
         const $selectedBtn = s.$selectList.find('[aria-selected="true"]');
-
+        s.$selectList.css({display: null});
         d.body.append(s.selectList);
         s.$selectEnhance.tgClass(cssPrefix + '--focused');
         s.$textInput.attr({ 'aria-expanded': 'true' });
@@ -203,10 +203,12 @@ export default class SelectEnhance {
         $be(d.body).off(s.bodyCloseEvt as EventName);
 
         setTimeout(() => {
-            s.$selectEnhance.rmClass([`${cssPrefix}--blurring`, `${cssPrefix}--pos-above`]);
-
+            s.$selectEnhance
+                .rmClass([`${cssPrefix}--blurring`, `${cssPrefix}--pos-above`])
+                .insert(s.$selectList);
+            
             s.$selectList
-                .remove()
+                .css({display: 'none'})
                 .rmClass([
                     `${cssPrefix}__list--blurring`,
                     `${cssPrefix}__list--focused`,
@@ -443,18 +445,26 @@ export default class SelectEnhance {
             textInput = make(`input.${s.params.cssPrefix}__enable-text`,{
                 type: 'text',
                 role: "combobox",
-                // 'aria-controls': s.selectId + '_listbox',
-                // 'aria-labelledby': s.selectId + '_lbl',
-                // 'aria-autocomplete': 'list',
-                // 'aria-expanded': 'false',
+                ariaExpanded: 'false',
+                 
                 id: s.selectId + '_input'
             }),
             $selectEnhance = $be(selectEnhance),
             $textInput = $be(textInput)
         ;
+        // TS throws error
+        const otherAttrs = [
+            ['aria-controls',s.selectId + '_listbox'],
+            ['aria-owns', s.selectId + '_listbox'],
+            ['aria-labelledby', s.selectId + '_lbl'],
+            ['aria-autocomplete', 'list'],
+            ['aria-activedescendant','']
+        ];
 
-       
-
+        for (const [attr,val] of otherAttrs) {
+            textInput.setAttribute(attr,val);
+        }
+        
         s.$textInput = $textInput;
         s.textInput = textInput;
         s.$selectEnhance = $selectEnhance;

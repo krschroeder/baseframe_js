@@ -5,6 +5,7 @@ Baseframe JS is a comprehensive suite of modular plugins and utilities designed 
 ---
 
 ## Features
+Baseframe JS is meant to be something you can build off of.
 
 - **Consistent Plugin Architecture:** All plugins share a unified API and configuration approach, simplifying usage and customization.
 - **Data Attribute Configuration:** Easily configure plugins via `data-` attributes using object literal syntax.

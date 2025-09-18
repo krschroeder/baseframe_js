@@ -1224,3 +1224,9 @@ __JavaScript__
 - Migrated away from Cash Dom to a custom DOM library.
 - Updated smooth scrolling and naming conventions.
 - Refactored and introduced breaking changes to several plugins, warranting a major version bump.
+
+### __Version 7.1.3__
+- Addressed ADA issues on SelectEnhance plugin adding back more 'aria-' attributes
+
+### __Version 7.1.4__
+- Fix for the SelectEnhance plugin to resolve a de-selection of options when the enter key was hit.

@@ -299,7 +299,6 @@ export default class SelectEnhance {
             }
 
             if (
-                ev.key === KEYS.enter || //enter key
                 ev.code === KEYS.space && s.keyedInput.trim() === '' || // space key
                 ev.ctrlKey && ev.altKey && ev.shiftKey && KEYS.space === ev.code
             ) {

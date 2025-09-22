@@ -1227,6 +1227,3 @@ __JavaScript__
 
 ### __Version 7.1.3__
 - Addressed ADA issues on SelectEnhance plugin adding back more 'aria-' attributes
-
-### __Version 7.1.4__
-- Fix for the SelectEnhance plugin to resolve a de-selection of options when the enter key was hit.

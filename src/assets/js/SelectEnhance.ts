@@ -75,7 +75,7 @@ export default class SelectEnhance {
     public selectListBoxInFullView: boolean;
     private keyedInput: string;
     private posTimeout: WinSetTimeout;
-    private bodyCloseEvt: string
+    private bodyCloseEvt: string;
     public static defaults = DEFAULTS;
     public static version = VERSION;
     public static pluginName = DATA_NAME;
@@ -163,6 +163,7 @@ export default class SelectEnhance {
         const s = this;
         if (s.select.disabled || s.optionsShown) return;
         s.optionsShown = true; 
+        
 
         currSelectEnhance = s.selectEnhance;
         const {cssPrefix} = s.params;
@@ -232,8 +233,6 @@ export default class SelectEnhance {
 
         if (!selectedOpt) return;
 
-        const newSelectedState = !selectedOpt.selected;
-
         s.params.beforeChange(s.select);
 
         selectedOpt.selected = true;
@@ -241,7 +240,7 @@ export default class SelectEnhance {
         s.params.afterChange(s.select); 
         s.$selectList.find('.' + cssPrefix + '__list-btn[aria-selected]').attr({ 'aria-selected': 'false' });
 
-        $be(optionBtn).attr({ 'aria-selected': newSelectedState + '' });
+        $be(optionBtn).attr({ 'aria-selected': 'true' });
         s.$textInput.attr({ 'aria-activedescendant': optionBtn.id });
 
         // add a class whether there is an input value or not
@@ -278,12 +277,10 @@ export default class SelectEnhance {
 
     #eventShowOptions() {
         const s = this;
-        const { cssPrefix } = s.params;
 
         s.$textInput.on(`click.${EVENT_NAME}`, () => {
             if (s.select.disabled) return;
             s.showOptions();
-            
         })
         .on(`keydown.${EVENT_NAME}`, (ev: KeyboardEvent) => {
             // Only works on keydown event
@@ -294,7 +291,11 @@ export default class SelectEnhance {
             }
         }).on(`keypress.${EVENT_NAME}`, (ev: KeyboardEvent) => {
              
-            if (ev.key !== KEYS.tab || ev.shiftKey && ev.key !== KEYS.tab) {
+            if (
+                ev.key !== KEYS.tab || 
+                ev.shiftKey && 
+                ev.key !== KEYS.tab
+            ) {
                 ev.preventDefault();
             }
 
@@ -302,6 +303,7 @@ export default class SelectEnhance {
                 ev.code === KEYS.space && s.keyedInput.trim() === '' || // space key
                 ev.ctrlKey && ev.altKey && ev.shiftKey && KEYS.space === ev.code
             ) {
+                
                 s.showOptions();
             }
         });
@@ -326,7 +328,7 @@ export default class SelectEnhance {
             if (
                 ev.key === KEYS.enter ||
                 ev.code === KEYS.space && s.keyedInput.trim() === ''
-            ) {
+            ) { 
                 selectedOption(elem as HTMLDivElement);
                 ev.preventDefault();
             }

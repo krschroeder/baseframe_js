@@ -27,10 +27,11 @@ import webpackStream  from "webpack-stream";
 import rollupEach     from 'gulp-rollup-each'; 
 import typescript     from "gulp-typescript";
 import ts 				    from 'typescript';
-import config         from "../gulp.config";
 import  { minify }    from 'rollup-plugin-esbuild-minify';
+import config         from "../gulp.config.js";
 
 const { buildDemo, production } = config;
+
 // Load Handlebars helpers
 helpers({ handlebars: handlebars.Handlebars });
 

@@ -1,4 +1,5 @@
 import yargs            from 'yargs';
+import { hideBin }      from 'yargs/helpers';
 import webpack          from "webpack";
 
 import typescript       from '@rollup/plugin-typescript';
@@ -6,11 +7,12 @@ import resolve          from '@rollup/plugin-node-resolve';
 import  { minify }      from 'rollup-plugin-esbuild-minify';
 import commonjs         from '@rollup/plugin-commonjs';
 
-
+ 
 const 
-    VERSION       = require('./package.json').version || '1.0.0',
-    PRODUCTION    = !!yargs.argv.prod,
-    BUILD_DEMO    = !!yargs.argv.demo,
+    VERSION       = '1.0.0',
+    argv          = yargs(hideBin(process.argv)).argv,
+    PRODUCTION    = !!argv.prod,
+    BUILD_DEMO    = !!argv.demo,
 
     destPath      = BUILD_DEMO ? 'demo' : 'dist' ,
     rollupBasePlugins = [resolve(), typescript(), commonjs()]

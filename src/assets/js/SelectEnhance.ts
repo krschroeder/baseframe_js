@@ -76,6 +76,7 @@ export default class SelectEnhance {
     private keyedInput: string;
     private posTimeout: WinSetTimeout;
     private bodyCloseEvt: string;
+    private toggling: boolean;
     public static defaults = DEFAULTS;
     public static version = VERSION;
     public static pluginName = DATA_NAME;
@@ -92,6 +93,7 @@ export default class SelectEnhance {
         s.selectId = s.id + '_enhance';
         s.$label = $be(`label[for="${s.id}"]`);
         s.optionSet = new WeakMap();
+        s.toggling = false;
         s.optionsShown = false;
         s.listPosTop = false;
         s.selectboxObserver;
@@ -203,7 +205,7 @@ export default class SelectEnhance {
         // remove the close event on the body
         $be(d.body).off(s.bodyCloseEvt as EventName);
 
-        setTimeout(() => {
+        setTimeout(() => { 
             s.$selectEnhance
                 .rmClass([`${cssPrefix}--blurring`, `${cssPrefix}--pos-above`])
                 .insert(s.$selectList);
@@ -312,11 +314,15 @@ export default class SelectEnhance {
     #eventOptionClick() {
         const s = this;
         const { cssPrefix } = s.params;
+        
+        let toggling: number = null;
 
         const selectedOption = (elem: HTMLDivElement) => {
+            // clear the close event if we are toggling twice quickly
+            window.clearTimeout(toggling);
             s.setSelectionState(elem);
-            s.$selectEnhance.rmClass(cssPrefix + '--focused');
-            setTimeout(() => s.closeOptions(), 200);
+          
+            toggling = window.setTimeout(() => s.closeOptions(), 200);
         }
         // mouse click
         s.$selectList.on(`click.${EVENT_NAME}`, (ev:MouseEvent, elem) => {
@@ -340,7 +346,7 @@ export default class SelectEnhance {
         setTimeout(() => {
             const bodyEvt = s.bodyCloseEvt as EventName;
             $be(d.body).off(bodyEvt).on(bodyEvt, (ev: MouseEvent, elem) => {
-                const activeElem= d.activeElement;
+                const activeElem = d.activeElement;
               
                 if (activeElem&& !s.selectList.contains(activeElem as HTMLElement)) {
                     s.closeOptions(); 
@@ -487,6 +493,7 @@ export default class SelectEnhance {
         const 
             { cssListModifer, cssPrefix } = s.params,
             optGroup = findBy('tag','optgroup', s.select) as HTMLOptGroupElement[],
+            options = s.select.options,
             hasOptGroup = !!optGroup.length,
             $optGroupWm = new WeakMap(),
             modifierCss =  " " + (cssListModifer ? cssPrefix + '__list--' + cssListModifer : '')
@@ -504,8 +511,6 @@ export default class SelectEnhance {
                 $optGroupWm.set(group, $be(optGroupElem));
             }
         }
-
-        const options = s.select.options;
  
         s.$selectList = $selectList ? $selectList : $be(make('div',{
             className: cssPrefix + '__list' + modifierCss,

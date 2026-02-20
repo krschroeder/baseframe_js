@@ -15,6 +15,7 @@ export interface ISelectEnhanceDefaults {
     blurDuration: number;
     typeAheadDuration: number;
     observeSelectbox: boolean;
+    listAppendToSelect: boolean;
     focusIn(select: HTMLSelectElement);
     focusOut(select: HTMLSelectElement);
     beforeChange(select: HTMLSelectElement);
@@ -37,7 +38,8 @@ const DEFAULTS: ISelectEnhanceDefaults = {
     afterChange: noop,
     blurDuration: 250,
     typeAheadDuration: 500,
-    observeSelectbox: true
+    observeSelectbox: true,
+    listAppendToSelect: false
 };
 
 
@@ -102,7 +104,7 @@ export default class SelectEnhance {
         s.posTimeout =  null;
         s.bodyCloseEvt = 'click.close_' + s.selectId + EVENT_NAME;
         s.isReadOnly = typeof s.$select.attr('readonly') === "string";
-
+        
         if (s.select.multiple) {
             console.warn(`The SelectEnhance plugin doesn't support multiple selections.`)
         }
@@ -112,6 +114,7 @@ export default class SelectEnhance {
         }
         
         s.params = setParams(SelectEnhance.defaults, options, dataOptions);
+        
 
         s.#setUpSelectHtml();
 
@@ -171,7 +174,13 @@ export default class SelectEnhance {
         const {cssPrefix} = s.params;
         const $selectedBtn = s.$selectList.find('[aria-selected="true"]');
         s.$selectList.css({display: null});
-        d.body.append(s.selectList);
+
+        if (s.params.listAppendToSelect) {
+            s.$selectEnhance.insert(s.$selectList);
+        } else {
+            d.body.append(s.selectList);
+        }
+       
         s.$selectEnhance.tgClass(cssPrefix + '--focused');
         s.$textInput.attr({ 'aria-expanded': 'true' });
 
@@ -653,7 +662,7 @@ export default class SelectEnhance {
             
             const 
                 selWrapRects = s.$selectEnhance.elemRects(),
-                { cssPrefix } = s.params,
+                { cssPrefix, listAppendToSelect } = s.params,
                 { innerHeight, scrollY, scrollX } = window,
                 selWrapTop = selWrapRects.top + scrollY,
                 selWrapPosBot = selWrapTop + selWrapRects.height,
@@ -664,14 +673,18 @@ export default class SelectEnhance {
                 isSpaceBelow = scrollYBot - selWrapPosBot > selListHeight,
 
                 // If space below use that, else if no space at all prefer space below
-                canPlaceBelow = isSpaceBelow ? true : isSpaceAbove ? false: true
+                canPlaceBelow = isSpaceBelow ? true : isSpaceAbove ? false: true,
+                left = listAppendToSelect ? 0 : (selWrapRects.left + scrollX),
+                top = listAppendToSelect ? 
+                    (canPlaceBelow ? selWrapRects.height : selListHeight * -1) : 
+                    (canPlaceBelow ? selWrapPosBot : selWrapTop - selListHeight)
             ;
 
             s.$selectEnhance.tgClass(cssPrefix + '--pos-above', !canPlaceBelow);
             s.$selectList
                 .css({ 
-                    left: (selWrapRects.left + scrollX) + 'px', 
-                    top: (canPlaceBelow ? selWrapPosBot : selWrapTop - selListHeight) + 'px', 
+                    left: left + 'px', 
+                    top: top + 'px', 
                     width: selWrapWidth + 'px'
                 })
                 .tgClass(cssPrefix + '__list--focused', s.optionsShown)

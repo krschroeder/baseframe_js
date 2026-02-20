@@ -18,6 +18,7 @@ import libraryExtend, {
     UrlState
 } from '../../../assets/js';
  
+ 
 
 libraryExtend([
     AccessibleMenu, 
@@ -66,7 +67,11 @@ $be('.plugins-list-inline').find('a').on('click.smoothScroll', (ev: MouseEvent, 
     }
 })
 
-$be('select').selectEnhance();
+$be('select').each((elem) => {
+    $be(elem).selectEnhance({
+        listAppendToSelect: true
+    }); 
+}); 
 
 const $collapseGroup1 = $be('.collapse-group-1');
 

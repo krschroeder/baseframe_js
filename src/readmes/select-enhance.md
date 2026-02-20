@@ -20,6 +20,7 @@ afterChange | Function | ($element) => {} | event to fire after the change event
 blurDuration | number | 250 | the amount of time in milliseconds the blurring CSS effect lasts
 typeAheadDuration | number | 500 | the timeout in millisconds to when the type/search feature resets
 observeSelectbox | boolean | true | uses a MutationObserver to view changes on the `<select>` element or changes to the `<options>`
+listAppendToSelect | boolean | false | Used to append the list to the select wrap. This option can be used if the select box is inside something that has sticky or absolute position, where if the user scrolls, the list box looses register with the select. By default it appends to the `document.body` to ensure if the `<select>` is in an area with overflow hidden, it won't get clipped by the containing element with that property set.
 
 ### Example
 

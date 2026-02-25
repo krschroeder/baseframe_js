@@ -13,7 +13,7 @@ export interface ICollapseDefaults extends LocationTracking {
 	toggleDuration: number;
 	toggleGroup: boolean;
 	moveToTopOnOpen: boolean;
-	moveToTopOffset: number;
+	moveToTopOffset: number | (() => number);
     moveToTopDuration: number;
 	afterOpen(btnElems: HTMLElement[], collapsibleItem: HTMLElement[]): void;
 	afterClose(btnElems: HTMLElement[], collapsibleItem: HTMLElement[]): void;
@@ -167,9 +167,10 @@ export default class Collapse {
 		
 		if (s.$activeItem) {
 			const item: HTMLElement[] = s.$activeItem.map(el => el.closest(`.${p.cssPrefix}__item`));
-
+            const offsetTop = typeof p.moveToTopOffset === 'function' ? p.moveToTopOffset() : p.moveToTopOffset;
+            
 			if (item.length && p.moveToTopOnOpen) {
-                const top = (item[0].getBoundingClientRect().top + window.scrollY) - p.moveToTopOffset;
+                const top = (item[0].getBoundingClientRect().top + window.scrollY) - offsetTop;
                
                 smoothScroll(top, p.moveToTopDuration)
                 

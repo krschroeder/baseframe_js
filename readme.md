@@ -350,7 +350,7 @@ cssPrefix | string |  'collapse' | The primary CSS class and prefix for all othe
 toggleDuration | number |  500 |  The speed at which the items will open, should pair with CSS transition settings.
 toggleGroup | boolean |  false |  More or less toggles the other opened element(s) closed, and make it behave like an accordion.
 moveToTopOnOpen | boolean |  false |  After the element is opened, the item will move to the top of it. Good for mobile.
-moveToTopOffset | number |  0 |  Should we need to offset the move to the top if the __moveToTopOnOpen__ is set to `true`.
+moveToTopOffset | number | () => number |  0 |  Should we need to offset the move to the top if the __moveToTopOnOpen__ is set to `true` can be a number or a function that returns a number.
 moveToTopDuration | number | 500 | duration to move to the top if the __moveToTopOnOpen__ setting is being used.
 urlFilterType | 'hash'\|'search' | 'hash' | The filtering type to use (either `location.hash` or `location.search`) to track the status of an open modal.
 historyType | 'replace'\|'push'| 'replace' | The history state update. Either `history.pushState` or `history.replaceState`.

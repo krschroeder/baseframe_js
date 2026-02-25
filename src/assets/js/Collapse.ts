@@ -169,7 +169,7 @@ export default class Collapse {
 			const item: HTMLElement[] = s.$activeItem.map(el => el.closest(`.${p.cssPrefix}__item`));
 
 			if (item.length && p.moveToTopOnOpen) {
-                const top = item[0].offsetTop - p.moveToTopOffset;
+                const top = (item[0].getBoundingClientRect().top + window.scrollY) - p.moveToTopOffset;
                
                 smoothScroll(top, p.moveToTopDuration)
                 

@@ -24,7 +24,7 @@ export interface ISelectEnhanceDefaults {
 
 export interface ISelectEnhanceOptions extends Partial<ISelectEnhanceDefaults> {}
 
-const VERSION = "3.0.0";
+const VERSION = "3.0.1";
 const EVENT_NAME = 'selectEnhance';
 const DATA_NAME = 'SelectEnhance';
 const DEFAULTS: ISelectEnhanceDefaults = {
@@ -462,7 +462,7 @@ export default class SelectEnhance {
                 type: 'text',
                 role: "combobox",
                 ariaExpanded: 'false',
-                 
+                ariaLabel: s.$label.text() || '',
                 id: s.selectId + '_input'
             }),
             $selectEnhance = $be(selectEnhance),
@@ -486,7 +486,7 @@ export default class SelectEnhance {
         s.$selectEnhance = $selectEnhance;
         s.selectEnhance = selectEnhance as HTMLDivElement;
         s.$select
-            .attr({ tabindex: '-1', 'aria-hidden': 'true' })
+            .attr({ tabindex: '-1'})
             .insert($selectEnhance, 'after');
 
         $selectEnhance.insert(s.$select);
@@ -727,7 +727,7 @@ export default class SelectEnhance {
             // the window event will just stay
             s.$selectEnhance
                 .insert(s.$select, 'after')
-                .attr({ tabindex: null, 'aria-hidden': null })
+                .attr({ tabindex: null })
                 .off([`mouseup.${EVENT_NAME}`,`change.${EVENT_NAME}`]);
 
             if (s.selectboxObserver) s.selectboxObserver.disconnect();

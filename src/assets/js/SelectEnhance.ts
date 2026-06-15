@@ -526,7 +526,7 @@ export default class SelectEnhance {
             role: 'listbox',
             id: s.selectId + '_listbox',
             ariaLabel: s.$label.text() || ''
-        }));
+        })).css({display: 'none'});
 
         s.selectList = s.$selectList.elem[0] as HTMLDivElement;
 
@@ -573,6 +573,10 @@ export default class SelectEnhance {
                 s.$selectList.insert($optGroupWm.get(group))
             }
         }
+
+        // append to select enhance wrapper for correct relative positioning, 
+        // will be moved to body on show if that is the option
+        s.$selectEnhance.insert(s.$selectList);
     }
 
     traverseOptions(elem: HTMLElement, dir: 'next' | 'prev') {
